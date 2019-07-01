@@ -23,7 +23,6 @@
 
 namespace frydom {
 
-
     // Forward declarations
     class FrHydroDB;
     class FrBEMBody;
@@ -34,7 +33,6 @@ namespace frydom {
     namespace internal {
         class FrRadiationModelBase;
     }
-
 
     /**
      * \class FrRadiationModel
@@ -119,7 +117,6 @@ namespace frydom {
         double m_dt = -9.;      ///< Time step of the recorder
 
     public:
-
         /// Default constructor
         FrRadiationConvolutionModel(std::shared_ptr<FrHydroDB> HDB);
 
@@ -153,6 +150,11 @@ namespace frydom {
         /// \param dt Time step
         void SetImpulseResponseSize(double Te, double dt);
 
+        /// Return the generalized force part relative to the added mass term
+        /// \param body Body for which the motion is considered
+        /// \return Part the the radiation force linked with the acceleration of the body
+        GeneralizedForce GetRadiationInertiaPart(FrBody* body) const;
+
     private:
 
         /// Compute the radiation convolution.
@@ -165,8 +167,10 @@ namespace frydom {
         /// \param N Number of time step
         void GetImpulseResponseSize(double& Te, double &dt, unsigned int& N) const;
 
+        /// Compute the the convolution part of the radiation force linked with steady speed
+        /// \param meanSpeed Steady speed of the body
+        /// \return Generalized force
         GeneralizedForce ConvolutionKu(double meanSpeed) const;
-
     };
 
     std::shared_ptr<FrRadiationConvolutionModel>

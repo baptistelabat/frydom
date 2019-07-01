@@ -31,12 +31,6 @@ void ValidationResults(const std::vector<double> vtime, const std::vector<double
         it += 1;
     }
 
-//    auto motion = -999.;
-//
-//    for (int i=it; i < vtime.size(); i++) {
-//        motion = std::max(motion, heave[i]);
-//    }
-
     auto motionMax = -999.;
     for (int i=it; i < vtime.size(); i++) {
         motionMax = std::max(motionMax, heave[i]);
@@ -84,7 +78,6 @@ std::vector<double> ReadParam(const std::string dbfile, const int iperiod, const
               << param[1] << " m " << "steepness = " << steepness << std::endl;
 
     return param;
-
 }
 
 int main(int argc, char* argv[]) {
@@ -216,18 +209,10 @@ int main(int argc, char* argv[]) {
         time += dt;
         system.AdvanceTo(time);
 
-        // ##CC
-        //std::cout << "time : " << time << " ; position of the body = "
-        //          << body->GetPosition(NWU).GetX() << " ; "
-        //          << body->GetPosition(NWU).GetY() << " ; "
-        //          << body->GetPosition(NWU).GetZ()
-        //          << std::endl;
-
         std::cout << "time : " << time << " s" << std::endl;
 
         heave.push_back(body->GetPosition(NWU).GetZ());
         vtime.push_back(time);
-        // ##CC
     }
 
     clock_t end = clock();
