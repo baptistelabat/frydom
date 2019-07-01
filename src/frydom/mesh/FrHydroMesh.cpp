@@ -98,7 +98,7 @@ namespace frydom {
 
         // Set the body position for horizontal correction in the clipping surface
         m_clipper->GetClippingSurface()->SetBodyPosition(m_body->GetPosition(NWU));
-        
+
         // Update the node vertical position for the clippingplane to the position of the tidal height (mean free surface position) 
         if (m_clippingSupport == ClippingSupport::PLANESURFACE) {
             Position Tide(0., 0., m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU));

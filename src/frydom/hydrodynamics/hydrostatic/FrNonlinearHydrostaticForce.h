@@ -52,15 +52,15 @@ namespace frydom {
         /// Initialize the log
         void AddFields() override;
 
-        /// Get the center of buoyancy position of the clipped mesh in the body reference frame
-        /// \param fc frame convention (NED/NWU)
-        /// \return center of buoyancy position in the body reference frame
-        Position GetCenterOfBuoyancyInBody(FRAME_CONVENTION fc);
-
-        /// Get the center of buoyancy position of the clipped mesh in the world reference frame
-        /// \param fc frame convention (NED/NWU)
-        /// \return center of buoyancy position in the world reference frame
-        Position GetCenterOfBuoyancyInWorld(FRAME_CONVENTION fc);
+//        /// Get the center of buoyancy position of the clipped mesh in the body reference frame
+//        /// \param fc frame convention (NED/NWU)
+//        /// \return center of buoyancy position in the body reference frame
+//        Position GetCenterOfBuoyancyInBody(FRAME_CONVENTION fc);
+//
+//        /// Get the center of buoyancy position of the clipped mesh in the world reference frame
+//        /// \param fc frame convention (NED/NWU)
+//        /// \return center of buoyancy position in the world reference frame
+//        Position GetCenterOfBuoyancyInWorld(FRAME_CONVENTION fc);
 
         /// Get the hydrostatic force (integration of the hydrostatic pressure on the clipped mesh)
         /// in the body reference frame
@@ -73,6 +73,18 @@ namespace frydom {
         /// \param fc frame convention (NED/NWU)
         /// \return hydrostatic force in the world reference frame
         Force GetHydrostaticForceInWorld(FRAME_CONVENTION fc);
+
+        /// Get the hydrostatic torque (integration of the hydrostatic pressure on the clipped mesh)
+        /// in the world reference frame, at the center of the clipped mesh
+        /// \param fc frame convention (NED/NWU)
+        /// \return hydrostatic torque in the word reference frame, at the center of the clipped mesh
+        Torque GetHydrostaticTorqueInBody(FRAME_CONVENTION fc);
+
+        /// Get the hydrostatic torque (integration of the hydrostatic pressure on the clipped mesh)
+        /// in the world reference frame, at the center of the clipped mesh
+        /// \param fc frame convention (NED/NWU)
+        /// \return hydrostatic torque in the word reference frame, at the center of the clipped mesh
+        Torque GetHydrostaticTorqueInWorld(FRAME_CONVENTION fc);
 
     private:
 

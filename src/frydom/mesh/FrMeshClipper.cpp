@@ -29,12 +29,6 @@ namespace frydom {
             Position P0 = {p0[0],p0[1],p0[2]};
             Position P1 = {p1[0],p1[1],p1[2]};
 
-            // Application of the horizontal translation.
-            auto BodyPos = m_bodyPosition; BodyPos.GetZ() = 0.;
-
-            P0 += BodyPos;
-            P1 += BodyPos;
-
             auto n = m_plane->GetNormaleInWorld(NWU);
 
             // check if P0P1 is parallel to the plan / or P0P1 null
@@ -42,7 +36,13 @@ namespace frydom {
             assert(line.dot(n)!=0);
 
             // P0O
-            Direction vector = m_plane->GetOriginInWorld(NWU) - P0;
+            auto planeOrigin = m_plane->GetOriginInWorld(NWU);
+
+            // Application of the horizontal translation.
+            auto BodyPos = m_bodyPosition; BodyPos.GetZ() = 0.;
+            planeOrigin -= BodyPos;
+
+            Direction vector = planeOrigin - P0;
 
             // s_i
             double s = vector.dot(n) / line.dot(n);
@@ -60,11 +60,13 @@ namespace frydom {
 
             auto PointInWorld = OpenMeshPointToVector3d<Position>(point);
 
+            auto planeOrigin = m_plane->GetOriginInWorld(NWU);
+
             // Application of the horizontal translation.
             auto BodyPos = m_bodyPosition; BodyPos.GetZ() = 0.;
-            const Position temp = PointInWorld + BodyPos;
+            planeOrigin -= BodyPos;
 
-            Position vector = temp - m_plane->GetOriginInWorld(NWU);
+            Position vector = PointInWorld - planeOrigin;
 
             return vector.dot(m_plane->GetNormaleInWorld(NWU));
 

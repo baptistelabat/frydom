@@ -425,7 +425,9 @@ namespace frydom {
             // These formulas are only valid for a bounded mesh. Per extension, they can be considered valid for
             // clipped mesh with plane on z=0 (or x=0 and y=0).
             auto box = GetBoundingBox();
-            assert(box.xmin==0 || box.xmax==0 || box.ymin==0 || box.ymax==0 || box.zmin==0 || box.zmax==0 );
+            assert(std::norm(box.xmin)<1E-5 || std::norm(box.xmax)<1E-5 ||std::norm(box.ymin)<1E-5 ||
+                           std::norm(box.ymax)<1E-5 ||std::norm(box.zmin)<1E-5 ||std::norm(box.zmax)<1E-5 ||
+                           IsWatertight() );
 
             int in = 0;
             double alpha = 0.;
@@ -502,7 +504,7 @@ namespace frydom {
                     valy += n[1] * data(*f_iter).GetSurfaceIntegral(POLY_Y);
                     valz += n[2] * data(*f_iter).GetSurfaceIntegral(POLY_Z);
                 }
-                assert(val-valy<1E-8);assert(val-valz<1E-8);
+                assert(val-valy<1E-5);assert(val-valz<1E-5);
 //                val /= 3.;
             }
 
@@ -562,9 +564,11 @@ namespace frydom {
                 zb += Normal[2] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2);
             }
 
-            xb /= 2. * GetVolume();
-            yb /= 2. * GetVolume();
-            zb /= 2. * GetVolume(); // FIXME: si on prend une cote de surface de clip non nulle, il faut ajouter la quantite ze**2 * Sf
+            auto volume = GetVolume();
+
+            xb /= 2. * volume;
+            yb /= 2. * volume;
+            zb /= 2. * volume; // FIXME: si on prend une cote de surface de clip non nulle, il faut ajouter la quantite ze**2 * Sf
 
             return {xb,yb,zb};
 
