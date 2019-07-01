@@ -84,6 +84,8 @@ class report():
         # conf.py file for generating the html file.
         my_path = os.path.abspath(os.path.dirname(__file__))
         self._conf_file = my_path+"/conf.py" # In the frydom-CE deposit.
+        conf_file = os.path.join(output_folder, 'conf.py')
+        copyfile(self._conf_file, conf_file)
 
         # _static folder.
         self.static_folder = os.path.join(output_folder,'_static/')
@@ -132,12 +134,12 @@ class report():
         self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
         self._RstIndex.newline()
         self._RstIndex.content('Source/' + self._PPFileName, indent=3, block='ct2')
-        self._RstIndex.newline()
-        self._RstIndex.h1("Indices and tables")
-        self._RstIndex.newline()
-        self._RstIndex.li([':ref:`genindex`'], bullet='*', block='li2')
-        self._RstIndex.li([':ref:`modindex`'], bullet='*', block='li2')
-        self._RstIndex.li([':ref:`search`'], bullet='*', block='li2')
+        # self._RstIndex.newline()
+        # self._RstIndex.h1("Indices and tables")
+        # self._RstIndex.newline()
+        # self._RstIndex.li([':ref:`genindex`'], bullet='*', block='li2')
+        # self._RstIndex.li([':ref:`modindex`'], bullet='*', block='li2')
+        # self._RstIndex.li([':ref:`search`'], bullet='*', block='li2')
 
     def WriteInputParameters(self, pyHDB, output_folder):
         """This function writes the rst file Input_parameters.rst."""
@@ -151,7 +153,7 @@ class report():
         self._RstInputParam._add(r'Parameter                         Value')
         self._RstInputParam._add(r'================================= ==================================')
         self._RstInputParam._add(r'Water density (:math:`kg/m^3`)    ' + str(pyHDB.rho_water))
-        self._RstInputParam._add(r'Gravity constant (:math:`m/s^2`)  ' + str(pyHDB.grav) + ' m/s2')
+        self._RstInputParam._add(r'Gravity constant (:math:`m/s^2`)  ' + str(pyHDB.grav))
         if(pyHDB.depth == float('inf')):
             self._RstInputParam._add(r'Water depth (:math:`m`)           Infinity')
         else:
@@ -558,8 +560,6 @@ class report():
     def BuildHTML(self, output_folder):
         """This function builds the html file from the rst files."""
 
-        conf_file = os.path.join(output_folder, 'conf.py')
-        copyfile(self._conf_file, conf_file)
         os.system('sphinx-build -b html '+ str(output_folder) + ' ' + self.build_folder)
 
     def OpenHTML(self, output_folder):
