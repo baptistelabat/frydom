@@ -25,6 +25,7 @@ from scipy import interpolate
 
 import meshmagick.MMviewer
 from plot_db import *
+from conf import latex_documents
 
 class report():
     """
@@ -93,6 +94,12 @@ class report():
         self.source_folder = os.path.join(output_folder, 'Source/')
         if not os.path.exists(self.source_folder):
             os.makedirs(self.source_folder)
+
+        # Build folder.
+        self.build_folder = os.path.join(output_folder, 'build/')
+
+        # Pdf output file name.
+        self.pdfname = os.path.splitext(latex_documents[0][1])[0]
 
     def WriteIndex(self, pyHDB):
         """This function writes the rst file Index.rst."""
@@ -506,13 +513,13 @@ class report():
 
                         if (iforce <= 2):
                             force_str = 'force'
-                            if (idof <= 2):  # Translation.
+                            if (idof <= 2): # Translation.
                                 motion_str = 'translation'
-                            else:  # Rotation.
+                            else: # Rotation.
                                 motion_str = 'rotation'
                         else:
                             force_str = 'moment'
-                            if (idof <= 2):  # Translation.
+                            if (idof <= 2): # Translation.
                                 motion_str = 'translation'
                             else:  # Rotation.
                                 motion_str = 'rotation'
@@ -551,8 +558,7 @@ class report():
 
         conf_file = os.path.join(output_folder, 'conf.py')
         copyfile(self._conf_file, conf_file)
-        build_folder = os.path.join(output_folder, 'build/')
-        os.system('sphinx-build -b html '+ str(output_folder) + ' ' + str(build_folder))
+        os.system('sphinx-build -b html '+ str(output_folder) + ' ' + self.build_folder)
 
     def OpenHTML(self, output_folder):
         """This function opens the html file in a web browser."""
@@ -561,9 +567,9 @@ class report():
         webbrowser.open(html_file)
 
     def BuildPDF(self, output_folder):
-        """This function builds the pdf file from the rst files."""
+        """This function writes a latex latex and then builds the pdf output file from the latex file."""
 
-        conf_file = os.path.join(output_folder, 'conf.py')
-        copyfile(self._conf_file, conf_file)
-        build_folder = os.path.join(output_folder, 'build/pdf')
-        os.system('sphinx-build -b pdf ' + str(output_folder) + ' ' + str(build_folder))
+        build_folder = os.path.join(output_folder, 'build')
+        os.system('sphinx-build -M latexpdf ' + str(output_folder) + ' ' + self.build_folder)
+        pdf_file = os.path.join(build_folder, 'latex', self.pdfname + '.pdf')
+        copyfile(pdf_file, os.path.join(build_folder, self.pdfname + '.pdf'))
