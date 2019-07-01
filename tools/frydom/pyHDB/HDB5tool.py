@@ -137,9 +137,13 @@ def get_parser(parser):
     parser.add_argument('--initialization','-init', action="store_true",help="""
                 Initialization of the hydrodynamic database: computation of the Froude-Krylov loads, IRF, etc.""")
 
-    # Report generation.
+    # Report generation (rst, html).
     parser.add_argument('--report_generation', '--report', '-rg', action="store", help="""
                 Report generation about the hydrodynamic database in the defined folder.""")
+
+    # Latex and pdf file generation.
+    parser.add_argument('-latex', '-tex', '-pdf', '-latexpdf', action="store_true", help="""
+                        latex and pdf file generation about the hydrodynamic database in the defined folder.""")
 
     return parser
 
@@ -356,6 +360,10 @@ def get_Arg_part_5_CE(args, database):
     # Report generation - Building the html file.
     if (args.report_generation is not None):
         database.report_building_html(args.report_generation)
+
+    # Report generation - Building both the latex and pdf files.
+    if (args.report_generation is not None and args.latex is True):
+        database.report_building_pdf(args.report_generation)
 
     return database
 

@@ -482,6 +482,9 @@ class HDB5(object):
         # Visualization of the html file.
         self.report.OpenHTML(output_folder)
 
+    def report_building_pdf(self, output_folder):
+        """This function builds a *.pdf file of the report."""
+
         # Building the pdf file.
         self.report.BuildPDF(output_folder)
 
