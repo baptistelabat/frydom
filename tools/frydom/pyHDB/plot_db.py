@@ -185,8 +185,8 @@ def plot_AB(data, w, ibody_force, iforce, ibody_motion, idof, show = True, save 
     """
 
     xlabel = r'$\omega$'+' $(rad/s)$'
-    ylabel1 = r'$A_{%s}(\omega)$' % (str(iforce+1) + str(idof+1))
-    ylabel2 = r'$B_{%s}(\omega)$' % (str(iforce+1) + str(idof+1))
+    ylabel1 = r'$A_{%s}(\omega)$' % (str(6 * ibody_force + iforce + 1) + str(6 * ibody_motion + idof + 1))
+    ylabel2 = r'$B_{%s}(\omega)$' % (str(6 * ibody_force + iforce + 1) + str(6 * ibody_motion + idof + 1))
 
     if (iforce <= 2):
         force_str = 'force'
@@ -231,6 +231,93 @@ def plot_AB(data, w, ibody_force, iforce, ibody_motion, idof, show = True, save 
     plt.ylabel(ylabel2, fontsize=18)
     plt.xlabel(xlabel, fontsize=18)
     plt.grid()
+
+    if (show == True):
+        plt.show()
+    if(save == True):
+        plt.tight_layout()
+        plt.savefig(filename)
+        plt.close()
+
+def plot_AB_multiple_coef(data, w, ibody_force, iforce, ibody_motion, show = True, save = False, filename = "AB.png"):
+    """Plots the radiation coefficients of a given modes set.
+
+    Parameters
+    ----------
+    data : Array of floats.
+        Data to plot: added mass and damping coefficients.
+    w : Array of floats.
+        Wave frequencies.
+    ibody_force : int
+        Index of the body where the radiation force is applied.
+    iforce : int
+        Index of the local body's force mode.
+    ibody_motion : int
+        Index of the body having a motion.
+    """
+
+    xlabel = r'$\omega$'+' $(rad/s)$'
+    ylabel1 = r'$A(\omega)$'
+    ylabel2 = r'$B(\omega)$'
+
+    if (iforce <= 2):
+        force_str = 'force'
+    else:
+        force_str = 'moment'
+
+    title = r"Radiation coefficients giving %s on body %u along direction %u " \
+            r"for a motion of body %u" \
+            % (force_str, ibody_force+1, iforce+1, ibody_motion+1)
+
+    plt.close()
+    if(save == False): # The size is smaller for the generation of automatic report because the title is not including.
+        plt.figure(num=None, figsize=(16, 8.5))
+    else:
+        plt.figure(num=None, figsize=(10, 6))
+
+    # Colors.
+    colors = cm.jet(np.linspace(0.9, 0, 6))
+
+    # Added mass coefficients.
+    plt.subplot(2, 1, 1)
+    for idof in range(0, 6):
+        unitA = r'$A_{%s}(\omega)$' % (str(6 * ibody_force + iforce + 1) + str(6 * ibody_motion + idof + 1))
+        if (iforce <= 2):
+            if (idof <= 2):  # Translation.
+                unitA += r' $(kg)$'
+            else:  # Rotation.
+                unitA += r' $(kg\,m)$'
+        else:
+            if (idof <= 2):  # Translation.
+                unitA += r' $(kg\,m)$'
+            else:  # Rotation.
+                unitA += r' $(kg\,m^2)$'
+        plt.plot(w, data[:len(w), idof], linestyle="-", linewidth = 2, label = unitA, color = colors[idof])
+        plt.plot(w[-1], data[-1, idof], marker = "+", markersize = 10, mew=3, color = colors[idof])
+    plt.ylabel(ylabel1, fontsize=18)
+    if(save == False): # The title is not necessary for the generation of automatic report.
+        plt.title(title, fontsize = 20)
+    plt.grid()
+    plt.legend()
+
+    plt.subplot(2, 1, 2)
+    for idof in range(0, 6):
+        unitB = r'$B_{%s}(\omega)$' % (str(6 * ibody_force + iforce + 1) + str(6 * ibody_motion + idof + 1))
+        if (iforce <= 2):
+            if (idof <= 2):  # Translation.
+                unitB += r' $(kg/s)$'
+            else:  # Rotation.
+                unitB += r' $(kg\,m/s)$'
+        else:
+            if (idof <= 2):  # Translation.
+                unitB += r' $(kg\,m/s)$'
+            else:  # Rotation.
+                unitB += r' $(kg\,m^2/s)$'
+        plt.plot(w, data[0:len(w),6 + idof], linestyle="-", linewidth = 2, label = unitB, color = colors[idof])
+    plt.ylabel(ylabel2, fontsize=18)
+    plt.xlabel(xlabel, fontsize=18)
+    plt.grid()
+    plt.legend()
 
     if (show == True):
         plt.show()

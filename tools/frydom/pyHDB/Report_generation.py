@@ -287,7 +287,7 @@ class report():
         self._RstPP.directive(name="toctree", fields=[('maxdepth', '3')])
         self._RstPP.newline()
 
-        # IRF.
+        # Infinite added mass matrix.
         self._RstPP.content('../Source/' + self._InfAddedMassFileName, indent=3, block='ct2')
         self._RstPP.newline()
         self.WriteInfAddedMass(pyHDB, output_folder, self._RstInfAddedMass)
@@ -317,40 +317,40 @@ class report():
 
             for iforce in range(0, 6):
                 for ibody_motion in range(0, pyHDB.nb_bodies):
-                    for idof in range(0, 6):
 
-                        ABfile = "AB_"+str(ibody_force)+str(iforce)+str(ibody_motion)+str(idof)+".png"
+                    ABfile = "AB_"+str(ibody_force)+str(iforce)+str(ibody_motion)+".png"
 
-                        # Data.
-                        data = np.zeros((pyHDB.nb_wave_freq + 1, 2), dtype=np.float)  # 2 for added mass and damping coefficients, +1 for the infinite added mass.
-                        data[0:pyHDB.nb_wave_freq, 0] = pyHDB.bodies[ibody_motion].Added_mass[iforce, 6 * ibody_force + idof, :]
-                        data[pyHDB.nb_wave_freq, 0] = pyHDB.bodies[ibody_motion].Inf_Added_mass[iforce, 6 * ibody_force + idof]
-                        data[0:pyHDB.nb_wave_freq, 1] = pyHDB.bodies[ibody_motion].Damping[iforce, 6 * ibody_force + idof, :]
+                    # Data.
+                    data = np.zeros((pyHDB.nb_wave_freq + 1, 12), dtype=np.float)  # 12 because 6 the for added mass and 6 for the damping coefficients, +1 for the infinite added mass.
+                    for idof in range(0,6):
+                        data[0:pyHDB.nb_wave_freq, idof] = pyHDB.bodies[ibody_motion].Added_mass[iforce, 6 * ibody_motion + idof, :]
+                        data[pyHDB.nb_wave_freq, idof] = pyHDB.bodies[ibody_motion].Inf_Added_mass[iforce, 6 * ibody_motion + idof]
+                        data[0:pyHDB.nb_wave_freq, 6 + idof] = pyHDB.bodies[ibody_motion].Damping[iforce, 6 * ibody_motion + idof, :]
 
-                        # Plots.
-                        plot_AB(data, pyHDB.wave_freq, ibody_force, iforce, ibody_motion, idof, show = False, save = True, filename = self.static_folder+ABfile)
+                    # Plots.
+                    plot_AB_multiple_coef(data, pyHDB.wave_freq, ibody_force, iforce, ibody_motion, show = False, save = True, filename = self.static_folder+ABfile)
 
-                        self._RstAddedMass.directive(name="figure", arg="/_static/" + ABfile, fields=[('align', 'center')])
-                        self._RstAddedMass.newline()
+                    self._RstAddedMass.directive(name="figure", arg="/_static/" + ABfile, fields=[('align', 'center')])
+                    self._RstAddedMass.newline()
 
-                        if (iforce <= 2):
-                            force_str = 'force'
-                            if (idof <= 2): # Translation.
-                                motion_str = 'translation'
-                            else: # Rotation.
-                                motion_str = 'rotation'
-                        else:
-                            force_str = 'moment'
-                            if (idof <= 2): # Translation.
-                                motion_str = 'translation'
-                            else: # Rotation.
-                                motion_str = 'rotation'
+                    if (iforce <= 2):
+                        force_str = 'force'
+                        if (idof <= 2): # Translation.
+                            motion_str = 'translation'
+                        else: # Rotation.
+                            motion_str = 'rotation'
+                    else:
+                        force_str = 'moment'
+                        if (idof <= 2): # Translation.
+                            motion_str = 'translation'
+                        else: # Rotation.
+                            motion_str = 'rotation'
 
-                        # Caption.
-                        self._RstAddedMass._add('   Added mass (top) and damping (bottom) coefficients giving ' + force_str+' on body ' + str(ibody_force + 1)
-                                                 + " along direction " + str(iforce + 1) + " for a " + motion_str+" of body " + str(ibody_motion + 1)
-                                                 + " along direction " + str(idof + 1) + ". The red cross represents the infinite added mass coefficient.")
-                        self._RstAddedMass.newline()
+                    # Caption.
+                    self._RstAddedMass._add('   Added mass (top) and damping (bottom) coefficients giving ' + force_str+' on body ' + str(ibody_force + 1)
+                                             + " along direction " + str(iforce + 1) + " for a " + motion_str+" of body " + str(ibody_motion + 1)
+                                             + ". The crosses represent the infinite added mass coefficients.")
+                    self._RstAddedMass.newline()
 
     def WriteLoads(self, pyHDB, output_folder, RSTfile, DiffOrFKOrExc):
         """ This function writes the diffraction or Froude-Krylov or excitation results in a *.rst file.
