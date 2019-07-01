@@ -15,11 +15,12 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 
 Beta_report = np.array([0., 30., 60., 90., 120., 150., 180.], np.float)
 
 def plot_loads(data, w, DiffOrFKOrExc, ibody, iforce, beta, show = True, save = False, filename = "Loads.png"):
-    """Plots the diffraction or Froude-Krylov or excitation response function of a given modes set
+    """Plots the diffraction or Froude-Krylov or excitation response function of a given modes set.
 
     Parameters
     ----------
@@ -79,6 +80,84 @@ def plot_loads(data, w, DiffOrFKOrExc, ibody, iforce, beta, show = True, save = 
     plt.xlabel(xlabel, fontsize=18)
     plt.grid()
 
+    if (show == True):
+        plt.show()
+    if (save == True):
+        plt.tight_layout()
+        plt.savefig(filename)
+        plt.close()
+
+def plot_loads_all_wave_dir(data, w, DiffOrFKOrExc, ibody, iforce, beta, show = True, save = False, filename = "Loads.png"):
+    """Plots the diffraction or Froude-Krylov or excitation response functions.
+
+    Parameters
+    ----------
+    data : Array of floats.
+        Data to plot: diffraction or Froude-Krylov loads.
+    w : Array of floats.
+        Wave frequencies.
+    DiffOrFKOrExc : int.
+        0 for diffraction loads, 1 for Froude-Krylov loads, 2 for excitation loads.
+    ibody : int.
+        The index of the body.
+    iforce : int.
+        The index of the body's force mode.
+    beta : float.
+        Wave directions in radians.
+    """
+
+    # Labels and title.
+    xlabel = r'$\omega$'+' $(rad/s)$'
+    if(DiffOrFKOrExc == 0): # Diffraction loads.
+        ylabel1 = r'$|F_{Diff}(\omega, \beta)|$'
+        ylabel2 = r'$Arg\left[F_{Diff}(\omega,\beta)\right] (deg)$'
+        title = r'Diffraction loads on body %u along the direction %u' % \
+                (ibody+1, iforce+1)
+    elif(DiffOrFKOrExc == 1): # Froude-Krylov loads.
+        ylabel1 = r'$|F_{FK}(\omega, \beta)|$'
+        ylabel2 = r'$Arg\left[F_{FK}(\omega,\beta)\right] (deg)$'
+        title = r'Froude-Krylov loads on body %u along the direction %u' % \
+                (ibody+1, iforce+1)
+    elif(DiffOrFKOrExc == 2): # Excitation loads.
+        ylabel1 = r'$|F_{Exc}(\omega, \beta)|$'
+        ylabel2 = r'$Arg\left[F_{Exc}(\omega,\beta)\right] (deg)$'
+        title = r'Excitation loads on body %u along the direction %u' % \
+                (ibody + 1, iforce + 1)
+
+    # Units.
+    if (iforce <= 2):
+        ylabel1 += r' $(N/m)$'
+    else:
+        ylabel1 += r' $(N)$'
+
+    # Colors.
+    colors = cm.jet(np.linspace(1, 0, beta.shape[0]))
+
+    # Plots.
+    if (save == False):  # The size is smaller for the generation of automatic report because the title is not including.
+        plt.figure(num=None, figsize=(16, 8.5))
+    else:
+        plt.figure(num=None, figsize=(10, 6))
+
+    # Amplitude
+    plt.subplot(2, 1, 1)
+    for ibeta in range(0, beta.shape[0]):
+        plt.plot(w, np.absolute(data[:, ibeta]),linestyle="-", linewidth = 2, label = str(beta[ibeta])+" deg", color = colors[ibeta])
+    plt.ylabel(ylabel1, fontsize=18)
+    if (save == False): # The title is not necessary for the generation of automatic report.
+        plt.title(title, fontsize=20)
+    plt.grid()
+    plt.legend()
+
+    # Phase.
+    plt.subplot(2, 1, 2)
+    for ibeta in range(0, beta.shape[0]):
+        plt.plot(w, np.angle(data[:, ibeta], deg=True),linestyle="-", linewidth = 2, color = colors[ibeta])
+    plt.ylabel(ylabel2, fontsize=18)
+    plt.xlabel(xlabel, fontsize=18)
+    plt.grid()
+
+    # Show and save.
     if (show == True):
         plt.show()
     if (save == True):

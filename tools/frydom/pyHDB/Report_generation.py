@@ -21,6 +21,7 @@ from shutil import copyfile
 import copy
 import numpy as np
 import datetime
+from scipy import interpolate
 
 import meshmagick.MMviewer
 from plot_db import *
@@ -395,33 +396,29 @@ class report():
             else: # Excitation.
                 Loads = Loads = body.Diffraction + body.Froude_Krylov
 
-            for iwave in range(0, pyHDB.nb_wave_dir):
+            for iforce in range(0, 6):
 
-                for iforce in range(0, 6):
+                Loadsfile = FilenameMaj+"_" + str(body.i_body) + str(iforce) + ".png"
 
-                    Loadsfile = FilenameMaj+"_" + str(body.i_body) + str(iwave) + str(iforce) + ".png"
+                # Data by interpolation about the wave directions.
+                f_interp_Loads = interpolate.interp1d(pyHDB.wave_dir, Loads[iforce, :, :], axis=1)  # axis = 1 -> wave directions.
+                data = f_interp_Loads(np.radians(Beta_report))
 
-                    # Data.
-                    data = Loads[iforce, :, iwave]
+                # Plot.
+                plot_loads_all_wave_dir(data, pyHDB.wave_freq, DiffOrFKOrExc, body.i_body, iforce, Beta_report, show = False, save = True, filename = self.static_folder+Loadsfile)
 
-                    # Wave direction.
-                    beta = np.degrees(pyHDB.wave_dir[iwave])
+                RSTfile.directive(name="figure", arg="/_static/" + Loadsfile, fields=[('align', 'center')])
+                RSTfile.newline()
 
-                    # Plot.
-                    plot_loads(data, pyHDB.wave_freq, DiffOrFKOrExc, body.i_body, iforce, beta, show = False, save = True, filename = self.static_folder+Loadsfile)
+                if (iforce <= 2):
+                    force_str = 'force'
+                else:
+                    force_str = 'moment'
 
-                    RSTfile.directive(name="figure", arg="/_static/" + Loadsfile, fields=[('align', 'center')])
-                    RSTfile.newline()
-
-                    if (iforce <= 2):
-                        force_str = 'force'
-                    else:
-                        force_str = 'moment'
-
-                    # Caption.
-                    RSTfile._add('   Amplitude (top) and phase (bottom) of the ' + FilenameMin + ' ' + force_str + ' on body ' + str(body.i_body + 1)
-                                            + " along direction " + str(iforce + 1) + " for a wave direction of %.1f deg" % beta)
-                    RSTfile.newline()
+                # Caption.
+                RSTfile._add('   Amplitude (top) and phase (bottom) of the ' + FilenameMin + ' ' + force_str + ' on body ' + str(body.i_body + 1)
+                                        + " along direction " + str(iforce + 1))
+                RSTfile.newline()
 
     def WriteInfAddedMass(self, pyHDB, output_folder, RSTfile):
         """ This function writes the infinite added mass matrix in a *.rst file.
