@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 Beta_report = np.array([0., 30., 60., 90., 120., 150., 180.], np.float)
+Dof_notation = [r'x',r'y',r'z',r'\phi',r'\theta',r'\psi']
 
 def plot_loads(data, w, DiffOrFKOrExc, ibody, iforce, beta, show = True, save = False, filename = "Loads.png"):
     """Plots the diffraction or Froude-Krylov or excitation response function of a given modes set.
@@ -185,8 +186,8 @@ def plot_AB(data, w, ibody_force, iforce, ibody_motion, idof, show = True, save 
     """
 
     xlabel = r'$\omega$'+' $(rad/s)$'
-    ylabel1 = r'$A_{%s}(\omega)$' % (str(6 * ibody_force + iforce + 1) + str(6 * ibody_motion + idof + 1))
-    ylabel2 = r'$B_{%s}(\omega)$' % (str(6 * ibody_force + iforce + 1) + str(6 * ibody_motion + idof + 1))
+    ylabel1 = r'$A_{%s}(\omega)$' % (Dof_notation[iforce]+"_"+str(ibody_force+1) + Dof_notation[idof]+"_"+str(ibody_motion+1))
+    ylabel2 = r'$B_{%s}(\omega)$' % (Dof_notation[iforce]+"_"+str(ibody_force+1) + Dof_notation[idof]+"_"+str(ibody_motion+1))
 
     if (iforce <= 2):
         force_str = 'force'
@@ -281,7 +282,7 @@ def plot_AB_multiple_coef(data, w, ibody_force, iforce, ibody_motion, show = Tru
     # Added mass coefficients.
     plt.subplot(2, 1, 1)
     for idof in range(0, 6):
-        unitA = r'$A_{%s}(\omega)$' % (str(6 * ibody_force + iforce + 1) + str(6 * ibody_motion + idof + 1))
+        unitA = r'$A_{%s}$' % (Dof_notation[iforce]+"_"+str(ibody_force+1) + Dof_notation[idof]+"_"+str(ibody_motion+1))
         if (iforce <= 2):
             if (idof <= 2): # Translation.
                 unitA += r' $(kg)$'
@@ -298,11 +299,11 @@ def plot_AB_multiple_coef(data, w, ibody_force, iforce, ibody_motion, show = Tru
     if(save == False): # The title is not necessary for the generation of automatic report.
         plt.title(title, fontsize = 20)
     plt.grid()
-    plt.legend()
+    plt.legend(fontsize = 12)
 
     plt.subplot(2, 1, 2)
     for idof in range(0, 6):
-        unitB = r'$B_{%s}(\omega)$' % (str(6 * ibody_force + iforce + 1) + str(6 * ibody_motion + idof + 1))
+        unitB = r'$B_{%s}$' % (Dof_notation[iforce]+"_"+str(ibody_force+1) + Dof_notation[idof]+"_"+str(ibody_motion+1))
         if (iforce <= 2):
             if (idof <= 2): # Translation.
                 unitB += r' $(kg/s)$'
@@ -317,7 +318,7 @@ def plot_AB_multiple_coef(data, w, ibody_force, iforce, ibody_motion, show = Tru
     plt.ylabel(ylabel2, fontsize=18)
     plt.xlabel(xlabel, fontsize=18)
     plt.grid()
-    plt.legend()
+    plt.legend(fontsize = 12)
 
     if (show == True):
         plt.show()
@@ -362,9 +363,9 @@ def plot_irf(data, time, SpeedOrNot, ibody_force, iforce, ibody_motion, idof, sh
             motion_str = 'rotation'
 
     if (SpeedOrNot == 0): # Without forward speed.
-        ylabel = r'$K_{%s}(t)$' % (str(iforce+1) + str(idof+1))
+        ylabel = r'$K_{%s}$' % (Dof_notation[iforce]+"_"+str(ibody_force+1) + Dof_notation[idof]+"_"+str(ibody_motion+1))
     else: # With forward speed.
-        ylabel = r'$Ku_{%s}(t)$' % (str(iforce + 1) + str(idof + 1))
+        ylabel = r'$Ku_{%s}$' % (Dof_notation[iforce]+"_"+str(ibody_force+1) + Dof_notation[idof]+"_"+str(ibody_motion+1))
 
     # Plots.
     if (save == False):  # The size is smaller for the generation of automatic report because the title is not including.
@@ -430,9 +431,9 @@ def plot_irf_multiple_coef(data, time, SpeedOrNot, ibody_force, iforce, ibody_mo
         plt.figure(num=None, figsize=(10, 6))
     for idof in range(0, 6):
         if (SpeedOrNot == 0): # Without forward speed.
-            unit = r'$K_{%s}(t)$' % (str(6 * ibody_force + iforce + 1) + str(6 * ibody_motion + idof + 1))
+            unit = r'$K_{%s}(t)$' % (Dof_notation[iforce]+"_"+str(ibody_force+1) + Dof_notation[idof]+"_"+str(ibody_motion+1))
         else: # With forward speed.
-            unit = r'$Ku_{%s}(t)$' % (str(6 * ibody_force + iforce + 1) + str(6 * ibody_motion + idof + 1))
+            unit = r'$Ku_{%s}(t)$' % (Dof_notation[iforce]+"_"+str(ibody_force+1) + Dof_notation[idof]+"_"+str(ibody_motion+1))
         plt.plot(time, data[:, idof], linestyle="-", linewidth=2, label = unit, color = colors[idof])
     plt.xlabel(r'$t$'+' $(s)$', fontsize=18)
     plt.ylabel(ylabel, fontsize=18)  # TODO: mettre une unite
@@ -444,7 +445,7 @@ def plot_irf_multiple_coef(data, time, SpeedOrNot, ibody_force, iforce, ibody_mo
             plt.title('Impulse response function with forward speed of %s on body %u along direction %u for a motion of body %u' %
                       (force_str, ibody_force + 1, iforce + 1, ibody_motion + 1), fontsize=20)
     plt.grid()
-    plt.legend()
+    plt.legend(fontsize = 14)
 
     if (show == True):
         plt.show()
