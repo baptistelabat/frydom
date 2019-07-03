@@ -308,10 +308,10 @@ class report():
         self._RstPP.newline()
         self.WriteIRF(pyHDB, output_folder, self._RstIRF, 0)
 
-        # IRF with speed.
-        self._RstPP.content('../Source/' + self._IRFspeedFileName, indent=3, block='ct2')
-        self._RstPP.newline()
-        self.WriteIRF(pyHDB, output_folder, self._RstIRFspeed, 1)
+        # # IRF with speed.
+        # self._RstPP.content('../Source/' + self._IRFspeedFileName, indent=3, block='ct2')
+        # self._RstPP.newline()
+        # self.WriteIRF(pyHDB, output_folder, self._RstIRFspeed, 1)
 
     def WriteAddedMassDamping(self, pyHDB, output_folder):
         """ This function writes the added-mass and damping results in Added_mass_Damping.rst."""
@@ -534,7 +534,7 @@ class report():
         self._RstExcitation.write(os.path.join(self.source_folder, self._ExcitationFileName + self.Ext)) # Excitation.rst.
         self._RstInfAddedMass.write(os.path.join(self.source_folder, self._InfAddedMassFileName + self.Ext)) # Inf_Added_mass.rst.
         self._RstIRF.write(os.path.join(self.source_folder, self._IRFFileName + self.Ext)) # IRF.rst.
-        self._RstIRFspeed.write(os.path.join(self.source_folder, self._IRFspeedFileName + self.Ext)) # IRF_speed.rst.
+        # self._RstIRFspeed.write(os.path.join(self.source_folder, self._IRFspeedFileName + self.Ext)) # IRF_speed.rst.
 
     def WritePPRst(self, output_folder):
         """This functions writes HDB_results.rst."""
