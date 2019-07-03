@@ -559,8 +559,8 @@ class NemohReader(_BEMReader):
         ############################################################################
 
         # Diffraction.
+        i_force = 0
         for body in pyHDB.bodies:
-            i_force = 0
             for j in range(0,6):
                 if(body.Force_mask[j] == 1): # Force activated.
                     body.Diffraction[j,:,:] = diffraction_data[i_force,:,:]
