@@ -112,56 +112,56 @@ class report():
         self._RstIndex.newline()
 
         # Input parameters.
-        self._RstIndex.h1("Input parameters for the frequency-domain solver")
-        self._RstIndex.newline()
+        # self._RstIndex.h1("Input parameters for the frequency-domain solver")
+        # self._RstIndex.newline()
         self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
         self._RstIndex.newline()
         self._RstIndex.content('Source/'+self._InputParamFileName, indent=3, block='ct2')
         self._RstIndex.newline()
 
         # Added mass and damping results.
-        self._RstIndex.h1("Added mass and damping results")
-        self._RstIndex.newline()
+        # self._RstIndex.h1("Added mass and damping results")
+        # self._RstIndex.newline()
         self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
         self._RstIndex.newline()
         self._RstIndex.content('Source/' + self._AddedMassFileName, indent=3, block='ct2')
         self._RstIndex.newline()
 
         # Diffraction load results.
-        self._RstIndex.h1("Diffraction load results")
-        self._RstIndex.newline()
+        # self._RstIndex.h1("Diffraction load results")
+        # self._RstIndex.newline()
         self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
         self._RstIndex.newline()
         self._RstIndex.content('Source/' + self._DiffractionFileName, indent=3, block='ct2')
         self._RstIndex.newline()
 
         # Froude-Krylov load results.
-        self._RstIndex.h1("Froude-Krylov load results")
-        self._RstIndex.newline()
+        # self._RstIndex.h1("Froude-Krylov load results")
+        # self._RstIndex.newline()
         self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
         self._RstIndex.newline()
         self._RstIndex.content('Source/' + self._FroudeKrylovFileName, indent=3, block='ct2')
         self._RstIndex.newline()
 
         # Excitation load results.
-        self._RstIndex.h1("Excitation load results")
-        self._RstIndex.newline()
+        # self._RstIndex.h1("Excitation load results")
+        # self._RstIndex.newline()
         self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
         self._RstIndex.newline()
         self._RstIndex.content('Source/' + self._ExcitationFileName, indent=3, block='ct2')
         self._RstIndex.newline()
 
         # Infinite added mass results.
-        self._RstIndex.h1("Infinite added mass results")
-        self._RstIndex.newline()
+        # self._RstIndex.h1("Infinite added mass results")
+        # self._RstIndex.newline()
         self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
         self._RstIndex.newline()
         self._RstIndex.content('Source/' + self._InfAddedMassFileName, indent=3, block='ct2')
         self._RstIndex.newline()
 
         # Impulse response function results.
-        self._RstIndex.h1("Impulse response function results")
-        self._RstIndex.newline()
+        # self._RstIndex.h1("Impulse response function results")
+        # self._RstIndex.newline()
         self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
         self._RstIndex.newline()
         self._RstIndex.content('Source/' + self._IRFFileName, indent=3, block='ct2')
