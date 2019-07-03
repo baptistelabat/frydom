@@ -351,11 +351,15 @@ def get_Arg_part_4_CE(args, database):
 
     # Report generation - hdb only.
     if (args.report_generation is not None):
-        database.report_writing(args.report_generation)
+        database.report_writing_HDB(args.report_generation)
 
     return database
 
 def get_Arg_part_5_CE(args, database):
+
+    # Report generation - Writing index.rst.
+    if (args.report_generation is not None):
+        database.report_writing_Index(args.report_generation)
 
     # Report generation - Building the html file.
     if (args.report_generation is not None):

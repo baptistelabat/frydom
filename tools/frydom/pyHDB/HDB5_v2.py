@@ -452,8 +452,8 @@ class HDB5(object):
         print('-------> "%s" has been loaded.' % hdb5_file)
         print('')
 
-    def report_writing(self, output_folder):
-        """This function writes a report about the hydrodynamic database."""
+    def report_writing_HDB(self, output_folder):
+        """This function writes the *.rst files for presenting the hydrodynamic database."""
 
         # Creation of the rst object.
         self.report = report(output_folder)
@@ -467,14 +467,13 @@ class HDB5(object):
         # HDB results.
         self.report.WriteHDB(self._pyHDB, output_folder)
 
-        # Writing the rst files except HDB_results.rst.
-        self.report.WriteRst(output_folder)
+    def report_writing_Index(self, output_folder):
+        """This function writes the index.rst file."""
+
+        self.report.WriteIndexRst(output_folder)
 
     def report_building_html(self, output_folder):
         """This function builds a *.html file of the report."""
-
-        # Writing PP_results.rst.
-        self.report.WritePPRst(output_folder)
 
         # Building the html file.
         self.report.BuildHTML(output_folder)

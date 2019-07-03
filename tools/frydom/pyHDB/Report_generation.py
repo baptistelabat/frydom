@@ -45,10 +45,6 @@ class report():
         self._RstInputParam = RstCloth()
         self._InputParamFileName = "Input_parameters"
 
-        # HDB results.
-        self._RstHDB = RstCloth()
-        self._HDBFileName = "HDB_results"
-
         # Added mass and damping coefficients.
         self._RstAddedMass = RstCloth()
         self._AddedMassFileName = "Added_mass_Damping"
@@ -64,10 +60,6 @@ class report():
         # Excitation loads.
         self._RstExcitation = RstCloth()
         self._ExcitationFileName = "Excitation"
-
-        # Post-processing results.
-        self._RstPP = RstCloth()
-        self._PPFileName = "PP_results"
 
         # Infinite added mass matrix.
         self._RstInfAddedMass = RstCloth()
@@ -106,6 +98,7 @@ class report():
     def WriteIndex(self, pyHDB):
         """This function writes the rst file Index.rst."""
 
+        # Title.
         self._RstIndex.title("Hydrodynamic database results")
         self._RstIndex.newline()
         self._RstIndex._add("This report presents the results of the hydrodynamic database obtained with **"+pyHDB.solver+"** and the post-processing results obtained with **HDB5tool**.")
@@ -117,24 +110,72 @@ class report():
         self._RstIndex.newline()
         self._RstIndex._add(".. Contents:")
         self._RstIndex.newline()
+
+        # Input parameters.
         self._RstIndex.h1("Input parameters for the frequency-domain solver")
         self._RstIndex.newline()
         self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
         self._RstIndex.newline()
         self._RstIndex.content('Source/'+self._InputParamFileName, indent=3, block='ct2')
         self._RstIndex.newline()
-        self._RstIndex.h1("Hydrodynamic database results")
+
+        # Added mass and damping results.
+        self._RstIndex.h1("Added mass and damping results")
         self._RstIndex.newline()
         self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
         self._RstIndex.newline()
-        self._RstIndex.content('Source/' + self._HDBFileName, indent=3, block='ct2')
+        self._RstIndex.content('Source/' + self._AddedMassFileName, indent=3, block='ct2')
         self._RstIndex.newline()
-        self._RstIndex.h1("Post-processing results")
+
+        # Diffraction load results.
+        self._RstIndex.h1("Diffraction load results")
         self._RstIndex.newline()
         self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
         self._RstIndex.newline()
-        self._RstIndex.content('Source/' + self._PPFileName, indent=3, block='ct2')
+        self._RstIndex.content('Source/' + self._DiffractionFileName, indent=3, block='ct2')
+        self._RstIndex.newline()
+
+        # Froude-Krylov load results.
+        self._RstIndex.h1("Froude-Krylov load results")
+        self._RstIndex.newline()
+        self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
+        self._RstIndex.newline()
+        self._RstIndex.content('Source/' + self._FroudeKrylovFileName, indent=3, block='ct2')
+        self._RstIndex.newline()
+
+        # Excitation load results.
+        self._RstIndex.h1("Excitation load results")
+        self._RstIndex.newline()
+        self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
+        self._RstIndex.newline()
+        self._RstIndex.content('Source/' + self._ExcitationFileName, indent=3, block='ct2')
+        self._RstIndex.newline()
+
+        # Infinite added mass results.
+        self._RstIndex.h1("Infinite added mass results")
+        self._RstIndex.newline()
+        self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
+        self._RstIndex.newline()
+        self._RstIndex.content('Source/' + self._InfAddedMassFileName, indent=3, block='ct2')
+        self._RstIndex.newline()
+
+        # Impulse response function results.
+        self._RstIndex.h1("Impulse response function results")
+        self._RstIndex.newline()
+        self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
+        self._RstIndex.newline()
+        self._RstIndex.content('Source/' + self._IRFFileName, indent=3, block='ct2')
+        self._RstIndex.newline()
+
+        # # Impulse reponse function results with forward speed.
+        # self._RstIndex.h1("Impulse response function results with forward speed")
         # self._RstIndex.newline()
+        # self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
+        # self._RstIndex.newline()
+        # self._RstIndex.content('Source/' + self._IRFspeedFileName, indent=3, block='ct2')
+        # self._RstIndex.newline()
+
+        # Index and table.
         # self._RstIndex.h1("Indices and tables")
         # self._RstIndex.newline()
         # self._RstIndex.li([':ref:`genindex`'], bullet='*', block='li2')
@@ -235,6 +276,9 @@ class report():
             # Picture of the mesh.
             self.PlotMesh(body, output_folder, mesh_file)
 
+        # Writing.
+        self._RstInputParam.write(os.path.join(self.source_folder, self._InputParamFileName + self.Ext))  # Input_parameters.rst.
+
     def PlotMesh(self, body, output_folder, mesh_file):
         """This function plots and saves a picture of the body mesh."""
 
@@ -261,57 +305,35 @@ class report():
         os.remove(cwd + "/screenshot.png")
 
     def WriteHDB(self, pyHDB, output_folder):
-        """This function writes the hdb result in HDB_result.rst."""
-
-        self._RstHDB.title("HDB results")
-        self._RstHDB.newline()
-        self._RstHDB._add("This chapter presents the results of the hydrodynamic database.")
-        self._RstHDB.newline()
-        self._RstHDB.directive(name="toctree", fields=[('maxdepth', '3')])
-        self._RstHDB.newline()
+        """This function writes the *.rst files for presenting the hydrodynamic database."""
 
         # Added mass and Damping.
-        self._RstHDB.content('../Source/' + self._AddedMassFileName, indent=3, block='ct2')
-        self._RstHDB.newline()
         self.WriteAddedMassDamping(pyHDB, output_folder)
+        self._RstAddedMass.write(os.path.join(self.source_folder, self._AddedMassFileName + self.Ext)) # Added_mass_Damping.rst.
 
         # Diffraction loads.
-        self._RstHDB.content('../Source/' + self._DiffractionFileName, indent=3, block='ct2')
-        self._RstHDB.newline()
         self.WriteLoads(pyHDB, output_folder, self._RstDiffraction, 0)
+        self._RstDiffraction.write(os.path.join(self.source_folder, self._DiffractionFileName + self.Ext)) # Diffraction.rst.
 
         # Froude-Krylov loads.
-        self._RstHDB.content('../Source/' + self._FroudeKrylovFileName, indent=3, block='ct2')
-        self._RstHDB.newline()
         self.WriteLoads(pyHDB, output_folder, self._RstFroudeKrylov, 1)
+        self._RstFroudeKrylov.write(os.path.join(self.source_folder, self._FroudeKrylovFileName + self.Ext)) # Froude_Krylov.rst.
 
         # Excitation loads.
-        self._RstHDB.content('../Source/' + self._ExcitationFileName, indent=3, block='ct2')
-        self._RstHDB.newline()
         self.WriteLoads(pyHDB, output_folder, self._RstExcitation, 2)
-
-        # Post-processing results.
-        self._RstPP.title("Post-processing results")
-        self._RstPP.newline()
-        self._RstPP._add("This chapter presents the post-processing results obtained from the hydrodynamic database.")
-        self._RstPP.newline()
-        self._RstPP.directive(name="toctree", fields=[('maxdepth', '3')])
-        self._RstPP.newline()
+        self._RstExcitation.write(os.path.join(self.source_folder, self._ExcitationFileName + self.Ext)) # Excitation.rst.
 
         # Infinite added mass matrix.
-        self._RstPP.content('../Source/' + self._InfAddedMassFileName, indent=3, block='ct2')
-        self._RstPP.newline()
         self.WriteInfAddedMass(pyHDB, output_folder, self._RstInfAddedMass)
+        self._RstInfAddedMass.write(os.path.join(self.source_folder, self._InfAddedMassFileName + self.Ext)) # Inf_Added_mass.rst.
 
         # IRF.
-        self._RstPP.content('../Source/' + self._IRFFileName, indent=3, block='ct2')
-        self._RstPP.newline()
         self.WriteIRF(pyHDB, output_folder, self._RstIRF, 0)
+        self._RstIRF.write(os.path.join(self.source_folder, self._IRFFileName + self.Ext)) # IRF.rst.
 
-        # # IRF with speed.
-        # self._RstPP.content('../Source/' + self._IRFspeedFileName, indent=3, block='ct2')
-        # self._RstPP.newline()
+        # # IRF with forward speed.
         # self.WriteIRF(pyHDB, output_folder, self._RstIRFspeed, 1)
+        # self._RstIRFspeed.write(os.path.join(self.source_folder, self._IRFspeedFileName + self.Ext)) # IRF_speed.rst.
 
     def WriteAddedMassDamping(self, pyHDB, output_folder):
         """ This function writes the added-mass and damping results in Added_mass_Damping.rst."""
@@ -522,24 +544,10 @@ class report():
 
                         RSTfile.newline()
 
-    def WriteRst(self, output_folder):
-        """This functions writes the rst files except HDB_result.rst because of the RAO and the drift loads."""
+    def WriteIndexRst(self, output_folder):
+        """This functions writes the index.rst file."""
 
-        self._RstIndex.write(os.path.join(output_folder, self._IndexFileName + self.Ext)) # Index.rst.
-        self._RstInputParam.write(os.path.join(self.source_folder, self._InputParamFileName + self.Ext)) # Input_parameters.rst.
-        self._RstHDB.write(os.path.join(self.source_folder, self._HDBFileName + self.Ext))  # HDB_results.rst.
-        self._RstAddedMass.write(os.path.join(self.source_folder, self._AddedMassFileName + self.Ext)) # Added_mass_Damping.rst.
-        self._RstDiffraction.write(os.path.join(self.source_folder, self._DiffractionFileName + self.Ext)) # Diffraction.rst.
-        self._RstFroudeKrylov.write(os.path.join(self.source_folder, self._FroudeKrylovFileName + self.Ext)) # Froude_Krylov.rst.
-        self._RstExcitation.write(os.path.join(self.source_folder, self._ExcitationFileName + self.Ext)) # Excitation.rst.
-        self._RstInfAddedMass.write(os.path.join(self.source_folder, self._InfAddedMassFileName + self.Ext)) # Inf_Added_mass.rst.
-        self._RstIRF.write(os.path.join(self.source_folder, self._IRFFileName + self.Ext)) # IRF.rst.
-        # self._RstIRFspeed.write(os.path.join(self.source_folder, self._IRFspeedFileName + self.Ext)) # IRF_speed.rst.
-
-    def WritePPRst(self, output_folder):
-        """This functions writes HDB_results.rst."""
-
-        self._RstPP.write(os.path.join(self.source_folder, self._PPFileName + self.Ext)) # PP_results.rst.
+        self._RstIndex.write(os.path.join(output_folder, self._IndexFileName + self.Ext)) # index.rst.
 
     def BuildHTML(self, output_folder):
         """This function builds the html file from the rst files."""
