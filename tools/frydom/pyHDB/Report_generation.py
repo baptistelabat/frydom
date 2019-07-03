@@ -460,27 +460,38 @@ class report():
         RSTfile.newline()
 
         # Loop over the bodies.
-        for body in pyHDB.bodies:
-            if (body.Inf_Added_mass is not None):
-                RSTfile.h1("Body " + str(body.i_body + 1))
+        for body_force in pyHDB.bodies:
+            if (body_force.Inf_Added_mass is not None):
+                RSTfile.h1("Body " + str(body_force.i_body + 1))
                 RSTfile.newline()
-                RSTfile.directive('math', block='d0')
-                RSTfile.newline()
-                RSTfile._add(r"    A_{%u}^{\infty} = \begin{bmatrix}" % (body.i_body+1))
-                RSTfile._add(r"                %.2f & %.2f & %.2f & %.2f & %.2f & %.2f \\" % (body.Inf_Added_mass[0, 0], body.Inf_Added_mass[0, 1], body.Inf_Added_mass[0, 2],
-                             body.Inf_Added_mass[0, 3], body.Inf_Added_mass[0, 4], body.Inf_Added_mass[0, 5]))
-                RSTfile._add(r"                %.2f & %.2f & %.2f & %.2f & %.2f & %.2f \\" % (body.Inf_Added_mass[1, 0], body.Inf_Added_mass[1, 1], body.Inf_Added_mass[1, 2],
-                             body.Inf_Added_mass[1, 3], body.Inf_Added_mass[1, 4], body.Inf_Added_mass[1, 5]))
-                RSTfile._add(r"                %.2f & %.2f & %.2f & %.2f & %.2f & %.2f \\" % (body.Inf_Added_mass[2, 0], body.Inf_Added_mass[2, 1], body.Inf_Added_mass[2, 2],
-                             body.Inf_Added_mass[2, 3], body.Inf_Added_mass[2, 4], body.Inf_Added_mass[2, 5]))
-                RSTfile._add(r"                %.2f & %.2f & %.2f & %.2f & %.2f & %.2f \\" % (body.Inf_Added_mass[3, 0], body.Inf_Added_mass[3, 1], body.Inf_Added_mass[3, 2],
-                             body.Inf_Added_mass[3, 3], body.Inf_Added_mass[3, 4], body.Inf_Added_mass[3, 5]))
-                RSTfile._add(r"                %.2f & %.2f & %.2f & %.2f & %.2f & %.2f \\" % (body.Inf_Added_mass[4, 0], body.Inf_Added_mass[4, 1], body.Inf_Added_mass[4, 2],
-                             body.Inf_Added_mass[4, 3], body.Inf_Added_mass[4, 4], body.Inf_Added_mass[4, 5]))
-                RSTfile._add(r"                %.2f & %.2f & %.2f & %.2f & %.2f & %.2f \\" % (body.Inf_Added_mass[5, 0], body.Inf_Added_mass[5, 1], body.Inf_Added_mass[5, 2],
-                             body.Inf_Added_mass[5, 3], body.Inf_Added_mass[5, 4], body.Inf_Added_mass[5, 5]))
-                RSTfile._add(r"             \end{bmatrix}")
-                RSTfile.newline()
+
+                for body_motion in pyHDB.bodies:
+
+                    ibody_motion = body_motion.i_body
+
+                    RSTfile.directive('math', block='d0')
+                    RSTfile.newline()
+                    RSTfile._add(r"    A_{%s}^{\infty} = \begin{bmatrix}" % (str(body_force.i_body+1) + str(ibody_motion+1)))
+                    RSTfile._add(r"                %.2f & %.2f & %.2f & %.2f & %.2f & %.2f \\" % (body_force.Inf_Added_mass[0, 6 * ibody_motion + 0], body_force.Inf_Added_mass[0, 6 * ibody_motion + 1],
+                                 body_force.Inf_Added_mass[0, 6 * ibody_motion + 2], body_force.Inf_Added_mass[0, 6 * ibody_motion + 3],
+                                 body_force.Inf_Added_mass[0, 6 * ibody_motion + 4], body_force.Inf_Added_mass[0, 6 * ibody_motion + 5]))
+                    RSTfile._add(r"                %.2f & %.2f & %.2f & %.2f & %.2f & %.2f \\" % (body_force.Inf_Added_mass[1, 6 * ibody_motion + 0], body_force.Inf_Added_mass[1, 6 * ibody_motion + 1],
+                                 body_force.Inf_Added_mass[1, 6 * ibody_motion + 2], body_force.Inf_Added_mass[1, 6 * ibody_motion + 3],
+                                 body_force.Inf_Added_mass[1, 6 * ibody_motion + 4], body_force.Inf_Added_mass[1, 6 * ibody_motion + 5]))
+                    RSTfile._add(r"                %.2f & %.2f & %.2f & %.2f & %.2f & %.2f \\" % (body_force.Inf_Added_mass[2, 6 * ibody_motion + 0], body_force.Inf_Added_mass[2, 6 * ibody_motion + 1],
+                                 body_force.Inf_Added_mass[2, 6 * ibody_motion + 2], body_force.Inf_Added_mass[2, 6 * ibody_motion + 3],
+                                 body_force.Inf_Added_mass[2, 6 * ibody_motion + 4], body_force.Inf_Added_mass[2, 6 * ibody_motion + 5]))
+                    RSTfile._add(r"                %.2f & %.2f & %.2f & %.2f & %.2f & %.2f \\" % (body_force.Inf_Added_mass[3, 6 * ibody_motion + 0], body_force.Inf_Added_mass[3, 6 * ibody_motion + 1],
+                                 body_force.Inf_Added_mass[3, 6 * ibody_motion + 2], body_force.Inf_Added_mass[3, 6 * ibody_motion + 3],
+                                 body_force.Inf_Added_mass[3, 6 * ibody_motion + 4], body_force.Inf_Added_mass[3, 6 * ibody_motion + 5]))
+                    RSTfile._add(r"                %.2f & %.2f & %.2f & %.2f & %.2f & %.2f \\" % (body_force.Inf_Added_mass[4, 6 * ibody_motion + 0], body_force.Inf_Added_mass[4, 6 * ibody_motion + 1],
+                                 body_force.Inf_Added_mass[4, 6 * ibody_motion + 2], body_force.Inf_Added_mass[4, 6 * ibody_motion + 3],
+                                 body_force.Inf_Added_mass[4, 6 * ibody_motion + 4], body_force.Inf_Added_mass[4, 6 * ibody_motion + 5]))
+                    RSTfile._add(r"                %.2f & %.2f & %.2f & %.2f & %.2f & %.2f \\" % (body_force.Inf_Added_mass[5, 6 * ibody_motion + 0], body_force.Inf_Added_mass[5, 6 * ibody_motion + 1],
+                                 body_force.Inf_Added_mass[5, 6 * ibody_motion + 2], body_force.Inf_Added_mass[5, 6 * ibody_motion + 3],
+                                 body_force.Inf_Added_mass[5, 6 * ibody_motion + 4], body_force.Inf_Added_mass[5, 6 * ibody_motion + 5]))
+                    RSTfile._add(r"             \end{bmatrix}")
+                    RSTfile.newline()
 
     def WriteIRF(self, pyHDB, output_folder, RSTfile, SpeedOrNot):
         """ This function writes the diffraction or Froude-Krylov or excitation results in a *.rst file.
