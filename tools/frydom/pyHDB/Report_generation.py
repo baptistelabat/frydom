@@ -25,7 +25,7 @@ from scipy import interpolate
 
 import meshmagick.MMviewer
 from plot_db import *
-from conf import latex_documents
+from conf import latex_documents, latex_logo
 
 class report():
     """
@@ -73,9 +73,11 @@ class report():
         self._RstIRFspeed = RstCloth()
         self._IRFspeedFileName = "IRF_speed"
 
-        # conf.py file for generating the html file.
+        # Path to the folder including hdbtool.
         my_path = os.path.abspath(os.path.dirname(__file__))
-        self._conf_file = my_path+"/conf.py" # In the frydom-CE deposit.
+
+        # conf.py file for generating the html file.
+        self._conf_file = my_path + "/conf.py" # In the frydom-CE deposit.
         conf_file = os.path.join(output_folder, 'conf.py')
         copyfile(self._conf_file, conf_file)
 
@@ -94,6 +96,10 @@ class report():
 
         # Pdf output file name.
         self.pdfname = os.path.splitext(latex_documents[0][1])[0]
+
+        # Logo D-ice Engineering.
+        Dice_logo = os.path.basename(latex_logo)
+        copyfile(os.path.join(my_path, "../../../data/", Dice_logo) , os.path.join(self.static_folder, Dice_logo))
 
     def WriteIndex(self, pyHDB):
         """This function writes the rst file Index.rst."""
