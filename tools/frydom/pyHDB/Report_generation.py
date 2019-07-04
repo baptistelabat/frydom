@@ -209,6 +209,17 @@ class report():
         self._RstInputParam._add(r'================================= ==================================')
         self._RstInputParam.newline()
 
+        self._RstInputParam._add("The link between the body meshes and the body indexes are given in the following table:")
+        self._RstInputParam.newline()
+        self._RstInputParam._add(r'============ =====')
+        self._RstInputParam._add(r'Body mesh    Index')
+        self._RstInputParam._add(r'============ =====')
+        for body in pyHDB.bodies:
+            meshname = os.path.split(body.mesh.name)[1]
+            self._RstInputParam._add('%s          %u' % (str(meshname), body.i_body + 1))
+        self._RstInputParam._add(r'============ =====')
+        self._RstInputParam.newline()
+
         if(pyHDB.nb_bodies > 1):
             self._RstInputParam._add("The main parameters of the bodies are listed below.")
         else:
@@ -219,13 +230,13 @@ class report():
         for body in pyHDB.bodies:
 
             mesh_file = "Mesh_"+str(body.i_body)+".png"
+            meshname = os.path.split(body.mesh.name)[1]
             self._RstInputParam.h1("Body " + str(body.i_body + 1))
             self._RstInputParam.newline()
             self._RstInputParam._add('========================== ==================================')
             self._RstInputParam._add('Parameter                  Value')
             self._RstInputParam._add('========================== ==================================')
-            self._RstInputParam._add('Body index                 ' + str(body.i_body))
-            self._RstInputParam._add('Mesh                       ' + str(body.mesh.name))
+            self._RstInputParam._add('Mesh name                  ' + str(meshname))
             self._RstInputParam._add('Number of vertices         ' + str(body.mesh.nb_vertices))
             self._RstInputParam._add('Number of faces            ' + str(body.mesh.nb_faces))
             self._RstInputParam._add('Motion mask                ' + str(body.Motion_mask))
