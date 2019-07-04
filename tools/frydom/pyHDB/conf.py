@@ -142,7 +142,9 @@ latex_elements = {
     #
     # Additional stuff for the LaTeX preamble.
     #
-    'preamble': '',
+    'preamble': r'''
+\usepackage{chngcntr}
+\counterwithin{figure}{chapter}''',
     #
     # Latex figure (float) alignment
     #
