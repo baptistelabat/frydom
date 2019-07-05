@@ -144,7 +144,8 @@ latex_elements = {
     #
     'preamble': r'''
 \usepackage{chngcntr}
-\counterwithin{figure}{chapter}''',
+\counterwithin{figure}{chapter}
+\counterwithin{table}{chapter}''',
     #
     # Latex figure (float) alignment
     #

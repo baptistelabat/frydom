@@ -115,11 +115,11 @@ class report():
         # Title.
         self._RstIndex.title("Hydrodynamic database results")
         self._RstIndex.newline()
-        self._RstIndex._add("This report presents the results of the hydrodynamic database obtained with **"+pyHDB.solver+"** and the post-processing results obtained with **HDB5tool**.")
+        self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
         self._RstIndex.newline()
-        now = datetime.datetime.now()
-        self._RstIndex._add("Report generated date: " + str(now.strftime("%Y-%m-%d")))
+        self._RstIndex._add(".. Contents:")
         self._RstIndex.newline()
+
         # Convetions.
         self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
         self._RstIndex.newline()
@@ -249,42 +249,53 @@ class report():
         self._RstInputParam.title("Input parameters")
         self._RstInputParam.newline()
         self._RstInputParam._add("This chapter lists the input parameters used in the frequency-domain linear potential flow based solver **"+pyHDB.solver+"**."
-                                 " They are listed in the next table:")
+                                 " The global parameters are listed in the next table.")
         self._RstInputParam.newline()
-        self._RstInputParam._add(r'================================= ==================================')
-        self._RstInputParam._add(r'Parameter                         Value')
-        self._RstInputParam._add(r'================================= ==================================')
-        self._RstInputParam._add(r'Water density (:math:`kg/m^3`)    ' + str(pyHDB.rho_water))
-        self._RstInputParam._add(r'Gravity constant (:math:`m/s^2`)  ' + str(pyHDB.grav))
-        if(pyHDB.depth == float('inf')):
-            self._RstInputParam._add(r'Water depth (:math:`m`)           Infinity')
+        self._RstInputParam.directive(name="list-table", arg="Global parameters used in **%s**" % (pyHDB.solver))
+        self._RstInputParam.newline()
+        self._RstInputParam._add("    * - **Parameter**")
+        self._RstInputParam._add("      - **Value**")
+        self._RstInputParam._add(r"    * - Water density (:math:`kg/m^3`)")
+        self._RstInputParam._add(r"      - " + str(pyHDB.rho_water))
+        self._RstInputParam._add(r"    * - Gravity constant (:math:`m/s^2`)")
+        self._RstInputParam._add(r"      - " + str(pyHDB.grav))
+        if (pyHDB.depth == float('inf')):
+            self._RstInputParam._add(r"    * - Water depth (:math:`m`)")
+            self._RstInputParam._add(r"      - Infinity")
         else:
-            self._RstInputParam._add(r'Water depth (:math:`m`)           ' + str(pyHDB.depth))
-        self._RstInputParam._add(r'Number of bodies                  ' + str(pyHDB.nb_bodies))
-        self._RstInputParam._add(r'Number of wave frequencies        ' + str(pyHDB.nb_wave_freq))
-        self._RstInputParam._add(r'Minimum frequency (:math:`rad/s`) %.2f' % (pyHDB.min_wave_freq))
-        self._RstInputParam._add(r'Maximum frequency (:math:`rad/s`) %.2f' % (pyHDB.max_wave_freq))
-        self._RstInputParam._add(r'Number of wave directions         ' + str(pyHDB.nb_wave_dir))
-        self._RstInputParam._add(r'Minimum wave direction (deg)      %.2f' % (pyHDB.min_wave_dir))
-        self._RstInputParam._add(r'Maximum wave direction (deg)      %.2f' % (pyHDB.max_wave_dir))
-        self._RstInputParam._add(r'================================= ==================================')
-        self._RstInputParam.newline()
+            self._RstInputParam._add(r"    * - Water depth (:math:`m`)")
+            self._RstInputParam._add(r"      - " + str(pyHDB.depth))
+        self._RstInputParam._add(r"    * - Number of bodies")
+        self._RstInputParam._add(r"      - " + str(pyHDB.nb_bodies))
+        self._RstInputParam._add(r"    * - Number of wave frequencies")
+        self._RstInputParam._add(r"      - " + str(pyHDB.nb_wave_freq))
+        self._RstInputParam._add(r"    * - Minimum frequency (:math:`rad/s`)")
+        self._RstInputParam._add(r"      - %.2f" % (pyHDB.min_wave_freq))
+        self._RstInputParam._add(r"    * - Maximum frequency (:math:`rad/s`)")
+        self._RstInputParam._add(r"      - %.2f" % (pyHDB.max_wave_freq))
+        self._RstInputParam._add(r"    * - Number of wave directions")
+        self._RstInputParam._add(r"      - " + str(pyHDB.nb_wave_dir))
+        self._RstInputParam._add(r"    * - Minimum wave direction (deg)")
+        self._RstInputParam._add(r"      - %.2f" % (pyHDB.min_wave_dir))
+        self._RstInputParam._add(r"    * - Maximum wave direction (deg)")
+        self._RstInputParam._add(r"      - %.2f" % (pyHDB.max_wave_dir))
 
-        self._RstInputParam._add("The link between the body meshes and the body indexes are given in the following table:")
+        self._RstInputParam._add("The link between the body meshes and the body indexes are given in the following table.")
         self._RstInputParam.newline()
-        self._RstInputParam._add(r'============ =====')
-        self._RstInputParam._add(r'Body mesh    Index')
-        self._RstInputParam._add(r'============ =====')
+        self._RstInputParam.directive(name="list-table", arg="Correspondance between the body meshes and the body indexes")
+        self._RstInputParam.newline()
+        self._RstInputParam._add("    * - **Body mesh**")
+        self._RstInputParam._add("      - **Index**")
         for body in pyHDB.bodies:
             meshname = os.path.split(body.mesh.name)[1]
-            self._RstInputParam._add('%s          %u' % (str(meshname), body.i_body + 1))
-        self._RstInputParam._add(r'============ =====')
+            self._RstInputParam._add("    * - %s" % meshname)
+            self._RstInputParam._add("      - %u" % (body.i_body + 1))
         self._RstInputParam.newline()
 
         if(pyHDB.nb_bodies > 1):
-            self._RstInputParam._add("The main parameters of the bodies are listed below.")
+            self._RstInputParam._add("The specific parameters for each body are listed in the next sections.")
         else:
-            self._RstInputParam._add("The main parameters of the body are listed below.")
+            self._RstInputParam._add("The specific parameters of the body are listed below.")
         self._RstInputParam.newline()
 
         # Loop over the bodies.
@@ -294,15 +305,22 @@ class report():
             meshname = os.path.split(body.mesh.name)[1]
             self._RstInputParam.h1("Body " + str(body.i_body + 1))
             self._RstInputParam.newline()
-            self._RstInputParam._add('========================== ==================================')
-            self._RstInputParam._add('Parameter                  Value')
-            self._RstInputParam._add('========================== ==================================')
-            self._RstInputParam._add('Mesh name                  ' + str(meshname))
-            self._RstInputParam._add('Number of vertices         ' + str(body.mesh.nb_vertices))
-            self._RstInputParam._add('Number of faces            ' + str(body.mesh.nb_faces))
-            self._RstInputParam._add('Motion mask                ' + str(body.Motion_mask))
-            self._RstInputParam._add('Force mask                 ' + str(body.Force_mask))
-            self._RstInputParam._add('========================== ==================================')
+
+            # Specific parameters.
+            self._RstInputParam.directive(name="list-table", arg="Mesh and mask parameters of body %u" % (body.i_body + 1))
+            self._RstInputParam.newline()
+            self._RstInputParam._add("    * - **Parameter**")
+            self._RstInputParam._add("      - **value**")
+            self._RstInputParam._add("    * - Mesh name")
+            self._RstInputParam._add("      - " + str(meshname))
+            self._RstInputParam._add("    * - Number of vertices")
+            self._RstInputParam._add("      - " +  str(body.mesh.nb_vertices))
+            self._RstInputParam._add("    * - Number of faces")
+            self._RstInputParam._add("      - " + str(body.mesh.nb_faces))
+            self._RstInputParam._add("    * - Motion mask")
+            self._RstInputParam._add("      - " + str(body.Motion_mask))
+            self._RstInputParam._add("    * - Force mask")
+            self._RstInputParam._add(r"      - " + str(body.Force_mask))
             self._RstInputParam.newline()
 
             # Hydrostatic stiffness matrix.
@@ -412,7 +430,7 @@ class report():
 
         self._RstAddedMass.title("Added mass and damping")
         self._RstAddedMass.newline()
-        self._RstAddedMass._add("This section presents the added mass and damping results.")
+        self._RstAddedMass._add("This chapter presents the added mass and damping results.")
         self._RstAddedMass.newline()
 
         for ibody_force in range(0, pyHDB.nb_bodies):
@@ -464,19 +482,19 @@ class report():
         if(DiffOrFKOrExc == 0): # Diffraction.
             RSTfile.title("Diffraction loads")
             RSTfile.newline()
-            RSTfile._add("This section presents the diffraction load results.")
+            RSTfile._add("This chapter presents the diffraction load results.")
             FilenameMaj = "Diffraction"
             FilenameMin = "diffraction"
         elif (DiffOrFKOrExc == 1): # Froude-Krylov.
             RSTfile.title("Froude-Krylov loads")
             RSTfile.newline()
-            RSTfile._add("This section presents the Froude-Krylov load results.")
+            RSTfile._add("This chapter presents the Froude-Krylov load results.")
             FilenameMaj = "Froude-Krylov"
             FilenameMin = "Froude-Krylov"
         else: # Excitation.
             RSTfile.title("Excitation loads")
             RSTfile.newline()
-            RSTfile._add("This section presents the excitation load results.")
+            RSTfile._add("This chapter presents the excitation load results.")
             FilenameMaj = "Excitation"
             FilenameMin = "excitation"
         RSTfile.newline()
@@ -528,7 +546,7 @@ class report():
 
         RSTfile.title("Infinite added mass matrices")
         RSTfile.newline()
-        RSTfile._add("This section presents the infinite added mass matrix for each body.")
+        RSTfile._add("This chapter presents the infinite added mass matrix for each body.")
         RSTfile.newline()
 
         # Loop over the bodies.
@@ -579,12 +597,12 @@ class report():
         if (SpeedOrNot == 0): # IRF without forward speed.
             RSTfile.title("Impulse response functions")
             RSTfile.newline()
-            RSTfile._add("This section presents the impulse response function results.")
+            RSTfile._add("This chapter presents the impulse response function results.")
             Filename = "IRF"
         else: # IRF with forward speed.
             RSTfile.title("Impulse response function with forward speed")
             RSTfile.newline()
-            RSTfile._add("This section presents the impulse response function results with forward speed.")
+            RSTfile._add("This chapter presents the impulse response function results with forward speed.")
             Filename = "IRF_speed"
         RSTfile.newline()
 
