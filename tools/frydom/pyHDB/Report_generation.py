@@ -278,6 +278,8 @@ class report():
         self._RstInputParam._add(r"      - " + str(pyHDB.rho_water))
         self._RstInputParam._add(r"    * - Gravity constant (:math:`m/s^2`)")
         self._RstInputParam._add(r"      - " + str(pyHDB.grav))
+        self._RstInputParam._add(r"    * - Length scale (:math:`m`)")
+        self._RstInputParam._add(r"      - %.1f" % (pyHDB.normalization_length))
         if (pyHDB.depth == float('inf')):
             self._RstInputParam._add(r"    * - Water depth (:math:`m`)")
             self._RstInputParam._add(r"      - Infinity")
