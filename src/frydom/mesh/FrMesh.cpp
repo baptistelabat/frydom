@@ -3,7 +3,9 @@
 //
 
 #include "FrMesh.h"
+#include "FrMeshClipper.h"
 #include "frydom/core/body/FrInertiaTensor.h"
+#include "frydom/core/common/FrGeometrical.h"
 
 namespace frydom {
     namespace mesh {
@@ -213,6 +215,8 @@ namespace frydom {
             face_vhandles.push_back(vhandle[6]);
             face_vhandles.push_back(vhandle[4]);
             add_face(face_vhandles);
+
+            UpdateAllProperties();
 
         }
 
@@ -504,7 +508,7 @@ namespace frydom {
                     valy += n[1] * data(*f_iter).GetSurfaceIntegral(POLY_Y);
                     valz += n[2] * data(*f_iter).GetSurfaceIntegral(POLY_Z);
                 }
-                assert(val-valy<1E-5);assert(val-valz<1E-5);
+                assert((val-valy)/val<1E-5);assert((val-valz)/val<1E-5);
 //                val /= 3.;
             }
 
@@ -571,6 +575,18 @@ namespace frydom {
             zb /= 2. * volume; // FIXME: si on prend une cote de surface de clip non nulle, il faut ajouter la quantite ze**2 * Sf
 
             return {xb,yb,zb};
+
+        }
+
+        const Position FrMesh::GetCOG(FrClippingPlane* plane) {
+
+            auto COG = GetCOG();
+
+            assert(CheckBoundaryPolygon(plane));
+
+            double ze = plane->GetPlane()->GetNormaleInWorld(NWU).dot(plane->GetPlane()->GetOriginInWorld(NWU));
+
+            return COG + ze * plane->GetPlane()->GetNormaleInWorld(NWU);
 
         }
 
@@ -793,6 +809,21 @@ namespace frydom {
             }
 
             m_polygonSet = polygonSet;
+        }
+
+        bool FrMesh::CheckBoundaryPolygon(FrClippingPlane *plane) {
+
+            bool valid = true;
+            PolygonSet polygonSet = m_polygonSet.Get();
+
+            for (auto& polygon : polygonSet) {
+
+                auto distance = plane->GetDistance(point(from_vertex_handle(polygon[0])));
+                valid &= (distance<1E-8);
+
+            }
+
+            return valid;
         }
 
 //        std::string InertiaTensor::ReportString() const {

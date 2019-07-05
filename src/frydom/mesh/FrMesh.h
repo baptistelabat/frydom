@@ -41,6 +41,7 @@ namespace frydom {
 
     namespace mesh {
 
+        class FrClippingPlane;
 
         enum VertexPosition {  // N'a a priori de sens que lors de la decoupe... Mettre dans FrMeshClipper ?
             // On pourrait du coup plutot utiliser les fonctions d'ajout dynamique de proprietes !!
@@ -501,6 +502,8 @@ namespace frydom {
 
             const Position GetCOG() const;
 
+            const Position GetCOG(FrClippingPlane* plane);
+
 //            const FrInertiaTensor GetPlainInertiaTensorAtCOG(double density) const;
 //
 //            const FrInertiaTensor GetPlainEqInertiaTensorAtCOG(double mass) const;
@@ -538,6 +541,14 @@ namespace frydom {
 
             void CalcBoundaryPolygonSet();
             // TODO: check pour voir si les polygones obtenus sont bien inscrit dans la surface de coupe
+
+
+
+        private:
+
+            bool CheckBoundaryPolygon(FrClippingPlane* plane);
+
+
         };
 
         //TODO: mettre le code portant sur les inerties dans un fichier a part

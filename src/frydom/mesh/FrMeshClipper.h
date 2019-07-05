@@ -64,13 +64,15 @@ namespace frydom {
 
         public:
 
-            explicit FrClippingPlane(const std::shared_ptr<FrPlane>& plane) : m_plane(plane) {};
+            explicit FrClippingPlane(const std::shared_ptr<FrPlane>& plane);;
 
             /// This function gives the distance to the plane.
             double GetDistance(const FrMesh::Point &point) const override;
 
             /// This function gives the intersection node position between an edge and the plane.
             FrMesh::Point GetIntersection(const FrMesh::Point &p0, const FrMesh::Point &p1) override;
+
+            FrPlane* GetPlane() const;
 
         };
 

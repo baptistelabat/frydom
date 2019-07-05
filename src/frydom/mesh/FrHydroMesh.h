@@ -84,11 +84,9 @@ namespace frydom {
         mesh::FrMesh m_initMesh;                        ///< Input mesh file (as defined and read from the input file)
         mesh::FrMesh m_clippedMesh;                     ///< Clipped mesh (its frame follows the body frame in its motions)
 
-        FrFrame m_meshOffset;                           ///< Offset frame between mesh and body frame (defined initially)
-
         ClippingSupport m_clippingSupport;              ///< Support for the clipping procedure
 
-        std::shared_ptr<FrNode> c_nodeForClippingPlane;                   ///< node for defining the FrPlane needed by FrClippingPlane
+        std::shared_ptr<FrNode> c_nodeForClippingPlane; ///< node for defining the FrPlane needed by FrClippingPlane
 
     };
 

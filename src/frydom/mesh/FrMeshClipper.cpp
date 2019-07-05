@@ -19,6 +19,8 @@ namespace frydom {
 
         // -----------------------------------------------------------------------------------------------------------------
 
+        FrClippingPlane::FrClippingPlane(const std::shared_ptr<FrPlane> &plane) : m_plane(plane) {}
+
         VectorT<double, 3>
         FrClippingPlane::GetIntersection(const VectorT<double, 3> &p0, const VectorT<double, 3> &p1) {
             // Find the abscissa on [P0P1] of the intersection with the plan :
@@ -70,6 +72,10 @@ namespace frydom {
 
             return vector.dot(m_plane->GetNormaleInWorld(NWU));
 
+        }
+
+        FrPlane *FrClippingPlane::GetPlane() const {
+            return m_plane.get();
         }
 
         // -----------------------------------------------------------------------------------------------------------------
