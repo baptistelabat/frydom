@@ -429,9 +429,9 @@ namespace frydom {
             // These formulas are only valid for a bounded mesh. Per extension, they can be considered valid for
             // clipped mesh with plane on z=0 (or x=0 and y=0).
             auto box = GetBoundingBox();
-            assert(std::norm(box.xmin)<1E-5 || std::norm(box.xmax)<1E-5 ||std::norm(box.ymin)<1E-5 ||
-                           std::norm(box.ymax)<1E-5 ||std::norm(box.zmin)<1E-5 ||std::norm(box.zmax)<1E-5 ||
-                           IsWatertight() );
+//            assert(std::norm(box.xmin)<1E-5 || std::norm(box.xmax)<1E-5 ||std::norm(box.ymin)<1E-5 ||
+//                           std::norm(box.ymax)<1E-5 ||std::norm(box.zmin)<1E-5 ||std::norm(box.zmax)<1E-5 ||
+//                           IsWatertight() );
 
             int in = 0;
             double alpha = 0.;
@@ -582,7 +582,7 @@ namespace frydom {
 
             auto COG = GetCOG();
 
-            assert(CheckBoundaryPolygon(plane));
+            if (!CheckBoundaryPolygon(plane)) return COG;
 
             double ze = plane->GetPlane()->GetNormaleInWorld(NWU).dot(plane->GetPlane()->GetOriginInWorld(NWU));
 
@@ -813,8 +813,8 @@ namespace frydom {
 
         bool FrMesh::CheckBoundaryPolygon(FrClippingPlane *plane) {
 
-            bool valid = true;
-            PolygonSet polygonSet = m_polygonSet.Get();
+            PolygonSet polygonSet = GetBoundaryPolygonSet();
+            bool valid = !polygonSet.empty();
 
             for (auto& polygon : polygonSet) {
 
