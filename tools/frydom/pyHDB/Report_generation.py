@@ -41,6 +41,10 @@ class report():
         self._RstIndex = RstCloth()
         self._IndexFileName = "index" # If you change this name, you need to update conf.py.
 
+        # Convention file.
+        self._RstConventions = RstCloth()
+        self._ConventionsFileName = "Conventions"
+
         # Input parameters file.
         self._RstInputParam = RstCloth()
         self._InputParamFileName = "Input_parameters"
@@ -101,6 +105,10 @@ class report():
         Dice_logo = os.path.basename(latex_logo)
         copyfile(os.path.join(my_path, "../../../data/", Dice_logo) , os.path.join(self.static_folder, Dice_logo))
 
+        # Wave direction convention.
+        self.Wave_direction_file = "Wave_direction_convention.jpg"
+        copyfile(os.path.join(my_path, "../../../docs/theory_manual/source/_static/", self.Wave_direction_file), os.path.join(self.static_folder, self.Wave_direction_file))
+
     def WriteIndex(self, pyHDB):
         """This function writes the rst file Index.rst."""
 
@@ -112,9 +120,10 @@ class report():
         now = datetime.datetime.now()
         self._RstIndex._add("Report generated date: " + str(now.strftime("%Y-%m-%d")))
         self._RstIndex.newline()
+        # Convetions.
         self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
         self._RstIndex.newline()
-        self._RstIndex._add(".. Contents:")
+        self._RstIndex.content('Source/' + self._ConventionsFileName, indent=3, block='ct2')
         self._RstIndex.newline()
 
         # Input parameters.
@@ -187,6 +196,52 @@ class report():
         # self._RstIndex.li([':ref:`genindex`'], bullet='*', block='li2')
         # self._RstIndex.li([':ref:`modindex`'], bullet='*', block='li2')
         # self._RstIndex.li([':ref:`search`'], bullet='*', block='li2')
+
+    def WriteConventions(self, pyHDB, output_folder):
+        """This function writes the conventions in Index.rst."""
+
+        self._RstConventions.title("Conventions and Definitions")
+        self._RstConventions.newline()
+        self._RstConventions._add("This chapter presents the conventions and the definitions used for the hydrodynamic database computation.")
+        self._RstConventions.newline()
+        self._RstConventions.h2("Hydrodynamic solver")
+        self._RstConventions.newline()
+        self._RstConventions._add("The frequency-domain linear potential flow based solver used to obtained the hydrodynamic database base is **" + pyHDB.solver + "**.")
+        self._RstConventions.newline()
+        self._RstConventions.h2("Conventions")
+        self._RstConventions.newline()
+        self._RstConventions._add(r"The wave propagation direction is defined in the next figure. :math:`\beta = 0` represents a wave coming from the positive x while :math:`\beta = 180` is for a wave coming from the negative x.")
+        self._RstConventions.newline()
+        self._RstConventions.directive(name="figure", arg="/_static/" + self.Wave_direction_file, fields=[('align', 'center'), ('scale', '50 %'), ('height', '800 px'), ('width', '750 px')])
+        self._RstConventions.newline()
+        self._RstConventions._add(r'   Sketch defining the global frame (N, E), the body coordinates (:math:`x`, :math:`y`) and the wave direction angle :math:`\beta`. '
+                     'The wave propagation direction is showed by the curved arrow. The vertical axes are positive upward. '
+                                  'The plane :math:`z = 0` represents the undisturbed free surface.')
+        self._RstConventions.newline()
+        self._RstConventions.h2("Definitions")
+        self._RstConventions.newline()
+        self._RstConventions._add("Each body has six degrees of freedom, represented by the symbols given in the following table.")
+        self._RstConventions.newline()
+        self._RstConventions.directive(name="list-table", arg="Symbol of the six degrees of freedom")
+        self._RstConventions.newline()
+        self._RstConventions._add("    * - **Degree of freedom**")
+        self._RstConventions._add("      - **Symbol**")
+        self._RstConventions._add("    * - Surge")
+        self._RstConventions._add("      - :math:`x`")
+        self._RstConventions._add("    * - Sway")
+        self._RstConventions._add("      - :math:`y`")
+        self._RstConventions._add("    * - Heave")
+        self._RstConventions._add("      - :math:`z`")
+        self._RstConventions._add("    * - Roll")
+        self._RstConventions._add("      - :math:`\phi`")
+        self._RstConventions._add("    * - Pitch")
+        self._RstConventions._add(r"      - :math:`\theta`")
+        self._RstConventions._add("    * - Yaw")
+        self._RstConventions._add("      - :math:`\psi`")
+        self._RstConventions.newline()
+
+        # Writing.
+        self._RstConventions.write(os.path.join(self.source_folder, self._ConventionsFileName + self.Ext)) # Conventions.rst.
 
     def WriteInputParameters(self, pyHDB, output_folder):
         """This function writes the rst file Input_parameters.rst."""

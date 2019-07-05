@@ -281,7 +281,7 @@ def plot_AB_multiple_coef(data, w, ibody_force, iforce, ibody_motion, show = Tru
     if (save == False):  # The size is smaller for the generation of automatic report because the title is not including.
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(16, 8.5))
     else:
-        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 5.5))
+        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6.5))
 
     # Added mass coefficients.
     legend_plot = [[] for i in range(6)]
