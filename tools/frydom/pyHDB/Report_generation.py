@@ -109,6 +109,10 @@ class report():
         self.Wave_direction_file = "Wave_direction_convention.jpg"
         copyfile(os.path.join(my_path, "../../../docs/theory_manual/source/_static/", self.Wave_direction_file), os.path.join(self.static_folder, self.Wave_direction_file))
 
+        # Wave direction convention.
+        self.Notation_AB = "Notation_AB.png"
+        copyfile(os.path.join(my_path, "../../../docs/theory_manual/source/_static/", self.Notation_AB), os.path.join(self.static_folder, self.Notation_AB))
+
     def WriteIndex(self, pyHDB):
         """This function writes the rst file Index.rst."""
 
@@ -445,7 +449,12 @@ class report():
 
         self._RstAddedMass.title("Added mass and damping")
         self._RstAddedMass.newline()
-        self._RstAddedMass._add("This chapter presents the added mass and damping results.")
+        self._RstAddedMass._add("This chapter presents the added mass and damping results. The following notation is adopted:")
+        self._RstAddedMass.newline()
+        self._RstAddedMass.directive(name="figure", arg="/_static/" + self.Notation_AB, fields=[('align', 'center'), ('height', '40 px'), ('width', '70 px')])
+        self._RstAddedMass.newline()
+        self._RstAddedMass._add(r"which representes the added mass (:math:`X = A`) or damping (:math:`X = B`) coefficient for a a unit acceleration of body :math:`j` "
+                                r"along the degree of freedom :math:`\beta` that radiates waves and generates a force on body :math:`i` along the degree of freedom :math:`\alpha`.")
         self._RstAddedMass.newline()
 
         for ibody_force in range(0, pyHDB.nb_bodies):
