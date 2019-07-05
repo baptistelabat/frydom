@@ -150,7 +150,7 @@ def get_parser(parser):
 def Read_cal_hdb5(args):
 
     # BEM reader.
-    if (args.path_to_nemoh_cal is not None):
+    if (args.path_to_nemoh_cal is not None): # Nemoh.
         database = HDB5()
         database.nemoh_reader(args.path_to_nemoh_cal[0])
         database._pyHDB.solver = "Nemoh"

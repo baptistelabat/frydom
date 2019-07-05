@@ -207,6 +207,14 @@ class report():
         self._RstConventions.h2("Hydrodynamic solver")
         self._RstConventions.newline()
         self._RstConventions._add("The frequency-domain linear potential flow based solver used to obtained the hydrodynamic database base is **" + pyHDB.solver + "**.")
+        if(pyHDB.solver == "Nemoh"):
+            self._RstConventions._add("Additional information about the theory used in **Nemoh** may be found in [Babarit2015]_.")
+            self._RstConventions._add("The source code of **Nemoh** can be downloaded here_.")
+            self._RstConventions.newline()
+            self._RstConventions._add(".. _here: https://lheea.ec-nantes.fr/logiciels-et-brevets/nemoh-presentation-192863.kjsp")
+        elif(pyHDB.solver == "WAMIT"):
+            self._RstConventions._add("Additional information about the theory used in **WAMIT** may be found in [WAMIT2016]_ and on the official website (link_).")
+            self._RstConventions._add(".. _link: https://www.wamit.com")
         self._RstConventions.newline()
         self._RstConventions.h2("Conventions")
         self._RstConventions.newline()
@@ -238,6 +246,13 @@ class report():
         self._RstConventions._add(r"      - :math:`\theta`")
         self._RstConventions._add("    * - Yaw")
         self._RstConventions._add("      - :math:`\psi`")
+        self._RstConventions.newline()
+        # self._RstConventions._add("References:")
+        # self._RstConventions.newline()
+        if (pyHDB.solver == "Nemoh"):
+            self._RstConventions._add(".. [Babarit2015] A. Babarit and G. Delhommeau. Theoretical and numerical aspects of the open source BEM solver NEMOH. In *Proceedings of the 11th European Wave and Tidal Energy Conference*, *EWTEC2015*, 2015.")
+        elif(pyHDB.solver == "WAMIT"):
+            self._RstConventions._add(".. [WAMIT2016] WAMIT User manual, Version 7.2., 2016.")
         self._RstConventions.newline()
 
         # Writing.
@@ -279,7 +294,7 @@ class report():
         self._RstInputParam._add(r"      - %.2f" % (pyHDB.min_wave_dir))
         self._RstInputParam._add(r"    * - Maximum wave direction (deg)")
         self._RstInputParam._add(r"      - %.2f" % (pyHDB.max_wave_dir))
-
+        self._RstInputParam.newline()
         self._RstInputParam._add("The link between the body meshes and the body indexes are given in the following table.")
         self._RstInputParam.newline()
         self._RstInputParam.directive(name="list-table", arg="Correspondance between the body meshes and the body indexes")
