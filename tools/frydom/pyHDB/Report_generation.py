@@ -194,7 +194,7 @@ class report():
         # self._RstIndex.content('Source/' + self._IRFspeedFileName, indent=3, block='ct2')
         # self._RstIndex.newline()
 
-        # Index and table.
+        # # Index and table.
         # self._RstIndex.h1("Indices and tables")
         # self._RstIndex.newline()
         # self._RstIndex.li([':ref:`genindex`'], bullet='*', block='li2')
@@ -211,12 +211,15 @@ class report():
         self._RstConventions.h2("Hydrodynamic solver")
         self._RstConventions.newline()
         self._RstConventions._add("The frequency-domain linear potential flow based solver used to obtained the hydrodynamic database base is **" + pyHDB.solver + "**.")
+        self._RstConventions._add("It computes the added mass coefficients, the damping coefficients and the diffraction loads. ")
         if(pyHDB.solver == "Nemoh"):
+            self._RstConventions.newline()
             self._RstConventions._add("Additional information about the theory used in **Nemoh** may be found in [Babarit2015]_.")
             self._RstConventions._add("The source code of **Nemoh** can be downloaded here_.")
             self._RstConventions.newline()
             self._RstConventions._add(".. _here: https://lheea.ec-nantes.fr/logiciels-et-brevets/nemoh-presentation-192863.kjsp")
         elif(pyHDB.solver == "WAMIT"):
+            self._RstConventions.newline()
             self._RstConventions._add("Additional information about the theory used in **WAMIT** may be found in [WAMIT2016]_ and on the official website (link_).")
             self._RstConventions._add(".. _link: https://www.wamit.com")
         self._RstConventions.newline()
