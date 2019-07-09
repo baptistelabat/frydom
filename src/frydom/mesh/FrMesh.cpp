@@ -81,35 +81,6 @@ namespace frydom {
             CalcShellInertiaProperties(mesh, mass/(mesh.GetArea()*thickness), thickness);
         }
 
-        void meshutils::IncrementalMeshWriter::operator()(const FrMesh &mesh) {
-            Write(mesh);
-        }
-
-        void meshutils::IncrementalMeshWriter::Write(const FrMesh &mesh) {
-            mesh.Write(GetFilename());
-            m_counter++;
-        }
-
-        void meshutils::IncrementalMeshWriter::SetFileBase(std::string base) {
-            m_meshFileBase = base;
-        }
-
-        void meshutils::IncrementalMeshWriter::SetFileType(std::string fileType) {
-            m_extension = fileType;
-        }
-
-        void meshutils::IncrementalMeshWriter::Reinit(int i) {
-            m_counter = i;
-        }
-
-        void meshutils::IncrementalMeshWriter::Reinit() {
-            m_counter = 0;
-        }
-
-        std::string meshutils::IncrementalMeshWriter::GetFilename() const {
-            return m_meshFileBase + std::to_string(m_counter) + m_extension;
-        }
-
         FrMesh::FrMesh(std::string meshfile) {
 
             // Constructor of the class.
@@ -355,12 +326,6 @@ namespace frydom {
             Point e1, e2, cp;
 
             double delta;
-
-            double int_x, int_y, int_z;
-            double int_yz, int_xz, int_xy;
-            double int_x2, int_y2, int_z2;
-            double int_x3, int_y3, int_z3;
-            double int_x2y, int_y2z, int_z2x;
 
             // Getting one half-edge handle of the current face
             auto heh = halfedge_handle(fh);
@@ -706,7 +671,8 @@ namespace frydom {
                 CalcBoundaryPolygonSet();
             }
 
-            BoundaryPolygonSurfaceIntegrals integrals;
+            double Int1, IntX, IntY, IntXY, IntX2, IntY2;
+            Int1 = IntX = IntY = IntXY = IntX2 = IntY2 =0;
 
             PolygonSet polygonSet = m_polygonSet.Get();
 
@@ -735,12 +701,12 @@ namespace frydom {
                     a = x0 * x0 + x1 * x1;
                     b = y0 * y0 + y1 * y1;
 
-                    integrals.m_Int_1 += dy * px;
-                    integrals.m_Int_x += dy * (px * px - x0 * x1);
-                    integrals.m_Int_y += dx * (py * py - y0 * y1);
-                    integrals.m_Int_xy += dy * (py * a + 2 * px * (x0 * y0 + x1 * y1));
-                    integrals.m_Int_x2 += dy * a * px;
-                    integrals.m_Int_y2 += dx * b * py;
+                    Int1 += dy * px;
+                    IntX += dy * (px * px - x0 * x1);
+                    IntY += dx * (py * py - y0 * y1);
+                    IntXY += dy * (py * a + 2 * px * (x0 * y0 + x1 * y1));
+                    IntX2 += dy * a * px;
+                    IntY2 += dx * b * py;
 
                     P0 = P1;
 
@@ -748,15 +714,32 @@ namespace frydom {
 
             }
 
-            integrals.m_Int_1  /= 2.;
-            integrals.m_Int_x  /= 6.;
-            integrals.m_Int_y  /= -6.;
-            integrals.m_Int_xy /= 24.;
-            integrals.m_Int_x2 /= 12.;
-            integrals.m_Int_y2 /= -12.;
+            Int1  /= 2.;
+            IntX  /= 6.;
+            IntY  /= -6.;
+            IntXY /= 24.;
+            IntX2 /= 12.;
+            IntY2 /= -12.;
 
-            c_polygonSurfaceIntegrals = integrals;
+            c_polygonSurfaceIntegrals.Set(BoundaryPolygonSurfaceIntegrals(Int1, IntX, IntY, IntXY, IntX2, IntY2));
         }
+
+
+        void FrMesh::UpdateVolumeIntegrals() {
+
+
+
+
+            Normal n;
+            double val = 0.;
+            for (FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
+                n = normal(*f_iter);
+                val += n[in] * data(*f_iter).GetSurfaceIntegral(surfaceIntegralIntegrandType);
+            }
+
+        }
+
+
 
         FrMesh::PolygonSet FrMesh::GetBoundaryPolygonSet() { // FIXME: devrait etre const...
             if (!m_polygonSet.IsValid()) {

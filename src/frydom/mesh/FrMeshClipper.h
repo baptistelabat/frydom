@@ -26,6 +26,70 @@ namespace frydom {
 
     namespace mesh {
 
+        enum FacePositionType {
+            // Position code is composed of 3 digit AOU where A is the number of vertices above the clipping surface,
+            // O the number of vertices on and U the number of vertices under.
+                    FPT_003 = 3,  // TODO : simplifier la representation de cas en enum, on peut certainemet nommer de maniere unique les cas entierement mouille, sec ou a couper
+            //  -----------  totally wet
+            //       *
+            //      / \
+            //     /   \
+            //    *-----*
+                    FPT_012 = 12,
+            //   ------*------ totally wet
+            //        / \
+            //       /   \
+            //      *-----*
+                    FPT_021 = 21,
+            //  ----*-----*---- totally wet
+            //       \   /
+            //        \ /
+            //         *
+                    FPT_030 = 30,
+            //  ----*----*----*  Lying on the clipping surface, should be removed
+
+            FPT_102 = 102,
+            //         *    Face to clip
+            //        / \
+            //    ---o---o---
+            //      /     \
+            //     *-------*
+                    FPT_111 = 111,
+            //          *               *    Face to clip
+            //         /|               |\
+            //        / |               | \
+            //    ---*--o---    or   ---o--*---
+            //        \ |               | /
+            //         \|               |/
+            //          *               *
+                    FPT_120 = 120,
+            //          *  totally dry
+            //         / \
+            //        /   \
+            //   ----*-----*----
+
+            FPT_201 = 201,
+            //       *-------*  Face to clip
+            //        \     /
+            //      ---o---o---
+            //          \ /
+            //           *
+                    FPT_210 = 210,
+            //        *-----*  totally dry
+            //         \   /
+            //          \ /
+            //       ----*----
+                    FPT_300 = 300,
+            //           *  totally dry
+            //          / \
+            //         /   \
+            //        *-----*
+            //
+            //   ----------------
+
+            FPT_UNDEFINED = -1
+        };
+
         /**
         * \class FrClippingSurface
         * \brief Class for dealing with the clipping incident wave field.
