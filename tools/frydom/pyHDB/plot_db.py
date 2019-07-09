@@ -43,18 +43,54 @@ def plot_loads(data, w, DiffOrFKOrExc, ibody, iforce, beta, show = True, save = 
     # Labels and title.
     xlabel = r'$\omega$'+' $(rad/s)$'
     if(DiffOrFKOrExc == 0): # Diffraction loads.
-        ylabel1 = r'$|F_{Diff}(\omega, \beta)|$'
-        ylabel2 = r'$Arg\left[F_{Diff}(\omega,\beta)\right] (deg)$'
+
+        # Amplitude.
+        if(iforce <= 2):
+            ylabel1 = r'$|F_{Diff}^{%s}(\omega, \beta)|$' % Dof_notation[iforce]
+        else:
+            ylabel1 = r'$|M_{Diff}^{%s}(\omega, \beta)|$' % Dof_notation[iforce]
+
+        # Phase.
+        if (iforce <= 2):
+            ylabel2 = r'$Arg\left[F_{Diff}^{%s}(\omega,\beta)\right] (deg)$'% Dof_notation[iforce]
+        else:
+            ylabel2 = r'$Arg\left[F_{Diff}^{%s}(\omega,\beta)\right] (deg)$'% Dof_notation[iforce]
+
+        # Title.
         title = r'Diffraction loads in %s of body %u for the wave direction %.1f deg' % \
                 (Dof_name[iforce], ibody + 1, np.degrees(beta))
     elif(DiffOrFKOrExc == 1): # Froude-Krylov loads.
-        ylabel1 = r'$|F_{FK}(\omega, \beta)|$'
-        ylabel2 = r'$Arg\left[F_{FK}(\omega,\beta)\right] (deg)$'
+
+        # Amplitude.
+        if (iforce <= 2):
+            ylabel1 = r'$|F_{FK}^{%s}(\omega, \beta)|$' % Dof_notation[iforce]
+        else:
+            ylabel1 = r'$|M_{FK}^{%s}(\omega, \beta)|$' % Dof_notation[iforce]
+
+        # Phase.
+        if(iforce <= 2):
+            ylabel2 = r'$Arg\left[F_{FK}^{%s}(\omega,\beta)\right] (deg)$' % Dof_notation[iforce]
+        else:
+            ylabel2 = r'$Arg\left[F_{FK}^{%s}(\omega,\beta)\right] (deg)$' % Dof_notation[iforce]
+
+        # Title.
         title = r'Froude-Krylov loads in %s of body %u for the wave direction %.1f deg' % \
                 (Dof_name[iforce], ibody + 1, np.degrees(beta))
     elif(DiffOrFKOrExc == 2): # Excitation loads.
-        ylabel1 = r'$|F_{Exc}(\omega, \beta)|$'
-        ylabel2 = r'$Arg\left[F_{Exc}(\omega,\beta)\right] (deg)$'
+
+        # Amplitude.
+        if (iforce <= 2):
+            ylabel1 = r'$|F_{Exc}^{%s}(\omega, \beta)|$' % Dof_notation[iforce]
+        else:
+            ylabel1 = r'$|M_{Exc}^{%s}(\omega, \beta)|$' % Dof_notation[iforce]
+
+        # Phase.
+        if(iforce <= 2):
+            ylabel2 = r'$Arg\left[F_{Exc}^{%s}(\omega,\beta)\right] (deg)$' % Dof_notation[iforce]
+        else:
+            ylabel2 = r'$Arg\left[F_{Exc}^{%s}(\omega,\beta)\right] (deg)$' % Dof_notation[iforce]
+
+        # Title.
         title = r'Excitation loads in %s of body %u for the wave direction %.1f deg' % \
                 (Dof_name[iforce], ibody + 1, np.degrees(beta))
 
@@ -111,18 +147,54 @@ def plot_loads_all_wave_dir(data, w, DiffOrFKOrExc, ibody, iforce, beta, show = 
     # Labels and title.
     xlabel = r'$\omega$'+' $(rad/s)$'
     if(DiffOrFKOrExc == 0): # Diffraction loads.
-        ylabel1 = r'$|F_{Diff}(\omega, \beta)|$'
-        ylabel2 = r'$Arg\left[F_{Diff}(\omega,\beta)\right] (deg)$'
+
+        # Amplitude.
+        if(iforce <= 2):
+            ylabel1 = r'$|F_{Diff}^{%s}(\omega, \beta)|$' % Dof_notation[iforce]
+        else:
+            ylabel1 = r'$|M_{Diff}^{%s}(\omega, \beta)|$' % Dof_notation[iforce]
+
+        # Phase.:
+        if(iforce <= 2):
+            ylabel2 = r'$Arg\left[F_{Diff}^{%s}(\omega,\beta)\right] (deg)$' % Dof_notation[iforce]
+        else:
+            ylabel2 = r'$Arg\left[F_{Diff}^{%s}(\omega,\beta)\right] (deg)$' % Dof_notation[iforce]
+
+        # Title.
         title = r'Diffraction loads in %s of body %u' % \
                 (Dof_name[iforce], ibody + 1)
     elif(DiffOrFKOrExc == 1): # Froude-Krylov loads.
-        ylabel1 = r'$|F_{FK}(\omega, \beta)|$'
-        ylabel2 = r'$Arg\left[F_{FK}(\omega,\beta)\right] (deg)$'
+
+        # Amplitude.
+        if (iforce <= 2):
+            ylabel1 = r'$|F_{FK}^{%s}(\omega, \beta)|$' % Dof_notation[iforce]
+        else:
+            ylabel1 = r'$|M_{FK}^{%s}(\omega, \beta)|$' % Dof_notation[iforce]
+
+        # Phase.
+        if (iforce <= 2):
+            ylabel2 = r'$Arg\left[F_{FK}^{%s}(\omega,\beta)\right] (deg)$' % Dof_notation[iforce]
+        else:
+            ylabel2 = r'$Arg\left[F_{FK}^{%s}(\omega,\beta)\right] (deg)$' % Dof_notation[iforce]
+
+        # Title.
         title = r'Froude-Krylov loads in %s of body %u' % \
                 (Dof_name[iforce], ibody + 1)
     elif(DiffOrFKOrExc == 2): # Excitation loads.
-        ylabel1 = r'$|F_{Exc}(\omega, \beta)|$'
-        ylabel2 = r'$Arg\left[F_{Exc}(\omega,\beta)\right] (deg)$'
+
+        # Amplitude.
+        if (iforce <= 2):
+            ylabel1 = r'$|F_{Exc}^{%s}(\omega, \beta)|$' % Dof_notation[iforce]
+        else:
+            ylabel1 = r'$|M_{Exc}^{%s}(\omega, \beta)|$' % Dof_notation[iforce]
+
+        # Phase.
+        if (iforce <= 2):
+            ylabel2 = r'$Arg\left[F_{Exc}^{%s}(\omega,\beta)\right] (deg)$' % Dof_notation[iforce]
+        else:
+            ylabel2 = r'$Arg\left[F_{Exc}^{%s}(\omega,\beta)\right] (deg)$' % Dof_notation[iforce]
+
+        # Title.
         title = r'Excitation loads in %s of body %u' % \
                 (Dof_name[iforce], ibody + 1)
 
