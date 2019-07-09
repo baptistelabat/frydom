@@ -262,6 +262,7 @@ class report():
         self._RstConventions._add("      - :math:`\psi`")
         self._RstConventions._add("      - 6")
         self._RstConventions.newline()
+
         # References.
         if (pyHDB.solver == "Nemoh"):
             self._RstConventions._add(".. [Babarit2015] A. Babarit and G. Delhommeau. Theoretical and numerical aspects of the open source BEM solver NEMOH. In *Proceedings of the 11th European Wave and Tidal Energy Conference*, *EWTEC2015*, 2015.")
@@ -468,6 +469,8 @@ class report():
         self._RstAddedMass._add(r"which representes the added mass (:math:`X = A`) or damping (:math:`X = B`) coefficient for a a unit acceleration of body :math:`j` "
                                 r"along the degree of freedom :math:`\beta` that radiates waves and generates a force on body :math:`i` along the degree of freedom :math:`\alpha`.")
         self._RstAddedMass.newline()
+        self._RstAddedMass._add(r"For instance :math:`A_{x_1 \theta_2}` represents the added mass coefficient for a unit acceleration in pitch of body 2 generating a force in surge on body 1.")
+        self._RstAddedMass.newline()
 
         for ibody_force in range(0, pyHDB.nb_bodies):
 
@@ -475,15 +478,22 @@ class report():
             self._RstAddedMass.newline()
 
             for iforce in range(0, 6):
+
                 for ibody_motion in range(0, pyHDB.nb_bodies):
 
                     ABfile = "AB_"+str(ibody_force)+str(iforce)+str(ibody_motion)+".png"
 
                     # Data.
-                    data = np.zeros((pyHDB.nb_wave_freq + 1, 12), dtype=np.float)  # 12 because 6 the for added mass and 6 for the damping coefficients, +1 for the infinite added mass.
+                    data = np.zeros((pyHDB.nb_wave_freq + 1, 12), dtype=np.float) # 12 because 6 the for added mass and 6 for the damping coefficients, +1 for the infinite added mass.
                     for idof in range(0,6):
+
+                        # Added mass.
                         data[0:pyHDB.nb_wave_freq, idof] = pyHDB.bodies[ibody_motion].Added_mass[iforce, 6 * ibody_motion + idof, :]
-                        data[pyHDB.nb_wave_freq, idof] = pyHDB.bodies[ibody_motion].Inf_Added_mass[iforce, 6 * ibody_motion + idof]
+
+                        # Infinite added mass.
+                        data[pyHDB.nb_wave_freq, idof] = pyHDB.bodies[ibody_motion].Inf_Added_mass[iforce, 6 * ibody_motion + idof] # Last line of data.
+
+                        # Damping/
                         data[0:pyHDB.nb_wave_freq, 6 + idof] = pyHDB.bodies[ibody_motion].Damping[iforce, 6 * ibody_motion + idof, :]
 
                     # Plots.
