@@ -92,7 +92,11 @@ To set the final time for evaluating the impulse response functions with and wit
 
 .. note::
 
-    By default, the final time is :math:`30` \\(s\\).
+    By default, the final time is:
+
+    :math:`T_f = \dfrac{2\pi}{2d\omega} = \dfrac{\pi}{d\omega}`
+
+    where :math:`d\omega` represents the wave frequency step.
 
 Time step
 ~~~~~~~~~
