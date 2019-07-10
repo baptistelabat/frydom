@@ -118,13 +118,11 @@ class HDB5(object):
         # Computing Froude-Krylov loads.
         self._pyHDB.Eval_Froude_Krylov_loads()
 
-        # Printing input data.
+        # Initialization of the discretization object.
         self._discretization.initialize(self._pyHDB)
 
         # Impule response functions for radiation damping.
-        tf = self.discretization.final_time
-        dt = self.discretization.delta_time
-        self._pyHDB.eval_impulse_response_function(tf=tf, dt=dt)
+        self._pyHDB.eval_impulse_response_function(tf = self.discretization.final_time, dt = self.discretization.delta_time)
 
         # Infinite masses.
         self._pyHDB.eval_infinite_added_mass()
