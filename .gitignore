@@ -135,3 +135,6 @@ tools/docs/_build
 
 # Old Nemoh2HDB rst files.
 tools/Old_Nemoh2HDB
+
+# Data from AWS
+tests/data/Langlee

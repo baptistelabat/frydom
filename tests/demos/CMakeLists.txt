@@ -1,40 +1,46 @@
 
 message(STATUS "    ...DEMOS :")
 
-
-
 set(DEMOS
-        demo_Ballistic
-        demo_Environment
-        demo_FreeSurface
-        demo_Body
-        demo_Rotation_and_Frame
-        demo_Hydrodynamic
-        demo_Morison
-        demo_Cable
-        demo_Hub_Installation
-        demo_langlee_FO3F
-        demo_FOSWEC_FlapDecay
-        demo_MooringLines
-        demo_NonLinearHydrostatics
-        demo_Constraints
-        demo_Links
-        bench_SphereDecay
-        bench_SphereRegular
-        bench_SphereIrregular
-        bench_DTMB5512_captive
-        bench_Cables
+        Ballistic
+        Environment
+        FreeSurface
+        Body
+        Rotation_and_Frame
+        Hydrodynamic
+        Morison
+        Cable
+        Hub_Installation
+        Langlee
+        FOSWEC_FlapDecay
+        MooringLines
+        NonLinearHydrostatics
+        Constraints
+        Links
         )
 
+set(BENCH
+        SphereDecay
+        SphereRegular
+        SphereIrregular
+        DTMB5512_captive
+        Cables
+        )
+
+include(URL_DEMO_DATA.conf)
 
 foreach(test ${DEMOS})
-    message(STATUS "        ...add ${test}")
+    message(STATUS "        ...add demo_${test}")
+    add_executable(demo_${test} demo_${test}.cpp)
+    target_link_libraries(demo_${test} FRyDoM_Engine)
+    target_compile_definitions(demo_${test} PUBLIC RESOURCES_PATH="${test}_${resources_path}")
+endforeach()
 
-    add_executable(${test} ${test}.cpp)
-    target_link_libraries(${test} FRyDoM_Engine)
-    target_compile_definitions(${test} PUBLIC RESOURCES_PATH="${langlee_resources_path}")
-    message(${langlee_resources_path})
-
+foreach(test ${BENCH})
+    message(STATUS "        ...add bench_${test}")
+    add_executable(bench_${test} bench_${test}.cpp)
+    target_link_libraries(bench_${test} FRyDoM_Engine)
+    target_compile_definitions(bench_${test} PUBLIC RESOURCES_PATH="${test}_${resources_path}")
 endforeach()
 
 set(subdirs
