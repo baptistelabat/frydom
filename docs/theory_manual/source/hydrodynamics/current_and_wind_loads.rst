@@ -37,14 +37,23 @@ where
     the moment acts about the vertical direction only.
 
 
-.. _fig_relative_flow_velocity:
-.. figure:: _static/flow_velocity.png
-    :align: center
-    :alt: Relative flow velocity
 
-    Relative flow velocity, past the body
-..
-    REFAIRE CETTE FIGURE !!!
+.. _fig_relative_wind_velocity:
+.. figure:: _static/wind_velocity.png
+    :align: center
+    :alt: Relative wind velocity
+
+    Relative wind velocity, past the body
+
+
+
+.. _fig_relative_current_velocity:
+.. figure:: _static/current_velocity.png
+    :align: center
+    :alt: Relative current velocity
+
+    Relative current velocity, past the body
+
 
 ..
     The computations are done within FRyDoM in NWU and GOTO conventions, however you can give polar coefficients in NED or NWU and in GOTO or COMEFROM, convention.
