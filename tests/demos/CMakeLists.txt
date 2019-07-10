@@ -32,6 +32,8 @@ foreach(test ${DEMOS})
 
     add_executable(${test} ${test}.cpp)
     target_link_libraries(${test} FRyDoM_Engine)
+    target_compile_definitions(${test} PUBLIC RESOURCES_PATH="${langlee_resources_path}")
+    message(${langlee_resources_path})
 
 endforeach()
 
@@ -94,11 +96,6 @@ configure_file(../data/Cylinder/Free_cylinder_11600_panels.obj . COPYONLY)
 configure_file(../data/FPSO/fpso_YC_modif_Coarse.obj . COPYONLY)
 configure_file(../data/FPSO/fpso_YC_modif_Medium.obj . COPYONLY)
 configure_file(../data/FPSO/fpso_YC_modif_Fine.obj . COPYONLY)
-
-configure_file(../data/Langlee/Barge.obj . COPYONLY)
-configure_file(../data/Langlee/Flap1_fuse.obj . COPYONLY)
-configure_file(../data/Langlee/Flap2_fuse.obj . COPYONLY)
-configure_file(../data/Langlee/Langlee.hdb5 . COPYONLY)
 
 configure_file(../data/FOSWEC/FOSWEC.hdb5 . COPYONLY)
 configure_file(../data/FOSWEC/FullFlap_mesh.obj . COPYONLY)
