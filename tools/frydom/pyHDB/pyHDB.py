@@ -301,34 +301,16 @@ class pyHDB():
                         nds = body.get_nds(i_force) # n*ds.
                         body.Froude_Krylov[i_force, :, :] = np.einsum('ijk, i -> jk', pressure, -nds) # Il s'agit de la normale entrante.
 
-    def eval_impulse_response_function(self, tf = 30., dt = None, full=True):
+    def eval_impulse_response_function(self, full=True):
         """Computes the impulse response functions.
 
         It uses the Ogilvie formulas based on radiation damping integration (Inverse Fourier Transform).
 
         Parameters
         ----------
-        tf : float, optional
-            Final time (seconds). Default is 30.
-        dt : float, optional
-            Time step (seconds). Default is None. If None, a time step is computed according to the max
-            frequency of
-            hydrodynamic coefficients (the Nyquist frequency is taken)
         full : bool, optional
             If True (default), it will use the full wave frequency range for computations.
         """
-
-        # Time.
-        if dt is None:
-            # Using Shannon theorem.
-            dt = pi / (10 * self.max_frequency)
-        time = np.arange(start=0., stop=tf + dt, step=dt)
-        tf = time[-1]  # It is overwriten !!
-
-        # Storage.
-        self.dt = dt
-        self.time = time
-        self.nb_time_samples = int(tf / self.dt) + 1
 
         # Wave frequency range.
         if full:
@@ -337,7 +319,7 @@ class pyHDB():
             w = self.omega
 
         # Computation.
-        wt = np.einsum('i, j -> ij', w, time)  # w*t.
+        wt = np.einsum('i, j -> ij', w, self.time)  # w*t.
         cwt = np.cos(wt)  # cos(w*t).
 
         for body in self.bodies:
@@ -366,11 +348,6 @@ class pyHDB():
          It uses the Ogilvie formula to get the coefficients from the impulse response functions.
         """
 
-        # Time.
-        dt = self.dt
-        time = self.time
-        tf = time[-1]
-
         # Wave frequency range.
         if full:
             w = self.get_full_omega()
@@ -378,7 +355,7 @@ class pyHDB():
             w = self.omega
 
         # Computation.
-        wt = np.einsum('i, j -> ij', w, time)  # w*t.
+        wt = np.einsum('i, j -> ij', w, self.time)  # w*t.
         sin_wt = np.sin(wt) # sin(w*t).
 
         for body in self.bodies:
@@ -396,7 +373,7 @@ class pyHDB():
                 cm = body.radiation_added_mass(self._iwcut)
 
             kernel = np.einsum('ijk, lk -> ijlk', irf, sin_wt)  # irf*sin(w*t).
-            integral = np.einsum('ijk, k -> ijk', np.trapz(kernel, x=time, axis=3), 1. / w)  # 1/w * int(irf*sin(w*t),dt).
+            integral = np.einsum('ijk, k -> ijk', np.trapz(kernel, x=self.time, axis=3), 1. / w)  # 1/w * int(irf*sin(w*t),dt).
 
             body.Inf_Added_mass = (cm + integral).mean(axis=2)  # mean( A(w) + 1/w * int(irf*sin(w*t),dt) ) wrt w.
 
@@ -411,11 +388,6 @@ class pyHDB():
             If True (default), it will use the full frequency range for computations.
         """
 
-        # Time.
-        dt = self.dt
-        time = self.time
-        tf = time[-1]
-
         # Wave frequency range.
         if full:
             w = self.get_full_omega()
@@ -423,7 +395,7 @@ class pyHDB():
             w = self.omega
 
         # Computation.
-        wt = np.einsum('i, j ->ij', w, time)  # w*t.
+        wt = np.einsum('i, j ->ij', w, self.time)  # w*t.
         cwt = np.cos(wt)  # cos(w*t).
 
         for body in self.bodies:

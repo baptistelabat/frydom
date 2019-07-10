@@ -121,8 +121,13 @@ class HDB5(object):
         # Initialization of the discretization object.
         self._discretization.initialize(self._pyHDB)
 
+        # Time.
+        self._pyHDB.time = self.discretization.time
+        self._pyHDB.dt = self.discretization.delta_time
+        self._pyHDB.nb_time_samples = self.discretization.nb_time_sample
+
         # Impule response functions for radiation damping.
-        self._pyHDB.eval_impulse_response_function(tf = self.discretization.final_time, dt = self.discretization.delta_time)
+        self._pyHDB.eval_impulse_response_function()
 
         # Infinite masses.
         self._pyHDB.eval_infinite_added_mass()

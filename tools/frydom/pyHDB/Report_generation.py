@@ -664,6 +664,7 @@ class report():
 
                         # Data.
                         data = np.zeros((pyHDB.nb_time_samples, 6), dtype=np.float)
+
                         for idof in range(0, 6):
                             if(SpeedOrNot == 0): # IRF without forward speed.
                                 data[:, idof] = pyHDB.bodies[ibody_force].irf[iforce, 6 * ibody_motion + idof, :]

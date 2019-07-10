@@ -278,7 +278,7 @@ class DiscretizationDB(object):
             Time vector.
         """
 
-        return np.linspace(0., self._final_time, self._nb_time_sample)
+        return np.linspace(start = 0., stop = self._final_time, num = self._nb_time_sample)
 
     def initialize(self, pyHDB):
 
