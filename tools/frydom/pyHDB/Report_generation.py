@@ -113,7 +113,7 @@ class report():
         self.Notation_AB = "Notation_AB.png"
         copyfile(os.path.join(my_path, "../../../docs/theory_manual/source/_static/", self.Notation_AB), os.path.join(self.static_folder, self.Notation_AB))
 
-    def WriteIndex(self, pyHDB):
+    def WriteIndex(self, pyHDB, RSTIntroPath):
         """This function writes the rst file Index.rst."""
 
         # Title.
@@ -124,7 +124,21 @@ class report():
         self._RstIndex._add(".. Contents:")
         self._RstIndex.newline()
 
-        # Convetions.
+        # Introduction
+        if (RSTIntroPath is not None):
+            # self._RstIndex.h1("Introduction")
+            # self._RstIndex.newline()
+
+            # Copy of the introduction RST file into the source file;
+            RSTIntro = os.path.basename(RSTIntroPath)
+            copyfile(RSTIntroPath, os.path.join(self.source_folder, RSTIntro))
+
+            self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
+            self._RstIndex.newline()
+            self._RstIndex.content('Source/' + RSTIntro, indent=3, block='ct2')
+            self._RstIndex.newline()
+
+        # Conventions and definitions.
         self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
         self._RstIndex.newline()
         self._RstIndex.content('Source/' + self._ConventionsFileName, indent=3, block='ct2')

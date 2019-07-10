@@ -143,7 +143,11 @@ def get_parser(parser):
 
     # Latex and pdf file generation.
     parser.add_argument('-latex', '-tex', '-pdf', '-latexpdf', action="store_true", help="""
-                        latex and pdf file generation about the hydrodynamic database in the defined folder.""")
+                        Latex and pdf file generation about the hydrodynamic database in the defined folder.""")
+
+    # Add an rst file for the introduction of the automatic report.
+    parser.add_argument('-intro', '-introduction', action="store", help="""
+                            Add a *.rst file for adding an introduction to the automatic report.""")
 
     return parser
 
@@ -351,7 +355,10 @@ def get_Arg_part_4_CE(args, database):
 
     # Report generation - hdb only.
     if (args.report_generation is not None):
-        database.report_writing_HDB(args.report_generation)
+        if(args.intro is not None):
+            database.report_writing_HDB(args.report_generation, args.intro)
+        else:
+            database.report_writing_HDB(args.report_generation)
 
     return database
 

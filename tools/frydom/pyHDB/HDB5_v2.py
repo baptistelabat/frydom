@@ -455,14 +455,14 @@ class HDB5(object):
         print('-------> "%s" has been loaded.' % hdb5_file)
         print('')
 
-    def report_writing_HDB(self, output_folder):
+    def report_writing_HDB(self, output_folder, RSTIntroPath = None):
         """This function writes the *.rst files for presenting the hydrodynamic database."""
 
         # Creation of the rst object.
         self.report = report(output_folder)
 
         # Description of the report.
-        self.report.WriteIndex(self._pyHDB)
+        self.report.WriteIndex(self._pyHDB, RSTIntroPath)
 
         # Input parameters.
         self.report.WriteConventions(self._pyHDB, output_folder)

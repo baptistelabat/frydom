@@ -240,6 +240,17 @@ The generation of a *pdf* report is based on the *rst* files created for the *ht
 
 The output *pdf* file is located in the folder *build*.
 
+Introductory chapter
+~~~~~~~~~~~~~~~~~~~~
+
+It is possible to add a RST file for describing your project which will become the introduction of the *html* report (and so the *pdf* report if given). The command is::
+
+>$ hdb5tool -cal path/to/Nemoh/cal/folder -rg path/to/report/folder -intro path/to/introductory/RST/file
+
+.. note::
+
+    You can use a relative or absolute path.
+
 Plots
 -----
 
