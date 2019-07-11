@@ -962,6 +962,12 @@ class pyHDB():
             dset.attrs['Description'] = "Infinite added mass matrix that modifies the apparent mass of body %u from " \
                                         "acceleration of body %u." % (body.i_body, j)
 
+            # Radiation mask.
+            dset = writer.create_dataset(radiation_body_motion_path + "/RadiationMask",
+                                         data=body.Radiation_mask[:, 6 * j:6 * (j + 1)])
+            dset.attrs['Description'] = "Radiation mask of body %u from " \
+                                        "acceleration of body %u." % (body.i_body, j)
+
             for idof in range(0,6):
 
                 # Added mass.
@@ -1105,7 +1111,7 @@ class pyHDB():
         # Diffraction and Froude-Krylov loads.
         self.write_excitation(writer, body, body_path + "/Excitation")
 
-        # Added mass and damping coefficients and impulse response functions.
+        # Added mass and damping coefficients, radiation masks and impulse response functions.
         self.write_radiation(writer, body, body_path + "/Radiation")
 
         # Hydrostatics.

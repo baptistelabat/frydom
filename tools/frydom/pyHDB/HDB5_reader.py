@@ -405,6 +405,12 @@ class HDB5reader_v2(HDB5reader):
             # Infinite added mass.
             body.Inf_Added_mass[:, 6 * j:6 * (j + 1)] = np.array(reader[radiation_body_motion_path + "/InfiniteAddedMass"])
 
+            # Radiation mask.
+            try:
+                body.Radiation_mask[:, 6 * j:6 * (j + 1)] = np.array(reader[radiation_body_motion_path + "/RadiationMask"])
+            except:
+                pass
+
             for imotion in range(0, 6):
 
                 # Added mass.
