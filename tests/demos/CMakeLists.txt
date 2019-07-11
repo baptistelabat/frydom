@@ -12,7 +12,7 @@ set(DEMOS
         Cable
         Hub_Installation
         Langlee
-        FOSWEC_FlapDecay
+        FOSWEC
         MooringLines
         NonLinearHydrostatics
         Constraints
