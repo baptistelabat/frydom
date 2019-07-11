@@ -17,6 +17,7 @@ set(DEMOS
         NonLinearHydrostatics
         Constraints
         Links
+        HexagonalArticulatedBuoy
         )
 
 set(BENCH
