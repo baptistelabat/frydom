@@ -38,6 +38,6 @@ foreach(test ${DEMOS})
             )
         endif()
     endif()
-    set(${test}_resources_path ${CMAKE_SOURCE_DIR}/tests/data/${test})
+    set(${test}_resources_path ${CMAKE_SOURCE_DIR}/tests/data/${test}/)
 
 endforeach()

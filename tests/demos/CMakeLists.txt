@@ -33,7 +33,7 @@ foreach(test ${DEMOS})
     message(STATUS "        ...add demo_${test}")
     add_executable(demo_${test} demo_${test}.cpp)
     target_link_libraries(demo_${test} FRyDoM_Engine)
-    target_compile_definitions(demo_${test} PUBLIC RESOURCES_PATH="${test}_${resources_path}")
+    target_compile_definitions(demo_${test} PUBLIC RESOURCES_PATH="${${test}_resources_path}")
 endforeach()
 
 foreach(test ${BENCH})
