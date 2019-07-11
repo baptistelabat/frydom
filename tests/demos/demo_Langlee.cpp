@@ -1,7 +1,7 @@
 //
 // Created by camille on 12/04/19.
 //
-
+#include <cppfs/fs.h>
 #include "frydom/frydom.h"
 
 using namespace frydom;
@@ -65,7 +65,7 @@ int main(int argc, char* argv[]) {
 
     auto barge = system.NewBody();
     barge->SetName("barge");
-    barge->AddMeshAsset(cppfs::join(resources_path, "barge_draft8_5.obj"));
+    barge->AddMeshAsset(resources_path + "barge_draft8_5.obj");
     barge->SetPosition(Position(0., 0., -8.5), NWU);
 
     double mass_b = 1.089825e6;

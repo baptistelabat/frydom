@@ -4,6 +4,7 @@ set(AWS_URL https://frydom-ce-data.s3.amazonaws.com/demo)
 
 set(DEFAULT_TAG "1.0.0")
 set(Langlee_TAG "1.0.1")
+set(FOSWEC_TAG "1.0.1")
 
 foreach(test ${DEMOS})
 
