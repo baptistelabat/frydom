@@ -482,6 +482,10 @@ def plot_AB_array(data, w, ibody_force, ibody_motion, pyHDB):
             axes[iforce, idof].plot(w, data[iforce, idof, :], linestyle="-", linewidth=2)
             axes[iforce, idof].grid()
             axes[iforce, idof].set_title(labelA)
+            if (pyHDB.bodies[ibody_force].Radiation_mask[iforce, 6 * ibody_motion + idof] == True
+                    and (pyHDB.bodies[ibody_force].Force_mask[iforce] == 0 or pyHDB.bodies[ibody_force].Motion_mask[idof] == 0)): # Automatic pre-filling of the radiation mask (can be change by clicking on the plots).
+                pyHDB.bodies[ibody_force].Radiation_mask[iforce, 6 * ibody_motion + idof] = False
+                axes[iforce, idof].set_facecolor("grey")
 
     # What to do if a mouse click is performed.
     def onclick(event):
