@@ -18,7 +18,9 @@ using namespace frydom;
 void ValidationResults(const std::vector<double> vtime, const std::vector<double> heave,
                        const int iperiod, const int isteepness) {
 
-    FrHDF5Reader db("bench_sphere_regular.h5");
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+
+    FrHDF5Reader db(resources_path.resolve("bench_sphere_regular.h5").path());
 
     auto path = "T" + std::to_string(iperiod) + "/H" + std::to_string(isteepness);
 
@@ -94,6 +96,8 @@ int main(int argc, char* argv[]) {
 //    if (argv[1]) { iPeriod = atoi(argv[1]); }
 //    if (argv[2]) { iSteepness = atoi(argv[2]); }
 
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+
     // -- System
 
     FrOffshoreSystem system;
@@ -140,7 +144,7 @@ int main(int argc, char* argv[]) {
 
     auto body = system.NewBody();
     body->SetName("Sphere");
-    body->AddMeshAsset("Sphere_6200_faces.obj");
+    body->AddMeshAsset(resources_path.resolve("Sphere_6200_faces.obj").path());
     body->SetColor(Yellow);
 
     Position COGPosition(0., 0., -2.);
@@ -169,7 +173,7 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrodynamics
 
-    auto hdb = make_hydrodynamic_database("sphere_hdb.h5");
+    auto hdb = make_hydrodynamic_database(resources_path.resolve("sphere_hdb.h5").path());
 
     auto eqFrame = std::make_shared<FrEquilibriumFrame>(body.get());
     system.AddPhysicsItem(eqFrame);
@@ -199,7 +203,7 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrodynamic mesh
 
-//    auto bodyMesh = make_hydro_mesh(body, "Sphere_6200_faces.obj", FrFrame(), true);
+//    auto bodyMesh = make_hydro_mesh(body, resources_path.resolve("Sphere_6200_faces.obj").path(), FrFrame(), true);
 //    bodyMesh->GetInitialMesh().Write("Mesh_Initial.obj");
 
     // -- Nonlinear hydrostatics
@@ -231,11 +235,12 @@ int main(int argc, char* argv[]) {
     while (time < 50.) {
         time += dt;
         system.AdvanceTo(time);
+        std::cout << "time : " << time << std::endl;
     }
 
     clock_t end = clock();
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-    std::cout << elapsed_secs << std::endl;
+    std::cout << "Elapsed time in seconds : " << elapsed_secs << std::endl;
 
 //    ValidationResults(vtime, heave, iPeriod, iSteepness);
 

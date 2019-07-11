@@ -1,6 +1,8 @@
 
 message(STATUS "    ...DEMOS :")
 
+# Name executable
+
 set(DEMOS
         Ballistic
         Environment
@@ -28,7 +30,15 @@ set(BENCH
         Cables
         )
 
+# Resource data loading / path definition
+
 include(URL_DEMO_DATA.conf)
+
+set(SphereDecay_resources_path ${CMAKE_SOURCE_DIR}/tests/data/bench/sphere/)
+set(SphereIrregular_resources_path ${CMAKE_SOURCE_DIR}/tests/data/bench/sphere/)
+set(SphereRegular_resources_path ${CMAKE_SOURCE_DIR}/tests/data/bench/sphere/)
+
+# Compile target
 
 foreach(test ${DEMOS})
     message(STATUS "        ...add demo_${test}")
@@ -41,7 +51,7 @@ foreach(test ${BENCH})
     message(STATUS "        ...add bench_${test}")
     add_executable(bench_${test} bench_${test}.cpp)
     target_link_libraries(bench_${test} FRyDoM_Engine)
-    target_compile_definitions(bench_${test} PUBLIC RESOURCES_PATH="${test}_${resources_path}")
+    target_compile_definitions(bench_${test} PUBLIC RESOURCES_PATH="${${test}_resources_path}")
 endforeach()
 
 set(subdirs
@@ -63,13 +73,6 @@ configure_file(../data/platform/Platform_WaveDriftCoeff.h5 . COPYONLY)
 configure_file(../data/platform/mesh_Platform_GVA7500.nemoh . COPYONLY)
 configure_file(../data/platform/mesh_Platform_GVA7500.obj . COPYONLY)
 configure_file(../data/platform/mesh_Platform_GVA7500_Sym.obj . COPYONLY)
-
-configure_file(../data/bench/sphere/sphere_hdb.h5 . COPYONLY)
-configure_file(../data/bench/sphere/bench_sphere_regular.h5 . COPYONLY)
-configure_file(../data/bench/sphere/sphere_7814_faces.obj . COPYONLY)
-configure_file(../data/bench/sphere/Sphere_6200_faces.obj . COPYONLY)
-configure_file(../data/bench/sphere/Sphere_10000_faces.obj . COPYONLY)
-configure_file(../data/bench/sphere/Sphere_14350_faces.obj . COPYONLY)
 
 configure_file(../data/bench/DTMB5512/DTMB5512.obj . COPYONLY)
 configure_file(../data/bench/DTMB5512/DTMB5512.hdb5 . COPYONLY)
