@@ -8,7 +8,7 @@ using namespace frydom;
 
 int main(int argc, char* argv[]) {
 
-    std::string resources_path = std::string(RESOURCES_PATH);
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
 
     // System
 
@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
 
     auto cyl1 = system.NewBody();
     cyl1->SetName("cyl1");
-    cyl1->AddMeshAsset(resources_path + "cylinder_base_bar.obj");
+    cyl1->AddMeshAsset(resources_path.resolve("cylinder_base_bar.obj").path());
     cyl1->SetColor(Green);
     cyl1->SetPosition(Position(-2.498, 0., 0.), NWU);
     FrInertiaTensor inertiaTensor1(
@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
 
     auto cyl2 = system.NewBody();
     cyl2->SetName("cyl2");
-    cyl2->AddMeshAsset(resources_path + "cylinder_base_bar_rz60m.obj");
+    cyl2->AddMeshAsset(resources_path.resolve("cylinder_base_bar_rz60m.obj").path());
     cyl2->SetColor(Yellow);
     cyl2->SetPosition(Position(-1.25, 2.165, 0.), NWU);
     FrInertiaTensor inertiaTensor2(
@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
 
     auto cyl3 = system.NewBody();
     cyl3->SetName("cyl3");
-    cyl3->AddMeshAsset(resources_path + "cylinder_base_bar_rz60.obj");
+    cyl3->AddMeshAsset(resources_path.resolve("cylinder_base_bar_rz60.obj").path());
     cyl3->SetColor(Yellow);
     cyl3->SetPosition(Position(1.25, 2.165, 0.), NWU);
     FrInertiaTensor inertiaTensor3(
@@ -76,7 +76,7 @@ int main(int argc, char* argv[]) {
 
     auto cyl4 = system.NewBody();
     cyl4->SetName("cyl4");
-    cyl4->AddMeshAsset(resources_path + "cylinder_base_bar.obj");
+    cyl4->AddMeshAsset(resources_path.resolve("cylinder_base_bar.obj").path());
     cyl4->SetColor(Yellow);
     cyl4->SetPosition(Position(2.498, 0., 0.), NWU);
     FrInertiaTensor inertiaTensor4(
@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
 
     auto cyl5 = system.NewBody();
     cyl5->SetName("cyl5");
-    cyl5->AddMeshAsset(resources_path + "cylinder_base_bar_rz60m.obj");
+    cyl5->AddMeshAsset(resources_path.resolve("cylinder_base_bar_rz60m.obj").path());
     cyl5->SetColor(Yellow);
     cyl5->SetPosition(Position(1.25, -2.165, 0.), NWU);
     FrInertiaTensor inertiaTensor5(
@@ -102,7 +102,7 @@ int main(int argc, char* argv[]) {
 
     auto cyl6 = system.NewBody();
     cyl6->SetName("cyl6");
-    cyl6->AddMeshAsset(resources_path + "cylinder_base_bar_rz60.obj");
+    cyl6->AddMeshAsset(resources_path.resolve("cylinder_base_bar_rz60.obj").path());
     cyl6->SetColor(Yellow);
     cyl6->SetPosition(Position(-1.25, -2.165, 0.), NWU);
     FrInertiaTensor inertiaTensor6(
@@ -165,7 +165,7 @@ int main(int argc, char* argv[]) {
 
     // Hydrodynamics
 
-    auto hdb = make_hydrodynamic_database(resources_path + "hexagonal_articulated_buoy.hdb5");
+    auto hdb = make_hydrodynamic_database(resources_path.resolve("hexagonal_articulated_buoy.hdb5").path());
 
     auto eqFrame0 = std::make_shared<FrEquilibriumFrame>(Position(-2.498, 0., 0.), FrRotation(), NWU, cyl1.get());
     auto eqFrame1 = std::make_shared<FrEquilibriumFrame>(Position(-1.25, 2.165, 0.), FrRotation(), NWU, cyl2.get());
@@ -191,27 +191,27 @@ int main(int argc, char* argv[]) {
 
     // Hydrostatic
 
-    auto cyl1Mesh = make_hydro_mesh(cyl1, resources_path + "cylinder_base.obj",
+    auto cyl1Mesh = make_hydro_mesh(cyl1, resources_path.resolve("cylinder_base.obj").path(),
                                     FrFrame(Position(0., 0., 0.), FrRotation(), NWU),
                                     FrHydroMesh::ClippingSupport::PLANESURFACE);
 
-    auto cyl2Mesh = make_hydro_mesh(cyl2, resources_path + "cylinder_base.obj",
+    auto cyl2Mesh = make_hydro_mesh(cyl2, resources_path.resolve("cylinder_base.obj").path(),
                                     FrFrame(Position(0., 0., 0.), FrRotation(Direction(0., 0., 1.), M_PI/3., NWU), NWU),
                                     FrHydroMesh::ClippingSupport::PLANESURFACE);
 
-    auto cyl3Mesh = make_hydro_mesh(cyl3, resources_path + "cylinder_base.obj",
+    auto cyl3Mesh = make_hydro_mesh(cyl3, resources_path.resolve("cylinder_base.obj").path(),
                                     FrFrame(Position(0., 0., 0.) ,FrRotation(Direction(0., 0., 1.), -M_PI/3., NWU), NWU),
                                     FrHydroMesh::ClippingSupport::PLANESURFACE);
 
-    auto cyl4Mesh = make_hydro_mesh(cyl4, resources_path + "cylinder_base.obj",
+    auto cyl4Mesh = make_hydro_mesh(cyl4, resources_path.resolve("cylinder_base.obj").path(),
                                     FrFrame(Position(0., 0., 0.), FrRotation(), NWU),
                                     FrHydroMesh::ClippingSupport::PLANESURFACE);
 
-    auto cyl5Mesh = make_hydro_mesh(cyl5, resources_path + "cylinder_base.obj",
+    auto cyl5Mesh = make_hydro_mesh(cyl5, resources_path.resolve("cylinder_base.obj").path(),
                                     FrFrame(Position(0., 0., 0.), FrRotation(Direction(0., 0., 1.), M_PI/3., NWU), NWU),
                                     FrHydroMesh::ClippingSupport::PLANESURFACE);
 
-    auto cyl6Mesh = make_hydro_mesh(cyl6, resources_path + "cylinder_base.obj",
+    auto cyl6Mesh = make_hydro_mesh(cyl6, resources_path.resolve("cylinder_base.obj").path(),
                                     FrFrame(Position(0., 0., 0.), FrRotation(Direction(0., 0., 1.), -M_PI/3., NWU), NWU),
                                     FrHydroMesh::ClippingSupport::PLANESURFACE);
 
