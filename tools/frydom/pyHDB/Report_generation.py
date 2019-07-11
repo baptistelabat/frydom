@@ -387,7 +387,7 @@ class report():
                 self._RstInputParam.newline()
                 self._RstInputParam.directive('math', block='d0')
                 self._RstInputParam.newline()
-                self._RstInputParam._add(r"    K_{%u} = \begin{bmatrix}" % (body.i_body+1))
+                self._RstInputParam._add(r"    \mathbf{K}_{%u}^{hs} = \begin{bmatrix}" % (body.i_body+1))
                 self._RstInputParam._add(r"                0 & 0 & 0 & 0 & 0 & 0 \\")
                 self._RstInputParam._add(r"                0 & 0 & 0 & 0 & 0 & 0 \\")
                 self._RstInputParam._add(r"                0 & 0 & %.2f & %.2f & %.2f & 0 \\" % (body.hydrostatic.matrix33[0, 0], body.hydrostatic.matrix33[0, 1], body.hydrostatic.matrix33[0, 2]))
@@ -403,7 +403,7 @@ class report():
                 self._RstInputParam.newline()
                 self._RstInputParam.directive('math', block='d0')
                 self._RstInputParam.newline()
-                self._RstInputParam._add(r"    M_{%u} = \begin{bmatrix}" % (body.i_body+1))
+                self._RstInputParam._add(r"    \mathbf{M}_{%u} = \begin{bmatrix}" % (body.i_body+1))
                 self._RstInputParam._add(r"                %.2f & 0 & 0 & 0 & 0 & 0 \\" % body.inertia.mass)
                 self._RstInputParam._add(r"                0 & %.2f & 0 & 0 & 0 & 0 \\" % body.inertia.mass)
                 self._RstInputParam._add(r"                0 & 0 & %.2f & 0 & 0 & 0 \\" % body.inertia.mass)
@@ -499,7 +499,7 @@ class report():
         self._RstAddedMass.newline()
         self._RstAddedMass.directive(name="figure", arg="/_static/" + self.Notation_AB, fields=[('align', 'center'), ('height', '40 px'), ('width', '70 px')])
         self._RstAddedMass.newline()
-        self._RstAddedMass._add(r"which representes the added mass (:math:`X = A`) or damping (:math:`X = B`) coefficient for a a unit acceleration of body :math:`j` "
+        self._RstAddedMass._add(r"which represents the added mass (:math:`X = A`) or damping (:math:`X = B`) coefficient for a unit acceleration of body :math:`j` "
                                 r"along the degree of freedom :math:`\beta` that radiates waves and generates a force on body :math:`i` along the degree of freedom :math:`\alpha`.")
         self._RstAddedMass.newline()
         self._RstAddedMass._add(r"For instance :math:`A_{x_1 \theta_2}` represents the added mass coefficient for a unit acceleration in pitch of body 2 generating a force in surge on body 1.")
@@ -558,7 +558,12 @@ class report():
 
         RSTfile.title("Radiation masks")
         RSTfile.newline()
-        RSTfile._add("This chapter presents the radiation mask for each body.")
+        RSTfile._add("This chapter presents the radiation mask for each body. The following notation is adopted:")
+        RSTfile.newline()
+        RSTfile.directive(name="figure", arg="/_static/" + self.Notation_AB, fields=[('align', 'center'), ('height', '40 px'), ('width', '70 px')])
+        RSTfile.newline()
+        RSTfile._add(r"which represents the :math:`(6 \times 6)` radiation mask matrix of body i due to the influence of body j. A coefficient equal to 1 involves the corresponding impulse response function will be "
+                     r"used by FRyDoM for the computation of the radiation loads, whereas a coefficient of 0 indicates the corresponding impulse response function will not be used.")
         RSTfile.newline()
 
         # Loop over the bodies.
@@ -572,7 +577,7 @@ class report():
 
                 RSTfile.directive('math', block='d0')
                 RSTfile.newline()
-                RSTfile._add(r"    M^{Rad}_{%s} = \begin{bmatrix}" % (str(body_force.i_body+1) + str(ibody_motion+1)))
+                RSTfile._add(r"    \mathbf{M}^{Rad}_{%s} = \begin{bmatrix}" % (str(body_force.i_body+1) + str(ibody_motion+1)))
                 RSTfile._add(r"                %i & %i & %i & %i & %i & %i \\" % (body_force.Radiation_mask[0, 6 * ibody_motion + 0], body_force.Radiation_mask[0, 6 * ibody_motion + 1],
                              body_force.Radiation_mask[0, 6 * ibody_motion + 2], body_force.Radiation_mask[0, 6 * ibody_motion + 3],
                              body_force.Radiation_mask[0, 6 * ibody_motion + 4], body_force.Radiation_mask[0, 6 * ibody_motion + 5]))
@@ -606,23 +611,49 @@ class report():
         """
 
         if(DiffOrFKOrExc == 0): # Diffraction.
-            RSTfile.title("Diffraction loads")
-            RSTfile.newline()
-            RSTfile._add("This chapter presents the diffraction load results.")
             FilenameMaj = "Diffraction"
             FilenameMin = "diffraction"
-        elif (DiffOrFKOrExc == 1): # Froude-Krylov.
-            RSTfile.title("Froude-Krylov loads")
+            RSTfile.title("Diffraction loads")
             RSTfile.newline()
-            RSTfile._add("This chapter presents the Froude-Krylov load results.")
+            RSTfile._add("This chapter presents the diffraction load results. They are obtained by integration of pressure due to the diffraction of the incident wave field on the fixed bodies. "
+                         "The following notation is adopted:")
+            RSTfile.newline()
+            RSTfile.directive(name="figure", arg="/_static/" + self.Notation_AB, fields=[('align', 'center'), ('height', '40 px'), ('width', '70 px')])
+            RSTfile.newline()
+            RSTfile._add(r"which represents the diffraction loads of body :math:`i` "
+                                    r"along the degree of freedom :math:`\alpha`.")
+            RSTfile.newline()
+            RSTfile._add(r"For instance :math:`F_{Diff}^{x_1}` represents the diffraction force in surge on body 1.")
+
+        elif (DiffOrFKOrExc == 1): # Froude-Krylov.
             FilenameMaj = "Froude-Krylov"
             FilenameMin = "Froude-Krylov"
-        else: # Excitation.
-            RSTfile.title("Excitation loads")
+            RSTfile.title("Froude-Krylov loads")
             RSTfile.newline()
-            RSTfile._add("This chapter presents the excitation load results.")
+            RSTfile._add("This chapter presents the Froude-Krylov load results. They are obtained by integration of the pressure due to the incident wave field over the wetted body surfaces. "
+                         "The following notation is adopted:")
+            RSTfile.newline()
+            RSTfile.directive(name="figure", arg="/_static/" + self.Notation_AB, fields=[('align', 'center'), ('height', '40 px'), ('width', '70 px')])
+            RSTfile.newline()
+            RSTfile._add(r"which represents the Froude-Krylov loads of body :math:`i` "
+                                    r"along the degree of freedom :math:`\alpha`.")
+            RSTfile.newline()
+            RSTfile._add(r"For instance :math:`F_{FK}^{x_1}` represents the Froude-Krylov force in surge on body 1.")
+
+        else: # Excitation.
             FilenameMaj = "Excitation"
             FilenameMin = "excitation"
+            RSTfile.title("Excitation loads")
+            RSTfile.newline()
+            RSTfile._add("This chapter presents the excitation load results. They are obtained by summing the diffraction loads and the Foude-Krylov loads. The following notation is adopted:")
+            RSTfile.newline()
+            RSTfile.directive(name="figure", arg="/_static/" + self.Notation_AB, fields=[('align', 'center'), ('height', '40 px'), ('width', '70 px')])
+            RSTfile.newline()
+            RSTfile._add(r"which represents the excitation loads of body :math:`i` "
+                                    r"along the degree of freedom :math:`\alpha`.")
+            RSTfile.newline()
+            RSTfile._add(r"For instance :math:`F_{Exc}^{x_1}` represents the excitation force in surge on body 1.")
+
         RSTfile.newline()
 
         for body in pyHDB.bodies:
@@ -672,7 +703,14 @@ class report():
 
         RSTfile.title("Infinite added mass matrices")
         RSTfile.newline()
-        RSTfile._add("This chapter presents the infinite added mass matrix for each body.")
+        RSTfile._add("This chapter presents the infinite added mass matrix for each body. The following notation is adopted:")
+        RSTfile.newline()
+        RSTfile.directive(name="figure", arg="/_static/" + self.Notation_AB, fields=[('align', 'center'), ('height', '40 px'), ('width', '70 px')])
+        RSTfile.newline()
+        RSTfile._add(r"which represents the :math:`(6 \times 6)` infinite added mass matrix for a unit acceleration of body :math:`j` "
+                                r"along all its degrees of freedom that radiates waves and generates a force on body :math:`i` along all its degrees of freedom.")
+        RSTfile.newline()
+        RSTfile._add(r"For instance :math:`A_{12}^{\infty}` represents the infinite added mass matrix for a unit acceleration of body 2 along all its degrees of freedom, generating a force on body 1 along all its degrees of freedom.")
         RSTfile.newline()
 
         # Loop over the bodies.
@@ -687,7 +725,7 @@ class report():
 
                     RSTfile.directive('math', block='d0')
                     RSTfile.newline()
-                    RSTfile._add(r"    A_{%s}^{\infty} = \begin{bmatrix}" % (str(body_force.i_body+1) + str(ibody_motion+1)))
+                    RSTfile._add(r"    \mathbf{A}_{%s}^{\infty} = \begin{bmatrix}" % (str(body_force.i_body+1) + str(ibody_motion+1)))
                     RSTfile._add(r"                %.2f & %.2f & %.2f & %.2f & %.2f & %.2f \\" % (body_force.Inf_Added_mass[0, 6 * ibody_motion + 0], body_force.Inf_Added_mass[0, 6 * ibody_motion + 1],
                                  body_force.Inf_Added_mass[0, 6 * ibody_motion + 2], body_force.Inf_Added_mass[0, 6 * ibody_motion + 3],
                                  body_force.Inf_Added_mass[0, 6 * ibody_motion + 4], body_force.Inf_Added_mass[0, 6 * ibody_motion + 5]))
@@ -721,15 +759,47 @@ class report():
         """
 
         if (SpeedOrNot == 0): # IRF without forward speed.
+            Filename = "IRF"
+
             RSTfile.title("Impulse response functions")
             RSTfile.newline()
-            RSTfile._add("This chapter presents the impulse response function results.")
-            Filename = "IRF"
+            RSTfile._add("This chapter presents the impulse response function results. They are obtained based on the damping coefficients by the following formula:")
+            RSTfile.newline()
+            RSTfile.directive('math', block='d0')
+            RSTfile._add(r"    \mathbf{K}(t) = \frac{2}{\pi} \int_0^{\infty} \mathbf{B}(\omega) \cos(\omega t) d\omega")
+            RSTfile.newline()
+            RSTfile._add("where :math:`\mathbf{B}(\omega)` is the damping matrix at the wave frequency :math:`\omega`.")
+            RSTfile.newline()
+            RSTfile._add("The following notation is adopted:")
+            RSTfile.newline()
+            RSTfile.directive(name="figure", arg="/_static/" + self.Notation_AB, fields=[('align', 'center'), ('height', '40 px'), ('width', '70 px')])
+            RSTfile.newline()
+            RSTfile._add(r"which represents the impulse response function for a unit velocity of body :math:`j` "
+                            r"along the degree of freedom :math:`\beta` that radiates waves and generates a force on body :math:`i` along the degree of freedom :math:`\alpha`.")
+            RSTfile.newline()
+            RSTfile._add(r"For instance :math:`K_{x_1 \theta_2}(t)` represents the impulse reponse function for a unit velocity in pitch of body 2 generating a force in surge on body 1.")
+
         else: # IRF with forward speed.
+            Filename = "IRF_speed"
+
             RSTfile.title("Impulse response function with forward speed")
             RSTfile.newline()
-            RSTfile._add("This chapter presents the impulse response function results with forward speed.")
-            Filename = "IRF_speed"
+            RSTfile._add("This chapter presents the impulse response function results with forward speed. They are obtained based on the added mass coefficients by the following formula:")
+            RSTfile.newline()
+            RSTfile.directive('math', block='d0')
+            RSTfile._add(r"    \mathbf{K}_u(t) = \frac{2}{\pi} \int_0^{\infty} (\mathbf{A}(\infty) - \mathbf{A}(\omega)) \mathbf{L} \cos(\omega t) d\omega")
+            RSTfile.newline()
+            RSTfile._add("where :math:`\mathbf{A}(\omega)` is the added mass matrix at the wave frequency :math:`\omega` and the matrix :math:`L` is defined by")
+            RSTfile.directive('math', block='d0')
+            RSTfile.newline()
+            RSTfile._add(r"    \mathbf{L} = \left( \begin{array}{cccc}")
+            RSTfile._add(r"    0 & \ldots & 0 & 0 \\")
+            RSTfile._add(r"    0 & \ldots & 0 & 1 \\")
+            RSTfile._add(r"    0 & \ldots & -1 & 0 \\")
+            RSTfile._add(r"    \vdots & \ddots & \vdots & \vdots \\")
+            RSTfile._add(r"    0 & \ldots & 0 & 0 \\")
+            RSTfile._add(r"    \end{array} \right)")
+
         RSTfile.newline()
 
         for ibody_force in range(0, pyHDB.nb_bodies):

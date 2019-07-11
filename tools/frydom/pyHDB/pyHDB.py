@@ -948,12 +948,12 @@ class pyHDB():
 
             irf_path = radiation_body_motion_path + "/ImpulseResponseFunctionK"
             dg = writer.create_group(irf_path)
-            dg.attrs['Description'] = "Impulse response functions K for velocity of body %u that radiates waves " \
+            dg.attrs['Description'] = "Impulse response functions K due to the velocity of body %u that radiates waves " \
                                       "and generates forces on body %u." % (j, body.i_body)
 
             irf_ku_path = radiation_body_motion_path + "/ImpulseResponseFunctionKU"
             dg = writer.create_group(irf_ku_path)
-            dg.attrs['Description'] = "Impulse response functions Ku for velocity of body %u that radiates waves " \
+            dg.attrs['Description'] = "Impulse response functions Ku due to the velocity of body %u that radiates waves " \
                                       "and generates forces on body %u." % (j, body.i_body)
 
             # Infinite added mass.

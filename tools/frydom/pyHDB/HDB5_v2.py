@@ -482,7 +482,7 @@ class HDB5(object):
         # Description of the report.
         self.report.WriteIndex(self._pyHDB, RSTIntroPath)
 
-        # Input parameters.
+        # Conventions and definitions.
         self.report.WriteConventions(self._pyHDB, output_folder)
 
         # Input parameters.
