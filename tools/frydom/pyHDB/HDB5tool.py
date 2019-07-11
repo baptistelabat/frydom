@@ -101,6 +101,10 @@ def get_parser(parser):
     parser.add_argument('--sym_hdb','-sym', '-s', action="store_true",help="""
                 Symmetrization of the HDB.""")
 
+    # Update the radiation mask.
+    parser.add_argument('--radiation_mask', '-rad_mask', '-rm', action="store_true", help="""
+                    Update the radiation mask of all bodies.""")
+
     # Writing the hdb5 output file.
     parser.add_argument('--write', '--export','-w', action="store",help="""
                 Writing the hdb5 output file with the given name.""")
@@ -203,7 +207,7 @@ def get_Arg_part_1_CE(args, database):
         database.discretization._delta_time = float(args.time_step_irf[0])
 
     # Initialize pyHDB.
-    if (args.path_to_nemoh_cal is not None or args.initialization is True):  # _initialize is automatically called when a .cal is read.
+    if (args.path_to_nemoh_cal is not None or args.initialization is True): # _initialize is automatically called when a .cal is read.
         database._initialize()
 
     # Body - Active hydrostatics (useless).
@@ -301,6 +305,10 @@ def get_Arg_part_2_CE(args, database):
     # Symmetry of the HDB.
     if (args.sym_hdb is True):
         database.symmetry_HDB()
+
+    # Radiation mask.
+    if(args.radiation_mask is True):
+        database.Update_radiation_mask()
 
     return database
 

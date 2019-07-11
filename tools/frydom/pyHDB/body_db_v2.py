@@ -76,6 +76,9 @@ class BodyDB(object):
         # Motion mask.
         self.Motion_mask = np.zeros(6,dtype = np.int)
 
+        # Radiation mask
+        self.Radiation_mask = np.ones((6, 6 * nb_bodies), dtype = bool)
+
         # Product n*dS for the computation of the Froude-Krylov loads.
         self._nds = None
 

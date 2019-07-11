@@ -379,6 +379,24 @@ class HDB5(object):
         if bool:
             self._pyHDB.bodies[ibody_force].irf[iforce, 6 * ibody_force + iforce, :] *= coeff
 
+    def Update_radiation_mask(self):
+        """This function asks the user to define the damping coefficient which should be zeroed and update the radiation mask accordingly."""
+
+        for ibody_force in range(0, self._pyHDB.nb_bodies):
+            for ibody_motion in range(0, self._pyHDB.nb_bodies):
+
+                # data.
+                data = np.zeros((6, 6, self._pyHDB.nb_wave_freq), dtype=np.float)
+                for iforce in range(0, 6):
+                    for idof in range(0, 6):
+                        for iw in range(0, self._pyHDB.nb_wave_freq):
+                            data[iforce, idof, iw] = np.linalg.norm(self._pyHDB.bodies[ibody_force].Damping[iforce, 6 * ibody_motion + idof, iw]
+                                        + 1j * self._pyHDB.wave_freq[iw] * (self._pyHDB.bodies[ibody_force].Added_mass[iforce, 6 * ibody_motion + idof, iw]
+                                        - self._pyHDB.bodies[ibody_force].Inf_Added_mass[iforce, 6 * ibody_motion + idof]))
+
+                # Plot.
+                plot_AB_array(data, self._pyHDB.wave_freq, ibody_force, ibody_motion, self._pyHDB)
+
     def export_hdb5(self, output_file = None):
         """This function writes the hydrodynamic database into a *.hdb5 file.
 

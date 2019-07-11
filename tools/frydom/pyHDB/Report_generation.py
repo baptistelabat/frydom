@@ -433,6 +433,9 @@ class report():
         mesh_vizu.viewer.screenshot()
         print("")
 
+        # Closing the figure.
+        mesh_vizu.viewer.finalize()
+
         # Copy of the mesh in the _Static folder.
         copyfile("screenshot.png", self.static_folder + mesh_file) # "screenshot.png" is hard codded in the script MMviewer.py of Meshmagick.
 
