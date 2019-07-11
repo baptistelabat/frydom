@@ -81,6 +81,12 @@ target_include_directories(FRyDoM_Engine PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/..
         )
 
+target_compile_definitions(FRyDoM_Engine PUBLIC
+        RESOURCES_VIZU_PATH="${PROJECT_SOURCE_DIR}/data/"
+        )
+
+message(STATUS " RESOURCES_VIZU_PATH=${PROJECT_SOURCE_DIR}/data/")
+
 get_target_property(INC FRyDoM_Engine INTERFACE_LINK_LIBRARIES)
 message(STATUS "FRyDoM_INCLUDE_DIRECTORIES : ${INC}")
 

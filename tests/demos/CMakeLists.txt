@@ -53,12 +53,6 @@ foreach (subdir ${subdirs})
 endforeach ()
 
 
-# Adding resource files
-configure_file(../../data/frydom_logo.png . COPYONLY)
-configure_file(../../data/skybox/sky_dn.jpg . COPYONLY)
-configure_file(../../data/skybox/sky_lf.jpg . COPYONLY)
-configure_file(../../data/skybox/sky_up.jpg . COPYONLY)
-
 configure_file(../data/ship/Ship.obj . COPYONLY)
 
 configure_file(../data/platform/Platform_GVA7500.obj . COPYONLY)

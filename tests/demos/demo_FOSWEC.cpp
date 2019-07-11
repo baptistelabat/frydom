@@ -162,7 +162,7 @@ void Run(FrOffshoreSystem& system) {
     system.SetTimeStep(dt);
     system.Initialize();
 
-    bool use_irrlicht = false;
+    bool use_irrlicht = true;
 
     if (use_irrlicht) {
 
