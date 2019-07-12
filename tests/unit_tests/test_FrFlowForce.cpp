@@ -166,16 +166,17 @@ void TestFrFlowForce::TestForce() {
 
 
 TEST_F(TestFrFlowForce, TestCurrentForce) {
-    LoadData("TNR_database.h5", "/current_force/");
-    MakeForce(WATER, "Ship_PolarCurrentCoeffs.json");
+    cppfs::FilePath resources_path(std:string(RESOURCES_PATH));
+    LoadData(resources_path.resolve("TNR_database.h5").path(), "/current_force/");
+    MakeForce(WATER, resources_path.resolve("Ship_PolarCurrentCoeffs.json").path());
     system.Initialize();
     TestForce();
 };
 
 
 TEST_F(TestFrFlowForce, TestWindForce) {
-    LoadData("TNR_database.h5", "/wind_force/");
-    MakeForce(FLUID_TYPE::AIR, "Ship_PolarWindCoeffs.json");
+    LoadData(resources_path.resolve("TNR_database.h5").path(), "/wind_force/");
+    MakeForce(FLUID_TYPE::AIR, resources_path.resolve("Ship_PolarWindCoeffs.json").path());
     system.Initialize();
     TestForce();
 };

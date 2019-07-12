@@ -62,7 +62,8 @@ void TestFrStandardWindForce::LoadData(std::string filename) {
 
 void TestFrStandardWindForce::SetUp() {
 
-    LoadData("TNR_database.h5");
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+    LoadData(resources_path.resolve("TNR_database.h5").path());
 
     force = std::make_shared<FrWindStandardForce>();
     force->SetLenghtBetweenPerpendicular(m_lengthBetweenPerpendicular);

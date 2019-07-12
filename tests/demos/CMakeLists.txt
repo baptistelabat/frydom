@@ -38,8 +38,15 @@ set(SphereDecay_resources_path ${CMAKE_SOURCE_DIR}/tests/data/bench/sphere/)
 set(SphereIrregular_resources_path ${CMAKE_SOURCE_DIR}/tests/data/bench/sphere/)
 set(SphereRegular_resources_path ${CMAKE_SOURCE_DIR}/tests/data/bench/sphere/)
 
-# Compile target
+set(Hydrodynamic_resources_path ${CMAKE_SOURCE_DIR}/tests/data/platform/)
+set(Morison_resources_path ${CMAKE_SOURCE_DIR}/tests/data/platform/)
 
+set(NonLinearHydrostatics_resources_path ${CMAKE_SOURCE_DIR}/tests/data/Cylinder/)
+set(Hub_Installation_resources_path ${CMAKE_SOURCE_DIR}/tests/data/barge/)
+
+set(DTMB5512_captive_resources_path ${CMAKE_SOURCE_DIR}/tests/data/bench/DTMB5512/)
+
+# Compile target
 foreach(test ${DEMOS})
     message(STATUS "        ...add demo_${test}")
     add_executable(demo_${test} demo_${test}.cpp)
@@ -64,49 +71,4 @@ endforeach ()
 
 
 configure_file(../data/ship/Ship.obj . COPYONLY)
-
-configure_file(../data/platform/Platform_GVA7500.obj . COPYONLY)
-configure_file(../data/platform/Platform_HDB.hdb5 . COPYONLY)
-configure_file(../data/platform/Platform_PolarCurrentCoeffs_NC.json . COPYONLY)
-configure_file(../data/platform/Platform_PolarWindCoeffs_NC.json . COPYONLY)
-configure_file(../data/platform/Platform_WaveDriftCoeff.h5 . COPYONLY)
-configure_file(../data/platform/mesh_Platform_GVA7500.nemoh . COPYONLY)
-configure_file(../data/platform/mesh_Platform_GVA7500.obj . COPYONLY)
-configure_file(../data/platform/mesh_Platform_GVA7500_Sym.obj . COPYONLY)
-
-configure_file(../data/bench/DTMB5512/DTMB5512.obj . COPYONLY)
-configure_file(../data/bench/DTMB5512/DTMB5512.hdb5 . COPYONLY)
-
-configure_file(../data/barge/Barge_HDB.h5 . COPYONLY)
-configure_file(../data/barge/barge.obj . COPYONLY)
-
-configure_file(../data/platform/Platform_HDB_Without_drift.hdb5 . COPYONLY)
-
-configure_file(../data/Mesh_clipper/MagneViking.obj . COPYONLY)
-configure_file(../data/Mesh_clipper/MagneViking_clip.obj . COPYONLY)
-configure_file(../data/Mesh_clipper/searev.obj . COPYONLY)
-configure_file(../data/Mesh_clipper/searev_clip.obj . COPYONLY)
-configure_file(../data/Mesh_clipper/BARGE.obj . COPYONLY)
-
-configure_file(../data/Cylinder/Free_cylinder_2900_panels.obj . COPYONLY)
-configure_file(../data/Cylinder/Free_cylinder_3800_panels.obj . COPYONLY)
-configure_file(../data/Cylinder/Free_cylinder_5100_panels.obj . COPYONLY)
-configure_file(../data/Cylinder/Free_cylinder_6000_panels.obj . COPYONLY)
-configure_file(../data/Cylinder/Free_cylinder_8000_panels.obj . COPYONLY)
-configure_file(../data/Cylinder/Free_cylinder_9700_panels.obj . COPYONLY)
-configure_file(../data/Cylinder/Free_cylinder_10500_panels.obj . COPYONLY)
-configure_file(../data/Cylinder/Free_cylinder_11600_panels.obj . COPYONLY)
-
-configure_file(../data/FPSO/fpso_YC_modif_Coarse.obj . COPYONLY)
-configure_file(../data/FPSO/fpso_YC_modif_Medium.obj . COPYONLY)
-configure_file(../data/FPSO/fpso_YC_modif_Fine.obj . COPYONLY)
-
-configure_file(../data/FOSWEC/FOSWEC.hdb5 . COPYONLY)
-configure_file(../data/FOSWEC/FullFlap_mesh.obj . COPYONLY)
-configure_file(../data/FOSWEC/FullPlatform.obj . COPYONLY)
-configure_file(../data/Cylinder/Free_cylinder_2900_panels.obj . COPYONLY)
-
-configure_file(../data/FPSO/fpso_YC_modif_Coarse.obj . COPYONLY)
-configure_file(../data/FPSO/fpso_YC_modif_Medium.obj . COPYONLY)
-configure_file(../data/FPSO/fpso_YC_modif_Fine.obj . COPYONLY)
 
