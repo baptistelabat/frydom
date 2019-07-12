@@ -24,7 +24,6 @@ from pyHDB import *
 from discretization_db_v2 import DiscretizationDB
 from wave_drift_db_v2 import WaveDriftDB
 from plot_db import *
-from Report_generation import *
 
 class HDB5(object):
 
@@ -46,9 +45,6 @@ class HDB5(object):
 
         # Initialization parameter.
         self._is_initialized = False
-
-        # Report.
-        self.report = None
 
         return
 
@@ -472,46 +468,3 @@ class HDB5(object):
         print('')
         print('-------> "%s" has been loaded.' % hdb5_file)
         print('')
-
-    def report_writing_HDB(self, output_folder, RSTIntroPath = None):
-        """This function writes the *.rst files for presenting the hydrodynamic database."""
-
-        # Creation of the rst object.
-        self.report = report(output_folder)
-
-        # Description of the report.
-        self.report.WriteIndex(self._pyHDB, RSTIntroPath)
-
-        # Conventions and definitions.
-        self.report.WriteConventions(self._pyHDB, output_folder)
-
-        # Input parameters.
-        self.report.WriteInputParameters(self._pyHDB, output_folder)
-
-        # HDB results.
-        self.report.WriteHDB(self._pyHDB, output_folder)
-
-    def report_writing_Index(self, output_folder):
-        """This function writes the index.rst file."""
-
-        self.report.WriteIndexRst(output_folder)
-
-    def report_building_html(self, output_folder):
-        """This function builds a *.html file of the report."""
-
-        # Building the html file.
-        self.report.BuildHTML(output_folder)
-
-        # Visualization of the html file.
-        self.report.OpenHTML(output_folder)
-
-    def report_building_pdf(self, output_folder):
-        """This function builds a *.pdf file of the report."""
-
-        # Building the pdf file.
-        self.report.BuildPDF(output_folder)
-
-
-
-
-

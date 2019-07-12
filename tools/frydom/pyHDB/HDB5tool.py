@@ -141,18 +141,6 @@ def get_parser(parser):
     parser.add_argument('--initialization','-init', action="store_true",help="""
                 Initialization of the hydrodynamic database: computation of the Froude-Krylov loads, IRF, etc.""")
 
-    # Report generation (rst, html).
-    parser.add_argument('--report_generation', '--report', '-rg', action="store", help="""
-                Report generation about the hydrodynamic database in the defined folder.""")
-
-    # Latex and pdf file generation.
-    parser.add_argument('-latex', '-tex', '-pdf', '-latexpdf', action="store_true", help="""
-                        Latex and pdf file generation about the hydrodynamic database in the defined folder.""")
-
-    # Add an rst file for the introduction of the automatic report.
-    parser.add_argument('-intro', '-introduction', action="store", help="""
-                            Add a *.rst file for adding an introduction to the automatic report.""")
-
     return parser
 
 def Read_cal_hdb5(args):
@@ -361,29 +349,6 @@ def get_Arg_part_4_CE(args, database):
     if (args.write is not None):
         database.export_hdb5(args.write)
 
-    # Report generation - hdb only.
-    if (args.report_generation is not None):
-        if(args.intro is not None):
-            database.report_writing_HDB(args.report_generation, args.intro)
-        else:
-            database.report_writing_HDB(args.report_generation)
-
-    return database
-
-def get_Arg_part_5_CE(args, database):
-
-    # Report generation - Writing index.rst.
-    if (args.report_generation is not None):
-        database.report_writing_Index(args.report_generation)
-
-    # Report generation - Building the html file.
-    if (args.report_generation is not None):
-        database.report_building_html(args.report_generation)
-
-    # Report generation - Building both the latex and pdf files.
-    if (args.report_generation is not None and args.latex is True):
-        database.report_building_pdf(args.report_generation)
-
     return database
 
 def main():
@@ -421,9 +386,6 @@ def main():
 
     # 4th set of arguments - FRyDoM CE.
     database = get_Arg_part_4_CE(args, database)
-
-    # 5th set of arguments - FRyDoM CE.
-    database = get_Arg_part_5_CE(args, database)
 
 if __name__ == '__main__':
     main()

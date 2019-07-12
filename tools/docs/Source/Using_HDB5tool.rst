@@ -239,42 +239,6 @@ To write a *.hdb5* file, the command is::
 
     The extension *.hdb5* is mandatory for the ouput file.
 
-Automatic generation of report
-------------------------------
-
-*html* report
-~~~~~~~~~~~~~
-
-To write an automatic report about the hydrodynamic database, the command is::
-
-    >$ hdb5tool -cal path/to/Nemoh/cal/folder -rg path/to/report/folder
-
-This report is a *.html* file which will be automatically opened in your browser once it is generated. The report folder encompasses the *.rst* source files along with all the figures generated for the report. The output *html* file is *build/index.html*. For information, *rg* means *report generation*.
-
-.. note::
-
-    You can use a relative or absolute path.
-
-*pdf* report
-~~~~~~~~~~~~
-
-The generation of a *pdf* report is based on the *rst* files created for the *html* report. They are automatically translated into a *latex* script which is compiled into a *pdf* output file. The command is::
-
-    >$ hdb5tool -cal path/to/Nemoh/cal/folder -rg path/to/report/folder -pdf
-
-The output *pdf* file is located in the folder *build*.
-
-Introductory chapter
-~~~~~~~~~~~~~~~~~~~~
-
-It is possible to add a RST file for describing your project which will become the introduction of the *html* report (and so the *pdf* report if given). The command is::
-
->$ hdb5tool -cal path/to/Nemoh/cal/folder -rg path/to/report/folder -intro path/to/introductory/RST/file
-
-.. note::
-
-    You can use a relative or absolute path.
-
 Plots
 -----
 
@@ -341,4 +305,4 @@ K55                       :math:`1.699\times10^1` \\(N.m\\)
 
 We want to generate the corresponding *.hdb5* file, named *Sphere.hdb5*, after doing a new discretization of the hydrodynamic database for 41 wave directions, 150 wave frequencies, computing the impulse reponse functions with a final time of :math:`100` \\(s\\) and a time step of :math:`0.01` \\(s\\), providing the hydrostatic and inertia matrices and applying a cutoff scaling function with a cutoff tume of :math:`10` \\(s\\) to :math:`K_{33}` and :math:`{Ku}_{33}`. We also want to plot the following quantities: :math:`A_{33}`, :math:`B_{44}`, :math:`F^{Diff}_{3}`, :math:`F^{Diff}_{4}`, :math:`F^{FK}_{4}`, :math:`F^{Exc}_{3}`, :math:`F^{Exc}_{4}`, :math:`K_{33}` and :math:`{Ku}_{44}`. The command is:: 
 
-    hdb5tool -cal . -dw 41 -df 150 -ft 100 -dt 0.01 -hs 1 3.082e4 1.699e1 1.699e1 0 0 0 -i 1 2094.39 837.76 837.76 837.76 0 0 0 -sym -w Sphere.hdb5 -pab 0 2 0 2 -prad 0 3 0 3 -pd 0 2 0 -pd 0 3 0 -pfk 0 2 0 -pfk 0 3 0 -pe 0 2 0 -pe 0 3 0 -pirf 0 2 0 2 -pirf_speed 0 3 0 3 -coirf 10 0 2 0 2 -coirf_speed 10 0 2 0 2 -rg . -pdf
+    hdb5tool -cal . -dw 41 -df 150 -ft 100 -dt 0.01 -hs 1 3.082e4 1.699e1 1.699e1 0 0 0 -i 1 2094.39 837.76 837.76 837.76 0 0 0 -sym -w Sphere.hdb5 -pab 0 2 0 2 -prad 0 3 0 3 -pd 0 2 0 -pd 0 3 0 -pfk 0 2 0 -pfk 0 3 0 -pe 0 2 0 -pe 0 3 0 -pirf 0 2 0 2 -pirf_speed 0 3 0 3 -coirf 10 0 2 0 2 -coirf_speed 10 0 2 0 2
