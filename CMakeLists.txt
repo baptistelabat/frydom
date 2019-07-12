@@ -35,7 +35,10 @@ set(FRYDOM_VERSION
 #-----------------------------------------------------------------------------
 #set(CMAKE_BUILD_TYPE Debug)
 
-option(frydom_build_tests "Build unit tests" ON)
+option(frydom_build_tests "Activate build tests" ON)
+option(frydom_build_unit_test "Build unit tests" ON)
+option(frydom_build_demo "Build demo tests" ON)
+option(frydom_build_dev_test "Build dev test" ON)
 
 #-----------------------------------------------------------------------------
 # C++ dialect
@@ -45,8 +48,6 @@ set(CMAKE_CXX_STANDARD 14)
 
 # Access to local cmake scripts
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-
-
 
 #=============================================================================
 # Adding Thirparty libraries to the project

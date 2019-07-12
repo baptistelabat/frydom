@@ -432,7 +432,7 @@ TEST_F(TestMorison, CompositeElementWithNodes) {
 
 TEST_F(TestMorison, ElementDiscretization) {
 
-    cppfs::FilePath resources_path(std::string(RESOURES_PATH));
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
     LoadData(resources_path.resolve("TNR_database.h5").path());
 
     auto morison = std::make_shared<FrMorisonCompositeElement>(body.get());
@@ -532,7 +532,7 @@ TEST_F(TestMorison, CompositionElementGeneralProperty) {
 
 TEST_F(TestMorison, CompositionElementGeneralPropertyNode) {
 
-    cppfs::FilePath resources_path(std::string(RESOURES_PATH));
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
     LoadData(resources_path.resolve("TNR_database.h5").path());
 
     auto morison = std::make_shared<FrMorisonCompositeElement>(body.get());
