@@ -113,9 +113,45 @@ class report():
         self.Wave_direction_file = "Wave_direction_convention.jpg"
         copyfile(os.path.join(my_path, "../../../docs/theory_manual/source/_static/", self.Wave_direction_file), os.path.join(self.static_folder, self.Wave_direction_file))
 
-        # Wave direction convention.
-        self.Notation_AB = "Notation_AB.png"
+        # Notation added mass and damping.
+        self.Notation_AB = "Notation_AB_new.png"
         copyfile(os.path.join(my_path, "../../../docs/theory_manual/source/_static/", self.Notation_AB), os.path.join(self.static_folder, self.Notation_AB))
+
+        # Notation added mass and damping.
+        self.Notation_A_inf = "Notation_A_inf.png"
+        copyfile(os.path.join(my_path, "../../../docs/theory_manual/source/_static/", self.Notation_A_inf), os.path.join(self.static_folder, self.Notation_A_inf))
+
+        # Notation radiation mask.
+        self.Notation_Radiation_mask = "Notation_Radiation_mask.png"
+        copyfile(os.path.join(my_path, "../../../docs/theory_manual/source/_static/", self.Notation_Radiation_mask), os.path.join(self.static_folder, self.Notation_Radiation_mask))
+
+        # Notation diffraction loads.
+        self.Notation_Diffraction = "Notation_Fdiff.png"
+        copyfile(os.path.join(my_path, "../../../docs/theory_manual/source/_static/", self.Notation_Diffraction), os.path.join(self.static_folder, self.Notation_Diffraction))
+
+        # Notation Froude-Krylov loads.
+        self.Notation_Froude_Krylov= "Notation_Ffk.png"
+        copyfile(os.path.join(my_path, "../../../docs/theory_manual/source/_static/", self.Notation_Froude_Krylov), os.path.join(self.static_folder, self.Notation_Froude_Krylov))
+
+        # Notation excitation loads.
+        self.Notation_Excitation = "Notation_Fexc.png"
+        copyfile(os.path.join(my_path, "../../../docs/theory_manual/source/_static/", self.Notation_Excitation), os.path.join(self.static_folder, self.Notation_Excitation))
+
+        # Notation IRF.
+        self.Notation_IRF = "Notation_IRF.png"
+        copyfile(os.path.join(my_path, "../../../docs/theory_manual/source/_static/", self.Notation_IRF), os.path.join(self.static_folder, self.Notation_IRF))
+
+        # Notation IRF with foward speed.
+        self.Notation_IRF_speed = "Notation_IRF_speed.png"
+        copyfile(os.path.join(my_path, "../../../docs/theory_manual/source/_static/", self.Notation_IRF_speed), os.path.join(self.static_folder, self.Notation_IRF_speed))
+
+        # Notation RAO.
+        self.Notation_RAO = "Notation_RAO.png"
+        copyfile(os.path.join(my_path, "../../../docs/theory_manual/source/_static/", self.Notation_RAO), os.path.join(self.static_folder, self.Notation_RAO))
+
+        # Notation drift loads.
+        self.Notation_Drift = "Notation_Drift.png"
+        copyfile(os.path.join(my_path, "../../../docs/theory_manual/source/_static/", self.Notation_Drift), os.path.join(self.static_folder, self.Notation_Drift))
 
     def WriteIndex(self, pyHDB, RSTIntroPath):
         """This function writes the rst file Index.rst."""
@@ -253,7 +289,7 @@ class report():
         self._RstConventions.newline()
         self._RstConventions._add(r"The wave propagation direction is defined in the next figure. :math:`\beta = 0` represents a wave coming from the positive x while :math:`\beta = 180` is for a wave coming from the negative x.")
         self._RstConventions.newline()
-        self._RstConventions.directive(name="figure", arg="/_static/" + self.Wave_direction_file, fields=[('align', 'center'), ('scale', '50 %'), ('height', '800 px'), ('width', '750 px')])
+        self._RstConventions.directive(name="figure", arg="/_static/" + self.Wave_direction_file, fields=[('align', 'center'), ('scale', '45 %'), ('height', '800 px'), ('width', '750 px')])
         self._RstConventions.newline()
         self._RstConventions._add(r'   Sketch defining the global frame (N, E), the body coordinates (:math:`x`, :math:`y`) and the wave direction angle :math:`\beta`. '
                      'The wave propagation direction is showed by the curved arrow. The vertical axes are positive upward. '
@@ -261,7 +297,7 @@ class report():
         self._RstConventions.newline()
         self._RstConventions.h2("Definitions")
         self._RstConventions.newline()
-        self._RstConventions._add("Each body has six degrees of freedom, represented by the symbols given in the following table.")
+        self._RstConventions._add("Each body has six degrees of freedom, represented by the symbols given in :numref:`Table_dof`.")
         self._RstConventions.newline()
         self._RstConventions._add(".. _Table_dof:")
         self._RstConventions.directive(name="list-table", arg="Symbol and number of the six degrees of freedom")
@@ -307,6 +343,7 @@ class report():
         self._RstInputParam._add("This chapter lists the input parameters used in the frequency-domain linear potential flow based solver **"+pyHDB.solver+"**."
                                  " The global parameters are listed in the next table.")
         self._RstInputParam.newline()
+        self._RstConventions._add(".. _Table_param:")
         self._RstInputParam.directive(name="list-table", arg="Global parameters used in **%s**" % (pyHDB.solver))
         self._RstInputParam.newline()
         self._RstInputParam._add("    * - **Parameter**")
@@ -338,8 +375,9 @@ class report():
         self._RstInputParam._add(r"    * - Maximum wave direction (deg)")
         self._RstInputParam._add(r"      - %.2f" % (pyHDB.max_wave_dir))
         self._RstInputParam.newline()
-        self._RstInputParam._add("The link between the body meshes and the body indexes are given in the following table.")
+        self._RstInputParam._add("The link between the body meshes and the body indexes are given in :numref:`Table_link_body_mesh`.")
         self._RstInputParam.newline()
+        self._RstInputParam._add(".. _Table_link_body_mesh:")
         self._RstInputParam.directive(name="list-table", arg="Correspondance between the body meshes and the body indexes")
         self._RstInputParam.newline()
         self._RstInputParam._add("    * - **Body mesh**")
@@ -499,10 +537,11 @@ class report():
         self._RstAddedMass.newline()
         self._RstAddedMass.directive(name="figure", arg="/_static/" + self.Notation_AB, fields=[('align', 'center'), ('height', '40 px'), ('width', '70 px')])
         self._RstAddedMass.newline()
-        self._RstAddedMass._add(r"which represents the added mass (:math:`X = A`) or damping (:math:`X = B`) coefficient for a unit acceleration of body :math:`j` "
-                                r"along the degree of freedom :math:`\beta` that radiates waves and generates a force on body :math:`i` along the degree of freedom :math:`\alpha`.")
+        self._RstAddedMass._add(r"which represents the added mass (:math:`X = A`) or damping (:math:`X = B`) coefficient for a unit acceleration of body :math:`j`"
+                                r", for the degree of freedom :math:`\beta`, that radiates waves and generates a force on body :math:`i` for the degree of freedom :math:`\alpha`.")
         self._RstAddedMass.newline()
-        self._RstAddedMass._add(r"For instance :math:`A_{x_1 \theta_2}` represents the added mass coefficient for a unit acceleration in pitch of body 2 generating a force in surge on body 1.")
+        self._RstAddedMass._add(r"For instance :math:`A_{x_1 \theta_2}` represents the added mass coefficient for a unit acceleration "
+                                r"in pitch of body 2 generating a force in surge on body 1.")
         self._RstAddedMass.newline()
 
         for ibody_force in range(0, pyHDB.nb_bodies):
@@ -560,10 +599,11 @@ class report():
         RSTfile.newline()
         RSTfile._add("This chapter presents the radiation mask for each body. The following notation is adopted:")
         RSTfile.newline()
-        RSTfile.directive(name="figure", arg="/_static/" + self.Notation_AB, fields=[('align', 'center'), ('height', '40 px'), ('width', '70 px')])
+        RSTfile.directive(name="figure", arg="/_static/" + self.Notation_Radiation_mask, fields=[('align', 'center'), ('height', '40 px'), ('width', '70 px')])
         RSTfile.newline()
-        RSTfile._add(r"which represents the :math:`(6 \times 6)` radiation mask matrix of body i due to the influence of body j. A coefficient equal to 1 involves the corresponding impulse response function will be "
-                     r"used by FRyDoM for the computation of the radiation loads, whereas a coefficient of 0 indicates the corresponding impulse response function will not be used.")
+        RSTfile._add(r"which represents the :math:`(6 \times 6)` radiation mask matrix of body i due to the influence of body j. A coefficient equal to 1 involves the corresponding"
+                     r" impulse response function will be used by FRyDoM for the computation of the radiation loads, whereas a coefficient of 0 indicates "
+                     r"the corresponding impulse response function will not be used. These coefficients were defined by the user of *hdb5tool*.")
         RSTfile.newline()
 
         # Loop over the bodies.
@@ -618,10 +658,10 @@ class report():
             RSTfile._add("This chapter presents the diffraction load results. They are obtained by integration of pressure due to the diffraction of the incident wave field on the fixed bodies. "
                          "The following notation is adopted:")
             RSTfile.newline()
-            RSTfile.directive(name="figure", arg="/_static/" + self.Notation_AB, fields=[('align', 'center'), ('height', '40 px'), ('width', '70 px')])
+            RSTfile.directive(name="figure", arg="/_static/" + self.Notation_Diffraction, fields=[('align', 'center'), ('height', '40 px'), ('width', '70 px')])
             RSTfile.newline()
             RSTfile._add(r"which represents the diffraction loads of body :math:`i` "
-                                    r"along the degree of freedom :math:`\alpha`.")
+                                    r"for the degree of freedom :math:`\alpha`.")
             RSTfile.newline()
             RSTfile._add(r"For instance :math:`F_{Diff}^{x_1}` represents the diffraction force in surge on body 1.")
 
@@ -633,10 +673,10 @@ class report():
             RSTfile._add("This chapter presents the Froude-Krylov load results. They are obtained by integration of the pressure due to the incident wave field over the wetted body surfaces. "
                          "The following notation is adopted:")
             RSTfile.newline()
-            RSTfile.directive(name="figure", arg="/_static/" + self.Notation_AB, fields=[('align', 'center'), ('height', '40 px'), ('width', '70 px')])
+            RSTfile.directive(name="figure", arg="/_static/" + self.Notation_Froude_Krylov, fields=[('align', 'center'), ('height', '40 px'), ('width', '70 px')])
             RSTfile.newline()
             RSTfile._add(r"which represents the Froude-Krylov loads of body :math:`i` "
-                                    r"along the degree of freedom :math:`\alpha`.")
+                                    r"for the degree of freedom :math:`\alpha`.")
             RSTfile.newline()
             RSTfile._add(r"For instance :math:`F_{FK}^{x_1}` represents the Froude-Krylov force in surge on body 1.")
 
@@ -647,10 +687,10 @@ class report():
             RSTfile.newline()
             RSTfile._add("This chapter presents the excitation load results. They are obtained by summing the diffraction loads and the Foude-Krylov loads. The following notation is adopted:")
             RSTfile.newline()
-            RSTfile.directive(name="figure", arg="/_static/" + self.Notation_AB, fields=[('align', 'center'), ('height', '40 px'), ('width', '70 px')])
+            RSTfile.directive(name="figure", arg="/_static/" + self.Notation_Excitation, fields=[('align', 'center'), ('height', '40 px'), ('width', '70 px')])
             RSTfile.newline()
             RSTfile._add(r"which represents the excitation loads of body :math:`i` "
-                                    r"along the degree of freedom :math:`\alpha`.")
+                                    r"for the degree of freedom :math:`\alpha`.")
             RSTfile.newline()
             RSTfile._add(r"For instance :math:`F_{Exc}^{x_1}` represents the excitation force in surge on body 1.")
 
@@ -705,12 +745,13 @@ class report():
         RSTfile.newline()
         RSTfile._add("This chapter presents the infinite added mass matrix for each body. The following notation is adopted:")
         RSTfile.newline()
-        RSTfile.directive(name="figure", arg="/_static/" + self.Notation_AB, fields=[('align', 'center'), ('height', '40 px'), ('width', '70 px')])
+        RSTfile.directive(name="figure", arg="/_static/" + self.Notation_A_inf, fields=[('align', 'center'), ('height', '40 px'), ('width', '60 px')])
         RSTfile.newline()
-        RSTfile._add(r"which represents the :math:`(6 \times 6)` infinite added mass matrix for a unit acceleration of body :math:`j` "
-                                r"along all its degrees of freedom that radiates waves and generates a force on body :math:`i` along all its degrees of freedom.")
+        RSTfile._add(r"which represents the :math:`(6 \times 6)` infinite added mass matrix for a unit acceleration of body :math:`j`"
+                                r", for all its degrees of freedom, that radiates waves and generates a force on body :math:`i` for all its degrees of freedom.")
         RSTfile.newline()
-        RSTfile._add(r"For instance :math:`A_{12}^{\infty}` represents the infinite added mass matrix for a unit acceleration of body 2 along all its degrees of freedom, generating a force on body 1 along all its degrees of freedom.")
+        RSTfile._add(r"For instance :math:`\mathbf{A}_{12}^{\infty}` represents the infinite added mass matrix for a unit acceleration of body 2, for all its degrees of freedom,"
+                     r" generating a force on body 1 for all its degrees of freedom.")
         RSTfile.newline()
 
         # Loop over the bodies.
@@ -772,12 +813,13 @@ class report():
             RSTfile.newline()
             RSTfile._add("The following notation is adopted:")
             RSTfile.newline()
-            RSTfile.directive(name="figure", arg="/_static/" + self.Notation_AB, fields=[('align', 'center'), ('height', '40 px'), ('width', '70 px')])
+            RSTfile.directive(name="figure", arg="/_static/" + self.Notation_IRF, fields=[('align', 'center'), ('height', '40 px'), ('width', '70 px')])
             RSTfile.newline()
             RSTfile._add(r"which represents the impulse response function for a unit velocity of body :math:`j` "
-                            r"along the degree of freedom :math:`\beta` that radiates waves and generates a force on body :math:`i` along the degree of freedom :math:`\alpha`.")
+                            r", for the degree of freedom :math:`\beta`, that radiates waves and generates a force on body :math:`i` for the degree of freedom :math:`\alpha`.")
             RSTfile.newline()
-            RSTfile._add(r"For instance :math:`K_{x_1 \theta_2}(t)` represents the impulse reponse function for a unit velocity in pitch of body 2 generating a force in surge on body 1.")
+            RSTfile._add(r"For instance :math:`K_{x_1 \theta_2}(t)` represents the impulse reponse function for a unit velocity in pitch"
+                         r" of body 2 generating a force in surge on body 1.")
 
         else: # IRF with forward speed.
             Filename = "IRF_speed"
@@ -799,6 +841,15 @@ class report():
             RSTfile._add(r"    \vdots & \ddots & \vdots & \vdots \\")
             RSTfile._add(r"    0 & \ldots & 0 & 0 \\")
             RSTfile._add(r"    \end{array} \right)")
+            RSTfile._add("The following notation is adopted:")
+            RSTfile.newline()
+            RSTfile.directive(name="figure", arg="/_static/" + self.Notation_IRF_speed, fields=[('align', 'center'), ('height', '40 px'), ('width', '70 px')])
+            RSTfile.newline()
+            RSTfile._add(r"which represents the impulse response function with forward speed for a unit velocity of body :math:`j`"
+                         r", for the degree of freedom :math:`\beta`, that radiates waves and generates a force on body :math:`i` for the degree of freedom :math:`\alpha`.")
+            RSTfile.newline()
+            RSTfile._add(r"For instance :math:`{Ku}_{x_1 \theta_2}(t)` represents the impulse reponse function with forward speed for a unit velocity in pitch"
+                         r" of body 2 generating a force in surge on body 1.")
 
         RSTfile.newline()
 
