@@ -174,10 +174,10 @@ int main(int argc, char* argv[]) {
     //flap2->AddExternalForce(diffBuoyForce2);
 
     // -- Nonlinear
-    auto flap1Mesh = make_hydro_mesh(flap1, "FullFlap_sym_wsep_draft8_5_fillet.obj", FrFrame(), FrHydroMesh::ClippingSupport::PLANSURFACE);
+    auto flap1Mesh = make_hydro_mesh(flap1, "FullFlap_sym_wsep_draft8_5_fillet.obj", FrFrame(), FrHydroMesh::ClippingSupport::PLANESURFACE);
     auto forceHst1 = make_nonlinear_hydrostatic_force(flap1, flap1Mesh);
 
-    auto flap2Mesh = make_hydro_mesh(flap2, "FullFlap_sym_wsep_draft8_5_fillet.obj", FrFrame(), FrHydroMesh::ClippingSupport::PLANSURFACE);
+    auto flap2Mesh = make_hydro_mesh(flap2, "FullFlap_sym_wsep_draft8_5_fillet.obj", FrFrame(), FrHydroMesh::ClippingSupport::PLANESURFACE);
     auto forceHst2 = make_nonlinear_hydrostatic_force(flap2, flap2Mesh);
 
     //flap1Mesh->GetInitialMesh().Write("HydroMesh_Flap1_Initial.obj");
