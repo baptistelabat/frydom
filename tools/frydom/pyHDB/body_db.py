@@ -15,8 +15,8 @@
 
 import numpy as np
 
-from hydrostatic_db_v2 import HydrostaticDB
-from inertia_v2 import Inertia
+from hydrostatic_db import HydrostaticDB
+from inertia import Inertia
 
 class BodyDB(object):
 

@@ -19,8 +19,8 @@ import h5py
 
 from meshmagick.mesh import Mesh
 
-from body_db_v2 import *
-from wave_drift_db_v2 import WaveDriftDB
+from body_db import *
+from wave_drift_db import WaveDriftDB
 
 class HDB5reader():
     """

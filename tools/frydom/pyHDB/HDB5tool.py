@@ -17,7 +17,7 @@
 import os
 import argparse
 
-from frydom.pyHDB.HDB5_v2 import *
+from frydom.pyHDB.HDB5 import *
 
 try:
     import argcomplete

@@ -16,8 +16,8 @@ import numpy as np
 from scipy import interpolate
 from datetime import datetime
 
-from wave_dispersion_relation_v2 import solve_wave_dispersion_relation
-from wave_drift_db_v2 import WaveDriftDB
+from wave_dispersion_relation import solve_wave_dispersion_relation
+from wave_drift_db import WaveDriftDB
 
 inf = float('inf') # Definition of infinity for depth.
 

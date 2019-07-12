@@ -19,9 +19,9 @@ from warnings import warn
 from meshmagick.mmio import load_MAR
 from meshmagick.mesh import Mesh, Plane
 
-from wave_dispersion_relation_v2 import solve_wave_dispersion_relation
+from wave_dispersion_relation import solve_wave_dispersion_relation
 from pyHDB import inf
-from body_db_v2 import *
+from body_db import *
 
 class _BEMReader(object):
     """

@@ -18,11 +18,11 @@ import os
 from math import *
 import numpy as np
 
-from bem_reader_v2 import *
+from bem_reader import *
 from HDB5_reader import *
 from pyHDB import *
-from discretization_db_v2 import DiscretizationDB
-from wave_drift_db_v2 import WaveDriftDB
+from discretization_db import DiscretizationDB
+from wave_drift_db import WaveDriftDB
 from plot_db import *
 
 class HDB5(object):
