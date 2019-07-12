@@ -139,6 +139,30 @@ And in case of impulse response functions with forward speed::
 
     >$ hdb5tool -cal path/to/Nemoh/cal/folder -coirf_all_speed 10.
 
+Radiation mask
+--------------
+
+The radiation coefficients close to zero may be canceled, so that they won't be used in the time-domain computations of FRyDoM. To do so, a radiation mask is used. It is represented by a matrix of size :math:`(6 n_B) \times (6 n_B)` where :math:`n_B` is the number of bodies. By default, every radiation coefficient is fixed is used and its corresponding radiation mask coefficient is set to True. By using the command::
+
+    >$ hdb5tool -cal path/to/Nemoh/cal/folder -rm
+
+the quantity :math:`\mathbf{H}(j\omega) = |\mathbf{B}(\omega) + j\omega[\mathbf{A}(\omega) - \mathbf{A}^{\infty}]|` is evaluated and plotted for all bodies and all degrees of freedom. The notation is :math:`H_{\alpha_i \beta_j}` and represents the effect of the degree of freedom :math:`\beta` of body :math:`j` on the degree of freedom :math:`\alpha` of body :math:`i`. If you considered a quantity is negligible, you can click on the plot. The radiation mask for this coefficient will turn to False and, visually, the background color of the plot will become grey. By clicking another time on the same plot, the radiation mask for this coefficient will be equal to True again and the background color of the plot will turn white as initially. An example is given below:
+
+.. figure:: /_static/Radiation_mask_before_clicking.png
+   :align: center
+
+   Plot of every coefficient of the matrix :math:`\mathbf{H}_{11}`
+
+.. figure:: /_static/Radiation_mask_after_clicking_mistake.png
+   :align: center
+
+   The coefficients :math:`H_{y_1z_1}`, :math:`H_{z_1y_1}` and :math:`H_{z_1 \theta_1}` are considered as negligible
+
+.. figure:: /_static/Radiation_mask_after_clicking_correction.png
+   :align: center
+
+   The coefficient :math:`H_{z_1 \theta_1}` is not considered as negligible anymore
+
 Postprocessing of the hydrodynamic database
 -------------------------------------------
 
