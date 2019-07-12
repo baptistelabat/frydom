@@ -602,7 +602,7 @@ class report():
         RSTfile.directive(name="figure", arg="/_static/" + self.Notation_Radiation_mask, fields=[('align', 'center'), ('height', '40 px'), ('width', '70 px')])
         RSTfile.newline()
         RSTfile._add(r"which represents the :math:`(6 \times 6)` radiation mask matrix of body i due to the influence of body j. A coefficient equal to 1 involves the corresponding"
-                     r" impulse response function will be used by FRyDoM for the computation of the radiation loads, whereas a coefficient of 0 indicates "
+                     r" impulse response function will be used by *FRyDoM* for the computation of the radiation loads, whereas a coefficient of 0 indicates "
                      r"the corresponding impulse response function will not be used. These coefficients were defined by the user of *hdb5tool*.")
         RSTfile.newline()
 
