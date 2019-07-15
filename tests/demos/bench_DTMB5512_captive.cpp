@@ -13,9 +13,99 @@
 
 using namespace frydom;
 
+FrLinearActuator* make_carriage(FrOffshoreSystem* system, const std::shared_ptr<FrNode>& shipNode,
+        bool is_captive){
+
+    FRAME_CONVENTION fc = NWU;
+
+    auto mass = shipNode->GetBody()->GetInertiaTensor().GetMass();
+
+    double tankLength = 140;
+    double tankWidth = 5;
+    double tankDepth = 3.048;
+
+    // Resources path
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+
+    // --------------------------------------------------
+    // Seabed and Free-surface grid definitions
+    // --------------------------------------------------
+    auto Seabed = system->GetEnvironment()->GetOcean()->GetSeabed();
+    Seabed->GetSeabedGridAsset()->SetGrid(
+            -0.05*tankLength, 0.95*tankLength, 0.01*tankLength,
+            -0.5*tankWidth, 0.5*tankWidth, 0.01*tankWidth);
+    Seabed->SetBathymetry(-tankDepth,fc);
+
+    auto FreeSurface = system->GetEnvironment()->GetOcean()->GetFreeSurface();
+    FreeSurface->GetFreeSurfaceGridAsset()->SetGrid(
+            -0.05*tankLength, 0.95*tankLength, 0.001*tankLength,
+            -0.5*tankWidth, 0.5*tankWidth, 0.01*tankWidth);
+    FreeSurface->GetFreeSurfaceGridAsset()->UpdateAssetON();
+    FreeSurface->GetFreeSurfaceGridAsset()->SetUpdateStep(10);
+
+    // --------------------------------------------------
+    // Wall definition
+    // --------------------------------------------------
+
+    auto tankWall = system->NewBody();
+    tankWall->SetName("Wall");
+    tankWall->SetFixedInWorld(true);
+    makeItBox(tankWall, tankLength, 0.1*tankWidth, 1.25*tankDepth, mass);
+
+    Position tankWallPosition = shipNode->GetPositionInWorld(fc); tankWallPosition.GetZ() = 0.;
+    tankWallPosition -= Position(-0.45*tankLength,0.55*tankWidth,0.375*tankDepth);
+    tankWall->SetPosition(tankWallPosition,fc);
+
+    auto wallNode = tankWall->NewNode();
+    wallNode->SetPositionInBody(Position(-0.45*tankLength,0.,0.75*tankDepth), fc);
+    wallNode->RotateAroundYInBody(-90*DEG2RAD,fc);
 
 
-// ##CC Quick logging class
+    // --------------------------------------------------
+    // Carriage definition
+    // --------------------------------------------------
+
+    auto carriage = system->NewBody();
+    carriage->SetName("Carriage");
+
+    double xSize = 0.1*tankWidth;
+    double ySize = 1.1*tankWidth;
+    double zSize = 0.1*tankWidth;
+
+    // Properties of the box
+    double xSize2 = xSize * xSize;
+    double ySize2 = ySize * ySize;
+    double zSize2 = zSize * zSize;
+
+    // inertia
+    double Ixx = (1./12.) * mass * (ySize2 + zSize2);
+    double Iyy = (1./12.) * mass * (xSize2 + zSize2);
+    double Izz = (1./12.) * mass * (xSize2 + ySize2);
+
+    carriage->SetInertiaTensor(FrInertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., Position(), NWU));
+    carriage->AddMeshAsset(resources_path.resolve("carriage_scale5.obj").path());
+
+    auto carriageToWallNode = carriage->NewNode();
+    carriageToWallNode->SetPositionInBody(Position(0.,-0.5*tankWidth,0.), fc);
+    carriageToWallNode->RotateAroundYInBody(-90*DEG2RAD,fc);
+
+    auto carriageToShipNode = carriage->NewNode();
+    //auto shipToCarriagePosition = Position(0., 0., -0.25*tankDepth - 0.5*tankWidth + 0.03);
+    auto shipToCarriagePosition = Position(0., 0., 0.03);
+    carriageToShipNode->SetPositionInWorld(shipToCarriagePosition, fc);
+    carriageToShipNode->RotateAroundYInBody(90*DEG2RAD,fc);
+    carriageToShipNode->RotateAroundXInBody(90*DEG2RAD,fc);
+
+    // --------------------------------------------------
+    // Link definitions
+    // --------------------------------------------------
+
+    auto linkToShip = make_prismatic_revolute_link(carriageToShipNode, shipNode, system);
+
+    auto rail = make_prismatic_link(wallNode, carriageToWallNode, system);
+
+    return rail->Motorize(VELOCITY);
+}
 
 class AddedMassRadiationForce {
 
@@ -240,12 +330,12 @@ int main(int argc, char* argv[]) {
 
     // -- Input
 
-    double speed = atof(argv[1]);
-    double ak = 0.5*atof(argv[2]);
-    double Tk = atof(argv[3]);
-    std::string name = argv[4];
+    double speed = atof(argv[1]);   // Ship forward speed
+    double ak = 0.5*atof(argv[2]);  // Wave amplitude (m)
+    double Tk = atof(argv[3]);      // Wave period (s)
+    std::string name = argv[4];     // Output director prefix name
 
-    bool captive_test = false;
+    bool captive_test = true;      // fixed heave and pitch motions
 
     // -- System
 
@@ -253,40 +343,23 @@ int main(int argc, char* argv[]) {
 
     // -- Ocean
     auto ocean = system.GetEnvironment()->GetOcean();
-    //ocean->GetSeabed()->SetBathymetry(-3.048, NWU);
-    ocean->SetDensity(1000.); // 1000.
+    ocean->SetDensity(1000.);
 
     auto waveField = ocean->GetFreeSurface()->SetAiryRegularWaveField();
-    waveField->SetWaveHeight(ak); // ak
-    waveField->SetWavePeriod(Tk); // Tk
+    waveField->SetWaveHeight(ak);
+    waveField->SetWavePeriod(Tk);
     waveField->SetDirection(180., DEG, NWU, GOTO);
+
+    system.GetEnvironment()->GetTimeRamp()->SetByTwoPoints(5., 0., 20., 1.);
+    //system.GetEnvironment()->GetTimeRamp()->SetActive();
+
     // -- Body
 
     auto body = system.NewBody();
-
     Position COGPosition(0., 0., 0.03); // 0.03
-
     body->SetPosition(Position(0., 0., 0.), NWU);
-    body->SetVelocityInBodyNoRotation(Velocity(speed, 0., 0.) ,NWU);
-
-    body->GetDOFMask()->SetLock_Y(true);
-    body->GetDOFMask()->SetLock_Rx(true);
-    body->GetDOFMask()->SetLock_Rz(true);
-
-    // ##CC
-    //body->GetDOFMask()->SetLock_X(true);
-    //body->GetDOFMask()->SetLock_Z(true);
-    //body->GetDOFMask()->SetLock_Ry(true);
-    // ##CC
-
-    if (captive_test) {
-        body->GetDOFMask()->SetLock_Z(true);
-        body->GetDOFMask()->SetLock_Ry(true);
-    } else {
-        //body->GetDOFMask()->SetLock_X(true);
-        //body->GetDOFMask()->SetLock_Ry(true);
-        system.GetEnvironment()->GetTimeRamp()->SetByTwoPoints(5., 0., 20., 1.);
-    }
+    body->AddMeshAsset(resources_path.resolve("DTMB5512_close.obj").path());
+    body->SetColor(Yellow);
 
     // -- Inertia
 
@@ -297,7 +370,6 @@ int main(int argc, char* argv[]) {
     double Izz = 49.99;
 
     FrInertiaTensor InertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGPosition, NWU);
-
     body->SetInertiaTensor(InertiaTensor);
 
     // -- Hydrodynamics
@@ -316,17 +388,11 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrostatic
 
-    //auto forceHst = std::make_shared<FrLinearHydrostaticForce>(hdb);
-    //body->AddExternalForce(forceHst);
     auto forceHst = make_linear_hydrostatic_force(hdb, body);
 
     // -- Radiation
 
     auto radiationModel = make_radiation_convolution_model(hdb, &system);
-
-    //auto radiationForce = std::make_shared<FrRadiationConvolutionForce>(radiationModel.get());
-    //body->AddExternalForce(radiationForce);
-
     radiationModel->SetImpulseResponseSize(body.get(), 50., 0.008);
 
     // ##CC for monitoring
@@ -359,90 +425,94 @@ int main(int argc, char* argv[]) {
     auto forceHeave = std::make_shared<SteadyHeaveForce>();
     body->AddExternalForce(forceHeave);
 
+    // -- Carriage and fixation point
+
+    auto shipNode = body->NewNode();
+    shipNode->SetPositionInBody(body->GetCOG(NWU),NWU);
+    shipNode->RotateAroundYInBody(90*DEG2RAD,NWU);
+    shipNode->RotateAroundXInBody(90*DEG2RAD,NWU);
+
+    auto carriage = make_carriage(&system, shipNode, captive_test);
+    //FrCosRampFunction ramp; ramp.SetByTwoPoints(0.,0.,10.,speed);
+    //carriage->SetMotorFunction(ramp);
+    carriage->SetMotorFunction(FrConstantFunction(speed));
+
+    if (captive_test) {
+        body->GetDOFMask()->SetLock_Z(true);
+        body->GetDOFMask()->SetLock_Ry(true);
+    }
+
     // -- Simulation
 
     auto dt = 0.008;
 
     system.SetTimeStep(dt);
     system.Initialize();
+    system.DoAssembly();
 
-    // ##CC
-    /*
-    std::cout << "debug: after initiliaze" << std::endl;
-    std::cout << "debug: body cog (in body): " << body->GetCOG(NWU).GetX() << ";"
-              << body->GetCOG(NWU).GetY() << ";"
-              << body->GetCOG(NWU).GetZ() << std::endl;
+    bool is_irrlicht = true;
 
-    std::cout << "debug: body cog (in world): " << body->GetCOGPositionInWorld(NWU).GetX() << ";"
-              << body->GetCOGPositionInWorld(NWU).GetY() << ";"
-              << body->GetCOGPositionInWorld(NWU).GetZ() << std::endl;
-    */
-    // ##CC
+    if (is_irrlicht) {
+        system.RunInViewer(50., 10., false);
+    } else {
 
-    double time = 0.;
+        double time = 0.;
 
-    // ##CC
-    //Logging log;
-    //log.Open(name);
-    // ##CC
-
-    while (time < 50.) {
-        time += dt;
-        system.AdvanceTo(time);
-
-        // ##CC test user define velocity
-        auto vel = body->GetCOGVelocityInWorld(NWU);
-        body->SetGeneralizedVelocityInWorldAtPointInBody(body->GetCOG(NWU), Velocity(speed, vel.y(), vel.z()),
-                                            body->GetAngularVelocityInWorld(NWU), NWU);
-        //body->SetGeneralizedVelocityInWorldAtPointInBody(body->GetCOG(NWU),
-        //                                                 BodyVelocity(time, Tk, 0.14, speed),
-        //                                                 BodyAngularVelocity(time, Tk, 0.), NWU);
+        // ##CC
+        //Logging log;
+        //log.Open(name);
         // ##CC
 
+        while (time < 50.) {
 
-        // ##CC monitoring
-        std::cout << "time : " << time << " ; position of the body = "
-                  << body->GetCOGPositionInWorld(NWU).GetX() << " ; "
-                  << body->GetCOGPositionInWorld(NWU).GetY() << " ; "
-                  << body->GetCOGPositionInWorld(NWU).GetZ()
-                  << std::endl;
-
-        std::cout << " velocity of the body = "
-                  << body->GetCOGVelocityInWorld(NWU).GetVx() << ";"
-                  << body->GetCOGVelocityInWorld(NWU).GetVy() << ";"
-                  << body->GetCOGVelocityInWorld(NWU).GetVz()
-                  << std::endl;
-
-        std::cout << " Position of the Equilibrium frame : "
-                  << eqFrame->GetPosition(NWU).GetX() << ";"
-                  << eqFrame->GetPosition(NWU).GetY() << ";"
-                  << eqFrame->GetPosition(NWU).GetZ() << std::endl;
-
-        std::cout << " Velocity of the Equilibrium frame : "
-                  << eqFrame->GetVelocityInWorld(NWU).GetVx() << ";"
-                  << eqFrame->GetVelocityInWorld(NWU).GetVy() << ";"
-                  << eqFrame->GetVelocityInWorld(NWU).GetVz() << std::endl;
+            time += dt;
+            system.AdvanceTo(time);
 
 
-        radiationAddedMassForce->Update(body.get());
+            // ##CC monitoring
+            std::cout << "time : " << time << " ; position of the body = "
+                      << body->GetCOGPositionInWorld(NWU).GetX() << " ; "
+                      << body->GetCOGPositionInWorld(NWU).GetY() << " ; "
+                      << body->GetCOGPositionInWorld(NWU).GetZ()
+                      << std::endl;
 
-        /*
-        log.Write(time,
-            body->GetCOGPositionInWorld(NWU), body->GetRotation(),
-            eqFrame->GetPosition(NWU), eqFrame->GetRotation(),
-            forceHst->GetForceInWorld(NWU),forceHst->GetTorqueInBodyAtCOG(NWU),
-            excitationForce->GetForceInWorld(NWU), excitationForce->GetTorqueInBodyAtCOG(NWU),
-            waveDriftForce->GetForceInWorld(NWU), waveDriftForce->GetTorqueInBodyAtCOG(NWU),
-            forceResistance->GetForceInWorld(NWU), forceResistance->GetTorqueInBodyAtCOG(NWU),
-            forcePitch->GetForceInWorld(NWU), forcePitch->GetTorqueInBodyAtCOG(NWU),
-            forceHeave->GetForceInWorld(NWU), forceHeave->GetTorqueInBodyAtCOG(NWU),
-            radiationForce->GetForceInWorld(NWU), radiationForce->GetTorqueInBodyAtCOG(NWU),
-            body->GetTotalExtForceInWorld(NWU), body->GetTotalTorqueInBodyAtCOG(NWU),
-            radiationAddedMassForce->GetForceInWorld(), radiationAddedMassForce->GetTorqueInWorldAtCOG()
-        );
-        */
-        // ##CC
+            std::cout << " velocity of the body = "
+                      << body->GetCOGVelocityInWorld(NWU).GetVx() << ";"
+                      << body->GetCOGVelocityInWorld(NWU).GetVy() << ";"
+                      << body->GetCOGVelocityInWorld(NWU).GetVz()
+                      << std::endl;
 
+            std::cout << " Position of the Equilibrium frame : "
+                      << eqFrame->GetPosition(NWU).GetX() << ";"
+                      << eqFrame->GetPosition(NWU).GetY() << ";"
+                      << eqFrame->GetPosition(NWU).GetZ() << std::endl;
+
+            std::cout << " Velocity of the Equilibrium frame : "
+                      << eqFrame->GetVelocityInWorld(NWU).GetVx() << ";"
+                      << eqFrame->GetVelocityInWorld(NWU).GetVy() << ";"
+                      << eqFrame->GetVelocityInWorld(NWU).GetVz() << std::endl;
+
+
+            radiationAddedMassForce->Update(body.get());
+
+            /*
+            log.Write(time,
+                body->GetCOGPositionInWorld(NWU), body->GetRotation(),
+                eqFrame->GetPosition(NWU), eqFrame->GetRotation(),
+                forceHst->GetForceInWorld(NWU),forceHst->GetTorqueInBodyAtCOG(NWU),
+                excitationForce->GetForceInWorld(NWU), excitationForce->GetTorqueInBodyAtCOG(NWU),
+                waveDriftForce->GetForceInWorld(NWU), waveDriftForce->GetTorqueInBodyAtCOG(NWU),
+                forceResistance->GetForceInWorld(NWU), forceResistance->GetTorqueInBodyAtCOG(NWU),
+                forcePitch->GetForceInWorld(NWU), forcePitch->GetTorqueInBodyAtCOG(NWU),
+                forceHeave->GetForceInWorld(NWU), forceHeave->GetTorqueInBodyAtCOG(NWU),
+                radiationForce->GetForceInWorld(NWU), radiationForce->GetTorqueInBodyAtCOG(NWU),
+                body->GetTotalExtForceInWorld(NWU), body->GetTotalTorqueInBodyAtCOG(NWU),
+                radiationAddedMassForce->GetForceInWorld(), radiationAddedMassForce->GetTorqueInWorldAtCOG()
+            );
+            */
+            // ##CC
+
+        }
     }
 
     //log.Close();
