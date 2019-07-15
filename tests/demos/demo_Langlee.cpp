@@ -59,13 +59,13 @@ int main(int argc, char* argv[]) {
     system.GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0., 0., 15., 1.);
     system.GetEnvironment()->GetTimeRamp()->SetActive(false);
 
-    //ocean->GetFreeSurface()->GetFreeSurfaceGridAsset()->SetGrid(-14., 14, 2, -14, 14, 2);
+    ocean->GetFreeSurface()->GetFreeSurfaceGridAsset()->SetGrid(-14., 14, 2, -14, 14, 2);
 
     // Bodies
 
     auto barge = system.NewBody();
     barge->SetName("barge");
-    barge->AddMeshAsset(resources_path.resolve("barge_draft8_5.obj").path());
+    barge->AddMeshAsset(resources_path.resolve("FullBarge_e125000.obj").path());
     barge->SetPosition(Position(0., 0., -8.5), NWU);
 
     double mass_b = 1.089825e6;
@@ -142,7 +142,7 @@ int main(int argc, char* argv[]) {
     //auto morisonForce_2 = make_morison_force(morisonModel_2, flap2);
 
     // Hydrodynamic
-    /*
+
     auto hdb = make_hydrodynamic_database(resources_path.resolve("Langlee_draft8_5_filtered_t50.hdb5").path());
 
     auto eqFrame0 = std::make_shared<FrEquilibriumFrame>(barge.get());
@@ -157,7 +157,7 @@ int main(int argc, char* argv[]) {
     radiationModel->SetImpulseResponseSize(flap1.get(), 80., 0.01);
     radiationModel->SetImpulseResponseSize(flap2.get(), 80., 0.01);
     radiationModel->SetImpulseResponseSize(barge.get(), 80., 0.01);
-    */
+
     // Hydrostatic
 
     // -- Linear
@@ -189,7 +189,7 @@ int main(int argc, char* argv[]) {
 
     // Simulation
 
-    auto dt = 0.005;
+    auto dt = 0.01;
 
     system.SetTimeStep(dt);
 

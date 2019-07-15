@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
     auto ocean = system.GetEnvironment()->GetOcean();
     auto waveField = ocean->GetFreeSurface()->SetAiryRegularWaveField();
     waveField->SetWavePeriod(3.);
-    waveField->SetWaveHeight(0.1);
+    waveField->SetWaveHeight(0.1); //0.1
     waveField->SetDirection(0., DEG, NWU, GOTO);
 
     system.GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0., 0., 15., 1.);
@@ -225,13 +225,13 @@ int main(int argc, char* argv[]) {
     // Motor
 
     /*
-    auto node_7a = cyl1->NewNode();
-    node_7a->SetPositionInWorld(Position(-2.498, 0., 0.), NWU);
-    auto node_7b = system.GetWorldBody()->NewNode();
-    node_7b->SetPositionInWorld(Position(-2.498, 0., 0.), NWU);
-    auto link7 = make_prismatic_link(node_7a, node_7b, &system);
+    auto node_9a = cyl1->NewNode();
+    node_9a->SetPositionInWorld(Position(-2.498, 0., 0.), NWU);
+    auto node_9b = system.GetWorldBody()->NewNode();
+    node_9b->SetPositionInWorld(Position(-2.498, 0., 0.), NWU);
+    auto link9 = make_prismatic_link(node_9a, node_9b, &system);
 
-    auto motor = link7->Motorize(POSITION);
+    auto motor = link9->Motorize(POSITION);
 
     auto x = new_var("x");
     auto ramp = FrLinearRampFunction();
@@ -260,7 +260,7 @@ int main(int argc, char* argv[]) {
     bool is_irrlicht = true;
 
     if (is_irrlicht) {
-        system.RunInViewer(40., 50.);
+        system.RunInViewer(50., 50., true, 5);
     } else {
         auto time = 0.;
         while(time < 50.) {
