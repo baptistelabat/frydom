@@ -17,6 +17,8 @@ int main(int argc, char* argv[]) {
 
     std::cout << " ========================= Test hydrostatic =================== " << std::endl;
 
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+
     std::cout << "--> Create a system ..." << std::endl;
     FrOffshoreSystem system;
 
@@ -24,7 +26,7 @@ int main(int argc, char* argv[]) {
     auto body = system.NewBody();
 
     std::cout << "--> Load HDB ... " << std::endl;
-    auto hdb = make_hydrodynamic_database("Platform_HDB.hdb5");
+    auto hdb = make_hydrodynamic_database(resources_path.resolve("Platform_HDB.hdb5").path());
 
     std::cout << "--> Eq Frame ... " << std::endl;
     auto eqFrame = std::make_shared<FrEquilibriumFrame>(body.get());

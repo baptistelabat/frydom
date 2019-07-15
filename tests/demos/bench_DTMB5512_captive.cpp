@@ -235,6 +235,9 @@ int main(int argc, char* argv[]) {
                  " Benchmark test : DTMB 5512 captive motion \n"
                  " =======================================================" << std::endl;
 
+    // Resources path
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+
     // -- Input
 
     double speed = atof(argv[1]);
@@ -299,7 +302,7 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrodynamics
 
-    auto hdb = make_hydrodynamic_database("DTMB5512.hdb5");
+    auto hdb = make_hydrodynamic_database(resources_path.resolve("DTMB5512.hdb5").path());
 
     auto eqFrame = std::make_shared<FrEquilibriumFrame>(body.get(), false);
     //eqFrame->InitSpeedFromBody(true);

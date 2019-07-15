@@ -128,7 +128,7 @@ namespace frydom {
 
         // Object for reading *.HDB5 input file.
         FrHDF5Reader reader;
-        reader.SetFilename(h5file);
+        reader.SetFilename(h5file.c_str());
 
         // Reading environmental data and the number of bodies.
         m_gravityAcc = reader.ReadDouble("/GravityAcc");

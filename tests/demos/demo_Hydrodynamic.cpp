@@ -34,6 +34,9 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem system;
     system.SetName("Hydrodynamics");
 
+    // Resources
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+
     // --------------------------------------------------
     // Environment
     // --------------------------------------------------
@@ -94,7 +97,7 @@ int main(int argc, char* argv[]) {
     // Create the platform, give it a name, asset, etc.
     auto platform = system.NewBody();
     platform->SetName("platform");
-    platform->AddMeshAsset("Platform_GVA7500.obj");
+    platform->AddMeshAsset(resources_path.resolve("Platform_GVA7500.obj").path());
     platform->SetColor(Yellow);
 
     // Set the inertia tensor
@@ -112,7 +115,7 @@ int main(int argc, char* argv[]) {
     // -- Hydrodynamics
 
 //     Create a hydrodynamic database (hdb), load data from the input file and creates and initialize the BEMBodies.
-    auto hdb = make_hydrodynamic_database("Platform_HDB_Without_drift.hdb5");
+    auto hdb = make_hydrodynamic_database(resources_path.resolve("Platform_HDB_Without_drift.hdb5").path());
 
     // Create an equilibrium frame for the platform and add it to the system at the position of the body CoG.
     auto eqFrame = std::make_shared<FrEquilibriumFrame>(platform.get());
@@ -139,11 +142,11 @@ int main(int argc, char* argv[]) {
 
     // -- Current model force, based on polar coefficients
     // Create the current model force and add it to the platform
-    auto currentForce = make_current_force("Platform_PolarCurrentCoeffs_NC.json", platform);
+    auto currentForce = make_current_force(resources_path.resolve("Platform_PolarCurrentCoeffs_NC.json").path(), platform);
 
     // -- Wind model force, based on polar coefficients
     // Create the model model force and add it to the platform
-    auto windForce = make_wind_force("Platform_PolarWindCoeffs_NC.json", platform);
+    auto windForce = make_wind_force(resources_path.resolve("Platform_PolarWindCoeffs_NC.json").path(), platform);
     windForce->ShowAsset(true);
 
     // ------------------ Run with Irrlicht ------------------ //

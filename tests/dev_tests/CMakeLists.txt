@@ -15,11 +15,19 @@ set(REFACTORING_TESTS
 
 #include(Add_matplotlib-cpp)
 
+set(test_body_mapper_resources_path ${CMAKE_SOURCE_DIR}/tests/data/platform/)
+set(test_hydrostatic_new_hdb_resources_path ${CMAKE_SOURCE_DIR}/tests/data/platform/)
+set(test_radiation_mode_resources_path ${CMAKE_SOURCE_DIR}/tests/data/platform/)
+set(test_WNL_and_NL_hydrostatics_resources_path ${CMAKE_SOURCE_DIR}/tests/data/platform/)
+set(test_CylinderInteraction_resources_path ${CMAKE_SOURCE_DIR}/tests/data/CylinderInteraction/)
+set(bench_Ellipsoid_OMAE2014_resources_path ${CMAKE_SOURCE_DIR}/tests/data/bench/Ellipsoid_OMAE2014/)
+
 foreach(test ${REFACTORING_TESTS})
     message(STATUS "        ...add ${test}")
 
     add_executable(${test} ${test}.cpp)
     target_link_libraries(${test} FRyDoM_Engine)
+    target_compile_definitions(${test} PUBLIC RESOURCES_PATH="${${test}_resources_path}")
 
 endforeach()
 
@@ -31,26 +39,3 @@ foreach (subdir ${subdirs})
     add_subdirectory(${subdir})
 endforeach ()
 
-# Adding resource files
-configure_file(../../data/frydom_logo.png . COPYONLY)
-configure_file(../../data/skybox/sky_dn.jpg . COPYONLY)
-configure_file(../../data/skybox/sky_lf.jpg . COPYONLY)
-configure_file(../../data/skybox/sky_up.jpg . COPYONLY)
-
-configure_file(../data/bench/DTMB5512/DTMB5512.obj . COPYONLY)
-configure_file(../data/bench/DTMB5512/DTMB5512.hdb5 . COPYONLY)
-
-
-configure_file(../data/platform/Platform_HDB.hdb5 . COPYONLY)
-configure_file(../data/CylinderInteraction/CylinderInteraction.hdb5 . COPYONLY)
-
-configure_file(../data/bench/Ellipsoid_OMAE2014/elipsoid_scaled_2880_faces.obj . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/elipsoid_scaled_mean_position.obj . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_4200_faces.obj . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_2880_faces.hdb5 . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_4200_faces.hdb5 . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_634_faces_with_sym.hdb5 . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_1416_faces_with_sym.hdb5 . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_2774_faces_with_sym.hdb5 . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_2880_faces_with_sym_mean_position.hdb5 . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_4500_faces_WAMIT_mesh_sym_mean_position.hdb5 . COPYONLY)

@@ -673,7 +673,8 @@ protected:
 
 void TestBase::SetUp() {
     force = std::make_shared<TestFrForce_>();
-    force->LoadData("TNR_database.h5");
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+    force->LoadData(resources_path.resolve("TNR_database.h5").path());
     body = NewBody(force);
     system.AddBody(body);
 }

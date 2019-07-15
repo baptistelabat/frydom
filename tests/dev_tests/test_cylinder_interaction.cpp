@@ -14,6 +14,9 @@ int main(int argc, char* argv[]) {
 
     FrOffshoreSystem system;
 
+    // Resources path
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+
     // Environment
 
     auto ocean = system.GetEnvironment()->GetOcean();
@@ -49,7 +52,7 @@ int main(int argc, char* argv[]) {
 
     // Hydrodynamic
 
-    auto hdb = make_hydrodynamic_database("CylinderInteraction.hdb5");
+    auto hdb = make_hydrodynamic_database(resources_path.resolve("CylinderInteraction.hdb5").path());
 
     auto eqFrame1 = std::make_shared<FrEquilibriumFrame>(cyl1.get());
     auto eqFrame2 = std::make_shared<FrEquilibriumFrame>(cyl2.get());

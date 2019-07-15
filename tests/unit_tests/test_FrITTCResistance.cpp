@@ -54,7 +54,8 @@ void TestITTCResistance::SetUp() {
     body->SetInertiaTensor(InertiaTensor);
 
     system.GetEnvironment()->GetOcean()->GetCurrent()->MakeFieldUniform();
-    LoadData("TNR_database.h5");
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+    LoadData(resources_path.resolve("TNR_database.h5").path());
 }
 
 void TestITTCResistance::LoadData(std::string filename) {

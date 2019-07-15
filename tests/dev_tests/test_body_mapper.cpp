@@ -17,6 +17,8 @@ int main(int argc, char* argv[]) {
 
     std::cout << "========================= Test body mapper ===================== " << std::endl;
 
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+
     std::cout << "--> Create system..." << std::endl;
     FrOffshoreSystem system;
 
@@ -24,7 +26,7 @@ int main(int argc, char* argv[]) {
     auto body = system.NewBody();
 
     std::cout << "--> Read file : Platform_HDB.hdb5" << std::endl;
-    auto hdb = std::make_shared<FrHydroDB>("Platform_HDB.hdb5");
+    auto hdb = std::make_shared<FrHydroDB>(resources_path.resolve("Platform_HDB.hdb5").path());
 
     std::cout << "--> Create eqFrame..." << std::endl;
     auto eqFrame = std::make_shared<FrEquilibriumFrame>(body.get());

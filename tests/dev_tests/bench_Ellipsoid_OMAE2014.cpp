@@ -63,6 +63,9 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem system;
     system.SetName("Ellipsoid_OMAE2014");
 
+    // Resources path
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                          Environment
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -123,7 +126,7 @@ int main(int argc, char* argv[]) {
 
     auto Ellipsoid = system.NewBody();
     Ellipsoid->SetName("Ellipsoid");
-    Ellipsoid->AddMeshAsset("elipsoid_scaled_2880_faces.obj");
+    Ellipsoid->AddMeshAsset(resources_path.resolve("elipsoid_scaled_2880_faces.obj").path());
     Ellipsoid->SetColor(Yellow);
 
     // Inertia Tensor
@@ -164,7 +167,7 @@ int main(int argc, char* argv[]) {
 
     // Create a hydrodynamic database (hdb), load data from the input file and creates and initialize the BEMBody.
 //    auto hdb = make_hydrodynamic_database("Ellipsoid_4500_faces_WAMIT_mesh_sym_mean_position.hdb5");
-    auto hdb = make_hydrodynamic_database("Ellipsoid_2774_faces_with_sym.hdb5");
+    auto hdb = make_hydrodynamic_database(resources_path.resolve("Ellipsoid_2774_faces_with_sym.hdb5").path());
 
     // Create an equilibrium frame for the platform and add it to the system at the position of the body CoG.
     // auto eqFrame = std::make_shared<FrEquilibriumFrame>(Position(0.,0.,1.99043),FrRotation(),NWU,Ellipsoid.get()); // 2880 faces.
@@ -181,7 +184,7 @@ int main(int argc, char* argv[]) {
     // INFO: The hydrostatic force object is called before this update to compute the hydrostatic stiffness matrix at the equilibrium position.
 
     // Linear.
-    auto forceHst = make_linear_hydrostatic_force(eqFrame, Ellipsoid,"elipsoid_scaled_mean_position.obj",FrFrame());
+    auto forceHst = make_linear_hydrostatic_force(eqFrame, Ellipsoid,resources_path.resolve("elipsoid_scaled_mean_position.obj").path(),FrFrame());
     forceHst->ShowAsset(true);
     auto ForceHstAsset = forceHst->GetAsset();
     ForceHstAsset->SetSize(0.00000015);
@@ -260,6 +263,6 @@ int main(int argc, char* argv[]) {
 
     clock_t end = clock();
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-    std::cout << elapsed_secs << std::endl;
+    std::cout << "Elapsed time : " << elapsed_secs << std::endl;
 
 }

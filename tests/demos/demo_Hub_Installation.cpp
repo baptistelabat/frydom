@@ -37,6 +37,9 @@ int main(int argc, char* argv[]) {
     steel->SetGn(1e10);
     steel->SetRestitution(0);
 
+    // Resources path
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+
     // --------------------------------------------------
     // Environment
     // --------------------------------------------------
@@ -87,7 +90,7 @@ int main(int argc, char* argv[]) {
 
     auto barge = system.NewBody();
     barge->SetName("Barge");
-    barge->AddMeshAsset("barge.obj");
+    barge->AddMeshAsset(resources_path.resolve("barge.obj").path());
     barge->SetColor(Yellow);
 
     auto collisionModel = std::make_shared<FrCollisionModel>();
@@ -105,7 +108,7 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrodynamics
 
-    auto hdb = make_hydrodynamic_database("Barge_HDB.h5");
+    auto hdb = make_hydrodynamic_database(resources_path.resolve("Barge_HDB.h5").path());
 
     auto eqFrame = std::make_shared<FrEquilibriumFrame>(barge.get());
     eqFrame->SetLogged(true);

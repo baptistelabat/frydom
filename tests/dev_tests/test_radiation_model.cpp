@@ -18,6 +18,8 @@ int main(int argc, char* argv[]) {
 
     std::cout << "=============================== Test radiation model =================== " << std::endl;
 
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+
     // ---- System
 
     FrOffshoreSystem system;
@@ -56,7 +58,7 @@ int main(int argc, char* argv[]) {
 
     // --- Hydrodynamic
 
-    auto hdb = std::make_shared<FrHydroDB>("Platform_HDB.hdb5");
+    auto hdb = std::make_shared<FrHydroDB>(resources_path.resolve("Platform_HDB.hdb5").path());
 
     auto eqFrame = std::make_shared<FrEquilibriumFrame>(body.get());
     system.AddPhysicsItem(eqFrame);
