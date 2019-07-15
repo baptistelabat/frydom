@@ -32,7 +32,9 @@ set(BENCH
 
 # Resource data loading / path definition
 
-include(URL_DEMO_DATA.conf)
+if(${frydom_download_demo_data})
+    include(URL_DEMO_DATA.conf)
+endif()
 
 set(SphereDecay_resources_path ${CMAKE_SOURCE_DIR}/tests/data/bench/sphere/)
 set(SphereIrregular_resources_path ${CMAKE_SOURCE_DIR}/tests/data/bench/sphere/)
@@ -69,6 +71,4 @@ foreach (subdir ${subdirs})
     add_subdirectory(${subdir})
 endforeach ()
 
-
-configure_file(../data/ship/Ship.obj . COPYONLY)
 

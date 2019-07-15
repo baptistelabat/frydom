@@ -39,6 +39,7 @@ option(frydom_build_tests "Activate build tests" ON)
 option(frydom_build_unit_test "Build unit tests" ON)
 option(frydom_build_demo "Build demo tests" ON)
 option(frydom_build_dev_test "Build dev test" ON)
+option(frydom_download_demo_data "Downloading demo data" ON)
 
 #-----------------------------------------------------------------------------
 # C++ dialect

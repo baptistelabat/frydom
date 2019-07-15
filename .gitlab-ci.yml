@@ -19,7 +19,7 @@ test:
         - rm -rf build
         - mkdir build
         - cd build
-        - cmake -Dfrydom_build_dev_test=OFF -Dfrydom_build_demo=OFF ..
+        - cmake -Dfrydom_download_demo_data=OFF ..
         - make all test -j4
 #    except:
 #        - master
