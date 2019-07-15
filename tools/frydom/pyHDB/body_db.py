@@ -15,8 +15,8 @@
 
 import numpy as np
 
-from hydrostatic_db_v2 import HydrostaticDB
-from inertia_v2 import Inertia
+from hydrostatic_db import HydrostaticDB
+from inertia import Inertia
 
 class BodyDB(object):
 
@@ -75,6 +75,9 @@ class BodyDB(object):
 
         # Motion mask.
         self.Motion_mask = np.zeros(6,dtype = np.int)
+
+        # Radiation mask
+        self.Radiation_mask = np.ones((6, 6 * nb_bodies), dtype = bool)
 
         # Product n*dS for the computation of the Froude-Krylov loads.
         self._nds = None

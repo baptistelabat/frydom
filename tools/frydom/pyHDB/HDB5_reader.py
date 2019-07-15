@@ -19,8 +19,8 @@ import h5py
 
 from meshmagick.mesh import Mesh
 
-from body_db_v2 import *
-from wave_drift_db_v2 import WaveDriftDB
+from body_db import *
+from wave_drift_db import WaveDriftDB
 
 class HDB5reader():
     """
@@ -87,6 +87,12 @@ class HDB5reader():
         # Number of bodies.
         pyHDB.nb_bodies = np.array(reader['NbBody'])
 
+        # Solver.
+        try:
+            pyHDB.solver = np.array(reader['Solver'])
+        except:
+            pyHDB.solver = "Nemoh"
+
     def read_discretization(self, reader, pyHDB):
         """This function reads the discretization parameters of the *.hdb5 file.
 
@@ -128,7 +134,7 @@ class HDB5reader():
             pyHDB.dt = np.array(reader[time_path + "/TimeStep"])
         except:
             pyHDB.dt = final_time / (pyHDB.nb_time_samples - 1)
-        pyHDB.time = np.arange(start=0., stop=final_time + pyHDB.dt, step=pyHDB.dt) # Definition of time.
+        pyHDB.time = np.linspace(start=0., stop=final_time, num=pyHDB.nb_time_samples)
 
     def read_mesh(self, reader, mesh_path):
 
@@ -398,6 +404,12 @@ class HDB5reader_v2(HDB5reader):
 
             # Infinite added mass.
             body.Inf_Added_mass[:, 6 * j:6 * (j + 1)] = np.array(reader[radiation_body_motion_path + "/InfiniteAddedMass"])
+
+            # Radiation mask.
+            try:
+                body.Radiation_mask[:, 6 * j:6 * (j + 1)] = np.array(reader[radiation_body_motion_path + "/RadiationMask"])
+            except:
+                pass
 
             for imotion in range(0, 6):
 

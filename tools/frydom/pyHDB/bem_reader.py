@@ -19,9 +19,9 @@ from warnings import warn
 from meshmagick.mmio import load_MAR
 from meshmagick.mesh import Mesh, Plane
 
-from wave_dispersion_relation_v2 import solve_wave_dispersion_relation
+from wave_dispersion_relation import solve_wave_dispersion_relation
 from pyHDB import inf
-from body_db_v2 import *
+from body_db import *
 
 class _BEMReader(object):
     """
@@ -559,24 +559,24 @@ class NemohReader(_BEMReader):
         ############################################################################
 
         # Diffraction.
+        i_force = 0
         for body in pyHDB.bodies:
-            i_force = 0
             for j in range(0,6):
                 if(body.Force_mask[j] == 1): # Force activated.
                     body.Diffraction[j,:,:] = diffraction_data[i_force,:,:]
                     i_force = i_force + 1
 
         # Added mass and damping.
+        i_force = 0
         for body_p in pyHDB.bodies:
-            i_force = 0
             for p in range(0,6):
                 if(body_p.Force_mask[p] == 1): # Force activated.
+                    i_motion = 0
                     for body_q in pyHDB.bodies:
-                        i_motion = 0
                         for q in range(0,6):
                             if(body_q.Motion_mask[q] == 1): # Motion activated.
-                                body_p.Added_mass[p, q, :] = added_mass_data_v2[i_force, i_motion,:]
-                                body_p.Damping[p, q, :] = radiation_damping_data_v2[i_force, i_motion, :]
+                                body_p.Added_mass[p, 6 * body_q.i_body + q, :] = added_mass_data_v2[i_force, i_motion,:]
+                                body_p.Damping[p, 6 * body_q.i_body + q, :] = radiation_damping_data_v2[i_force, i_motion, :]
                                 i_motion = i_motion + 1
                     i_force = i_force + 1
 

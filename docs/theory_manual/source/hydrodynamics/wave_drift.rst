@@ -26,5 +26,5 @@ where :math:`k_{\omega}` is the wave number and :math:`x_w` is the wave directio
 
     Representation of the wave directions and vessel orientation used for wave drift force computation.
 
-- :math:`\mathbf{C}(\omega_e,\alpha)` are the polar wave drift coefficients, in :math:`N/m^2` which depend on :math:`\omega_e` and :math:`\alpha)`.
+- :math:`\mathbf{C}(\omega_e,\alpha)` are the polar wave drift coefficients, in :math:`N/m^2` which depend on :math:`\omega_e` and :math:`\alpha`.
 

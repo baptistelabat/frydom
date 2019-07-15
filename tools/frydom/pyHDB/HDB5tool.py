@@ -17,7 +17,7 @@
 import os
 import argparse
 
-from frydom.pyHDB.HDB5_v2 import *
+from frydom.pyHDB.HDB5 import *
 
 try:
     import argcomplete
@@ -101,6 +101,10 @@ def get_parser(parser):
     parser.add_argument('--sym_hdb','-sym', '-s', action="store_true",help="""
                 Symmetrization of the HDB.""")
 
+    # Update the radiation mask.
+    parser.add_argument('--radiation_mask', '-rad_mask', '-rm', action="store_true", help="""
+                    Update the radiation mask of all bodies.""")
+
     # Writing the hdb5 output file.
     parser.add_argument('--write', '--export','-w', action="store",help="""
                 Writing the hdb5 output file with the given name.""")
@@ -137,18 +141,15 @@ def get_parser(parser):
     parser.add_argument('--initialization','-init', action="store_true",help="""
                 Initialization of the hydrodynamic database: computation of the Froude-Krylov loads, IRF, etc.""")
 
-    # Report generation.
-    parser.add_argument('--report_generation', '--report', '-rg', action="store", help="""
-                Report generation about the hydrodynamic database in the defined folder.""")
-
     return parser
 
 def Read_cal_hdb5(args):
 
     # BEM reader.
-    if (args.path_to_nemoh_cal is not None):
+    if (args.path_to_nemoh_cal is not None): # Nemoh.
         database = HDB5()
         database.nemoh_reader(args.path_to_nemoh_cal[0])
+        database._pyHDB.solver = "Nemoh"
 
     # Reading a hdb5 file.
     if (args.read is not None):
@@ -194,7 +195,7 @@ def get_Arg_part_1_CE(args, database):
         database.discretization._delta_time = float(args.time_step_irf[0])
 
     # Initialize pyHDB.
-    if (args.path_to_nemoh_cal is not None or args.initialization is True):  # _initialize is automatically called when a .cal is read.
+    if (args.path_to_nemoh_cal is not None or args.initialization is True): # _initialize is automatically called when a .cal is read.
         database._initialize()
 
     # Body - Active hydrostatics (useless).
@@ -293,6 +294,10 @@ def get_Arg_part_2_CE(args, database):
     if (args.sym_hdb is True):
         database.symmetry_HDB()
 
+    # Radiation mask.
+    if(args.radiation_mask is True):
+        database.Update_radiation_mask()
+
     return database
 
 def get_Arg_part_3_CE(args, database):
@@ -344,18 +349,6 @@ def get_Arg_part_4_CE(args, database):
     if (args.write is not None):
         database.export_hdb5(args.write)
 
-    # Report generation - hdb only.
-    if (args.report_generation is not None):
-        database.report_writing(args.report_generation)
-
-    return database
-
-def get_Arg_part_5_CE(args, database):
-
-    # Report generation - Building the html file.
-    if (args.report_generation is not None):
-        database.report_building_html(args.report_generation)
-
     return database
 
 def main():
@@ -393,9 +386,6 @@ def main():
 
     # 4th set of arguments - FRyDoM CE.
     database = get_Arg_part_4_CE(args, database)
-
-    # 5th set of arguments - FRyDoM CE.
-    database = get_Arg_part_5_CE(args, database)
 
 if __name__ == '__main__':
     main()

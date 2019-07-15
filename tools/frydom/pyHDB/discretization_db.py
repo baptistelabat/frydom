@@ -38,7 +38,7 @@ class DiscretizationDB(object):
         self._nb_wave_directions = None
 
         # Time discretization for the impulse response functions.
-        self._final_time = 30
+        self._final_time = None
         self._nb_time_sample = None
         self._delta_time = 0.008
 
@@ -278,7 +278,7 @@ class DiscretizationDB(object):
             Time vector.
         """
 
-        return np.linspace(0., self._final_time, self._nb_time_sample)
+        return np.linspace(start = 0., stop = self._final_time, num = self._nb_time_sample)
 
     def initialize(self, pyHDB):
 
@@ -330,7 +330,16 @@ class DiscretizationDB(object):
 
         self._wave_dirs = np.radians(np.linspace(self.min_angle, self.max_angle, self.nb_wave_directions))
 
-        # Time.
+        # Final time.
+        if (self._final_time is None):
+
+            # Wave frequency step.
+            dw = self._wave_frequencies[1] - self._wave_frequencies[0]
+
+            # The final time is chosen to be consistent with the wave frequency step.
+            self._final_time = np.pi / (dw) # 2*pi / (2*dw).
+
+        # Number of time steps.
         if self._nb_time_sample is None:
             self._nb_time_sample = int(self.final_time / self._delta_time) + 1
             self._delta_time = self.final_time / float(self.nb_time_sample - 1)

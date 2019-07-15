@@ -16,8 +16,8 @@ import numpy as np
 from scipy import interpolate
 from datetime import datetime
 
-from wave_dispersion_relation_v2 import solve_wave_dispersion_relation
-from wave_drift_db_v2 import WaveDriftDB
+from wave_dispersion_relation import solve_wave_dispersion_relation
+from wave_drift_db import WaveDriftDB
 
 inf = float('inf') # Definition of infinity for depth.
 
@@ -91,6 +91,9 @@ class pyHDB():
         # Drift loads from Kochin functions.
         self.has_Drift_Kochin = False
         self.Wave_drift_force = None
+
+        # Solver.
+        self.solver = None
 
     def set_wave_frequencies(self):
         """Frequency array of BEM computations in rad/s.
@@ -298,34 +301,16 @@ class pyHDB():
                         nds = body.get_nds(i_force) # n*ds.
                         body.Froude_Krylov[i_force, :, :] = np.einsum('ijk, i -> jk', pressure, -nds) # Il s'agit de la normale entrante.
 
-    def eval_impulse_response_function(self, tf = 30., dt = None, full=True):
+    def eval_impulse_response_function(self, full=True):
         """Computes the impulse response functions.
 
         It uses the Ogilvie formulas based on radiation damping integration (Inverse Fourier Transform).
 
         Parameters
         ----------
-        tf : float, optional
-            Final time (seconds). Default is 30.
-        dt : float, optional
-            Time step (seconds). Default is None. If None, a time step is computed according to the max
-            frequency of
-            hydrodynamic coefficients (the Nyquist frequency is taken)
         full : bool, optional
             If True (default), it will use the full wave frequency range for computations.
         """
-
-        # Time.
-        if dt is None:
-            # Using Shannon theorem.
-            dt = pi / (10 * self.max_frequency)
-        time = np.arange(start=0., stop=tf + dt, step=dt)
-        tf = time[-1]  # It is overwriten !!
-
-        # Storage.
-        self.dt = dt
-        self.time = time
-        self.nb_time_samples = int(tf / self.dt) + 1
 
         # Wave frequency range.
         if full:
@@ -334,7 +319,7 @@ class pyHDB():
             w = self.omega
 
         # Computation.
-        wt = np.einsum('i, j -> ij', w, time)  # w*t.
+        wt = np.einsum('i, j -> ij', w, self.time)  # w*t.
         cwt = np.cos(wt)  # cos(w*t).
 
         for body in self.bodies:
@@ -363,11 +348,6 @@ class pyHDB():
          It uses the Ogilvie formula to get the coefficients from the impulse response functions.
         """
 
-        # Time.
-        dt = self.dt
-        time = self.time
-        tf = time[-1]
-
         # Wave frequency range.
         if full:
             w = self.get_full_omega()
@@ -375,7 +355,7 @@ class pyHDB():
             w = self.omega
 
         # Computation.
-        wt = np.einsum('i, j -> ij', w, time)  # w*t.
+        wt = np.einsum('i, j -> ij', w, self.time)  # w*t.
         sin_wt = np.sin(wt) # sin(w*t).
 
         for body in self.bodies:
@@ -393,7 +373,7 @@ class pyHDB():
                 cm = body.radiation_added_mass(self._iwcut)
 
             kernel = np.einsum('ijk, lk -> ijlk', irf, sin_wt)  # irf*sin(w*t).
-            integral = np.einsum('ijk, k -> ijk', np.trapz(kernel, x=time, axis=3), 1. / w)  # 1/w * int(irf*sin(w*t),dt).
+            integral = np.einsum('ijk, k -> ijk', np.trapz(kernel, x=self.time, axis=3), 1. / w)  # 1/w * int(irf*sin(w*t),dt).
 
             body.Inf_Added_mass = (cm + integral).mean(axis=2)  # mean( A(w) + 1/w * int(irf*sin(w*t),dt) ) wrt w.
 
@@ -408,11 +388,6 @@ class pyHDB():
             If True (default), it will use the full frequency range for computations.
         """
 
-        # Time.
-        dt = self.dt
-        time = self.time
-        tf = time[-1]
-
         # Wave frequency range.
         if full:
             w = self.get_full_omega()
@@ -420,7 +395,7 @@ class pyHDB():
             w = self.omega
 
         # Computation.
-        wt = np.einsum('i, j ->ij', w, time)  # w*t.
+        wt = np.einsum('i, j ->ij', w, self.time)  # w*t.
         cwt = np.cos(wt)  # cos(w*t).
 
         for body in self.bodies:
@@ -726,6 +701,10 @@ class pyHDB():
         dset = writer.create_dataset('NbBody', data=self.nb_bodies)
         dset.attrs['Description'] = 'Number of hydrodynamic bodies.'
 
+        # Solver.
+        dset = writer.create_dataset('Solver', data=self.solver)
+        dset.attrs['Description'] = 'Hydrodynamic solver used for computing the hydrodynamic database.'
+
     def write_discretization(self,writer):
         """This function writes the discretization parameters into the *.hdb5 file.
 
@@ -969,18 +948,24 @@ class pyHDB():
 
             irf_path = radiation_body_motion_path + "/ImpulseResponseFunctionK"
             dg = writer.create_group(irf_path)
-            dg.attrs['Description'] = "Impulse response functions K for velocity of body %u that radiates waves " \
+            dg.attrs['Description'] = "Impulse response functions K due to the velocity of body %u that radiates waves " \
                                       "and generates forces on body %u." % (j, body.i_body)
 
             irf_ku_path = radiation_body_motion_path + "/ImpulseResponseFunctionKU"
             dg = writer.create_group(irf_ku_path)
-            dg.attrs['Description'] = "Impulse response functions Ku for velocity of body %u that radiates waves " \
+            dg.attrs['Description'] = "Impulse response functions Ku due to the velocity of body %u that radiates waves " \
                                       "and generates forces on body %u." % (j, body.i_body)
 
             # Infinite added mass.
             dset = writer.create_dataset(radiation_body_motion_path + "/InfiniteAddedMass",
                                          data=body.Inf_Added_mass[:,6*j:6*(j+1)])
             dset.attrs['Description'] = "Infinite added mass matrix that modifies the apparent mass of body %u from " \
+                                        "acceleration of body %u." % (body.i_body, j)
+
+            # Radiation mask.
+            dset = writer.create_dataset(radiation_body_motion_path + "/RadiationMask",
+                                         data=body.Radiation_mask[:, 6 * j:6 * (j + 1)])
+            dset.attrs['Description'] = "Radiation mask of body %u from " \
                                         "acceleration of body %u." % (body.i_body, j)
 
             for idof in range(0,6):
@@ -1126,7 +1111,7 @@ class pyHDB():
         # Diffraction and Froude-Krylov loads.
         self.write_excitation(writer, body, body_path + "/Excitation")
 
-        # Added mass and damping coefficients and impulse response functions.
+        # Added mass and damping coefficients, radiation masks and impulse response functions.
         self.write_radiation(writer, body, body_path + "/Radiation")
 
         # Hydrostatics.

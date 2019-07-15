@@ -18,13 +18,12 @@ import os
 from math import *
 import numpy as np
 
-from bem_reader_v2 import *
+from bem_reader import *
 from HDB5_reader import *
 from pyHDB import *
-from discretization_db_v2 import DiscretizationDB
-from wave_drift_db_v2 import WaveDriftDB
+from discretization_db import DiscretizationDB
+from wave_drift_db import WaveDriftDB
 from plot_db import *
-from Report_generation import *
 
 class HDB5(object):
 
@@ -46,9 +45,6 @@ class HDB5(object):
 
         # Initialization parameter.
         self._is_initialized = False
-
-        # Report.
-        self.report = None
 
         return
 
@@ -118,13 +114,16 @@ class HDB5(object):
         # Computing Froude-Krylov loads.
         self._pyHDB.Eval_Froude_Krylov_loads()
 
-        # Printing input data.
+        # Initialization of the discretization object.
         self._discretization.initialize(self._pyHDB)
 
+        # Time.
+        self._pyHDB.time = self.discretization.time
+        self._pyHDB.dt = self.discretization.delta_time
+        self._pyHDB.nb_time_samples = self.discretization.nb_time_sample
+
         # Impule response functions for radiation damping.
-        tf = self.discretization.final_time
-        dt = self.discretization.delta_time
-        self._pyHDB.eval_impulse_response_function(tf=tf, dt=dt)
+        self._pyHDB.eval_impulse_response_function()
 
         # Infinite masses.
         self._pyHDB.eval_infinite_added_mass()
@@ -376,6 +375,24 @@ class HDB5(object):
         if bool:
             self._pyHDB.bodies[ibody_force].irf[iforce, 6 * ibody_force + iforce, :] *= coeff
 
+    def Update_radiation_mask(self):
+        """This function asks the user to define the damping coefficient which should be zeroed and update the radiation mask accordingly."""
+
+        for ibody_force in range(0, self._pyHDB.nb_bodies):
+            for ibody_motion in range(0, self._pyHDB.nb_bodies):
+
+                # data.
+                data = np.zeros((6, 6, self._pyHDB.nb_wave_freq), dtype=np.float)
+                for iforce in range(0, 6):
+                    for idof in range(0, 6):
+                        for iw in range(0, self._pyHDB.nb_wave_freq):
+                            data[iforce, idof, iw] = np.linalg.norm(self._pyHDB.bodies[ibody_force].Damping[iforce, 6 * ibody_motion + idof, iw]
+                                        + 1j * self._pyHDB.wave_freq[iw] * (self._pyHDB.bodies[ibody_force].Added_mass[iforce, 6 * ibody_motion + idof, iw]
+                                        - self._pyHDB.bodies[ibody_force].Inf_Added_mass[iforce, 6 * ibody_motion + idof]))
+
+                # Plot.
+                plot_AB_array(data, self._pyHDB.wave_freq, ibody_force, ibody_motion, self._pyHDB)
+
     def export_hdb5(self, output_file = None):
         """This function writes the hydrodynamic database into a *.hdb5 file.
 
@@ -451,38 +468,3 @@ class HDB5(object):
         print('')
         print('-------> "%s" has been loaded.' % hdb5_file)
         print('')
-
-    def report_writing(self, output_folder):
-        """This function writes a report about the hydrodynamic database."""
-
-        # Creation of the rst object.
-        self.report = report(output_folder)
-
-        # Description of the report.
-        self.report.WriteIndex()
-
-        # Input parameters.
-        self.report.WriteInputParameters(self._pyHDB, output_folder)
-
-        # HDB results.
-        self.report.WriteHDB(self._pyHDB, output_folder)
-
-        # Writing the rst files except HDB_results.rst.
-        self.report.WriteRst(output_folder)
-
-    def report_building_html(self, output_folder):
-        """This function builds a *.html file of the report."""
-
-        # Writing PP_results.rst.
-        self.report.WritePPRst(output_folder)
-
-        # Building the html file.
-        self.report.BuildHTML(output_folder)
-
-        # Visualization of the html file.
-        self.report.OpenHTML(output_folder)
-
-
-
-
-
