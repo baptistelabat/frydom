@@ -90,7 +90,7 @@ In this test case, the mean wave drift coefficient :math:`C_{wd}` is estimate fr
 
 where :math:`\bar{C_T}` is the mean unsteady resistance and :math:`C_{T,st}` is the steay resistance in calm water.
 
-Estimation of the mean wave drift coefficient in surge :math:`C_{wd, x}` for various wave frequencies is represented in Fig <>
+Estimation of the mean wave drift coefficient in surge :math:`C_{wd, x}` for various wave frequencies is represented in :numref:`fig_wave_drift_coeff`
 
 .. _fig_wave_drift_coeff:
 .. figure:: _static/Cwd.png
@@ -118,21 +118,21 @@ Following [ref], harmonic decomposition of the forces and moment are applied as 
 
 where :math:`X_0` is the constant part and :math:`X_n` the :math:`n^{th}` harmonic coefficient of the function :math:`X_F`.
 
-The zeroth and first harmonic coefficients of :math:`C_T`, :math:`C_H` and :math:`C_M` are compared to experimental results in Fig <_fig_zeroth_coeff>_ and Fig <>.
+The zeroth and first harmonic coefficients of :math:`C_T`, :math:`C_H` and :math:`C_M` are compared to experimental results in :numref:`fig_zeroth_coeff` and :numref:`fig_first_harmonic`.
 
 .. _fig_zeroth_coeff:
-.. figure:: _static/zero_harmonic_plot.png
+.. figure:: _static/zero_harmonic_plot_vert.png
     :align: center
     :alt: Zeroth coefficient
-    :scale: 120%
+    :scale: 50%
 
     Comparison of the zeroth coefficients from FRyDoM (continous lines) with experimental results (discontinous lines).
 
 .. _fig_first_harmonic:
-.. figure:: _static/first_harmonic_plot.png
+.. figure:: _static/first_harmonic_plot_vert.png
     :align: center
     :alt: First coefficient
-    :scale: 120%
+    :scale: 50%
 
     Comparison of the first harmonic coefficient from FRyDoM (continuous lines) with experimental results (discontinuous lines).
 

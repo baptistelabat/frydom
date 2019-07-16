@@ -333,13 +333,14 @@ int main(int argc, char* argv[]) {
     double speed = atof(argv[1]);   // Ship forward speed
     double ak = 0.5*atof(argv[2]);  // Wave amplitude (m)
     double Tk = atof(argv[3]);      // Wave period (s)
-    std::string name = argv[4];     // Output director prefix name
+    char* name = argv[4];     // Output director prefix name
 
     bool captive_test = true;      // fixed heave and pitch motions
 
     // -- System
 
     FrOffshoreSystem system;
+    system.SetName(name);
 
     // -- Ocean
     auto ocean = system.GetEnvironment()->GetOcean();
@@ -396,7 +397,7 @@ int main(int argc, char* argv[]) {
     radiationModel->SetImpulseResponseSize(body.get(), 50., 0.008);
 
     // ##CC for monitoring
-    auto radiationAddedMassForce = std::make_shared<AddedMassRadiationForce>(hdb.get(), body.get());
+    //auto radiationAddedMassForce = std::make_shared<AddedMassRadiationForce>(hdb.get(), body.get());
     // ##CC
 
     // -- Excitation
@@ -450,7 +451,7 @@ int main(int argc, char* argv[]) {
     system.Initialize();
     system.DoAssembly();
 
-    bool is_irrlicht = true;
+    bool is_irrlicht = false;
 
     if (is_irrlicht) {
         system.RunInViewer(50., 10., false);
@@ -468,8 +469,10 @@ int main(int argc, char* argv[]) {
             time += dt;
             system.AdvanceTo(time);
 
+            std::cout << "time : " << time << std::endl;
 
             // ##CC monitoring
+            /*
             std::cout << "time : " << time << " ; position of the body = "
                       << body->GetCOGPositionInWorld(NWU).GetX() << " ; "
                       << body->GetCOGPositionInWorld(NWU).GetY() << " ; "
@@ -494,6 +497,7 @@ int main(int argc, char* argv[]) {
 
 
             radiationAddedMassForce->Update(body.get());
+            */
 
             /*
             log.Write(time,
@@ -510,12 +514,13 @@ int main(int argc, char* argv[]) {
                 radiationAddedMassForce->GetForceInWorld(), radiationAddedMassForce->GetTorqueInWorldAtCOG()
             );
             */
+
             // ##CC
 
         }
-    }
 
-    //log.Close();
+        //log.Close();
+    }
 
     std::cout << "=============================== End ========================" << std::endl;
 
