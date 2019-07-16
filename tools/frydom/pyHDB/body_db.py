@@ -140,16 +140,16 @@ class BodyDB(object):
             # Direction.
             direction = np.zeros(3)
             if (i == 0 or i == 3):
-                direction[0] = 1  # ex.
+                direction[0] = 1 # ex.
             elif (i == 1 or i == 4):
-                direction[1] = 1  # ey.
+                direction[1] = 1 # ey.
             elif (i == 2 or i == 5):
-                direction[2] = 1  # ez.
+                direction[2] = 1 # ez.
 
             # n*ds.
             if i <= 2: # Force.
                 self._nds[i, :] = areas * np.einsum('ij, j -> i', normals, direction)
-            else:  # Moment.
+            else: # Moment.
                 am = centers - self.point[i-3,:]
                 vel = np.cross(direction, am)
                 self._nds[i, :] = areas * (normals * vel).sum(axis=1)

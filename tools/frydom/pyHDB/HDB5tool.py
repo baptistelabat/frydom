@@ -145,6 +145,8 @@ def get_parser(parser):
 
 def Read_cal_hdb5(args):
 
+    """This function reads the input files of a frequency-domain tool or a *.HDB5 file."""
+
     # BEM reader.
     if (args.path_to_nemoh_cal is not None): # Nemoh.
         database = HDB5()
@@ -171,6 +173,9 @@ def Read_cal_hdb5(args):
     return database
 
 def get_Arg_part_1_CE(args, database):
+
+    """This function makes all the fundamental computations with the hydrodynamic database:
+    computation of IRF, infinite added masses, rediscretization, filering, etc."""
 
     # Discretization - Wave directions.
     if (args.discretization_waves is not None):
@@ -290,6 +295,8 @@ def get_Arg_part_1_CE(args, database):
 
 def get_Arg_part_2_CE(args, database):
 
+    """This function makes the symmetry of the HDB and updates the radiation mask."""
+
     # Symmetry of the HDB.
     if (args.sym_hdb is True):
         database.symmetry_HDB()
@@ -301,6 +308,8 @@ def get_Arg_part_2_CE(args, database):
     return database
 
 def get_Arg_part_3_CE(args, database):
+
+    """ This function plots all the physical quantities: added mass, damping, loads and IRF."""
 
     # Plot added mass and damping coefficients.
     if (args.plot_radiation is not None):
@@ -345,6 +354,8 @@ def get_Arg_part_3_CE(args, database):
 
 def get_Arg_part_4_CE(args, database):
 
+    """This function writes the *.hdb5 output file."""
+
     # Writing the hdb5 output file.
     if (args.write is not None):
         database.export_hdb5(args.write)
@@ -375,16 +386,16 @@ def main():
     #                                               Reading arguments
     ####################################################################################################################
 
-    # 1st set of arguments - FryDoM CE.
+    # 1st set of arguments - FryDoM CE - Computation of IRF, infinite added masses, rediscretization, filering, etc.
     database = get_Arg_part_1_CE(args, database)
 
-    # 2nd set of arguments - FRyDoM CE.
+    # 2nd set of arguments - FRyDoM CE - Symmetry of the HDB and updating of the radiation mask.
     database = get_Arg_part_2_CE(args, database)
 
-    # 3rd set of arguments - FRyDoM CE.
+    # 3rd set of arguments - FRyDoM CE - Plots of A, B, Fdiff, Ffk, Fexc., IRF.
     database = get_Arg_part_3_CE(args, database)
 
-    # 4th set of arguments - FRyDoM CE.
+    # 4th set of arguments - FRyDoM CE - Writing the *.hdb5 output file.
     database = get_Arg_part_4_CE(args, database)
 
 if __name__ == '__main__':
