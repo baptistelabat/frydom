@@ -6,6 +6,7 @@ Using HDB5tool
     * So far, only the ouput files of **Nemoh** may be read.
     * The command line options may be combined.
     * Indexes present in arguments start from 0 (for instance, the first body has an index of 0).
+    * Physical quantities are expressed at the center of gravity of each body.
 
 .. contents:: Content
     :local:

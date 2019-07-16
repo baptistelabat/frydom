@@ -402,6 +402,9 @@ class NemohReader(_BEMReader):
                     direction = map(float, dof[1:4])
                     point = map(float, dof[4:])
 
+                    # Center of gravity.
+                    body.position = point
+
                     if motion_type == 1: # Translation.
                         if(direction[0] == 1):
                             body.Motion_mask[0] = 1
