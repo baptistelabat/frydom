@@ -22,7 +22,7 @@ namespace frydom {
 
     //Forward declarations
     class FrFreeSurface;
-    class FrPlane;
+    class FrCPlane;
 
     namespace mesh {
 
@@ -124,11 +124,11 @@ namespace frydom {
 
         private:
 
-            std::shared_ptr<FrPlane> m_plane;
+            std::shared_ptr<FrCPlane> m_plane;
 
         public:
 
-            explicit FrClippingPlane(const std::shared_ptr<FrPlane>& plane);;
+            explicit FrClippingPlane(const std::shared_ptr<FrCPlane>& plane);;
 
             /// This function gives the distance to the plane.
             double GetDistance(const FrMesh::Point &point) const override;
@@ -136,7 +136,7 @@ namespace frydom {
             /// This function gives the intersection node position between an edge and the plane.
             FrMesh::Point GetIntersection(const FrMesh::Point &p0, const FrMesh::Point &p1) override;
 
-            FrPlane* GetPlane() const;
+            FrCPlane* GetPlane() const;
 
         };
 

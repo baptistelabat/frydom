@@ -3,83 +3,201 @@
 //
 
 #include "FrMesh.h"
+#include "FrPlane.h"
 #include "FrMeshClipper.h"
 #include "frydom/core/body/FrInertiaTensor.h"
-#include "frydom/core/common/FrGeometrical.h"
+#include "frydom/core/link/constraint/FrCGeometrical.h"
 
 namespace frydom {
     namespace mesh {
 
 
-        FrInertiaTensor CalcPlainInertiaProperties(const FrMesh &mesh, const double density) {
-
-            auto mass = density * mesh.GetVolume();
-            auto COG = mesh.GetCOG();
-
-            double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
-
-            double intV_x2 = mesh.GetVolumeIntegral(POLY_X2);
-            double intV_y2 = mesh.GetVolumeIntegral(POLY_Y2);
-            double intV_z2 = mesh.GetVolumeIntegral(POLY_Z2);
-
-            Ixx = density * (intV_y2 + intV_z2);
-            Iyy = density * (intV_x2 + intV_z2);
-            Izz = density * (intV_x2 + intV_y2);
-
-            Iyz = -density * mesh.GetVolumeIntegral(POLY_YZ);
-            Ixz = -density * mesh.GetVolumeIntegral(POLY_XZ);
-            Ixy = -density * mesh.GetVolumeIntegral(POLY_XY);
-
-            return FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, FrFrame(), COG, NWU);
-        }
-
-
-        FrInertiaTensor CalcPlainEqInertiaProperties(const FrMesh &mesh, double mass) {
-            return CalcPlainInertiaProperties(mesh, mass/mesh.GetVolume());
-        }
-
-
-        FrInertiaTensor CalcShellInertiaProperties(const FrMesh &mesh, double density, double thickness) {
-
-
-            double area = mesh.GetArea();
-
-            double re = density * thickness;
-
-            auto mass = re * area;
-
-            auto COG = mesh.GetCOG();
-
-            double Intx2, Inty2, Intz2, Intyz, Intxz, Intxy;
-            Intx2 = Inty2 = Intz2 = Intyz = Intxz = Intxy = 0.;
-            for (FrMesh::FaceIter f_iter = mesh.faces_begin(); f_iter != mesh.faces_end(); ++f_iter) {
-
-                Intx2 += mesh.data(*f_iter).GetSurfaceIntegral(POLY_X2);
-                Inty2 += mesh.data(*f_iter).GetSurfaceIntegral(POLY_Y2);
-                Intz2 += mesh.data(*f_iter).GetSurfaceIntegral(POLY_Z2);
-                Intyz += mesh.data(*f_iter).GetSurfaceIntegral(POLY_YZ);
-                Intxz += mesh.data(*f_iter).GetSurfaceIntegral(POLY_XZ);
-                Intxy += mesh.data(*f_iter).GetSurfaceIntegral(POLY_XY);
-
-            }
-
-            double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
-
-            // The inertia tensor is expressed at the mesh origin (not COG)
-            Ixx = re * (Inty2 + Intz2);
-            Iyy = re * (Intx2 + Intz2);
-            Izz = re * (Intx2 + Inty2);
-
-            Iyz = -re * Intyz;
-            Ixz = -re * Intxz;
-            Ixy = -re * Intxy;
-
-            return FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, FrFrame(), COG, NWU);
-        }
-
-        FrInertiaTensor CalcShellEqInertiaProperties(const FrMesh &mesh, double mass, double thickness) {
-            CalcShellInertiaProperties(mesh, mass/(mesh.GetArea()*thickness), thickness);
-        }
+//        FrInertiaTensor CalcPlainInertiaProperties(const FrMesh &mesh, const double density) {
+//
+//            auto mass = density * mesh.GetVolume();
+//            auto COG = mesh.GetCOG();
+//
+//            double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
+//
+//            double intV_x2 = mesh.GetMeshSurfaceIntegral(POLY_X2);
+//            double intV_y2 = mesh.GetMeshSurfaceIntegral(POLY_Y2);
+//            double intV_z2 = mesh.GetMeshSurfaceIntegral(POLY_Z2);
+//
+//            Ixx = density * (intV_y2 + intV_z2);
+//            Iyy = density * (intV_x2 + intV_z2);
+//            Izz = density * (intV_x2 + intV_y2);
+//
+//            Iyz = -density * mesh.GetMeshSurfaceIntegral(POLY_YZ);
+//            Ixz = -density * mesh.GetMeshSurfaceIntegral(POLY_XZ);
+//            Ixy = -density * mesh.GetMeshSurfaceIntegral(POLY_XY);
+//
+//            return FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, FrFrame(), COG, NWU);
+//        }
+//
+//
+//        FrInertiaTensor CalcPlainEqInertiaProperties(const FrMesh &mesh, double mass) {
+//            return CalcPlainInertiaProperties(mesh, mass/mesh.GetVolume());
+//        }
+//
+//
+//        FrInertiaTensor CalcShellInertiaProperties(const FrMesh &mesh, double density, double thickness) {
+//
+//
+//            double area = mesh.GetArea();
+//
+//            double re = density * thickness;
+//
+//            auto mass = re * area;
+//
+//            auto COG = mesh.GetCOG();
+//
+//            double Intx2, Inty2, Intz2, Intyz, Intxz, Intxy;
+//            Intx2 = Inty2 = Intz2 = Intyz = Intxz = Intxy = 0.;
+//            for (FrMesh::FaceIter f_iter = mesh.faces_begin(); f_iter != mesh.faces_end(); ++f_iter) {
+//
+//                Intx2 += mesh.data(*f_iter).GetSurfaceIntegral(POLY_X2);
+//                Inty2 += mesh.data(*f_iter).GetSurfaceIntegral(POLY_Y2);
+//                Intz2 += mesh.data(*f_iter).GetSurfaceIntegral(POLY_Z2);
+//                Intyz += mesh.data(*f_iter).GetSurfaceIntegral(POLY_YZ);
+//                Intxz += mesh.data(*f_iter).GetSurfaceIntegral(POLY_XZ);
+//                Intxy += mesh.data(*f_iter).GetSurfaceIntegral(POLY_XY);
+//
+//            }
+//
+//            double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
+//
+//            // The inertia tensor is expressed at the mesh origin (not COG)
+//            Ixx = re * (Inty2 + Intz2);
+//            Iyy = re * (Intx2 + Intz2);
+//            Izz = re * (Intx2 + Inty2);
+//
+//            Iyz = -re * Intyz;
+//            Ixz = -re * Intxz;
+//            Ixy = -re * Intxy;
+//
+//            return FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, FrFrame(), COG, NWU);
+//        }
+//
+//        FrInertiaTensor CalcShellEqInertiaProperties(const FrMesh &mesh, double mass, double thickness) {
+//            CalcShellInertiaProperties(mesh, mass/(mesh.GetArea()*thickness), thickness);
+//        }
+//
+//        double CalcMeshSurfaceIntegrals(const FrMesh &mesh, int iNormal, IntegrandType type) {
+//
+//            double val = 0.;
+//            for (auto f_iter = mesh.faces_begin(); f_iter != mesh.faces_end(); ++f_iter) {
+//                auto n = mesh.normal(*f_iter);
+//                val += n[iNormal] * mesh.data(*f_iter).GetSurfaceIntegral(type);
+//            }
+//
+//            return val;
+//
+//        }
+//
+//        double CalcVolumeIntegrals(FrMesh &mesh, IntegrandType type) {
+//
+//            int in = 0;
+//            double alpha = 0.;
+//            IntegrandType surfaceIntegralIntegrandType = UNDEFINED_INTEGRAND;
+//
+//            double value;
+//
+//            auto polygonSet = mesh.GetBoundaryPolygonSet();
+//
+//            std::vector<Position> contour;
+//            for (auto& polygon:polygonSet){
+//                for (const auto& heh:polygon) {
+//                    FrMesh::Point P0;
+//                    P0 = mesh.point(mesh.from_vertex_handle(heh));
+//                    contour.push_back(OpenMeshPointToVector3d<Position>(P0));
+//                }
+//            }
+//
+//            geom::FrPlane plane(contour, NWU);
+//
+//            auto normal = plane.GetNormal(NWU);
+//
+//            switch (type) {
+//                case POLY_1:
+//
+//
+//
+//                    value = CalcMeshSurfaceIntegrals(mesh,0,POLY_X);
+//                    value += normal[0] * mesh.GetBoundaryPolygonsSurfaceIntegral(POLY_X);
+//
+//                    break;
+//                case POLY_X:
+//                    in = 0;
+//                    alpha = 0.5;
+//                    surfaceIntegralIntegrandType = POLY_X2;
+//                    break;
+//                case POLY_Y:
+//                    in = 1;
+//                    alpha = 0.5;
+//                    surfaceIntegralIntegrandType = POLY_Y2;
+//                    break;
+//                case POLY_Z:
+//                    in = 2;
+//                    alpha = 0.5;
+//                    surfaceIntegralIntegrandType = POLY_Z2;
+//                    break;
+//                case POLY_X2:
+//                    in = 0;
+//                    alpha = 1. / 3.;
+//                    surfaceIntegralIntegrandType = POLY_X3;
+//                    break;
+//                case POLY_Y2:
+//                    in = 1;
+//                    alpha = 1. / 3.;
+//                    surfaceIntegralIntegrandType = POLY_Y3;
+//                    break;
+//                case POLY_Z2:
+//                    in = 2;
+//                    alpha = 1. / 3.;
+//                    surfaceIntegralIntegrandType = POLY_Z3;
+//                    break;
+//                case POLY_XY:
+//                    in = 0;
+//                    alpha = 0.5;
+//                    surfaceIntegralIntegrandType = POLY_X2Y;
+//                    break;
+//                case POLY_YZ:
+//                    in = 1;
+//                    alpha = 0.5;
+//                    surfaceIntegralIntegrandType = POLY_Y2Z;
+//                    break;
+//                case POLY_XZ:
+//                    in = 2;
+//                    alpha = 0.5;
+//                    surfaceIntegralIntegrandType = POLY_Z2X;
+//                    break;
+//                default:
+//                    std::cerr << "No volume integral can be computed for integrand of type"
+//                              << type << std::endl;
+//            }
+//
+////            double val = 0.;
+////            for (auto f_iter = mesh.faces_begin(); f_iter != mesh.faces_end(); ++f_iter) {
+////                auto n = mesh.normal(*f_iter);
+////                val += n[in] * mesh.data(*f_iter).GetSurfaceIntegral(surfaceIntegralIntegrandType);
+////            }
+////
+////            // Volume integration of 1 may be obtained by 3 surface integration in x, y, z. We use the mean of the three.
+////            if (type == POLY_1) {
+////                double valy, valz; valy = valz = 0;
+////                for (auto f_iter = mesh.faces_begin(); f_iter != mesh.faces_end(); ++f_iter) {
+////                    auto n = mesh.normal(*f_iter);
+////                    valy += n[1] * mesh.data(*f_iter).GetSurfaceIntegral(POLY_Y);
+////                    valz += n[2] * mesh.data(*f_iter).GetSurfaceIntegral(POLY_Z);
+////                }
+////                assert((val-valy)/val<1E-5);assert((val-valz)/val<1E-5);
+//////                val /= 3.;
+////            }
+////
+////            val *= alpha;
+//
+//            return value;
+//        }
 
         FrMesh::FrMesh(std::string meshfile) {
 
@@ -387,101 +505,6 @@ namespace frydom {
 
         }
 
-        double FrMesh::GetVolumeIntegral(IntegrandType type) const {
-            // TODO : mettre en cache avec DCache
-            // TODO: faire un check que les integrales de surface ont ete calculees
-
-            // These formulas are only valid for a bounded mesh. Per extension, they can be considered valid for
-            // clipped mesh with plane on z=0 (or x=0 and y=0).
-            auto box = GetBoundingBox();
-//            assert(std::norm(box.xmin)<1E-5 || std::norm(box.xmax)<1E-5 ||std::norm(box.ymin)<1E-5 ||
-//                           std::norm(box.ymax)<1E-5 ||std::norm(box.zmin)<1E-5 ||std::norm(box.zmax)<1E-5 ||
-//                           IsWatertight() );
-
-            int in = 0;
-            double alpha = 0.;
-            IntegrandType surfaceIntegralIntegrandType = UNDEFINED_INTEGRAND;
-
-            switch (type) {
-                case POLY_1:
-                    in = 0; // check with POLY_Y and POLY_Z
-                    surfaceIntegralIntegrandType = POLY_X;
-                    alpha = 1.;
-                    break;
-                case POLY_X:
-                    in = 0;
-                    alpha = 0.5;
-                    surfaceIntegralIntegrandType = POLY_X2;
-                    break;
-                case POLY_Y:
-                    in = 1;
-                    alpha = 0.5;
-                    surfaceIntegralIntegrandType = POLY_Y2;
-                    break;
-                case POLY_Z:
-                    in = 2;
-                    alpha = 0.5;
-                    surfaceIntegralIntegrandType = POLY_Z2;
-                    break;
-                case POLY_X2:
-                    in = 0;
-                    alpha = 1. / 3.;
-                    surfaceIntegralIntegrandType = POLY_X3;
-                    break;
-                case POLY_Y2:
-                    in = 1;
-                    alpha = 1. / 3.;
-                    surfaceIntegralIntegrandType = POLY_Y3;
-                    break;
-                case POLY_Z2:
-                    in = 2;
-                    alpha = 1. / 3.;
-                    surfaceIntegralIntegrandType = POLY_Z3;
-                    break;
-                case POLY_XY:
-                    in = 0;
-                    alpha = 0.5;
-                    surfaceIntegralIntegrandType = POLY_X2Y;
-                    break;
-                case POLY_YZ:
-                    in = 1;
-                    alpha = 0.5;
-                    surfaceIntegralIntegrandType = POLY_Y2Z;
-                    break;
-                case POLY_XZ:
-                    in = 2;
-                    alpha = 0.5;
-                    surfaceIntegralIntegrandType = POLY_Z2X;
-                    break;
-                default:
-                    std::cerr << "No volume integral can be computed for integrand of type"
-                              << type << std::endl;
-            }
-
-            Normal n;
-            double val = 0.;
-            for (FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
-                n = normal(*f_iter);
-                val += n[in] * data(*f_iter).GetSurfaceIntegral(surfaceIntegralIntegrandType);
-            }
-
-            // Volume integration of 1 may be obtained by 3 surface integration in x, y, z. We use the mean of the three.
-            if (type == POLY_1) {
-                double valy, valz; valy = valz = 0;
-                for (FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
-                    n = normal(*f_iter);
-                    valy += n[1] * data(*f_iter).GetSurfaceIntegral(POLY_Y);
-                    valz += n[2] * data(*f_iter).GetSurfaceIntegral(POLY_Z);
-                }
-                assert((val-valy)/val<1E-5);assert((val-valz)/val<1E-5);
-//                val /= 3.;
-            }
-
-            val *= alpha;
-
-            return val;
-        }
-
         BoundingBox FrMesh::GetBoundingBox() const {
             BoundingBox bbox;
 
@@ -498,62 +521,62 @@ namespace frydom {
             return bbox;
         }
 
-        const double FrMesh::GetArea() const {
-            if (!c_meshArea.IsValid()) {
-
-                double area = 0.;
-                for (FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
-                    area += GetArea(*f_iter);
-                }
-                c_meshArea = area;
-            }
-
-            return c_meshArea;
-        }
+//        const double FrMesh::GetArea() const {
+//            if (!c_meshArea.IsValid()) {
+//
+//                double area = 0.;
+//                for (FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
+//                    area += GetArea(*f_iter);
+//                }
+//                c_meshArea = area;
+//            }
+//
+//            return c_meshArea;
+//        }
 
         const double FrMesh::GetArea(const FaceHandle &fh) const {
             return data(fh).GetSurfaceIntegral(POLY_1);
         }
 
-        const double FrMesh::GetVolume() const {
-            return GetVolumeIntegral(POLY_1);
-        }
-
-        const Position FrMesh::GetCOG() const {
-
-            double xb, yb, zb;
-            xb = yb = zb = 0.;
-
-            mesh::FrMesh::Normal Normal;
-
-            for (mesh::FrMesh::FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
-                Normal = normal(*f_iter);
-                xb += Normal[0] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_X2);
-                yb += Normal[1] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y2);
-                zb += Normal[2] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2);
-            }
-
-            auto volume = GetVolume();
-
-            xb /= 2. * volume;
-            yb /= 2. * volume;
-            zb /= 2. * volume; // FIXME: si on prend une cote de surface de clip non nulle, il faut ajouter la quantite ze**2 * Sf
-
-            return {xb,yb,zb};
-
-        }
-
-        const Position FrMesh::GetCOG(FrClippingPlane* plane) {
-
-            auto COG = GetCOG();
-
-            if (!CheckBoundaryPolygon(plane)) return COG;
-
-            double ze = plane->GetPlane()->GetNormaleInWorld(NWU).dot(plane->GetPlane()->GetOriginInWorld(NWU));
-
-            return COG + ze * plane->GetPlane()->GetNormaleInWorld(NWU);
-
-        }
+//        const double FrMesh::GetVolume() const {
+//            return GetMeshSurfaceIntegral(POLY_1);
+//        }
+//
+//        const Position FrMesh::GetCOG() const {
+//
+//            double xb, yb, zb;
+//            xb = yb = zb = 0.;
+//
+//            mesh::FrMesh::Normal Normal;
+//
+//            for (mesh::FrMesh::FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
+//                Normal = normal(*f_iter);
+//                xb += Normal[0] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_X2);
+//                yb += Normal[1] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y2);
+//                zb += Normal[2] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2);
+//            }
+//
+//            auto volume = GetVolume();
+//
+//            xb /= 2. * volume;
+//            yb /= 2. * volume;
+//            zb /= 2. * volume; // FIXME: si on prend une cote de surface de clip non nulle, il faut ajouter la quantite ze**2 * Sf
+//
+//            return {xb,yb,zb};
+//
+//        }
+//
+//        const Position FrMesh::GetCOG(FrClippingPlane* plane) {
+//
+//            auto COG = GetCOG();
+//
+//            if (!CheckBoundaryPolygon(plane)) return COG;
+//
+//            double ze = plane->GetPlane()->GetNormaleInWorld(NWU).dot(plane->GetPlane()->GetOriginInWorld(NWU));
+//
+//            return COG + ze * plane->GetPlane()->GetNormaleInWorld(NWU);
+//
+//        }
 
 //        const FrInertiaTensor FrMesh::GetPlainInertiaTensorAtCOG(double density) const {
 //
@@ -672,7 +695,7 @@ namespace frydom {
             }
 
             double Int1, IntX, IntY, IntXY, IntX2, IntY2;
-            Int1 = IntX = IntY = IntXY = IntX2 = IntY2 =0;
+            Int1 = IntX = IntY = IntXY = IntX2 = IntY2 = 0;
 
             PolygonSet polygonSet = m_polygonSet.Get();
 
@@ -704,7 +727,8 @@ namespace frydom {
                     Int1 += dy * px;
                     IntX += dy * (px * px - x0 * x1);
                     IntY += dx * (py * py - y0 * y1);
-                    IntXY += dy * (py * a + 2 * px * (x0 * y0 + x1 * y1));
+//                    IntXY += dy * (py * a + 2 * px * (x0 * y0 + x1 * y1));
+                    IntXY += dy * (py * px*px + y0*x0*x0 + y1*x1*x1);
                     IntX2 += dy * a * px;
                     IntY2 += dx * b * py;
 
@@ -724,24 +748,20 @@ namespace frydom {
             c_polygonSurfaceIntegrals.Set(BoundaryPolygonSurfaceIntegrals(Int1, IntX, IntY, IntXY, IntX2, IntY2));
         }
 
+        double FrMesh::CalcMeshSurfaceIntegrals(int iNormal, double alpha, IntegrandType type) {
 
-        void FrMesh::UpdateVolumeIntegrals() {
-
-
-
-
-            Normal n;
             double val = 0.;
             for (FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
-                n = normal(*f_iter);
-                val += n[in] * data(*f_iter).GetSurfaceIntegral(surfaceIntegralIntegrandType);
+                auto n = normal(*f_iter);
+                val += n[iNormal] * data(*f_iter).GetSurfaceIntegral(type);
             }
 
+            return val * alpha;
         }
 
 
 
-        FrMesh::PolygonSet FrMesh::GetBoundaryPolygonSet() { // FIXME: devrait etre const...
+        PolygonSet FrMesh::GetBoundaryPolygonSet() { // FIXME: devrait etre const...
             if (!m_polygonSet.IsValid()) {
                 CalcBoundaryPolygonSet();
             }
@@ -792,11 +812,12 @@ namespace frydom {
             }
 
             m_polygonSet = polygonSet;
+//            m_polygoneSet.Get() = polygonSet;
         }
 
         bool FrMesh::CheckBoundaryPolygon(FrClippingPlane *plane) {
 
-            PolygonSet polygonSet = GetBoundaryPolygonSet();
+            auto polygonSet = GetBoundaryPolygonSet();
             bool valid = !polygonSet.empty();
 
             for (auto& polygon : polygonSet) {

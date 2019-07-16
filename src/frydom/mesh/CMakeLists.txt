@@ -8,6 +8,8 @@ set(SRC_FILES
 		FrMeshClipper.cpp
 		FrHydroMesh.cpp
 		FrIncrementalMeshWriter.cpp
+		FrPlane.cpp
+		FrPolygonSet.cpp
         )
 
 set(FRYDOM_MESH_SOURCES "")

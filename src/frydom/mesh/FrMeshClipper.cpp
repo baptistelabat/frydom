@@ -4,7 +4,7 @@
 
 #include "FrMeshClipper.h"
 
-#include "frydom/core/common/FrGeometrical.h"
+#include "frydom/core/link/constraint/FrCGeometrical.h"
 
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
@@ -19,7 +19,7 @@ namespace frydom {
 
         // -----------------------------------------------------------------------------------------------------------------
 
-        FrClippingPlane::FrClippingPlane(const std::shared_ptr<FrPlane> &plane) : m_plane(plane) {}
+        FrClippingPlane::FrClippingPlane(const std::shared_ptr<FrCPlane> &plane) : m_plane(plane) {}
 
         VectorT<double, 3>
         FrClippingPlane::GetIntersection(const VectorT<double, 3> &p0, const VectorT<double, 3> &p1) {
@@ -74,7 +74,7 @@ namespace frydom {
 
         }
 
-        FrPlane *FrClippingPlane::GetPlane() const {
+        FrCPlane *FrClippingPlane::GetPlane() const {
             return m_plane.get();
         }
 

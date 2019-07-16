@@ -28,6 +28,7 @@
 
 #include "FrCache.h"
 #include "FrMeshTraits.h"
+#include "FrPolygonSet.h"
 #include "FrIncrementalMeshWriter.h"
 
 
@@ -122,116 +123,118 @@ namespace frydom {
             };
             mutable FrCache<BoundaryPolygonSurfaceIntegrals> c_polygonSurfaceIntegrals;
 
-
-            class VolumeIntegrals {
-
-            private:
-                double m_Int_1  = 0.0;
-                double m_Int_x  = 0.0;
-                double m_Int_y  = 0.0;
-                double m_Int_z  = 0.0;
-                double m_Int_xy = 0.0;
-                double m_Int_xz = 0.0;
-                double m_Int_yz = 0.0;
-                double m_Int_x2 = 0.0;
-                double m_Int_y2 = 0.0;
-                double m_Int_z2 = 0.0;
-                double m_Int_x3 = 0.0;
-                double m_Int_y3 = 0.0;
-                double m_Int_z3 = 0.0;
-                double m_Int_x2y = 0.0;
-                double m_Int_y2z = 0.0;
-                double m_Int_z2x = 0.0;
-
-            public:
-
-                VolumeIntegrals() = default;
-
-                VolumeIntegrals(double Int_1, double Int_x, double Int_y, double Int_z, double Int_xy, double Int_xz, double Int_yz,
-                                double Int_x2, double Int_y2, double Int_z2, double Int_x3, double Int_y3, double Int_z3,
-                                double Int_x2y, double Int_y2z, double Int_z2x) {
-                    m_Int_1 = Int_1;
-                    m_Int_x = Int_x;
-                    m_Int_y = Int_y;
-                    m_Int_z = Int_z;
-                    m_Int_xy = Int_xy;
-                    m_Int_xz = Int_xz;
-                    m_Int_yz = Int_yz;
-                    m_Int_x2 = Int_x2;
-                    m_Int_y2 = Int_y2;
-                    m_Int_z2 = Int_z2;
-                    m_Int_x2 = Int_x3;
-                    m_Int_y2 = Int_y3;
-                    m_Int_z2 = Int_z3;
-                    m_Int_x2y = Int_x2y;
-                    m_Int_y2z = Int_y2z;
-                    m_Int_z2x = Int_z2x;
-                }
+//            FrPolygonSet m_polygoneSet;
 
 
-                VolumeIntegrals(VolumeIntegrals& integrals) {
-                    m_Int_1 = integrals.m_Int_1;
-                    m_Int_x = integrals.m_Int_x;
-                    m_Int_y = integrals.m_Int_y;
-                    m_Int_z = integrals.m_Int_z;
-                    m_Int_xy = integrals.m_Int_xy;
-                    m_Int_xz = integrals.m_Int_xz;
-                    m_Int_yz = integrals.m_Int_yz;
-                    m_Int_x2 = integrals.m_Int_x2;
-                    m_Int_y2 = integrals.m_Int_y2;
-                    m_Int_z2 = integrals.m_Int_z2;
-                    m_Int_x2 = integrals.m_Int_x3;
-                    m_Int_y2 = integrals.m_Int_y3;
-                    m_Int_z2 = integrals.m_Int_z3;
-                    m_Int_x2y = integrals.m_Int_x2y;
-                    m_Int_y2z = integrals.m_Int_y2z;
-                    m_Int_z2x = integrals.m_Int_z2x;
-                }
-
-                /// This function gives the surface integral of a mesh.
-                double GetSurfaceIntegral(IntegrandType type) const {
-                    switch (type) {
-                        case POLY_1:
-                            return m_Int_1;
-                        case POLY_X:
-                            return m_Int_x;
-                        case POLY_Y:
-                            return m_Int_y;
-                        case POLY_Z:
-                            return m_Int_z;
-                        case POLY_XY:
-                            return m_Int_xy;
-                        case POLY_XZ:
-                            return m_Int_xz;
-                        case POLY_YZ:
-                            return m_Int_yz;
-                        case POLY_X2:
-                            return m_Int_x2;
-                        case POLY_Y2:
-                            return m_Int_y2;
-                        case POLY_Z2:
-                            return m_Int_z2;
-                        case POLY_X3:
-                            return m_Int_x3;
-                        case POLY_Y3:
-                            return m_Int_y3;
-                        case POLY_Z3:
-                            return m_Int_z3;
-                        case POLY_X2Y:
-                            return m_Int_x2y;
-                        case POLY_Y2Z:
-                            return m_Int_y2z;
-                        case POLY_Z2X:
-                            return m_Int_z2x;
-                        default:
-                            std::cerr << "No integration rule for integrand of type " << type << " for polygons" << std::endl;
-                            exit(1);
-                    }
-
-                }
-
-            };
-            mutable FrCache<VolumeIntegrals> c_volumeIntegrals;
+//            class MeshSurfaceIntegrals {
+//
+//            private:
+//                double m_Int_1  = 0.0;
+//                double m_Int_x  = 0.0;
+//                double m_Int_y  = 0.0;
+//                double m_Int_z  = 0.0;
+//                double m_Int_xy = 0.0;
+//                double m_Int_xz = 0.0;
+//                double m_Int_yz = 0.0;
+//                double m_Int_x2 = 0.0;
+//                double m_Int_y2 = 0.0;
+//                double m_Int_z2 = 0.0;
+//                double m_Int_x3 = 0.0;
+//                double m_Int_y3 = 0.0;
+//                double m_Int_z3 = 0.0;
+//                double m_Int_x2y = 0.0;
+//                double m_Int_y2z = 0.0;
+//                double m_Int_z2x = 0.0;
+//
+//            public:
+//
+//                MeshSurfaceIntegrals() = default;
+//
+//                MeshSurfaceIntegrals(double Int_1, double Int_x, double Int_y, double Int_z, double Int_xy, double Int_xz, double Int_yz,
+//                                double Int_x2, double Int_y2, double Int_z2, double Int_x3, double Int_y3, double Int_z3,
+//                                double Int_x2y, double Int_y2z, double Int_z2x) {
+//                    m_Int_1 = Int_1;
+//                    m_Int_x = Int_x;
+//                    m_Int_y = Int_y;
+//                    m_Int_z = Int_z;
+//                    m_Int_xy = Int_xy;
+//                    m_Int_xz = Int_xz;
+//                    m_Int_yz = Int_yz;
+//                    m_Int_x2 = Int_x2;
+//                    m_Int_y2 = Int_y2;
+//                    m_Int_z2 = Int_z2;
+//                    m_Int_x2y = Int_x2y;
+//                    m_Int_y2z = Int_y2z;
+//                    m_Int_z2x = Int_z2x;
+//                    m_Int_x3 = Int_x3;
+//                    m_Int_y3 = Int_y3;
+//                    m_Int_z3 = Int_z3;
+//                }
+//
+//
+//                MeshSurfaceIntegrals(MeshSurfaceIntegrals& integrals) {
+//                    m_Int_1 = integrals.m_Int_1;
+//                    m_Int_x = integrals.m_Int_x;
+//                    m_Int_y = integrals.m_Int_y;
+//                    m_Int_z = integrals.m_Int_z;
+//                    m_Int_xy = integrals.m_Int_xy;
+//                    m_Int_xz = integrals.m_Int_xz;
+//                    m_Int_yz = integrals.m_Int_yz;
+//                    m_Int_x2 = integrals.m_Int_x2;
+//                    m_Int_y2 = integrals.m_Int_y2;
+//                    m_Int_z2 = integrals.m_Int_z2;
+//                    m_Int_x2y = integrals.m_Int_x2y;
+//                    m_Int_y2z = integrals.m_Int_y2z;
+//                    m_Int_z2x = integrals.m_Int_z2x;
+//                    m_Int_x3 = integrals.m_Int_x3;
+//                    m_Int_y3 = integrals.m_Int_y3;
+//                    m_Int_z3 = integrals.m_Int_z3;
+//                }
+//
+//                /// This function gives the surface integral of a mesh.
+//                double GetSurfaceIntegral(IntegrandType type) const {
+//                    switch (type) {
+//                        case POLY_1:
+//                            return m_Int_1;
+//                        case POLY_X:
+//                            return m_Int_x;
+//                        case POLY_Y:
+//                            return m_Int_y;
+//                        case POLY_Z:
+//                            return m_Int_z;
+//                        case POLY_XY:
+//                            return m_Int_xy;
+//                        case POLY_XZ:
+//                            return m_Int_xz;
+//                        case POLY_YZ:
+//                            return m_Int_yz;
+//                        case POLY_X2:
+//                            return m_Int_x2;
+//                        case POLY_Y2:
+//                            return m_Int_y2;
+//                        case POLY_Z2:
+//                            return m_Int_z2;
+//                        case POLY_X3:
+//                            return m_Int_x3;
+//                        case POLY_Y3:
+//                            return m_Int_y3;
+//                        case POLY_Z3:
+//                            return m_Int_z3;
+//                        case POLY_X2Y:
+//                            return m_Int_x2y;
+//                        case POLY_Y2Z:
+//                            return m_Int_y2z;
+//                        case POLY_Z2X:
+//                            return m_Int_z2x;
+//                        default:
+//                            std::cerr << "No integration rule for integrand of type " << type << " for polygons" << std::endl;
+//                            exit(1);
+//                    }
+//
+//                }
+//
+//            };
+//            mutable FrCache<MeshSurfaceIntegrals> c_meshSurfaceIntegrals;
 
             mutable FrCache<double> c_meshArea;
 
@@ -279,7 +282,8 @@ namespace frydom {
 
 
 
-            double GetVolumeIntegral(IntegrandType type) const;
+            /// This function gives the value of a surface integral over the meshed surface
+            double GetMeshSurfaceIntegral(IntegrandType type);
 
             /// This function gives the value of a surface integral over the waterline area.
             double GetBoundaryPolygonsSurfaceIntegral(IntegrandType type);
@@ -289,15 +293,15 @@ namespace frydom {
 
             BoundingBox GetBoundingBox() const;
 
-            const double GetArea() const;
+            const double GetArea() const {return 0.;};
 
             const double GetArea(const FaceHandle &fh) const;
 
-            const double GetVolume() const;
+            const double GetVolume() const {return 0.;};
 
-            const Position GetCOG() const;
+            const Position GetCOG() const {return {};};
 
-            const Position GetCOG(FrClippingPlane* plane);
+//            const Position GetCOG(FrClippingPlane* plane);
 
 
 
@@ -336,19 +340,25 @@ namespace frydom {
 
             void UpdateBoundariesSurfacePolynomialIntegrals();
 
-            void UpdateVolumeIntegrals();
+
+            double CalcMeshSurfaceIntegrals(int iNormal, double alpha, IntegrandType type);
+
+            void UpdateMeshSurfaceIntegrals();
 
 
         };
 
-
-        FrInertiaTensor CalcPlainInertiaProperties(const FrMesh &mesh, double density);
-
-        FrInertiaTensor CalcPlainEqInertiaProperties(const FrMesh &mesh, double mass);
-
-        FrInertiaTensor CalcShellInertiaProperties(const FrMesh &mesh, double density, double thickness);
-
-        FrInertiaTensor CalcShellEqInertiaProperties(const FrMesh &mesh, double mass, double thickness);
+//        double CalcMeshSurfaceIntegrals(const FrMesh &mesh, int iNormal, IntegrandType type);
+//
+//        double CalcVolumeIntegrals(FrMesh &mesh, IntegrandType type);
+//
+//        FrInertiaTensor CalcPlainInertiaProperties(const FrMesh &mesh, double density);
+//
+//        FrInertiaTensor CalcPlainEqInertiaProperties(const FrMesh &mesh, double mass);
+//
+//        FrInertiaTensor CalcShellInertiaProperties(const FrMesh &mesh, double density, double thickness);
+//
+//        FrInertiaTensor CalcShellEqInertiaProperties(const FrMesh &mesh, double mass, double thickness);
 
         /// Convert an OpenMesh point into a FRyDoM Vector
         template <class Vector>

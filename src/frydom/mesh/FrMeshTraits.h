@@ -5,7 +5,7 @@
 #ifndef FRYDOM_FRMESHTRAITS_H
 #define FRYDOM_FRMESHTRAITS_H
 
-
+#include <iostream>
 
 #include "OpenMesh/Core/IO/MeshIO.hh"
 #include "OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh"
@@ -36,7 +36,7 @@ namespace frydom {
             POLY_X2Y,
             POLY_Y2Z,
             POLY_Z2X,
-            INFINITE_DEPTH_GREEN_FUNCTION, // TODO : en parler avec Camille et Lucas
+            INFINITE_DEPTH_GREEN_FUNCTION, // TODO : en parler avec Camille et Lucas et PYW
             FINITE_DEPTH_GREEN_FUNCTION
         };
 

@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
 
     auto node = system.GetWorldBody()->NewNode();
     node->TranslateInWorld(0, 0, 5, NWU);
-    auto plane = std::make_shared<FrPlane>(node);
+    auto plane = std::make_shared<FrCPlane>(node);
 
     auto clippingSurface = std::make_shared<mesh::FrClippingPlane>(plane);
 
@@ -40,10 +40,10 @@ int main(int argc, char* argv[]) {
     std::cout<<mesh.GetVolume()<<std::endl;
 
     auto COG = mesh.GetCOG();
-    auto COGcorr = mesh.GetCOG(clippingSurface.get());
+//    auto COGcorr = mesh.GetCOG(clippingSurface.get());
 
     std::cout<<"COG : "<<COG.GetX()<<","<<COG.GetY()<<","<<COG.GetZ()<<std::endl;
-    std::cout<<"COG corr : "<<COGcorr.GetX()<<","<<COGcorr.GetY()<<","<<COGcorr.GetZ()<<std::endl;
+//    std::cout<<"COG corr : "<<COGcorr.GetX()<<","<<COGcorr.GetY()<<","<<COGcorr.GetZ()<<std::endl;
 
 
 

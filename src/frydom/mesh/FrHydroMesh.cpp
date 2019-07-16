@@ -14,7 +14,7 @@
 #include "FrMeshClipper.h"
 
 #include "frydom/core/body/FrBody.h"
-#include "frydom/core/common/FrGeometrical.h"
+#include "frydom/core/link/constraint/FrCGeometrical.h"
 
 namespace frydom {
 
@@ -52,7 +52,7 @@ namespace frydom {
                 Position Tide(0., 0., m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU));
                 c_nodeForClippingPlane->SetPositionInBody(Tide, NWU);
 
-                auto plane = std::make_shared<FrPlane>(c_nodeForClippingPlane);
+                auto plane = std::make_shared<FrCPlane>(c_nodeForClippingPlane);
 
                 auto clippingSurface = std::make_shared<mesh::FrClippingPlane>(plane);
                 m_clipper->SetClippingSurface(clippingSurface);
