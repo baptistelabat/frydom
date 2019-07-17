@@ -21,7 +21,7 @@ setup(
     install_requires=['numpy', 'matplotlib', 'h5py', 'argcomplete'],
 
     entry_points={
-        'console_scripts': ['HDB5tool=HDB5tool:main','hdb5tool=HDB5tool:main']
+        'console_scripts': ['HDB5tool=HDB5tool.HDB5tool:main','hdb5tool=HDB5tool.HDB5tool:main']
     },
 
     classifiers=[

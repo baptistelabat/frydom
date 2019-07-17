@@ -15,7 +15,6 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
 
 Dof_notation = [r'x',r'y',r'z',r'\phi',r'\theta',r'\psi']
 Dof_name = ["surge", "sway", "heave", "roll", "pitch", "yaw"]
@@ -170,8 +169,8 @@ def plot_AB(data, w, ibody_force, iforce, ibody_motion, idof, show = True, save 
             motion_str = 'rotation'
 
     title = r"Radiation coefficients giving %s in %s of body %u " \
-            r"for a %s %s of body %u along direction %u" \
-            % (force_str, Dof_name[iforce], ibody_force+1, motion_str, Dof_name[idof], ibody_motion+1)
+            r"for a %s in %s of body %u" \
+            % (force_str, Dof_name[iforce], ibody_force + 1, motion_str, Dof_name[idof], ibody_motion + 1)
 
     plt.close()
     if(save == False):
@@ -331,11 +330,11 @@ def plot_irf(data, time, SpeedOrNot, ibody_force, iforce, ibody_motion, idof, sh
     plt.ylabel(ylabel, fontsize=18)  # TODO: mettre une unite
     if (save == False):
         if(SpeedOrNot == 0): # Without forward speed.
-            plt.title('Impulse response function of %s in %s of body %u for a %s %s of body %u' %
+            plt.title('Impulse response function of %s in %s of body %u for a %s in %s of body %u' %
                   (force_str, Dof_name[iforce], ibody_force + 1, Dof_name[idof], motion_str, ibody_motion + 1), fontsize = 20)
         else: # With forward speed.
-            plt.title('Impulse response function with forward speed of %s in %s of body %u for a %s %s of body %u' %
-                      (force_str, Dof_name[iforce], ibody_force + 1, iforce + 1, Dof_name[idof], motion_str, ibody_motion + 1), fontsize=20)
+            plt.title('Impulse response function with forward speed of %s in %s of body %u for a %s in %s of body %u' %
+                      (force_str, Dof_name[iforce], ibody_force + 1, Dof_name[idof], motion_str, ibody_motion + 1), fontsize=20)
     plt.grid()
 
     if (show == True):
@@ -397,11 +396,11 @@ def plot_filering(data, time, SpeedOrNot, coeff, ibody_force, iforce, ibody_moti
     plt.xlabel(r'$t$'+' $(s)$', fontsize=18)
     plt.ylabel(ylabel, fontsize=18)  # TODO: mettre une unite
     if (SpeedOrNot == 0): # Without forward speed.
-        plt.title('Impulse response function of %s in %s of body %u along direction %u for a %s %s of body %u' %
-                  (force_str, Dof_name[iforce], ibody_force + 1, Dof_name[idof], motion_str, ibody_motion + 1), fontsize=20)
+        plt.title('Impulse response function of %s in %s of body %u for a %s in %s of body %u' %
+                  (force_str, Dof_name[iforce], ibody_force + 1, motion_str, Dof_name[idof], ibody_motion + 1), fontsize=20)
     else: # With forward speed.
-        plt.title('Impulse response function with forward speed of %s in %s of body %u along direction %u for a %s %s of body %u' %
-                  (force_str, Dof_name[iforce], ibody_force + 1, Dof_name[idof], motion_str, ibody_motion + 1), fontsize=20)
+        plt.title('Impulse response function with forward speed of %s in %s of body %u for a %s in %s of body %u' %
+                  (force_str, Dof_name[iforce], ibody_force + 1, motion_str, Dof_name[idof], ibody_motion + 1), fontsize=20)
     plt.legend()
     plt.grid()
     plt.show()

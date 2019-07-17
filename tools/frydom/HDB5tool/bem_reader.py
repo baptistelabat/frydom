@@ -19,9 +19,9 @@ from warnings import warn
 from meshmagick.mmio import load_MAR
 from meshmagick.mesh import Mesh, Plane
 
-from wave_dispersion_relation import solve_wave_dispersion_relation
-from pyHDB import inf
-from body_db import *
+from frydom.HDB5tool.wave_dispersion_relation import solve_wave_dispersion_relation
+from frydom.HDB5tool.pyHDB import inf
+import frydom.HDB5tool.body_db as body_db
 
 class _BEMReader(object):
     """
@@ -392,7 +392,7 @@ class NemohReader(_BEMReader):
                 mesh.name, _ = os.path.splitext(meshfile)
 
                 # Instantiating BodyDB.
-                body = BodyDB(ibody, pyHDB.nb_bodies, pyHDB.nb_wave_freq, pyHDB.nb_wave_dir , mesh)
+                body = body_db.BodyDB(ibody, pyHDB.nb_bodies, pyHDB.nb_wave_freq, pyHDB.nb_wave_dir , mesh)
 
                 # RADIATION.
                 nb_dof = int(f.readline().split()[0])
@@ -401,6 +401,9 @@ class NemohReader(_BEMReader):
                     motion_type = int(dof[0])
                     direction = map(float, dof[1:4])
                     point = map(float, dof[4:])
+
+                    # Center of gravity.
+                    body.position = point
 
                     if motion_type == 1: # Translation.
                         if(direction[0] == 1):

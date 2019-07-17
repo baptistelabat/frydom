@@ -17,7 +17,7 @@
 import os
 import argparse
 
-from frydom.pyHDB.HDB5 import *
+import frydom.HDB5tool.HDB5 as H5T
 
 try:
     import argcomplete
@@ -149,13 +149,13 @@ def Read_cal_hdb5(args):
 
     # BEM reader.
     if (args.path_to_nemoh_cal is not None): # Nemoh.
-        database = HDB5()
+        database = H5T.HDB5()
         database.nemoh_reader(args.path_to_nemoh_cal[0])
         database._pyHDB.solver = "Nemoh"
 
     # Reading a hdb5 file.
     if (args.read is not None):
-        database = HDB5()
+        database = H5T.HDB5()
         database.read_hdb5(args.read)
         database._is_initialized = True  # No initialization except if asked.
 

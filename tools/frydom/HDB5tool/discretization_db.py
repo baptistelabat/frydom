@@ -12,7 +12,7 @@
 # ==========================================================================
 """Module to create the discretization database for frydom hydrodynamic database"""
 
-from math import *
+# from math import *
 import numpy as np
 
 class DiscretizationDB(object):

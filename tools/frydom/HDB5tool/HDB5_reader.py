@@ -19,8 +19,8 @@ import h5py
 
 from meshmagick.mesh import Mesh
 
-from body_db import *
-from wave_drift_db import WaveDriftDB
+import frydom.HDB5tool.body_db as body_db
+import frydom.HDB5tool.wave_drift_db as wave_drift_db
 
 class HDB5reader():
     """
@@ -213,7 +213,7 @@ class HDB5reader():
 
         try:
             reader[wave_drift_path]
-            pyHDB._wave_drift = WaveDriftDB()
+            pyHDB._wave_drift = wave_drift_db.WaveDriftDB()
 
             # sym_x.
             if(int(np.array(reader[wave_drift_path + "/sym_x"])) == 0):
@@ -508,7 +508,7 @@ class HDB5reader_v2(HDB5reader):
             mesh = self.read_mesh(reader, body_path + "/Mesh")
 
             # Body definition.
-            body = BodyDB(id, pyHDB.nb_bodies, pyHDB.nb_wave_freq, pyHDB.nb_wave_dir, mesh)
+            body = body_db.BodyDB(id, pyHDB.nb_bodies, pyHDB.nb_wave_freq, pyHDB.nb_wave_dir, mesh)
 
             # Body name.
             try:
@@ -787,7 +787,7 @@ class HDB5reader_v1(HDB5reader):
             mesh = self.read_mesh(reader, body_path + "/Mesh")
 
             # Body definition.
-            body = BodyDB(id, pyHDB.nb_bodies, pyHDB.nb_wave_freq, pyHDB.nb_wave_dir, mesh)
+            body = body_db.BodyDB(id, pyHDB.nb_bodies, pyHDB.nb_wave_freq, pyHDB.nb_wave_dir, mesh)
 
             # Body name.
             try:

@@ -15,8 +15,8 @@
 
 import numpy as np
 
-from hydrostatic_db import HydrostaticDB
-from inertia import Inertia
+from frydom.HDB5tool.hydrostatic_db import HydrostaticDB
+from frydom.HDB5tool.inertia import Inertia
 
 class BodyDB(object):
 
@@ -65,7 +65,7 @@ class BodyDB(object):
         self.Froude_Krylov = np.zeros((6, nw, nbeta), dtype=np.complex)
 
         # Excitation loads (6 dof so 6 rows x all the frequencies).
-        self.Excitation = np.zeros((6, nw, nbeta), dtype=np.complex)
+        # self.Excitation = np.zeros((6, nw, nbeta), dtype=np.complex)
 
         # Mesh.
         self.mesh = mesh

@@ -15,15 +15,14 @@
 """
 
 import os
-from math import *
 import numpy as np
 
-from bem_reader import *
-from HDB5_reader import *
-from pyHDB import *
-from discretization_db import DiscretizationDB
-from wave_drift_db import WaveDriftDB
-from plot_db import *
+import frydom.HDB5tool.bem_reader as bem_reader
+import frydom.HDB5tool.HDB5_reader as HDB5_reader
+import frydom.HDB5tool.pyHDB as pyHDB
+from frydom.HDB5tool.discretization_db import DiscretizationDB
+from frydom.HDB5tool.wave_drift_db import WaveDriftDB
+import frydom.HDB5tool.plot_db as plot_db
 
 class HDB5(object):
 
@@ -38,7 +37,7 @@ class HDB5(object):
         """
 
         # HDB.
-        self._pyHDB = pyHDB()
+        self._pyHDB = pyHDB.pyHDB()
 
         # Discretization parameters.
         self._discretization = DiscretizationDB()
@@ -102,7 +101,7 @@ class HDB5(object):
             nb_faces_by_wavelength = 10
 
         # Reading *.cal.
-        NemohReader(self._pyHDB,cal_file=nemoh_cal_file, test=True, nb_face_by_wave_length=nb_faces_by_wavelength)
+        bem_reader.NemohReader(self._pyHDB,cal_file=nemoh_cal_file, test=True, nb_face_by_wave_length=nb_faces_by_wavelength)
 
         print('-------> Nemoh data successfully loaded from "%s"' % input_directory)
         print("")
@@ -207,7 +206,7 @@ class HDB5(object):
         beta = self._pyHDB.wave_dir[iwave]
 
         # Plot.
-        plot_loads(data, self._pyHDB.wave_freq, 0, ibody, iforce, beta)
+        plot_db.plot_loads(data, self._pyHDB.wave_freq, 0, ibody, iforce, beta)
 
     def Plot_Froude_Krylov(self, ibody, iforce, iwave = 0, **kwargs):
         """This functions plots the Froude-Krylov loads."""
@@ -219,7 +218,7 @@ class HDB5(object):
         beta = self._pyHDB.wave_dir[iwave]
 
         # Plots.
-        plot_loads(data, self._pyHDB.wave_freq, 1, ibody, iforce, beta, **kwargs)
+        plot_db.plot_loads(data, self._pyHDB.wave_freq, 1, ibody, iforce, beta, **kwargs)
 
     def Plot_Excitation(self, ibody, iforce, iwave = 0, **kwargs):
         """This functions plots the excitation loads."""
@@ -231,7 +230,7 @@ class HDB5(object):
         beta = self._pyHDB.wave_dir[iwave]
 
         # Plots.
-        plot_loads(data, self._pyHDB.wave_freq, 2, ibody, iforce, beta, **kwargs)
+        plot_db.plot_loads(data, self._pyHDB.wave_freq, 2, ibody, iforce, beta, **kwargs)
 
     def Plot_Radiation_coeff(self, ibody_force, iforce, ibody_motion, idof):
         """This functions plots the added mass and damping coefficients."""
@@ -243,7 +242,7 @@ class HDB5(object):
         data[0:self._pyHDB.nb_wave_freq, 1] = self._pyHDB.bodies[ibody_force].Damping[iforce, 6 * ibody_motion + idof, :]
 
         # Plots.
-        plot_AB(data, self._pyHDB.wave_freq, ibody_force, iforce, ibody_motion, idof)
+        plot_db.plot_AB(data, self._pyHDB.wave_freq, ibody_force, iforce, ibody_motion, idof)
 
     def Plot_IRF(self, ibody_force, iforce, ibody_motion, idof):
         """This function plots the impulse response functions without forward speed."""
@@ -255,7 +254,7 @@ class HDB5(object):
         time = self._pyHDB.time
 
         # Plots.
-        plot_irf(data, time, 0, ibody_force, iforce, ibody_motion, idof)
+        plot_db.plot_irf(data, time, 0, ibody_force, iforce, ibody_motion, idof)
 
     def Plot_IRF_speed(self, ibody_force, iforce, ibody_motion, idof):
         """This function plots the impulse response functions with forward speed."""
@@ -267,7 +266,7 @@ class HDB5(object):
         time = self._pyHDB.time
 
         # Plots.
-        plot_irf(data, time, 1, ibody_force, iforce, ibody_motion, idof)
+        plot_db.plot_irf(data, time, 1, ibody_force, iforce, ibody_motion, idof)
 
     def Cutoff_scaling_IRF(self, tc, ibody_force, iforce, ibody_motion, idof, auto_apply=False):
         """This function applies a filter to the impule response functions without forward speed and plot the result.
@@ -305,7 +304,7 @@ class HDB5(object):
             bool = True
         else:
             # Plot.
-            plot_filering(data, time, 0, coeff, ibody_force, iforce, ibody_motion, idof)
+            plot_db.plot_filering(data, time, 0, coeff, ibody_force, iforce, ibody_motion, idof)
 
             # raw_input returns the empty string for "enter".
             yes = {'yes', 'y', 'ye', ''}
@@ -358,7 +357,7 @@ class HDB5(object):
             bool = True
         else:
             # Plot.
-            plot_filering(data, time, 1, coeff, ibody_force, iforce, ibody_motion, idof)
+            plot_db.plot_filering(data, time, 1, coeff, ibody_force, iforce, ibody_motion, idof)
 
             # raw_input returns the empty string for "enter".
             yes = {'yes', 'y', 'ye', ''}
@@ -391,7 +390,7 @@ class HDB5(object):
                                         - self._pyHDB.bodies[ibody_force].Inf_Added_mass[iforce, 6 * ibody_motion + idof]))
 
                 # Plot.
-                plot_AB_array(data, self._pyHDB.wave_freq, ibody_force, ibody_motion, self._pyHDB)
+                plot_db.plot_AB_array(data, self._pyHDB.wave_freq, ibody_force, ibody_motion, self._pyHDB)
 
     def export_hdb5(self, output_file = None):
         """This function writes the hydrodynamic database into a *.hdb5 file.
@@ -461,7 +460,7 @@ class HDB5(object):
 
         # Reading all the data from .hdb5 and creating a _pyHDB object.
         try:
-            HDB5reader(self._pyHDB, hdb5_file)
+            HDB5_reader.HDB5reader(self._pyHDB, hdb5_file)
         except IOError:
             raise IOError('Problem in reading HDB5 file at location %s' % hdb5_file)
 

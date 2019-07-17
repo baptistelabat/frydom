@@ -13,7 +13,6 @@
 """Module to load wave drift polar coefficients"""
 
 import numpy as np
-from math import *
 from scipy.interpolate import interp1d
 
 class CoeffData(object):
