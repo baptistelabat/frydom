@@ -1404,13 +1404,7 @@ namespace frydom {
                     heh = next_halfedge_handle(heh);
                 }
 
-//                FrPolygon test(this);
-//                test.SetPolygon(polygon);
-
                 polygonSet.push_back(FrPolygon(this, polygon));
-//                polygonSet.push_back(test);
-                // Updating polygon properties
-//                    polygon.UpdateIntegrals();
 
                 heh_init = FindFirstUntaggedBoundaryHalfedge();
 
@@ -1422,7 +1416,7 @@ namespace frydom {
             }
 
             m_polygonSet = polygonSet;
-//            m_polygoneSet.Get() = polygonSet;
+            
         }
 
         bool FrMesh_::CheckBoundaryPolygon(FrClippingPlane *plane) {

@@ -17,8 +17,15 @@ namespace frydom {
         }
 
         FrPolygon::FrPolygon(FrMesh_ *mesh, Polygon polygon) : m_mesh(mesh), m_polygon(std::move(polygon)) {
+            c_surfaceIntegrals = BoundaryPolygonSurfaceIntegrals(0,0,0,0,0,0);
             UpdateBoundariesSurfacePolynomialIntegrals();
         }
+
+//        FrPolygon::FrPolygon(FrPolygon &polygon) {
+//            m_mesh = polygon.m_mesh;
+//            m_polygon = polygon.m_polygon;
+//            c_surfaceIntegrals = polygon.c_surfaceIntegrals;
+//        }
 
         void FrPolygon::SetPolygon(Polygon &polygon) {
             m_polygon = polygon;

@@ -37,16 +37,6 @@ namespace frydom {
                 m_Int_y2 = Int_y2;
             }
 
-
-            BoundaryPolygonSurfaceIntegrals(BoundaryPolygonSurfaceIntegrals& integrals) {
-                m_Int_1 = integrals.m_Int_1;
-                m_Int_x = integrals.m_Int_x;
-                m_Int_y = integrals.m_Int_y;
-                m_Int_xy = integrals.m_Int_xy;
-                m_Int_x2 = integrals.m_Int_x2;
-                m_Int_y2 = integrals.m_Int_y2;
-            }
-
             /// This function gives the surface integral of a mesh.
             double GetSurfaceIntegral(IntegrandType type) const {
                 switch (type) {
@@ -82,6 +72,8 @@ namespace frydom {
             explicit FrPolygon(FrMesh_* mesh);
 
             FrPolygon(FrMesh_* mesh, Polygon polygon);
+
+//            FrPolygon(FrPolygon& polygon);
 
             void SetPolygon(Polygon& polygon);
 
