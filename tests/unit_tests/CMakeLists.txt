@@ -32,6 +32,7 @@ set(UNIT_TESTS
         test_edge_splitting
         test_FrAssembly
         test_FrClippingSurface
+        test_FrPlane
         )
 
 

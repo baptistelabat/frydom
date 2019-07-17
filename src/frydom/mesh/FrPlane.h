@@ -31,6 +31,8 @@ namespace frydom{
 
             double GetDistanceToPoint(Position PointInWorld, FRAME_CONVENTION fc) const;
 
+            double GetSignedDistanceToPoint(Position PointInWorld, FRAME_CONVENTION fc) const;
+
             Position GetIntersectionWithLine(Position P0, Position P1, FRAME_CONVENTION fc) const;
 
             Position GetClosestPointOnPlane(Position PointInWorld, FRAME_CONVENTION fc) const;

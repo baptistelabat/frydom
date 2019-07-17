@@ -66,6 +66,12 @@ namespace frydom {
         }
 
         double FrPlane::GetDistanceToPoint(Position PointInWorld, FRAME_CONVENTION fc) const {
+            return std::abs(GetSignedDistanceToPoint(PointInWorld, fc));
+        }
+
+
+        double FrPlane::GetSignedDistanceToPoint(Position PointInWorld, FRAME_CONVENTION fc) const {
+
             Position vector = PointInWorld - GetOrigin(fc);
 
             return vector.dot(GetNormal(fc));
@@ -85,9 +91,7 @@ namespace frydom {
             double s = vector.dot(normale) / line.dot(normale);
 
             // P_i
-            Position Intersection = P0 + (P1-P0) * s;
-
-            return {Intersection.GetX(),Intersection.GetY(),Intersection.GetZ()};
+            return P0 + (P1-P0) * s;
         }
 
         Position FrPlane::GetClosestPointOnPlane(Position PointInWorld, FRAME_CONVENTION fc) const {
