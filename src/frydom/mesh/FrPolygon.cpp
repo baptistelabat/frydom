@@ -7,35 +7,43 @@
 #include "FrPolygon.h"
 #include "FrMesh.h"
 #include "FrMeshClipper.h"
+#include "FrPlane.h"
 
 namespace frydom {
 
     namespace mesh {
-
-        FrPolygon::FrPolygon(FrMesh_ *mesh) : m_mesh(mesh) {
-
-        }
 
         FrPolygon::FrPolygon(FrMesh_ *mesh, Polygon polygon) : m_mesh(mesh), m_polygon(std::move(polygon)) {
             c_surfaceIntegrals = BoundaryPolygonSurfaceIntegrals(0,0,0,0,0,0);
             UpdateBoundariesSurfacePolynomialIntegrals();
         }
 
-//        FrPolygon::FrPolygon(FrPolygon &polygon) {
-//            m_mesh = polygon.m_mesh;
-//            m_polygon = polygon.m_polygon;
-//            c_surfaceIntegrals = polygon.c_surfaceIntegrals;
-//        }
-
-        void FrPolygon::SetPolygon(Polygon &polygon) {
-            m_polygon = polygon;
-        }
-
         Polygon FrPolygon::GetPolygon() const {
             return m_polygon;
         }
 
+        std::vector<Position> FrPolygon::GetVertexList() const {
+            std::vector<Position> vertexList;
+
+            for (auto& heh : m_polygon) {
+                auto vertex = OpenMeshPointToVector3d<Position>(m_mesh->point(m_mesh->from_vertex_handle(heh)));
+                vertexList.push_back(vertex);
+            }
+
+            return vertexList;
+        }
+
+        double FrPolygon::GetArea() const {
+
+            CheckPlanar();
+
+            return GetSurfaceIntegral(POLY_1);
+
+        }
+
         void FrPolygon::UpdateBoundariesSurfacePolynomialIntegrals() {
+
+            CheckPlanar();
 
             double Int1, IntX, IntY, IntXY, IntX2, IntY2;
             Int1 = IntX = IntY = IntXY = IntX2 = IntY2 = 0;
@@ -88,6 +96,10 @@ namespace frydom {
 
         }
 
+        BoundaryPolygonSurfaceIntegrals FrPolygon::GetSurfaceIntegrals() const {
+            return c_surfaceIntegrals;
+        }
+
         double FrPolygon::GetSurfaceIntegral(IntegrandType type) const {
             return c_surfaceIntegrals.GetSurfaceIntegral(type);
         }
@@ -105,9 +117,25 @@ namespace frydom {
             return false;
         }
 
-//        BoundaryPolygonSurfaceIntegrals FrPolygon::GetSurfaceIntegrals() const {
-//            return c_surfaceIntegrals;
-//        }
+        bool FrPolygon::CheckPlanar() const {
+
+            std::vector<Position> vertexList = GetVertexList();
+
+            geom::FrPlane plane(vertexList, NWU);
+
+            bool planar = true;
+
+            for (auto& vertex : vertexList){
+                auto distance = plane.GetDistanceToPoint(vertex, NWU);
+                planar &= (distance<1E-8);
+            }
+
+            return planar;
+        }
+
+        bool FrPolygon::IsPlanar() const {
+            return c_planar;
+        }
 
 
     } // end namespace frydom::mesh

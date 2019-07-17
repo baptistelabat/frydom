@@ -348,7 +348,7 @@ namespace frydom {
 
         };
 
-//        double CalcMeshSurfaceIntegrals(const FrMesh &mesh, int iNormal, IntegrandType type);
+//        double GetMeshedSurfaceIntegral(const FrMesh &mesh, int iNormal, IntegrandType type);
 //
 //        double CalcVolumeIntegrals(FrMesh &mesh, IntegrandType type);
 //
@@ -386,11 +386,10 @@ namespace frydom {
         class FrMesh_ : public TriMesh_ArrayKernelT<FrMeshTraits> { // FrMesh must be a triangular mesh.
 
         private:
+
             meshutils::FrIncrementalMeshWriter m_writer;
 
             mutable FrCache<PolygonSet2> m_polygonSet;
-
-            mutable FrCache<double> c_meshArea;
 
         public:
 
@@ -412,7 +411,6 @@ namespace frydom {
             void Rotate(double phi, double theta, double psi);
 
 
-
             void Write(std::string meshfile) const;
 
             void WriteInc(std::string meshfile, int i);
@@ -425,46 +423,27 @@ namespace frydom {
             /// This function updates all properties of faces and vertices (normals, centroids, surface integrals).
             void UpdateAllProperties();
 
-            /// This function updates the computations of the polynomial surface integrals.
-            void UpdateFacesPolynomialIntegrals();
-
-            // Computes triangular faces surface integration of some polynomial integrands using analytical formulas
-            // established by transforming surface integrals into contour integrals and deriving analytical expressions.
-            // Extended from Eberly... TODO: mettre la referece
-            void CalcFacePolynomialIntegrals(const FrMesh::FaceHandle &fh);
-
-
-
-
-            /// This function gives the value of a surface integral over the meshed surface
-            double GetMeshSurfaceIntegral(IntegrandType type);
-
-            /// This function gives the value of a surface integral over the waterline area.
-            double GetBoundaryPolygonsSurfaceIntegral(IntegrandType type);
-
-
 
 
             BoundingBox GetBoundingBox() const;
 
-            const double GetArea() const {return 0.;};
 
-            const double GetArea(const FaceHandle &fh) const;
+            /// This function gives the value of a surface integral over the meshed surface
+            double GetMeshedSurfaceIntegral(IntegrandType type);
 
-            const double GetVolume() const {return 0.;};
+            double GetMeshedSurfaceIntegral(int iNormal, IntegrandType type);
 
-            const Position GetCOG() const {return {};};
+            const double GetArea();
 
-//            const Position GetCOG(FrClippingPlane* plane);
+            const double GetVolume() {return 0.;};
 
+            const Position GetCOG() {return {};};
 
 
 
             bool HasBoundaries() const;
 
             bool IsWatertight() const;
-
-            HalfedgeHandle FindFirstUntaggedBoundaryHalfedge() const;
 
 
             //            bool AreBoundariesClipping() {
@@ -483,21 +462,27 @@ namespace frydom {
         private:
 
 
+            /// This function computes the normal vectors everywhere and the centroid of faces.
+            void UpdateBaseProperties();
+
+            /// This function updates the computations of the polynomial surface integrals.
+            void UpdateFacesPolynomialIntegrals();
+
+            // Computes triangular faces surface integration of some polynomial integrands using analytical formulas
+            // established by transforming surface integrals into contour integrals and deriving analytical expressions.
+            // Extended from Eberly... TODO: mettre la reference
+            void CalcFacePolynomialIntegrals(const FrMesh::FaceHandle &fh);
+
+
+            HalfedgeHandle FindFirstUntaggedBoundaryHalfedge() const;
+
             void CalcBoundaryPolygonSet();
             // TODO: check pour voir si les polygones obtenus sont bien inscrits dans la surface de coupe
 
 
+            const double GetArea(const FaceHandle &fh) const;
+
             bool CheckBoundaryPolygon(FrClippingPlane* plane);
-
-            /// This function computes the normal vectors everywhere and the centroid of faces.
-            void UpdateBaseProperties();
-
-            void UpdateBoundariesSurfacePolynomialIntegrals();
-
-
-            double CalcMeshSurfaceIntegrals(int iNormal, IntegrandType type);
-
-            void UpdateMeshSurfaceIntegrals();
 
 
         };

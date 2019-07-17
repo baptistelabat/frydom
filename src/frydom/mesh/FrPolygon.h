@@ -10,6 +10,9 @@
 
 namespace frydom {
 
+    // Forward Declarations
+    class Position;
+
     namespace mesh {
 
         typedef std::vector<HalfedgeHandle> Polygon;
@@ -69,29 +72,33 @@ namespace frydom {
 
         public:
 
-            explicit FrPolygon(FrMesh_* mesh);
-
             FrPolygon(FrMesh_* mesh, Polygon polygon);
-
-//            FrPolygon(FrPolygon& polygon);
-
-            void SetPolygon(Polygon& polygon);
 
             Polygon GetPolygon() const;
 
-//            BoundaryPolygonSurfaceIntegrals GetSurfaceIntegrals() const;
+            bool IsPlanar() const;
+
+            std::vector<Position> GetVertexList() const;
+
+            double GetArea() const;
+
+            BoundaryPolygonSurfaceIntegrals GetSurfaceIntegrals() const;
 
             double GetSurfaceIntegral(IntegrandType type) const;
 
             bool CheckBoundaryPolygon(FrClippingPlane *plane) const;
 
+
         private:
 
             void UpdateBoundariesSurfacePolynomialIntegrals();
+            bool CheckPlanar() const;
 
             FrMesh_* m_mesh;
             Polygon m_polygon;
             BoundaryPolygonSurfaceIntegrals c_surfaceIntegrals;
+
+            bool c_planar;
 
         };
 

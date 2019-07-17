@@ -20,17 +20,17 @@ namespace frydom {
 //
 //            double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
 //
-//            double intV_x2 = mesh.GetMeshSurfaceIntegral(POLY_X2);
-//            double intV_y2 = mesh.GetMeshSurfaceIntegral(POLY_Y2);
-//            double intV_z2 = mesh.GetMeshSurfaceIntegral(POLY_Z2);
+//            double intV_x2 = mesh.GetMeshedSurfaceIntegral(POLY_X2);
+//            double intV_y2 = mesh.GetMeshedSurfaceIntegral(POLY_Y2);
+//            double intV_z2 = mesh.GetMeshedSurfaceIntegral(POLY_Z2);
 //
 //            Ixx = density * (intV_y2 + intV_z2);
 //            Iyy = density * (intV_x2 + intV_z2);
 //            Izz = density * (intV_x2 + intV_y2);
 //
-//            Iyz = -density * mesh.GetMeshSurfaceIntegral(POLY_YZ);
-//            Ixz = -density * mesh.GetMeshSurfaceIntegral(POLY_XZ);
-//            Ixy = -density * mesh.GetMeshSurfaceIntegral(POLY_XY);
+//            Iyz = -density * mesh.GetMeshedSurfaceIntegral(POLY_YZ);
+//            Ixz = -density * mesh.GetMeshedSurfaceIntegral(POLY_XZ);
+//            Ixy = -density * mesh.GetMeshedSurfaceIntegral(POLY_XY);
 //
 //            return FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, FrFrame(), COG, NWU);
 //        }
@@ -83,7 +83,7 @@ namespace frydom {
 //            CalcShellInertiaProperties(mesh, mass/(mesh.GetArea()*thickness), thickness);
 //        }
 //
-//        double CalcMeshSurfaceIntegrals(const FrMesh &mesh, int iNormal, IntegrandType type) {
+//        double GetMeshedSurfaceIntegral(const FrMesh &mesh, int iNormal, IntegrandType type) {
 //
 //            double val = 0.;
 //            for (auto f_iter = mesh.faces_begin(); f_iter != mesh.faces_end(); ++f_iter) {
@@ -123,7 +123,7 @@ namespace frydom {
 //
 //
 //
-//                    value = CalcMeshSurfaceIntegrals(mesh,0,POLY_X);
+//                    value = GetMeshedSurfaceIntegral(mesh,0,POLY_X);
 //                    value += normal[0] * mesh.GetBoundaryPolygonsSurfaceIntegral(POLY_X);
 //
 //                    break;
@@ -540,7 +540,7 @@ namespace frydom {
         }
 
 //        const double FrMesh::GetVolume() const {
-//            return GetMeshSurfaceIntegral(POLY_1);
+//            return GetMeshedSurfaceIntegral(POLY_1);
 //        }
 //
 //        const Position FrMesh::GetCOG() const {
@@ -1197,137 +1197,25 @@ namespace frydom {
             return bbox;
         }
 
-//        const double FrMesh_::GetArea() const {
-//            if (!c_meshArea.IsValid()) {
-//
-//                double area = 0.;
-//                for (FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
-//                    area += GetArea(*f_iter);
-//                }
-//                c_meshArea = area;
-//            }
-//
-//            return c_meshArea;
-//        }
+        const double FrMesh_::GetArea() {
+
+            double area = 0;
+
+            for (FaceIter fh = faces_begin(); fh != faces_end(); ++fh) {
+                area += GetArea(*fh);
+            }
+
+            for (auto& polygon:GetBoundaryPolygonSet()) {
+                area += polygon.GetArea();
+            }
+
+            return area;
+
+        }
 
         const double FrMesh_::GetArea(const FaceHandle &fh) const {
             return data(fh).GetSurfaceIntegral(POLY_1);
         }
-
-//        const double FrMesh_::GetVolume() const {
-//            return GetMeshSurfaceIntegral(POLY_1);
-//        }
-//
-//        const Position FrMesh_::GetCOG() const {
-//
-//            double xb, yb, zb;
-//            xb = yb = zb = 0.;
-//
-//            mesh::FrMesh_::Normal Normal;
-//
-//            for (mesh::FrMesh_::FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
-//                Normal = normal(*f_iter);
-//                xb += Normal[0] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_X2);
-//                yb += Normal[1] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y2);
-//                zb += Normal[2] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2);
-//            }
-//
-//            auto volume = GetVolume();
-//
-//            xb /= 2. * volume;
-//            yb /= 2. * volume;
-//            zb /= 2. * volume; // FIXME: si on prend une cote de surface de clip non nulle, il faut ajouter la quantite ze**2 * Sf
-//
-//            return {xb,yb,zb};
-//
-//        }
-//
-//        const Position FrMesh_::GetCOG(FrClippingPlane* plane) {
-//
-//            auto COG = GetCOG();
-//
-//            if (!CheckBoundaryPolygon(plane)) return COG;
-//
-//            double ze = plane->GetPlane()->GetNormaleInWorld(NWU).dot(plane->GetPlane()->GetOriginInWorld(NWU));
-//
-//            return COG + ze * plane->GetPlane()->GetNormaleInWorld(NWU);
-//
-//        }
-
-//        const FrInertiaTensor FrMesh_::GetPlainInertiaTensorAtCOG(double density) const {
-//
-//            auto volume = GetVolume();
-//            auto mass = volume * density;
-//
-//            auto COG = GetCOG();
-//
-//            double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
-//            Ixx = Iyy = Izz= Ixy= Ixz= Iyz = 0.;
-//
-//            mesh::FrMesh_::Normal Normal;
-//
-//            for (mesh::FrMesh_::FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
-//                Normal = normal(*f_iter);
-//                Ixx += Normal[1] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y3) + Normal[2] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z3);
-//                Iyy += Normal[0] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_X3) + Normal[2] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z3);
-//                Izz += Normal[0] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_X3) + Normal[1] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y3);
-//                Ixy += Normal[0] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_X2Y);
-//                Ixz += Normal[2] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2X);
-//                Iyz += Normal[1] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y2Z);
-//            }
-//
-//            Ixx *= density/3.;
-//            Iyy *= density/3.;
-//            Izz *= density/3.;
-//            Ixy *= -density/2.;
-//            Ixz *= -density/2.;
-//            Iyz *= -density/2.;
-//
-//            return FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, COG, NWU);
-//        }
-//
-//        const FrInertiaTensor FrMesh_::GetPlainEqInertiaTensorAtCOG(double mass) const {
-//
-//            return GetPlainInertiaTensorAtCOG(mass/GetVolume());
-//
-//        }
-//
-//        const FrInertiaTensor FrMesh_::GetShellInertiaTensorAtCOG(double density, double thickness) const {
-//
-//            auto area = GetArea();
-//            auto mass = area * thickness * density;
-//
-//            auto COG = GetShellCOG();
-//            auto COGTest = GetCOG();
-//
-//
-//            double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
-//            Ixx = Iyy = Izz= Ixy= Ixz= Iyz = 0.;
-//
-//            for (mesh::FrMesh_::FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
-//                Ixx += data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y2) + data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2);
-//                Iyy += data(*f_iter).GetSurfaceIntegral(mesh::POLY_X2) + data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2);
-//                Izz += data(*f_iter).GetSurfaceIntegral(mesh::POLY_X2) + data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y2);
-//                Ixy += data(*f_iter).GetSurfaceIntegral(mesh::POLY_YZ);
-//                Ixz += data(*f_iter).GetSurfaceIntegral(mesh::POLY_XZ);
-//                Iyz += data(*f_iter).GetSurfaceIntegral(mesh::POLY_XY);
-//            }
-//
-//            Ixx *= density * thickness;
-//            Iyy *= density * thickness;
-//            Izz *= density * thickness;
-//            Ixy *= -density * thickness;
-//            Ixz *= -density * thickness;
-//            Iyz *= -density * thickness;
-//
-//            return FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, COG, NWU);
-//        }
-//
-//        const FrInertiaTensor FrMesh_::GetShellEqInertiaTensorAtCOG(double mass, double thickness) const {
-//
-//            GetShellInertiaTensorAtCOG(GetArea()* thickness / mass, thickness);
-//
-//        }
 
         bool FrMesh_::HasBoundaries() const {  // FIXME: si le maillage est non conforme mais hermetique, HasBoudaries() renvoie true et donc IsWatertight() false, c'est un faux négatif...
             for (FaceIter fh = faces_begin(); fh != faces_end(); ++fh) {
@@ -1354,7 +1242,7 @@ namespace frydom {
             return HalfedgeHandle(-1);
         }
 
-        double FrMesh_::CalcMeshSurfaceIntegrals(int iNormal, IntegrandType type) {
+        double FrMesh_::GetMeshedSurfaceIntegral(int iNormal, IntegrandType type) {
 
             double val = 0.;
             for (FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
@@ -1365,6 +1253,17 @@ namespace frydom {
             return val;
         }
 
+
+        double FrMesh_::GetMeshedSurfaceIntegral(IntegrandType type) {
+
+            double val = 0.;
+            for (FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
+                auto n = normal(*f_iter);
+                val += data(*f_iter).GetSurfaceIntegral(type);
+            }
+
+            return val;
+        }
 
 
         PolygonSet2 FrMesh_::GetBoundaryPolygonSet() { // FIXME: devrait etre const...
@@ -1432,8 +1331,6 @@ namespace frydom {
         }
 
 
-
-
-
     }  // end namespace mesh
+
 }  // end namespace frydom
