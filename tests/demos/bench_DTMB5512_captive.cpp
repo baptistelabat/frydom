@@ -335,7 +335,7 @@ int main(int argc, char* argv[]) {
     double Tk = atof(argv[3]);      // Wave period (s)
     char* name = argv[4];     // Output director prefix name
 
-    bool captive_test = true;      // fixed heave and pitch motions
+    bool captive_test = false;      // fixed heave and pitch motions
 
     // -- System
 
@@ -429,7 +429,8 @@ int main(int argc, char* argv[]) {
     // -- Carriage and fixation point
 
     auto shipNode = body->NewNode();
-    shipNode->SetPositionInBody(body->GetCOG(NWU),NWU);
+    //shipNode->SetPositionInBody(body->GetCOG(NWU),NWU);
+    shipNode->SetPositionInBody(Position(0., 0., -0.05),NWU);
     shipNode->RotateAroundYInBody(90*DEG2RAD,NWU);
     shipNode->RotateAroundXInBody(90*DEG2RAD,NWU);
 
