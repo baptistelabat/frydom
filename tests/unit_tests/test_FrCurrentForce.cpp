@@ -215,14 +215,16 @@ public:
 
 void TestFrCurrentForce_::SetUp() {
 
-    this->LoadData("TNR_database.h5");
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+
+    this->LoadData(resources_path.resolve("TNR_database.h5").path());
 
     body = std::make_shared<FrBody_>();
     body->SetPosition(bodyPositionInWorld, NWU);
     body->SetCOG(COGPosition, NWU);
     system.AddBody(body);
 
-    force = std::make_shared<FrCurrentForce_>("../Ship_PolarCurrentCoeffs.json");
+    force = std::make_shared<FrCurrentForce_>(resources_path.resolve("Ship_PolarCurrentCoeffs.json").path());
     body->AddExternalForce(force);
 
     system.Initialize();
