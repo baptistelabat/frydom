@@ -5,6 +5,7 @@
 #include "FrMesh.h"
 #include "FrPlane.h"
 #include "FrMeshClipper.h"
+#include "FrPolygon.h"
 #include "frydom/core/body/FrInertiaTensor.h"
 #include "frydom/core/link/constraint/FrCGeometrical.h"
 
@@ -765,7 +766,7 @@ namespace frydom {
             if (!m_polygonSet.IsValid()) {
                 CalcBoundaryPolygonSet();
             }
-            return m_polygonSet;
+            return m_polygonSet.Get();
         }
 
         void FrMesh::CalcBoundaryPolygonSet() {
@@ -863,5 +864,582 @@ namespace frydom {
 //            return mw.str();
 //
 //        }
+
+
+
+
+
+
+
+
+
+        //-----------REFACTO
+
+        FrMesh_::FrMesh_(std::string meshfile) {
+
+            // Constructor of the class.
+
+            Load(std::move(meshfile));
+        }
+
+        void FrMesh_::Load(std::string meshfile) {
+
+            // This function loads the mesh file.
+
+            if (!IO::read_mesh(*this, meshfile)) {
+                std::cerr << "Meshfile " << meshfile << " could not be read\n";
+                exit(1);
+            }
+            UpdateAllProperties();
+        }
+
+        void FrMesh_::CreateBox(double Lx, double Ly, double Lz) {
+
+            // generate vertices
+            FrMesh_::VertexHandle vhandle[8];
+            vhandle[0] = add_vertex(FrMesh_::Point(-Lx, -Ly,  Lz)*.5);
+            vhandle[1] = add_vertex(FrMesh_::Point( Lx, -Ly,  Lz)*.5);
+            vhandle[2] = add_vertex(FrMesh_::Point( Lx,  Ly,  Lz)*.5);
+            vhandle[3] = add_vertex(FrMesh_::Point(-Lx,  Ly,  Lz)*.5);
+            vhandle[4] = add_vertex(FrMesh_::Point(-Lx, -Ly, -Lz)*.5);
+            vhandle[5] = add_vertex(FrMesh_::Point( Lx, -Ly, -Lz)*.5);
+            vhandle[6] = add_vertex(FrMesh_::Point( Lx,  Ly, -Lz)*.5);
+            vhandle[7] = add_vertex(FrMesh_::Point(-Lx,  Ly, -Lz)*.5);
+
+            // generate (triangular) faces
+            std::vector<FrMesh_::VertexHandle>  face_vhandles;
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[0]);
+            face_vhandles.push_back(vhandle[1]);
+            face_vhandles.push_back(vhandle[2]);
+            add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[2]);
+            face_vhandles.push_back(vhandle[3]);
+            face_vhandles.push_back(vhandle[0]);
+            add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[0]);
+            face_vhandles.push_back(vhandle[4]);
+            face_vhandles.push_back(vhandle[1]);
+            add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[1]);
+            face_vhandles.push_back(vhandle[4]);
+            face_vhandles.push_back(vhandle[5]);
+            add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[1]);
+            face_vhandles.push_back(vhandle[5]);
+            face_vhandles.push_back(vhandle[2]);
+            add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[2]);
+            face_vhandles.push_back(vhandle[5]);
+            face_vhandles.push_back(vhandle[6]);
+            add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[2]);
+            face_vhandles.push_back(vhandle[6]);
+            face_vhandles.push_back(vhandle[3]);
+            add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[3]);
+            face_vhandles.push_back(vhandle[6]);
+            face_vhandles.push_back(vhandle[7]);
+            add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[3]);
+            face_vhandles.push_back(vhandle[7]);
+            face_vhandles.push_back(vhandle[0]);
+            add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[0]);
+            face_vhandles.push_back(vhandle[7]);
+            face_vhandles.push_back(vhandle[4]);
+            add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[6]);
+            face_vhandles.push_back(vhandle[5]);
+            face_vhandles.push_back(vhandle[4]);
+            add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[7]);
+            face_vhandles.push_back(vhandle[6]);
+            face_vhandles.push_back(vhandle[4]);
+            add_face(face_vhandles);
+
+            UpdateAllProperties();
+
+        }
+
+        void FrMesh_::Translate(const VectorT<double, 3> t) {
+
+            // This function translates the mesh.
+
+            Point p;
+            for (VertexIter v_iter = vertices_begin(); v_iter != vertices_end(); ++v_iter) {
+                point(*v_iter) += t;
+            }
+            UpdateAllProperties();
+        }
+
+        void FrMesh_::Rotate(double phi, double theta, double psi) {
+
+            // This function rotates the mesh.
+
+            // Rotation matrix.
+            double Norm_angles = std::sqrt(phi*phi + theta*theta + psi*psi);
+            double nx = phi / Norm_angles;
+            double ny = theta / Norm_angles;
+            double nz = psi / Norm_angles;
+            double nxny = nx*ny;
+            double nxnz = nx*nz;
+            double nynz = ny*nz;
+            double nx2 = nx*nx;
+            double ny2 = ny*ny;
+            double nz2 = nz*nz;
+            double ctheta = std::cos(Norm_angles);
+            double stheta = std::sin(Norm_angles);
+
+            mathutils::Matrix33<double> Rot_matrix;
+
+            if(Norm_angles == 0){
+                Rot_matrix.SetIdentity();
+            }
+            else{
+
+                mathutils::Matrix33<double> Identity;
+                Identity.SetIdentity();
+
+                mathutils::Matrix33<double> Nsym;
+                Nsym << nx2, nxny, nxnz,
+                        nxny, ny2, nynz,
+                        nxnz, nynz, nz2;
+
+                mathutils::Matrix33<double> Nnosym;
+                Nnosym << 0., -nz, ny,
+                        nz, 0., -nx,
+                        -ny, nx, 0.;
+
+                Rot_matrix = ctheta*Identity + (1-ctheta)*Nsym + stheta*Nnosym;
+
+                // Update the positions of every node.
+                mathutils::Vector3d<double> Node_position;
+                for (VertexIter v_iter = vertices_begin(); v_iter != vertices_end(); ++v_iter) {
+
+                    // x = R*x (made with the same data structure).
+                    Node_position[0] = point(*v_iter)[0];
+                    Node_position[1] = point(*v_iter)[1];
+                    Node_position[2] = point(*v_iter)[2];
+                    Node_position = Rot_matrix*Node_position;
+                    point(*v_iter)[0] = Node_position[0];
+                    point(*v_iter)[1] = Node_position[1];
+                    point(*v_iter)[2] = Node_position[2];
+                }
+
+            }
+
+            UpdateAllProperties();
+        }
+
+        void FrMesh_::Write(std::string meshfile) const {
+            if (!IO::write_mesh(*this, meshfile)) {
+                std::cerr << "Meshfile " << meshfile << " could not be written\n";
+                exit(1);
+            }
+        }
+
+        void FrMesh_::WriteInc(std::string meshfile, int i) {
+            m_writer.Reinit(i);
+            m_writer.SetFileBase(meshfile);
+//            m_writer(*this);
+        }
+
+        void FrMesh_::WriteInc() {
+//            m_writer(*this);
+        }
+
+        void FrMesh_::UpdateAllProperties() {
+
+            // This function updates all properties of faces and vertices (normals, centroids, surface integrals).
+
+            // Computation of normal vectors and centroids.
+            UpdateBaseProperties();
+
+            // Computation of surface polynomial integrals.
+            UpdateFacesPolynomialIntegrals();
+        }
+
+        void FrMesh_::UpdateBaseProperties() {
+
+            // This function computes the normal vectors everywhere and the centroid of faces.
+
+            // Computation of the normal vectors of faces, vertices and half edges.
+            update_normals();  // Update normals for both faces and vertices
+
+            // Update face's center properties.
+            Point center;
+            for (FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
+                data(*f_iter).SetCenter(calc_face_centroid(*f_iter));
+            }
+
+        }
+
+        void FrMesh_::UpdateFacesPolynomialIntegrals() {
+
+            // This function updates the computations of the polynomial surface integrals.
+
+            for (FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
+                CalcFacePolynomialIntegrals(*f_iter);
+            }
+        }
+
+        void FrMesh_::CalcFacePolynomialIntegrals(const FrMesh_::FaceHandle &fh) {  // TODO: mettre en private
+
+            // This function computes the polynomial surface integrals over the faces.
+
+            typedef Vec3d Point;
+
+            Point P0, P1, P2;
+            Point t0, t1, t2;
+            Point f1, f2, f3;
+            Point g0, g1, g2;
+            Point e1, e2, cp;
+
+            double delta;
+
+            // Getting one half-edge handle of the current face
+            auto heh = halfedge_handle(fh);
+
+            // Getting the origin vertex of heh
+            P0 = point(from_vertex_handle(heh));
+
+            heh = next_halfedge_handle(heh);
+            P1 = point(from_vertex_handle(heh));
+
+            heh = next_halfedge_handle(heh);
+            P2 = point(from_vertex_handle(heh));
+
+            e1 = P1 - P0;
+            e2 = P2 - P0;
+            cp = cross(e1, e2);
+            delta = cp.norm();
+
+            // factorized terms (optimization terms :) )
+            t0 = P0 + P1;
+            f1 = t0 + P2;
+            t1 = P0 * P0;
+            t2 = t1 + P1 * t0;
+            f2 = t2 + P2 * f1;
+            f3 = P0 * t1 + P1 * t2 + P2 * f2;
+            g0 = f2 + P0 * (f1 + P0);
+            g1 = f2 + P1 * (f1 + P1);
+            g2 = f2 + P2 * (f1 + P2);
+
+            // My Extended Eberly's Formulas.
+            // Surface integrals are transformed into contour integrals.
+            data(fh).SetSurfaceIntegral(POLY_1, delta / 2.);
+
+            data(fh).SetSurfaceIntegral(POLY_X, delta * f1[0] / 6.);
+            data(fh).SetSurfaceIntegral(POLY_Y, delta * f1[1] / 6.);
+            data(fh).SetSurfaceIntegral(POLY_Z, delta * f1[2] / 6.);
+
+            data(fh).SetSurfaceIntegral(POLY_YZ, delta * (6. * P0[1] * P0[2]
+                                                          + 3. * (P1[1] * P1[2] + P2[1] * P2[2])
+                                                          - P0[1] * f1[2] - P0[2] * f1[1]) / 12.);
+            data(fh).SetSurfaceIntegral(POLY_XZ, delta * (6. * P0[0] * P0[2]
+                                                          + 3. * (P1[0] * P1[2] + P2[0] * P2[2])
+                                                          - P0[0] * f1[2] - P0[2] * f1[0]) / 12.);
+            data(fh).SetSurfaceIntegral(POLY_XY, delta * (6. * P0[0] * P0[1]
+                                                          + 3. * (P1[0] * P1[1] + P2[0] * P2[1])
+                                                          - P0[0] * f1[1] - P0[1] * f1[0]) / 12.);
+
+            data(fh).SetSurfaceIntegral(POLY_X2, delta * f2[0] / 12.);
+            data(fh).SetSurfaceIntegral(POLY_Y2, delta * f2[1] / 12.);
+            data(fh).SetSurfaceIntegral(POLY_Z2, delta * f2[2] / 12.);
+
+            data(fh).SetSurfaceIntegral(POLY_X3, delta * f3[0] / 20.);
+            data(fh).SetSurfaceIntegral(POLY_Y3, delta * f3[1] / 20.);
+            data(fh).SetSurfaceIntegral(POLY_Z3, delta * f3[2] / 20.);
+
+            data(fh).SetSurfaceIntegral(POLY_X2Y, delta * (P0[1] * g0[0] + P1[1] * g1[0] + P2[1] * g2[0]) / 60.);
+            data(fh).SetSurfaceIntegral(POLY_Y2Z, delta * (P0[2] * g0[1] + P1[2] * g1[1] + P2[2] * g2[1]) / 60.);
+            data(fh).SetSurfaceIntegral(POLY_Z2X, delta * (P0[0] * g0[2] + P1[0] * g1[2] + P2[0] * g2[2]) / 60.);
+
+        }
+
+        BoundingBox FrMesh_::GetBoundingBox() const {
+            BoundingBox bbox;
+
+            Point p;
+            for (VertexIter v_iter=vertices_begin(); v_iter != vertices_end(); ++v_iter) {
+                p = point(*v_iter);
+                bbox.xmin = fmin(bbox.xmin, p[0]);
+                bbox.xmax = fmax(bbox.xmax, p[0]);
+                bbox.ymin = fmin(bbox.ymin, p[1]);
+                bbox.ymax = fmax(bbox.ymax, p[1]);
+                bbox.zmin = fmin(bbox.zmin, p[2]);
+                bbox.zmax = fmax(bbox.zmax, p[2]);
+            }
+            return bbox;
+        }
+
+//        const double FrMesh_::GetArea() const {
+//            if (!c_meshArea.IsValid()) {
+//
+//                double area = 0.;
+//                for (FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
+//                    area += GetArea(*f_iter);
+//                }
+//                c_meshArea = area;
+//            }
+//
+//            return c_meshArea;
+//        }
+
+        const double FrMesh_::GetArea(const FaceHandle &fh) const {
+            return data(fh).GetSurfaceIntegral(POLY_1);
+        }
+
+//        const double FrMesh_::GetVolume() const {
+//            return GetMeshSurfaceIntegral(POLY_1);
+//        }
+//
+//        const Position FrMesh_::GetCOG() const {
+//
+//            double xb, yb, zb;
+//            xb = yb = zb = 0.;
+//
+//            mesh::FrMesh_::Normal Normal;
+//
+//            for (mesh::FrMesh_::FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
+//                Normal = normal(*f_iter);
+//                xb += Normal[0] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_X2);
+//                yb += Normal[1] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y2);
+//                zb += Normal[2] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2);
+//            }
+//
+//            auto volume = GetVolume();
+//
+//            xb /= 2. * volume;
+//            yb /= 2. * volume;
+//            zb /= 2. * volume; // FIXME: si on prend une cote de surface de clip non nulle, il faut ajouter la quantite ze**2 * Sf
+//
+//            return {xb,yb,zb};
+//
+//        }
+//
+//        const Position FrMesh_::GetCOG(FrClippingPlane* plane) {
+//
+//            auto COG = GetCOG();
+//
+//            if (!CheckBoundaryPolygon(plane)) return COG;
+//
+//            double ze = plane->GetPlane()->GetNormaleInWorld(NWU).dot(plane->GetPlane()->GetOriginInWorld(NWU));
+//
+//            return COG + ze * plane->GetPlane()->GetNormaleInWorld(NWU);
+//
+//        }
+
+//        const FrInertiaTensor FrMesh_::GetPlainInertiaTensorAtCOG(double density) const {
+//
+//            auto volume = GetVolume();
+//            auto mass = volume * density;
+//
+//            auto COG = GetCOG();
+//
+//            double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
+//            Ixx = Iyy = Izz= Ixy= Ixz= Iyz = 0.;
+//
+//            mesh::FrMesh_::Normal Normal;
+//
+//            for (mesh::FrMesh_::FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
+//                Normal = normal(*f_iter);
+//                Ixx += Normal[1] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y3) + Normal[2] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z3);
+//                Iyy += Normal[0] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_X3) + Normal[2] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z3);
+//                Izz += Normal[0] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_X3) + Normal[1] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y3);
+//                Ixy += Normal[0] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_X2Y);
+//                Ixz += Normal[2] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2X);
+//                Iyz += Normal[1] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y2Z);
+//            }
+//
+//            Ixx *= density/3.;
+//            Iyy *= density/3.;
+//            Izz *= density/3.;
+//            Ixy *= -density/2.;
+//            Ixz *= -density/2.;
+//            Iyz *= -density/2.;
+//
+//            return FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, COG, NWU);
+//        }
+//
+//        const FrInertiaTensor FrMesh_::GetPlainEqInertiaTensorAtCOG(double mass) const {
+//
+//            return GetPlainInertiaTensorAtCOG(mass/GetVolume());
+//
+//        }
+//
+//        const FrInertiaTensor FrMesh_::GetShellInertiaTensorAtCOG(double density, double thickness) const {
+//
+//            auto area = GetArea();
+//            auto mass = area * thickness * density;
+//
+//            auto COG = GetShellCOG();
+//            auto COGTest = GetCOG();
+//
+//
+//            double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
+//            Ixx = Iyy = Izz= Ixy= Ixz= Iyz = 0.;
+//
+//            for (mesh::FrMesh_::FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
+//                Ixx += data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y2) + data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2);
+//                Iyy += data(*f_iter).GetSurfaceIntegral(mesh::POLY_X2) + data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2);
+//                Izz += data(*f_iter).GetSurfaceIntegral(mesh::POLY_X2) + data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y2);
+//                Ixy += data(*f_iter).GetSurfaceIntegral(mesh::POLY_YZ);
+//                Ixz += data(*f_iter).GetSurfaceIntegral(mesh::POLY_XZ);
+//                Iyz += data(*f_iter).GetSurfaceIntegral(mesh::POLY_XY);
+//            }
+//
+//            Ixx *= density * thickness;
+//            Iyy *= density * thickness;
+//            Izz *= density * thickness;
+//            Ixy *= -density * thickness;
+//            Ixz *= -density * thickness;
+//            Iyz *= -density * thickness;
+//
+//            return FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, COG, NWU);
+//        }
+//
+//        const FrInertiaTensor FrMesh_::GetShellEqInertiaTensorAtCOG(double mass, double thickness) const {
+//
+//            GetShellInertiaTensorAtCOG(GetArea()* thickness / mass, thickness);
+//
+//        }
+
+        bool FrMesh_::HasBoundaries() const {  // FIXME: si le maillage est non conforme mais hermetique, HasBoudaries() renvoie true et donc IsWatertight() false, c'est un faux négatif...
+            for (FaceIter fh = faces_begin(); fh != faces_end(); ++fh) {
+                if (is_boundary(*fh)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        bool FrMesh_::IsWatertight() const { // FIXME: plutot utiliser l'hydrostatique (plonger le corps dans l'eau) et recuperer la resultante pour verifier qu'elle est verticale positive vers le haut.
+            // Du coup par deduction, on pourra dire avec HasBoundaries() si le maillage est non conforme (hermetique mais avec frontieres).
+            return !HasBoundaries();
+        }
+
+        HalfedgeHandle FrMesh_::FindFirstUntaggedBoundaryHalfedge() const {  // TODO: placer en prive
+            HalfedgeHandle heh;
+            for (HalfedgeIter he_iter = halfedges_begin(); he_iter != halfedges_end(); ++he_iter) {
+                heh = *he_iter;
+                if (is_boundary(heh) && !status(heh).tagged()) {
+                    return heh;
+                }
+            }
+            return HalfedgeHandle(-1);
+        }
+
+        double FrMesh_::CalcMeshSurfaceIntegrals(int iNormal, IntegrandType type) {
+
+            double val = 0.;
+            for (FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
+                auto n = normal(*f_iter);
+                val += n[iNormal] * data(*f_iter).GetSurfaceIntegral(type);
+            }
+
+            return val;
+        }
+
+
+
+        PolygonSet2 FrMesh_::GetBoundaryPolygonSet() { // FIXME: devrait etre const...
+            if (!m_polygonSet.IsValid()) {
+                CalcBoundaryPolygonSet();
+            }
+            return m_polygonSet.Get();
+        }
+
+        void FrMesh_::CalcBoundaryPolygonSet() {
+
+            //  TODO: faire des tests pour verifier que le polygone frontiere suive bien la surface
+            // on peut avoir une methode qui accepte une Clipping Surface et qui verifie qu'on a bien une intersection
+            // avec la surface de decoupe.
+
+            PolygonSet2 polygonSet;
+
+            // buffer to keep track of the visited halfedges to reinit the tag after it is being used
+            std::vector<HalfedgeHandle> tagged_halfedges;
+
+            HalfedgeHandle heh_init, heh;
+
+            heh_init = FindFirstUntaggedBoundaryHalfedge();
+            while (heh_init.idx() != -1) {  // TODO : voir s'il n'y a pas de methode heh_init.is_valid()
+                Polygon polygon;
+
+                polygon.push_back(heh_init);
+                status(heh_init).set_tagged(true);
+                tagged_halfedges.push_back(heh_init);
+
+                // Circulating over the boundary from heh_init until the polygon is closed
+                heh = next_halfedge_handle(heh_init);
+                while (heh != heh_init) {
+                    polygon.push_back(heh);
+                    status(heh).set_tagged(true);
+                    tagged_halfedges.push_back(heh);
+                    heh = next_halfedge_handle(heh);
+                }
+
+//                FrPolygon test(this);
+//                test.SetPolygon(polygon);
+
+                polygonSet.push_back(FrPolygon(this, polygon));
+//                polygonSet.push_back(test);
+                // Updating polygon properties
+//                    polygon.UpdateIntegrals();
+
+                heh_init = FindFirstUntaggedBoundaryHalfedge();
+
+            }
+
+            // Removing tags
+            for (HalfedgeHandle heh_ptr : tagged_halfedges) {
+                status(heh_ptr).set_tagged(false);
+            }
+
+            m_polygonSet = polygonSet;
+//            m_polygoneSet.Get() = polygonSet;
+        }
+
+        bool FrMesh_::CheckBoundaryPolygon(FrClippingPlane *plane) {
+
+            auto polygonSet = GetBoundaryPolygonSet();
+            bool valid = !polygonSet.empty();
+
+            for (auto& polygon : polygonSet) {
+                valid &= polygon.CheckBoundaryPolygon(plane);
+            }
+
+            return valid;
+        }
+
+
+
+
+
     }  // end namespace mesh
 }  // end namespace frydom

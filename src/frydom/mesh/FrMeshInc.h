@@ -21,6 +21,6 @@
 #include "FrTriangleMeshConnected.h"
 #include "FrHydroMesh.h"
 #include "FrPlane.h"
-#include "FrPolygonSet.h"
+#include "FrPolygon.h"
 
 #endif //FRYDOM_FRMESHINC_H

@@ -9,7 +9,7 @@ set(SRC_FILES
 		FrHydroMesh.cpp
 		FrIncrementalMeshWriter.cpp
 		FrPlane.cpp
-		FrPolygonSet.cpp
+        FrPolygon.cpp
         )
 
 set(FRYDOM_MESH_SOURCES "")

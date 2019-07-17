@@ -28,7 +28,7 @@
 
 #include "FrCache.h"
 #include "FrMeshTraits.h"
-#include "FrPolygonSet.h"
+#include "FrPolygon.h"
 #include "FrIncrementalMeshWriter.h"
 
 
@@ -55,13 +55,13 @@ namespace frydom {
             double zmax = 0.;
         };
 
+        typedef std::vector<Polygon> PolygonSet;
         class FrMesh : public TriMesh_ArrayKernelT<FrMeshTraits> { // FrMesh must be a triangular mesh.
 
         private:
             meshutils::FrIncrementalMeshWriter m_writer;
 
-            typedef std::vector<HalfedgeHandle> Polygon;
-            typedef std::vector<Polygon> PolygonSet;
+//            typedef std::vector<HalfedgeHandle> Polygon;
 
             mutable FrCache<PolygonSet> m_polygonSet;
 
@@ -123,7 +123,7 @@ namespace frydom {
             };
             mutable FrCache<BoundaryPolygonSurfaceIntegrals> c_polygonSurfaceIntegrals;
 
-//            FrPolygonSet m_polygoneSet;
+//            FrPolygon m_polygoneSet;
 
 
 //            class MeshSurfaceIntegrals {
@@ -370,6 +370,137 @@ namespace frydom {
         inline mesh::FrMesh::Point Vector3dToOpenMeshPoint(const mathutils::Vector3d<double>& vector3d) {
             return {vector3d[0], vector3d[1], vector3d[2]};
         }
+
+
+
+
+
+
+
+        //-----------REFACTO
+
+
+
+        typedef std::vector<FrPolygon> PolygonSet2;
+
+        class FrMesh_ : public TriMesh_ArrayKernelT<FrMeshTraits> { // FrMesh must be a triangular mesh.
+
+        private:
+            meshutils::FrIncrementalMeshWriter m_writer;
+
+            mutable FrCache<PolygonSet2> m_polygonSet;
+
+            mutable FrCache<double> c_meshArea;
+
+        public:
+
+            /// Constructor of the class.
+            FrMesh_() = default;
+
+            /// Constructor of the class.
+            explicit FrMesh_(std::string meshfile);
+
+            /// This function loads the mesh file.
+            void Load(std::string meshfile);
+
+            void CreateBox(double Lx, double Ly, double Lz);
+
+            /// This function translates the mesh.
+            void Translate(const Point t);
+
+            /// This function rotates the mesh.
+            void Rotate(double phi, double theta, double psi);
+
+
+
+            void Write(std::string meshfile) const;
+
+            void WriteInc(std::string meshfile, int i);
+
+            void WriteInc();
+
+
+
+
+            /// This function updates all properties of faces and vertices (normals, centroids, surface integrals).
+            void UpdateAllProperties();
+
+            /// This function updates the computations of the polynomial surface integrals.
+            void UpdateFacesPolynomialIntegrals();
+
+            // Computes triangular faces surface integration of some polynomial integrands using analytical formulas
+            // established by transforming surface integrals into contour integrals and deriving analytical expressions.
+            // Extended from Eberly... TODO: mettre la referece
+            void CalcFacePolynomialIntegrals(const FrMesh::FaceHandle &fh);
+
+
+
+
+            /// This function gives the value of a surface integral over the meshed surface
+            double GetMeshSurfaceIntegral(IntegrandType type);
+
+            /// This function gives the value of a surface integral over the waterline area.
+            double GetBoundaryPolygonsSurfaceIntegral(IntegrandType type);
+
+
+
+
+            BoundingBox GetBoundingBox() const;
+
+            const double GetArea() const {return 0.;};
+
+            const double GetArea(const FaceHandle &fh) const;
+
+            const double GetVolume() const {return 0.;};
+
+            const Position GetCOG() const {return {};};
+
+//            const Position GetCOG(FrClippingPlane* plane);
+
+
+
+
+            bool HasBoundaries() const;
+
+            bool IsWatertight() const;
+
+            HalfedgeHandle FindFirstUntaggedBoundaryHalfedge() const;
+
+
+            //            bool AreBoundariesClipping() {
+//                // TODO
+//                // On verifie que les polygones frontieres ont ete generees
+//
+//
+//                // S'il n'y en a aucune (watertight), on retourne false
+//
+//                // Pour chaque polygone, on appelle la methode de verif prenant en entree la FrClippingSurface
+//
+//            }
+
+            PolygonSet2 GetBoundaryPolygonSet();
+
+        private:
+
+
+            void CalcBoundaryPolygonSet();
+            // TODO: check pour voir si les polygones obtenus sont bien inscrits dans la surface de coupe
+
+
+            bool CheckBoundaryPolygon(FrClippingPlane* plane);
+
+            /// This function computes the normal vectors everywhere and the centroid of faces.
+            void UpdateBaseProperties();
+
+            void UpdateBoundariesSurfacePolynomialIntegrals();
+
+
+            double CalcMeshSurfaceIntegrals(int iNormal, IntegrandType type);
+
+            void UpdateMeshSurfaceIntegrals();
+
+
+        };
 
     }  // end namespace mesh
 
