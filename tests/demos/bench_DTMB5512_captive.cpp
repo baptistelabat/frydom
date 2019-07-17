@@ -429,8 +429,7 @@ int main(int argc, char* argv[]) {
     // -- Carriage and fixation point
 
     auto shipNode = body->NewNode();
-    //shipNode->SetPositionInBody(body->GetCOG(NWU),NWU);
-    shipNode->SetPositionInBody(Position(0., 0., -0.05),NWU);
+    shipNode->SetPositionInBody(body->GetCOG(NWU),NWU);
     shipNode->RotateAroundYInBody(90*DEG2RAD,NWU);
     shipNode->RotateAroundXInBody(90*DEG2RAD,NWU);
 
