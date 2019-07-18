@@ -55,4 +55,3 @@ set(subdirs
 foreach (subdir ${subdirs})
     add_subdirectory(${subdir})
 endforeach ()
-
