@@ -21,6 +21,7 @@ set(test_radiation_mode_resources_path ${CMAKE_SOURCE_DIR}/tests/data/platform/)
 set(test_WNL_and_NL_hydrostatics_resources_path ${CMAKE_SOURCE_DIR}/tests/data/platform/)
 set(test_CylinderInteraction_resources_path ${CMAKE_SOURCE_DIR}/tests/data/CylinderInteraction/)
 set(bench_Ellipsoid_OMAE2014_resources_path ${CMAKE_SOURCE_DIR}/tests/data/bench/Ellipsoid_OMAE2014/)
+set(dev_Carriage_resources_path ${CMAKE_SOURCE_DIR}/tests/data/bench/DTMB5512/)
 
 foreach(test ${REFACTORING_TESTS})
     message(STATUS "        ...add ${test}")
