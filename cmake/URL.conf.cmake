@@ -48,3 +48,4 @@ set(cppfs_TAG v1.2.0)
 # JSON
 set(json_URL https://github.com/nlohmann/json.git)
 set(json_TAG v3.6.1)
+

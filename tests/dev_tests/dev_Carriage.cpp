@@ -88,13 +88,16 @@ int main() {
 
     FrOffshoreSystem system;
 
+    // Resources path
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+
     // --------------------------------------------------
     // Ship
     // --------------------------------------------------
 
     auto ship = system.NewBody();
     ship->SetName("Ship");
-    ship->AddMeshAsset("DTMB5512.obj");
+    ship->AddMeshAsset(resources_path.resolve("DTMB5512.obj").path());
     ship->SetColor(Green);
 
     // Inertia
@@ -116,7 +119,7 @@ int main() {
 
 //    hdb->Map(0,ship.get(),eqFrame);
 
-    auto hydrostaticForce = make_linear_hydrostatic_force(eqFrame,ship,"DTMB5512.obj",FrFrame());
+    auto hydrostaticForce = make_linear_hydrostatic_force(eqFrame,ship,resources_path.resolve("DTMB5512.obj").path(),FrFrame());
 
     // --------------------------------------------------
     // Carriage

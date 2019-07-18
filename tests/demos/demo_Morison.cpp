@@ -33,6 +33,9 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem system;
     system.SetName("demo_Morison");
 
+    // Resources path
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+
     // ------------------ Wave Field ------------------ //
 
     auto FreeSurface = system.GetEnvironment()->GetOcean()->GetFreeSurface();
@@ -96,7 +99,7 @@ int main(int argc, char* argv[]) {
         auto Platform = system.NewBody();
         Platform->SetName("platform");
 
-        Platform->AddMeshAsset("Platform_GVA7500.obj");
+        Platform->AddMeshAsset(resources_path.resolve("Platform_GVA7500.obj").path());
 
         Platform->SetFixedInWorld(true);
 

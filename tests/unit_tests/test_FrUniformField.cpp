@@ -174,7 +174,8 @@ void TestFrUniformField::LoadData(std::string filename) {
 }
 
 void TestFrUniformField::SetUp() {
-    LoadData("TNR_database.h5");
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+    LoadData(resources_path.resolve("TNR_database.h5").path());
 }
 
 void TestFrUniformField::TestSetVelocityFrameDir() {

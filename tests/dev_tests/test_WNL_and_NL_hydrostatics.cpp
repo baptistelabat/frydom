@@ -15,6 +15,8 @@ using namespace frydom;
 
 int main(int argc, char* argv[]) {
 
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+
     // Define the frame convention (NWU for North-West-Up or NED for North-East-Down)
     FRAME_CONVENTION fc = NWU;
 
@@ -87,7 +89,7 @@ int main(int argc, char* argv[]) {
 
     auto platform = system.NewBody();
     platform->SetName("platform");
-    platform->AddMeshAsset("Platform_GVA7500.obj");
+    platform->AddMeshAsset(resources_path.resolve("Platform_GVA7500.obj").path());
     platform->SetColor(Yellow);
 
     // Inertia Tensor
@@ -129,7 +131,7 @@ int main(int argc, char* argv[]) {
 
 //     Create a hydrodynamic database (hdb), load data from the input file and creates and initialize the BEMBody.
 //    auto hdb = make_hydrodynamic_database("Platform_HDB.hdb5");
-    auto hdb = make_hydrodynamic_database("Platform_HDB_Without_drift.hdb5");
+    auto hdb = make_hydrodynamic_database(resources_path.resolve("Platform_HDB_Without_drift.hdb5").path());
 
     // Create an equilibrium frame for the platform and add it to the system at the position of the body CoG.
     auto eqFrame = std::make_shared<FrEquilibriumFrame>(platform.get());
@@ -139,7 +141,7 @@ int main(int argc, char* argv[]) {
     hdb->Map(0, platform.get(), eqFrame);
 
     // -- Hydrodynamic mesh
-    auto PlatformMesh = make_hydro_mesh(platform, "mesh_Platform_GVA7500_Sym.obj", FrFrame(), FrHydroMesh::ClippingSupport::WAVESURFACE);
+    auto PlatformMesh = make_hydro_mesh(platform, resources_path.resolve("mesh_Platform_GVA7500_Sym.obj").path(), FrFrame(), FrHydroMesh::ClippingSupport::WAVESURFACE);
 
     // -- Hydrostatics
     // Create the linear hydrostatic force and add it to the platform

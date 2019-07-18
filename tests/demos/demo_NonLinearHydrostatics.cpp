@@ -39,6 +39,9 @@ int main(int argc, char* argv[]) {
 
     system.GetEnvironment()->GetOcean()->SetDensity(1023.);
 
+    // Resources path
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+
     // --------------------------------------------------
     // Environment
     // --------------------------------------------------
@@ -91,7 +94,8 @@ int main(int argc, char* argv[]) {
     meshOffset.SetRotation(cylRotation);
 
     // -- Hydrodynamic mesh
-    auto CylinderMesh = make_hydro_mesh(cylinder, "Free_cylinder_2900_panels.obj", meshOffset, FrHydroMesh::ClippingSupport::PLANESURFACE);
+    auto CylinderMesh = make_hydro_mesh(cylinder, resources_path.resolve("Free_cylinder_2900_panels.obj").path(),
+            meshOffset, FrHydroMesh::ClippingSupport::PLANESURFACE);
 
     // Writing the initial mesh, for checking only
     CylinderMesh->GetInitialMesh().Write("Mesh_Initial.obj");
