@@ -15,6 +15,11 @@ namespace frydom {
 
         FrPolygon::FrPolygon(FrMesh_ *mesh, Polygon polygon) : m_mesh(mesh), m_polygon(std::move(polygon)) {
             c_surfaceIntegrals = BoundaryPolygonSurfaceIntegrals(0,0,0,0,0,0);
+
+            StoreVertexInPlane();
+            c_planar = CheckPlanar();
+
+
             UpdateBoundariesSurfacePolynomialIntegrals();
         }
 
@@ -25,8 +30,11 @@ namespace frydom {
         std::vector<Position> FrPolygon::GetVertexList() const {
             std::vector<Position> vertexList;
 
+            auto vertex = OpenMeshPointToVector3d<Position>(m_mesh->point(m_mesh->from_vertex_handle(m_polygon[0])));
+            vertexList.push_back(vertex);
+
             for (auto& heh : m_polygon) {
-                auto vertex = OpenMeshPointToVector3d<Position>(m_mesh->point(m_mesh->from_vertex_handle(heh)));
+                vertex = OpenMeshPointToVector3d<Position>(m_mesh->point(m_mesh->to_vertex_handle(heh)));
                 vertexList.push_back(vertex);
             }
 
@@ -34,37 +42,30 @@ namespace frydom {
         }
 
         double FrPolygon::GetArea() const {
-
-            CheckPlanar();
-
             return GetSurfaceIntegral(POLY_1);
-
         }
 
         void FrPolygon::UpdateBoundariesSurfacePolynomialIntegrals() {
 
-            CheckPlanar();
+            assert(IsPlanar());
 
             double Int1, IntX, IntY, IntXY, IntX2, IntY2;
             Int1 = IntX = IntY = IntXY = IntX2 = IntY2 = 0;
 
-            Polygon polygonSet = m_polygon;
-
-            FrMesh_::Point P0, P1;
+            Position pos0, pos1;
             double x0, x1, y0, y1;
             double dx, dy, px, py, a, b;
 
-            P0 = m_mesh->point(m_mesh->from_vertex_handle(m_polygon[0]));
+            pos0 = c_vertex[0];
 
-            for (const HalfedgeHandle &heh : m_polygon) {
+            for (int i = 1; i < c_vertex.size(); i++) {
 
-                P1 = m_mesh->point(m_mesh->to_vertex_handle(heh));
+                pos1 = c_vertex[i];
+                x0 = pos0[0];
+                y0 = pos0[1];
 
-                x0 = P0[0];
-                y0 = P0[1];
-
-                x1 = P1[0];
-                y1 = P1[1];
+                x1 = pos1[0];
+                y1 = pos1[1];
 
                 dx = x1 - x0;
                 dy = y1 - y0;
@@ -81,7 +82,7 @@ namespace frydom {
                 IntX2 += dy * a * px;
                 IntY2 += dx * b * py;
 
-                P0 = P1;
+                pos0 = pos1;
 
             }
 
@@ -119,13 +120,11 @@ namespace frydom {
 
         bool FrPolygon::CheckPlanar() const {
 
-            std::vector<Position> vertexList = GetVertexList();
-
-            geom::FrPlane plane(vertexList, NWU);
+            geom::FrPlane plane(c_vertex, NWU);
 
             bool planar = true;
 
-            for (auto& vertex : vertexList){
+            for (auto& vertex : c_vertex){
                 auto distance = plane.GetDistanceToPoint(vertex, NWU);
                 planar &= (distance<1E-8);
             }
@@ -135,6 +134,19 @@ namespace frydom {
 
         bool FrPolygon::IsPlanar() const {
             return c_planar;
+        }
+
+        void FrPolygon::StoreVertexInPlane() {
+            c_vertex = GetVertexList();
+
+            geom::FrPlane plane(c_vertex, NWU);
+
+            for (auto& vertex : c_vertex){
+                auto pos = plane.GetFrame().GetPointPositionInFrame(vertex, NWU);
+                vertex = pos;
+            }
+
+
         }
 
 

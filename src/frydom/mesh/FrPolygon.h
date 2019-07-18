@@ -93,12 +93,15 @@ namespace frydom {
 
             void UpdateBoundariesSurfacePolynomialIntegrals();
             bool CheckPlanar() const;
+            void StoreVertexInPlane();
 
             FrMesh_* m_mesh;
             Polygon m_polygon;
             BoundaryPolygonSurfaceIntegrals c_surfaceIntegrals;
 
             bool c_planar;
+
+            std::vector<Position> c_vertex;
 
         };
 
