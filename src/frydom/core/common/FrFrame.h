@@ -361,6 +361,8 @@ namespace frydom {
 
         Position GetPointPositionInParent(const Position& framePos, FRAME_CONVENTION fc) const;
 
+        Position GetPointPositionInFrame(const Position& parentPos, FRAME_CONVENTION fc) const;
+
 
         friend std::ostream&operator<<(std::ostream& os, const FrFrame& frame);
 

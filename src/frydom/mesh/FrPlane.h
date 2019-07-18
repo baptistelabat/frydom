@@ -7,7 +7,8 @@
 
 #include <memory>
 
-#include <frydom/core/math/FrVector.h>
+#include "frydom/core/math/FrVector.h"
+#include "frydom/core/common/FrFrame.h"
 
 namespace frydom{
 
@@ -29,6 +30,8 @@ namespace frydom{
 
             void GetNormal(Direction normal, FRAME_CONVENTION fc) const;
 
+            FrFrame GetFrame() const;
+
             double GetDistanceToPoint(Position PointInWorld, FRAME_CONVENTION fc) const;
 
             double GetSignedDistanceToPoint(Position PointInWorld, FRAME_CONVENTION fc) const;
@@ -39,10 +42,14 @@ namespace frydom{
 
 
 
+
         private:
+
+            void BuildFrame();
 
             Position m_origin;          ///< plane origin
             Direction m_normal;         ///< plane normal
+            FrFrame m_frame;            ///< plane reference frame
 
         };
 

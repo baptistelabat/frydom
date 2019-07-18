@@ -10,7 +10,7 @@
 using namespace frydom;
 using namespace geom;
 
-TEST(FrPlane,Construction) {
+TEST(FrPlane,ConstructionRandom) {
 
 //    std::srand((unsigned int) time(nullptr));
 
@@ -76,5 +76,16 @@ TEST(FrPlane,Construction) {
     EXPECT_NEAR(testIntersection.norm(), 0., 1E-8);
 
 
+    // Frame
+    {;
+        auto planeFrame = plane.GetFrame();
+
+        auto P1 = plane.GetClosestPointOnPlane(P0, fc);
+
+        auto P1inPlane = planeFrame.GetPointPositionInFrame(P1,NWU);
+        EXPECT_NEAR(P1inPlane.GetZ(), 0., 1E-8);
+
+
+    }
 
 }

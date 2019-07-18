@@ -9,10 +9,12 @@ namespace frydom {
     namespace geom {
 
         FrPlane::FrPlane(const Position &origin, const Direction &normal, FRAME_CONVENTION fc) :  m_origin(origin), m_normal(normal) {
+            assert(std::abs(1.-m_normal.norm())<1E-8);
             if (IsNED(fc)) {
                 internal::SwapFrameConvention(m_origin);
                 internal::SwapFrameConvention(m_normal);
             }
+            BuildFrame();
         }
 
         FrPlane::FrPlane(const std::vector<Position> &cloudPoint, FRAME_CONVENTION fc) {
@@ -42,6 +44,7 @@ namespace frydom {
                 internal::SwapFrameConvention(m_origin);
                 internal::SwapFrameConvention(m_normal);
             }
+            BuildFrame();
 
         }
 
@@ -63,6 +66,10 @@ namespace frydom {
 
         void FrPlane::GetNormal(Direction normal, FRAME_CONVENTION fc) const {
             normal = GetNormal(fc);
+        }
+
+        FrFrame FrPlane::GetFrame() const {
+            return m_frame;
         }
 
         double FrPlane::GetDistanceToPoint(Position PointInWorld, FRAME_CONVENTION fc) const {
@@ -96,6 +103,33 @@ namespace frydom {
 
         Position FrPlane::GetClosestPointOnPlane(Position PointInWorld, FRAME_CONVENTION fc) const {
             return GetIntersectionWithLine(PointInWorld, PointInWorld+GetNormal(fc), fc);
+        }
+
+        void FrPlane::BuildFrame() {
+
+//            m_frame.SetPosition(GetIntersectionWithLine(Position(0,0,0),Position(0,0,1),NWU), NWU);
+
+            m_frame.SetPosition(GetClosestPointOnPlane(Position(),NWU), NWU);
+
+            Direction z = m_normal;
+
+            Direction x = m_normal.cross(Direction(1,0,0));
+            x.normalize();
+
+            if (x.norm()<1E-8) x = m_normal.cross(Direction(0,1,0));
+            Direction y = z.cross(x); y.normalize();
+
+            Matrix33<double> matrix;
+            matrix <<   x.Getux(), y.Getux(), z.Getux(),
+                    x.Getuy(), y.Getuy(), z.Getuy(),
+                    x.Getuz(), y.Getuz(), z.Getuz();
+
+            FrUnitQuaternion quat;
+            quat.Set(matrix, NWU);
+//            quat.Set(matrix.transpose(), NWU);
+
+            m_frame.SetRotation(quat);
+
         }
 
     } //end namespace frydom::mesh

@@ -368,5 +368,10 @@ namespace frydom {
 
     }
 
+    Position FrFrame::GetPointPositionInFrame(const Position &framePos, FRAME_CONVENTION fc) const {
+        Position pos = framePos - GetPosition(fc);
+        return ProjectVectorParentInFrame(pos, fc);
+    }
+
 
 }  // end namespace frydom
