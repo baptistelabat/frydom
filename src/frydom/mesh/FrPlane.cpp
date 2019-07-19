@@ -45,6 +45,12 @@ namespace frydom {
 
         }
 
+        void FrPlane::SetOrigin(const Position& origin, FRAME_CONVENTION fc) {
+            m_origin = origin;
+            if (IsNED(fc)) internal::SwapFrameConvention(m_origin);
+            BuildFrame();
+        }
+
         Position FrPlane::GetOrigin(FRAME_CONVENTION fc) const {
             Position origin = m_origin;
             if (IsNED(fc)) internal::SwapFrameConvention(origin);
@@ -53,6 +59,12 @@ namespace frydom {
 
         void FrPlane::GetOrigin(Position origin, FRAME_CONVENTION fc) const {
             origin = GetOrigin(fc);
+        }
+
+        void FrPlane::SetNormal(const Direction &normal, FRAME_CONVENTION fc) {
+            m_normal = normal;
+            if (IsNED(fc)) internal::SwapFrameConvention(m_normal);
+            BuildFrame();
         }
 
         Direction FrPlane::GetNormal(FRAME_CONVENTION fc) const {

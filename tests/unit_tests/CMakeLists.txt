@@ -34,6 +34,7 @@ set(UNIT_TESTS
         test_FrClippingSurface
         test_FrPlane
         test_FrPolygon
+        test_FrMesh
         )
 
 

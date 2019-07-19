@@ -22,9 +22,13 @@ namespace frydom{
 
             FrPlane(const std::vector<Position> &cloudPoints, FRAME_CONVENTION fc);
 
+            void SetOrigin(const Position& origin, FRAME_CONVENTION fc);
+
             Position GetOrigin(FRAME_CONVENTION fc) const;
 
             void GetOrigin(Position origin, FRAME_CONVENTION fc) const;
+
+            void SetNormal(const Direction &normal, FRAME_CONVENTION fc);
 
             Direction GetNormal(FRAME_CONVENTION fc) const;
 

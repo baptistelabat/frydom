@@ -67,18 +67,3 @@ TEST(FrPolygone,Construction) {
 //    std::cout<<"Ix = "<< Ix<<", Iy = "<< Iy<<", Ixy = "<< Ixy<<", Ix2 = "<< Ix2<<", Iy2 = "<< Iy2<<std::endl;
 
 }
-
-
-TEST(FrPolygone,FromMesh) {
-
-    FRAME_CONVENTION fc = NWU;
-
-    mesh::FrMesh mesh;
-
-    mesh.CreateBox(10,10,10);
-
-
-
-
-
-}

@@ -4,7 +4,8 @@
 
 #include "FrMeshClipper.h"
 
-#include "frydom/core/link/constraint/FrCGeometrical.h"
+//#include "frydom/core/link/constraint/FrCGeometrical.h"
+#include "FrPlane.h"
 
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
@@ -19,7 +20,7 @@ namespace frydom {
 
         // -----------------------------------------------------------------------------------------------------------------
 
-        FrClippingPlane::FrClippingPlane(const std::shared_ptr<FrCPlane> &plane) : m_plane(plane) {}
+        FrClippingPlane::FrClippingPlane(const std::shared_ptr<geom::FrPlane> &plane) : m_plane(plane) {}
 
         VectorT<double, 3>
         FrClippingPlane::GetIntersection(const VectorT<double, 3> &p0, const VectorT<double, 3> &p1) {
@@ -31,14 +32,14 @@ namespace frydom {
             Position P0 = {p0[0],p0[1],p0[2]};
             Position P1 = {p1[0],p1[1],p1[2]};
 
-            auto n = m_plane->GetNormaleInWorld(NWU);
+            auto n = m_plane->GetNormal(NWU);
 
             // check if P0P1 is parallel to the plan / or P0P1 null
             Direction line = (P1 - P0); assert(line.norm()>1E-16);
             assert(line.dot(n)!=0);
 
             // P0O
-            auto planeOrigin = m_plane->GetOriginInWorld(NWU);
+            auto planeOrigin = m_plane->GetOrigin(NWU);
 
             // Application of the horizontal translation.
             auto BodyPos = m_bodyPosition; BodyPos.GetZ() = 0.;
@@ -62,7 +63,7 @@ namespace frydom {
 
             auto PointInWorld = OpenMeshPointToVector3d<Position>(point);
 
-            auto planeOrigin = m_plane->GetOriginInWorld(NWU);
+            auto planeOrigin = m_plane->GetOrigin(NWU);
 
             // Application of the horizontal translation.
             auto BodyPos = m_bodyPosition; BodyPos.GetZ() = 0.;
@@ -70,11 +71,11 @@ namespace frydom {
 
             Position vector = PointInWorld - planeOrigin;
 
-            return vector.dot(m_plane->GetNormaleInWorld(NWU));
+            return vector.dot(m_plane->GetNormal(NWU));
 
         }
 
-        FrCPlane *FrClippingPlane::GetPlane() const {
+        geom::FrPlane *FrClippingPlane::GetPlane() const {
             return m_plane.get();
         }
 
@@ -224,7 +225,7 @@ namespace frydom {
             FrMesh::FFIter ff_iter = m_mesh->ff_iter(fh);
             for (; ff_iter.is_valid(); ++ff_iter) {
                 m_mesh->update_normal(*ff_iter);
-                m_mesh->CalcFacePolynomialIntegrals(*ff_iter);
+//                m_mesh->CalcFacePolynomialIntegrals(*ff_iter); //FIXME
             }
         }
 

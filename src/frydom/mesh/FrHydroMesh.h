@@ -27,6 +27,7 @@ namespace frydom {
 
     class FrOffshoreSystem;
     class FrBody;
+    namespace geom { class FrPlane; }
 
     /**
      * \class FrHydroMesh
@@ -86,7 +87,8 @@ namespace frydom {
 
         ClippingSupport m_clippingSupport;              ///< Support for the clipping procedure
 
-        std::shared_ptr<FrNode> c_nodeForClippingPlane; ///< node for defining the FrPlane needed by FrClippingPlane
+//        std::shared_ptr<FrNode> c_nodeForClippingPlane; ///< node for defining the FrPlane needed by FrClippingPlane
+        std::shared_ptr<geom::FrPlane> c_clippingPlane; ///< plane for the FrClippingPane
 
     };
 
