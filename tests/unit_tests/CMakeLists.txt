@@ -33,6 +33,7 @@ set(UNIT_TESTS
         test_FrAssembly
         test_FrClippingSurface
         test_FrPlane
+        test_FrPolygon
         )
 
 

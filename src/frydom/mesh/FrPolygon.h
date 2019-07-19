@@ -7,11 +7,14 @@
 
 #include "FrMeshTraits.h"
 #include "FrCache.h"
+#include "FrPlane.h"
 
 namespace frydom {
 
     // Forward Declarations
     class Position;
+
+
 
     namespace mesh {
 
@@ -65,20 +68,16 @@ namespace frydom {
         };
 
         // Forward Declarations
-        class FrMesh_;
-        class FrClippingPlane;
 
         class FrPolygon {
 
         public:
 
-            FrPolygon(FrMesh_* mesh, Polygon polygon);
-
-            Polygon GetPolygon() const;
+            FrPolygon(const std::vector<Position>& vertexList, FRAME_CONVENTION fc);
 
             bool IsPlanar() const;
 
-            std::vector<Position> GetVertexList() const;
+            std::vector<Position> GetVertexList(FRAME_CONVENTION fc) const;
 
             double GetArea() const;
 
@@ -86,22 +85,19 @@ namespace frydom {
 
             double GetSurfaceIntegral(IntegrandType type) const;
 
-            bool CheckBoundaryPolygon(FrClippingPlane *plane) const;
-
+            geom::FrPlane GetPlane() const;
 
         private:
 
             void UpdateBoundariesSurfacePolynomialIntegrals();
             bool CheckPlanar() const;
-            void StoreVertexInPlane();
+            std::vector<Position> GetVertexInPlane() const;
 
-            FrMesh_* m_mesh;
-            Polygon m_polygon;
             BoundaryPolygonSurfaceIntegrals c_surfaceIntegrals;
 
             bool c_planar;
 
-            std::vector<Position> c_vertex;
+            std::vector<Position> m_vertexList;
 
         };
 

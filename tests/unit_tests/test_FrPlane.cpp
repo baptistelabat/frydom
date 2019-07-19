@@ -10,9 +10,9 @@
 using namespace frydom;
 using namespace geom;
 
-TEST(FrPlane,ConstructionRandom) {
+TEST(FrPlane,Construction) {
 
-//    std::srand((unsigned int) time(nullptr));
+    std::srand((unsigned int) time(nullptr));
 
     FRAME_CONVENTION fc = NWU;
 
@@ -77,15 +77,44 @@ TEST(FrPlane,ConstructionRandom) {
 
 
     // Frame
-    {;
+    {
         auto planeFrame = plane.GetFrame();
 
         auto P1 = plane.GetClosestPointOnPlane(P0, fc);
 
         auto P1inPlane = planeFrame.GetPointPositionInFrame(P1,NWU);
         EXPECT_NEAR(P1inPlane.GetZ(), 0., 1E-8);
-
-
     }
+
+}
+
+TEST(FrPlane,Cloud) {
+
+    FRAME_CONVENTION fc = NWU;
+
+    int nVertex = 4;
+    double radius = 10;
+
+    std::vector<Position> vertexList;
+
+    Position origin(0.5,0,0.5);
+
+    Direction normal(1,0,1);
+    normal.normalize();
+
+    FrPlane plane(origin, normal, fc);
+
+    for (int i = 0; i<nVertex; i++) {
+        Position P(radius*cos(2*MU_PI*i/nVertex), radius*sin(2*MU_PI*i/nVertex), 0);
+        P = plane.GetFrame().GetPointPositionInParent(P, fc);
+        vertexList.push_back(P);
+    }
+
+    FrPlane test(vertexList, fc);
+
+    Direction testNormal = normal - test.GetNormal(fc);
+    EXPECT_NEAR(testNormal.norm(),0,1E-8);
+
+    EXPECT_NEAR(test.GetDistanceToPoint(Position(),fc)-plane.GetDistanceToPoint(Position(),fc),0,1E-8);
 
 }

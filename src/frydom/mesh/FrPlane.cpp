@@ -29,15 +29,12 @@ namespace frydom {
             G /= cloudPoint.size();
             m_origin = G;
 
-            Position prePoint = G;
-            for (auto& point : cloudPoint){
-                a += (prePoint.GetY() - point.GetY()) * (prePoint.GetZ() + point.GetZ());
-                b += (prePoint.GetZ() - point.GetZ()) * (prePoint.GetX() + point.GetX());
-                c += (prePoint.GetX() - point.GetX()) * (prePoint.GetY() + point.GetY());
-            }
-//            d = - a*G.GetX() - b*G.GetY() - c*G.GetZ();
+            m_normal.SetNull();
 
-            m_normal = {a, b, c};
+            for (int i=0; i<cloudPoint.size()-1; i++) {
+                Position vec1 = G - cloudPoint[i];
+                m_normal += vec1.cross(G-cloudPoint[i+1]);
+            }
             m_normal.normalize();
 
             if (IsNED(fc)) {

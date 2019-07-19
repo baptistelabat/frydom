@@ -7,38 +7,45 @@
 #include "FrPolygon.h"
 #include "FrMesh.h"
 #include "FrMeshClipper.h"
-#include "FrPlane.h"
 
 namespace frydom {
 
     namespace mesh {
 
-        FrPolygon::FrPolygon(FrMesh_ *mesh, Polygon polygon) : m_mesh(mesh), m_polygon(std::move(polygon)) {
-            c_surfaceIntegrals = BoundaryPolygonSurfaceIntegrals(0,0,0,0,0,0);
+        FrPolygon::FrPolygon(const std::vector<Position>& vertexList, FRAME_CONVENTION fc) {
 
-            StoreVertexInPlane();
+            m_vertexList = vertexList;
+            if (IsNED(fc)) {
+                for (auto& vertex:m_vertexList)
+                    internal::SwapFrameConvention(vertex);
+            }
+
             c_planar = CheckPlanar();
-
 
             UpdateBoundariesSurfacePolynomialIntegrals();
         }
 
-        Polygon FrPolygon::GetPolygon() const {
-            return m_polygon;
-        }
+        std::vector<Position> FrPolygon::GetVertexList(FRAME_CONVENTION fc) const {
 
-        std::vector<Position> FrPolygon::GetVertexList() const {
-            std::vector<Position> vertexList;
-
-            auto vertex = OpenMeshPointToVector3d<Position>(m_mesh->point(m_mesh->from_vertex_handle(m_polygon[0])));
-            vertexList.push_back(vertex);
-
-            for (auto& heh : m_polygon) {
-                vertex = OpenMeshPointToVector3d<Position>(m_mesh->point(m_mesh->to_vertex_handle(heh)));
-                vertexList.push_back(vertex);
+            auto vertexList = m_vertexList;
+            if (IsNED(fc)) {
+                for (auto& vertex:vertexList)
+                    internal::SwapFrameConvention(vertex);
             }
 
             return vertexList;
+
+//            std::vector<Position> vertexList;
+//
+//            auto vertex = OpenMeshPointToVector3d<Position>(m_mesh->point(m_mesh->from_vertex_handle(m_polygon[0])));
+//            vertexList.push_back(vertex);
+//
+//            for (auto& heh : m_polygon) {
+//                vertex = OpenMeshPointToVector3d<Position>(m_mesh->point(m_mesh->to_vertex_handle(heh)));
+//                vertexList.push_back(vertex);
+//            }
+//
+//            return vertexList;
         }
 
         double FrPolygon::GetArea() const {
@@ -56,11 +63,13 @@ namespace frydom {
             double x0, x1, y0, y1;
             double dx, dy, px, py, a, b;
 
-            pos0 = c_vertex[0];
+            auto vertexInPlane = GetVertexInPlane();
 
-            for (int i = 1; i < c_vertex.size(); i++) {
+            pos0 = vertexInPlane[0];
 
-                pos1 = c_vertex[i];
+            for (int i = 1; i < vertexInPlane.size(); i++) {
+
+                pos1 = vertexInPlane[i];
                 x0 = pos0[0];
                 y0 = pos0[1];
 
@@ -105,26 +114,26 @@ namespace frydom {
             return c_surfaceIntegrals.GetSurfaceIntegral(type);
         }
 
-        bool FrPolygon::CheckBoundaryPolygon(FrClippingPlane *plane) const {
-
-            auto valid = !m_polygon.empty();
-
-            for (auto& heh : m_polygon) {
-                auto P1 = m_mesh->point(m_mesh->from_vertex_handle(heh));
-                auto distance = plane->GetDistance(P1);
-                valid &= (distance<1E-8);
-            }
-
-            return false;
-        }
+//        bool FrPolygon::CheckBoundaryPolygon(FrClippingPlane *plane) const {
+//
+//            auto valid = !m_polygon.empty();
+//
+//            for (auto& heh : m_polygon) {
+//                auto P1 = m_mesh->point(m_mesh->from_vertex_handle(heh));
+//                auto distance = plane->GetDistance(P1);
+//                valid &= (distance<1E-8);
+//            }
+//
+//            return false;
+//        }
 
         bool FrPolygon::CheckPlanar() const {
 
-            geom::FrPlane plane(c_vertex, NWU);
+            auto plane = GetPlane();
 
             bool planar = true;
 
-            for (auto& vertex : c_vertex){
+            for (auto& vertex : m_vertexList){
                 auto distance = plane.GetDistanceToPoint(vertex, NWU);
                 planar &= (distance<1E-8);
             }
@@ -136,17 +145,21 @@ namespace frydom {
             return c_planar;
         }
 
-        void FrPolygon::StoreVertexInPlane() {
-            c_vertex = GetVertexList();
+        std::vector<Position> FrPolygon::GetVertexInPlane() const {
+            std::vector<Position> vertexInPlane;
 
-            geom::FrPlane plane(c_vertex, NWU);
+            auto plane = GetPlane();
 
-            for (auto& vertex : c_vertex){
+            for (auto& vertex : m_vertexList){
                 auto pos = plane.GetFrame().GetPointPositionInFrame(vertex, NWU);
-                vertex = pos;
+                vertexInPlane.push_back(pos);
             }
 
+            return vertexInPlane;
+        }
 
+        geom::FrPlane FrPolygon::GetPlane() const {
+            return geom::FrPlane(m_vertexList, NWU);
         }
 
 

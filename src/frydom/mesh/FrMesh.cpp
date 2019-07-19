@@ -1289,10 +1289,16 @@ namespace frydom {
             heh_init = FindFirstUntaggedBoundaryHalfedge();
             while (heh_init.idx() != -1) {  // TODO : voir s'il n'y a pas de methode heh_init.is_valid()
                 Polygon polygon;
+                std::vector<Position> vertexList;
 
                 polygon.push_back(heh_init);
                 status(heh_init).set_tagged(true);
                 tagged_halfedges.push_back(heh_init);
+
+                auto vertex = OpenMeshPointToVector3d<Position>(point(from_vertex_handle(heh)));
+                vertexList.push_back(vertex);
+                vertex = OpenMeshPointToVector3d<Position>(point(to_vertex_handle(heh)));
+                vertexList.push_back(vertex);
 
                 // Circulating over the boundary from heh_init until the polygon is closed
                 heh = next_halfedge_handle(heh_init);
@@ -1300,10 +1306,12 @@ namespace frydom {
                     polygon.push_back(heh);
                     status(heh).set_tagged(true);
                     tagged_halfedges.push_back(heh);
+                    vertex = OpenMeshPointToVector3d<Position>(point(to_vertex_handle(heh)));
+                    vertexList.push_back(vertex);
                     heh = next_halfedge_handle(heh);
                 }
 
-                polygonSet.push_back(FrPolygon(this, polygon));
+                polygonSet.push_back(FrPolygon(vertexList,NWU));
 
                 heh_init = FindFirstUntaggedBoundaryHalfedge();
 
@@ -1324,7 +1332,7 @@ namespace frydom {
             bool valid = !polygonSet.empty();
 
             for (auto& polygon : polygonSet) {
-                valid &= polygon.CheckBoundaryPolygon(plane);
+//                valid &= polygon.CheckBoundaryPolygon(plane);
             }
 
             return valid;
