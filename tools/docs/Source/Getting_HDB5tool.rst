@@ -2,11 +2,11 @@ Installation Instructions
 =========================
 
 
-HDB5tool is packaged for every major OS (Unix, Windows) for both 32/64 bit systems. It requires the use of the matplotlib library version 2.0.0 or more. 
+**HDB5tool** is packaged for every major OS (Unix, Windows) for both 32/64 bit systems.
 
-.. warning::
+.. note::
 
-    HDB5tool has only been tested with a Python 2.7 distribution.
+    **HDB5tool** has been tested with both Python 2.7 and 3.7 distributions.
 
 Installing with pip
 -------------------
@@ -17,10 +17,14 @@ In *tools/frydom*, do::
 
 Please, do not forget the dot.
 
-The version of *matplotlib* needs to be 2.0.0 or higher::
+The following Python packages have to be installed::
 
+    pip install numpy
+    pip install scipy
+    pip install vtk
+    pip install rstcloth
     pip install matplotlib==2.0.0
 
-The following package has to be installed::
+Furthermore, the documentation generator *Sphinx* needs to be installed::
 
-    pip install rstcloth
+    sudo apt-get install python3-sphinx
