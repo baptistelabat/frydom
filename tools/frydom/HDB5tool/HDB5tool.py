@@ -214,12 +214,12 @@ def get_Arg_part_1_CE(args, database):
         nb_hydrostatics = len(args.hydrostatics)
         for j in range(0, nb_hydrostatics):
             database.body[int(args.hydrostatics[j][0]) - 1].activate_hydrostatic()
-            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k33 = args.hydrostatics[j][1]
-            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k44 = args.hydrostatics[j][2]
-            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k55 = args.hydrostatics[j][3]
-            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k34 = args.hydrostatics[j][4]
-            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k35 = args.hydrostatics[j][5]
-            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k45 = args.hydrostatics[j][6]
+            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k33 = float(args.hydrostatics[j][1])
+            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k44 = float(args.hydrostatics[j][2])
+            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k55 = float(args.hydrostatics[j][3])
+            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k34 = float(args.hydrostatics[j][4])
+            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k35 = float(args.hydrostatics[j][5])
+            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k45 = float(args.hydrostatics[j][6])
 
     # Body - Active inertia (useless).
     if (args.activate_inertia is not None):
@@ -232,32 +232,32 @@ def get_Arg_part_1_CE(args, database):
         nb_inertia = len(args.inertia)
         for j in range(0, nb_inertia):
             database.body[int(args.inertia[j][0]) - 1].activate_inertia()
-            database.body[int(args.inertia[j][0]) - 1].inertia.mass = args.inertia[j][1]
-            database.body[int(args.inertia[j][0]) - 1].inertia.I44 = args.inertia[j][2]
-            database.body[int(args.inertia[j][0]) - 1].inertia.I55 = args.inertia[j][3]
-            database.body[int(args.inertia[j][0]) - 1].inertia.I66 = args.inertia[j][4]
-            database.body[int(args.inertia[j][0]) - 1].inertia.I45 = args.inertia[j][5]
-            database.body[int(args.inertia[j][0]) - 1].inertia.I46 = args.inertia[j][6]
-            database.body[int(args.inertia[j][0]) - 1].inertia.I56 = args.inertia[j][7]
+            database.body[int(args.inertia[j][0]) - 1].inertia.mass = float(args.inertia[j][1])
+            database.body[int(args.inertia[j][0]) - 1].inertia.I44 = float(args.inertia[j][2])
+            database.body[int(args.inertia[j][0]) - 1].inertia.I55 = float(args.inertia[j][3])
+            database.body[int(args.inertia[j][0]) - 1].inertia.I66 = float(args.inertia[j][4])
+            database.body[int(args.inertia[j][0]) - 1].inertia.I45 = float(args.inertia[j][5])
+            database.body[int(args.inertia[j][0]) - 1].inertia.I46 = float(args.inertia[j][6])
+            database.body[int(args.inertia[j][0]) - 1].inertia.I56 = float(args.inertia[j][7])
 
     # Body - Inertia matrix.
     if (args.inertia_only is not None):
         nb_inertia_only = len(args.inertia_only)
         for j in range(0, nb_inertia_only):
             database.body[int(args.inertia_only[j][0]) - 1].activate_inertia()
-            database.body[int(args.inertia_only[j][0]) - 1].inertia.I44 = args.inertia_only[j][1]
-            database.body[int(args.inertia_only[j][0]) - 1].inertia.I55 = args.inertia_only[j][2]
-            database.body[int(args.inertia_only[j][0]) - 1].inertia.I66 = args.inertia_only[j][3]
-            database.body[int(args.inertia_only[j][0]) - 1].inertia.I45 = args.inertia_only[j][4]
-            database.body[int(args.inertia_only[j][0]) - 1].inertia.I46 = args.inertia_only[j][5]
-            database.body[int(args.inertia_only[j][0]) - 1].inertia.I56 = args.inertia_only[j][6]
+            database.body[int(args.inertia_only[j][0]) - 1].inertia.I44 = float(args.inertia_only[j][1])
+            database.body[int(args.inertia_only[j][0]) - 1].inertia.I55 = float(args.inertia_only[j][2])
+            database.body[int(args.inertia_only[j][0]) - 1].inertia.I66 = float(args.inertia_only[j][3])
+            database.body[int(args.inertia_only[j][0]) - 1].inertia.I45 = float(args.inertia_only[j][4])
+            database.body[int(args.inertia_only[j][0]) - 1].inertia.I46 = float(args.inertia_only[j][5])
+            database.body[int(args.inertia_only[j][0]) - 1].inertia.I56 = float(args.inertia_only[j][6])
 
     # Body - Mass.
     if (args.mass is not None):
         nb_mass = len(args.mass)
         for j in range(0, nb_mass):
             database.body[int(args.mass[j][0]) - 1].activate_inertia()
-            database.body[int(args.mass[j][0]) - 1].inertia.mass = args.mass[j][1]
+            database.body[int(args.mass[j][0]) - 1].inertia.mass = float(args.mass[j][1])
 
     # Filtering impulse response functions.
     if (args.cutoff_irf is not None):
