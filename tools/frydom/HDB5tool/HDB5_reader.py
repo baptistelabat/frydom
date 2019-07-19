@@ -174,8 +174,17 @@ class HDB5reader():
             Path to the masks.
         """
 
-        body.Motion_mask = np.array(reader[mask_path + "/MotionMask"])
-        body.Force_mask = np.array(reader[mask_path + "/ForceMask"])
+        # Motion mask.
+        try:
+            body.Motion_mask = np.array(reader[mask_path + "/MotionMask"])
+        except:
+            body.Motion_mask = np.ones(6, dtype = np.int)
+
+        # Force mask.
+        try:
+            body.Force_mask = np.array(reader[mask_path + "/ForceMask"])
+        except:
+            body.Force_mask = np.ones(6, dtype = np.int)
 
     def read_hydrostatic(self, reader, body, hydrostatic_path):
 
@@ -585,7 +594,7 @@ class HDB5reader_v1(HDB5reader):
 
         j = 0
         for iforce in range(0, 6):
-            if (ForceOrMotion == 0):  # Force.
+            if (ForceOrMotion == 0): # Force.
                 if (body.Motion_mask[iforce] == 1):
                     mode_path = body_modes_path + "/ForceModes/Mode_%u" % j
                     j = j + 1
@@ -595,7 +604,7 @@ class HDB5reader_v1(HDB5reader):
                     j = j + 1
 
             if (iforce >= 3):
-                if (ForceOrMotion == 0):  # Force.
+                if (ForceOrMotion == 0): # Force.
                     if(body.Motion_mask[iforce] == 1):
                         body.point[iforce - 3, :] = np.array(reader[mode_path + "/Point"])
                 else: # Motion.
