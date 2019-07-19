@@ -108,13 +108,13 @@ namespace frydom {
 
             double GetMeshedSurfaceIntegral(int iNormal, IntegrandType type);
 
-            const double GetArea();
-
             const double GetArea(const FaceHandle &fh) const;
 
-            const double GetVolume() {return 0.;};
+            const double GetArea();
 
-            const Position GetCOG() {return {};};
+            const double GetVolume();
+
+            const Position GetCOG();;
 
 
 

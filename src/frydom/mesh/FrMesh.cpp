@@ -522,6 +522,10 @@ namespace frydom {
             return bbox;
         }
 
+        const double FrMesh::GetArea(const FaceHandle &fh) const {
+            return data(fh).GetSurfaceIntegral(POLY_1);
+        }
+
         const double FrMesh::GetArea() {
 
             double area = 0;
@@ -538,8 +542,79 @@ namespace frydom {
 
         }
 
-        const double FrMesh::GetArea(const FaceHandle &fh) const {
-            return data(fh).GetSurfaceIntegral(POLY_1);
+        const double FrMesh::GetVolume() {
+
+            auto volume = GetMeshedSurfaceIntegral(2,POLY_Z);
+
+            auto polygonSet = GetBoundaryPolygonSet();
+
+            // Boundary polygon contribution
+            for (auto& polygon : polygonSet) {
+
+                auto plane = polygon.GetPlane();
+                auto frame = plane.GetFrame();
+
+                double e = frame.GetPosition(NWU).norm();
+                double wc = plane.GetNormal(NWU).Getuz();
+                double R13 = frame.GetRotation().GetInverseRotationMatrix().at(0,2);
+                double R23 = frame.GetRotation().GetInverseRotationMatrix().at(1,2);
+
+                volume += wc * (e*wc*polygon.GetSurfaceIntegral(POLY_1)
+                                + R13 * polygon.GetSurfaceIntegral(POLY_X)
+                                + R23 * polygon.GetSurfaceIntegral(POLY_Y));
+
+            }
+
+            return volume;
+        }
+
+        const Position FrMesh::GetCOG() {
+
+            auto Sux2 = GetMeshedSurfaceIntegral(0,POLY_X2);
+            auto Svy2 = GetMeshedSurfaceIntegral(1,POLY_Y2);
+            auto Swz2 = GetMeshedSurfaceIntegral(2,POLY_Z2);
+
+            auto Inv2Volume = 0.5 / GetVolume();
+
+            auto polygonSet = GetBoundaryPolygonSet();
+
+            Position G(Sux2 * Inv2Volume, Svy2 * Inv2Volume, Swz2 * Inv2Volume);
+
+            Position Gcorr; Gcorr.SetNull();
+
+            for (auto& polygon : polygonSet) {
+
+                auto plane = polygon.GetPlane();
+                auto frame = plane.GetFrame();
+
+                auto e = frame.GetPosition(NWU).norm();
+                auto normal = plane.GetNormal(NWU);
+                auto R = frame.GetRotation().GetInverseRotationMatrix();
+//                auto R = frame.GetRotation().GetRotationMatrix();
+
+                auto Sc = polygon.GetSurfaceIntegral(POLY_1);
+                auto mux = polygon.GetSurfaceIntegral(POLY_X);
+                auto muy = polygon.GetSurfaceIntegral(POLY_Y);
+                auto muxy = polygon.GetSurfaceIntegral(POLY_XY);
+                auto mux2 = polygon.GetSurfaceIntegral(POLY_X2);
+                auto muy2 = polygon.GetSurfaceIntegral(POLY_Y2);
+
+                Gcorr.GetX() =  R.at(0,0)*R.at(0,0) * mux2 + R.at(1,0)*R.at(1,0) * muy2 + e*e * normal.Getux()* normal.Getux() * Sc
+                                + 2 * R.at(0,0)*R.at(1,0) * muxy + 2 * e* normal.Getux() * (R.at(0,0)* mux + R.at(1,0) * muy);
+
+                Gcorr.GetY() =  R.at(0,1)*R.at(0,1) * mux2 + R.at(1,1)*R.at(1,1) * muy2 + e*e * normal.Getuy()* normal.Getuy() * Sc
+                                + 2 * R.at(0,1)*R.at(1,1) * muxy + 2 * e* normal.Getuy() * (R.at(0,1)* mux + R.at(1,1) * muy);
+
+                Gcorr.GetZ() =  R.at(0,2)*R.at(0,2) * mux2 + R.at(1,2)*R.at(1,2) * muy2 + e*e * normal.Getuz()* normal.Getuz() * Sc
+                                + 2 * R.at(0,2)*R.at(1,2) * muxy + 2 * e* normal.Getuz() * (R.at(0,2)* mux + R.at(1,2) * muy);
+
+
+                Gcorr = Inv2Volume * Gcorr.cwiseProduct(normal);
+            }
+
+            G += Gcorr;
+
+            return G;
         }
 
         bool FrMesh::HasBoundaries() const {  // FIXME: si le maillage est non conforme mais hermetique, HasBoudaries() renvoie true et donc IsWatertight() false, c'est un faux négatif...
