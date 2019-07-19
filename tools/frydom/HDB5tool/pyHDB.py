@@ -179,16 +179,16 @@ class pyHDB():
         self.max_dir_kochin = self.max_wave_dir
         self.wave_dir_kochin = np.radians(np.linspace(self.min_dir_kochin, self.max_dir_kochin, self.nb_dir_kochin, dtype=np.float))
 
-    @property
-    def wave_dir(self):
-        """Wave direction angles array of BEM computations in radians
-
-        Returns
-        -------
-        np.ndarray
-            angles array in radians.
-        """
-        return self.wave_dir
+    # @property
+    # def wave_dir(self):
+    #     """Wave direction angles array of BEM computations in radians
+    #
+    #     Returns
+    #     -------
+    #     np.ndarray
+    #         angles array in radians.
+    #     """
+    #     return self.wave_dir
 
     def append(self, body):
 

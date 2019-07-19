@@ -171,7 +171,7 @@ class _BEMReader(object):
             This is based on the assumption of having at least %u faces by wave length corresponding to the higher
             wave frequency.
             """ % (wmax_mesh, pyHDB.max_wave_freq, n)
-            print msg.upper()
+            print((msg.upper()))
 
 
 class NemohReaderError(Exception):
@@ -273,7 +273,7 @@ class NemohReader(_BEMReader):
             depth = float(f.readline().split()[0])
             if depth == 0.: # Infinite water depth.
                 depth = inf
-            xeff, yeff = map(float, f.readline().split()[:2])
+            xeff, yeff = list(map(float, f.readline().split()[:2]))
 
             # Number of bodies
             skip_line()
@@ -286,24 +286,24 @@ class NemohReader(_BEMReader):
             pyHDB.y_wave_measure = yeff
             pyHDB.nb_bodies = nb_bodies
 
-            for ibody in xrange(nb_bodies):
+            for ibody in range(nb_bodies):
                 skip_line()
                 skip_line()
                 skip_line()
 
                 # RADIATION.
                 nb_dof = int(f.readline().split()[0])
-                for idof in xrange(nb_dof):
+                for idof in range(nb_dof):
                     skip_line()
 
                 # INTEGRATION.
                 nb_force = int(f.readline().split()[0])
-                for iforce in xrange(nb_force):
+                for iforce in range(nb_force):
                     skip_line()
 
                 # Skipping additional lines
                 nb_add_line = int(f.readline().split()[0])
-                for i_add_line in xrange(nb_add_line):
+                for i_add_line in range(nb_add_line):
                     skip_line()
 
             # Reading discretization
@@ -312,7 +312,7 @@ class NemohReader(_BEMReader):
             # Getting frequency discretization
             data = f.readline().split()[:3]
             nb_frequencies = int(data[0])
-            min_frequency, max_frequency = map(float, data[1:])
+            min_frequency, max_frequency = list(map(float, data[1:]))
 
             pyHDB.nb_wave_freq = nb_frequencies
             pyHDB.min_wave_freq = min_frequency
@@ -322,7 +322,7 @@ class NemohReader(_BEMReader):
             # Getting wave directions discretization
             data = f.readline().split()[:3]
             nb_wave_directions = int(data[0])
-            min_wave_dir, max_wave_dir = map(float, data[1:])
+            min_wave_dir, max_wave_dir = list(map(float, data[1:]))
 
             pyHDB.nb_wave_dir = nb_wave_directions
             pyHDB.min_wave_dir = min_wave_dir
@@ -368,7 +368,7 @@ class NemohReader(_BEMReader):
             skip_line()
             skip_line() # nb_bodies.
 
-            for ibody in xrange(pyHDB.nb_bodies):
+            for ibody in range(pyHDB.nb_bodies):
                 skip_line()
                 meshfile = str(f.readline().split()[0])
                 abs_meshfile = os.path.join(dirname, meshfile)
@@ -377,7 +377,7 @@ class NemohReader(_BEMReader):
                 vertices, faces = load_MAR(abs_meshfile)
                 mesh = Mesh(vertices, faces)
 
-                nb_vertices, nb_faces = map(int, f.readline().split()[:2])
+                nb_vertices, nb_faces = list(map(int, f.readline().split()[:2]))
 
                 # Verification of mesh information consistency
                 assert nb_vertices == mesh.nb_vertices
@@ -396,11 +396,11 @@ class NemohReader(_BEMReader):
 
                 # RADIATION.
                 nb_dof = int(f.readline().split()[0])
-                for idof in xrange(nb_dof):
+                for idof in range(nb_dof):
                     dof = f.readline().split()[:7]
                     motion_type = int(dof[0])
-                    direction = map(float, dof[1:4])
-                    point = map(float, dof[4:])
+                    direction = list(map(float, dof[1:4]))
+                    point = list(map(float, dof[4:]))
 
                     # Center of gravity.
                     body.position = point
@@ -430,11 +430,11 @@ class NemohReader(_BEMReader):
 
                 # INTEGRATION.
                 nb_force = int(f.readline().split()[0])
-                for iforce in xrange(nb_force):
+                for iforce in range(nb_force):
                     force = f.readline().split()[:7]
                     force_type = int(force[0])
-                    direction = map(float, force[1:4])
-                    point = map(float, force[4:])
+                    direction = list(map(float, force[1:4]))
+                    point = list(map(float, force[4:]))
                     if force_type == 1:  # Pure force
                         if (direction[0] == 1):
                             body.Force_mask[0] = 1
@@ -463,7 +463,7 @@ class NemohReader(_BEMReader):
 
                 # Skipping additional lines.
                 nb_add_line = int(f.readline().split()[0])
-                for i_add_line in xrange(nb_add_line):
+                for i_add_line in range(nb_add_line):
                     skip_line()
 
                 # Add body to pyHDB.
@@ -497,7 +497,7 @@ class NemohReader(_BEMReader):
             pyHDB.has_kochin = bool(float(data[0]))
             if pyHDB.has_kochin:
                 pyHDB.nb_angle_kochin = int(data[0])
-                pyHDB.min_angle_kochin, pyHDB.max_angle_kochin = map(float, data[1:])
+                pyHDB.min_angle_kochin, pyHDB.max_angle_kochin = list(map(float, data[1:]))
                 pyHDB.set_wave_directions_Kochin()
 
 
@@ -618,10 +618,10 @@ class NemohReader(_BEMReader):
 
         # Real and imaginary parts of the Kochin functions for every elementary problem.
         i_bem_problem = 0
-        for ifreq in xrange(nw):
+        for ifreq in range(nw):
 
             # Diffraction problems.
-            for iwave in xrange(nbeta):
+            for iwave in range(nbeta):
                 i_bem_problem += 1
                 pyHDB.kochin_diffraction[iwave, ifreq, :] = read(i_bem_problem)*np.exp(1j * pi/2.) # np.exp(1j * pi/2.) due to the Nemoh convention.
 

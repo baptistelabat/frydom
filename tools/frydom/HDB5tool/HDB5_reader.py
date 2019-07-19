@@ -89,7 +89,7 @@ class HDB5reader():
 
         # Solver.
         try:
-            pyHDB.solver = np.array(reader['Solver'])
+            pyHDB.solver = str(np.array(reader['Solver']).decode("utf-8"))
         except:
             pyHDB.solver = "Nemoh"
 
@@ -497,7 +497,7 @@ class HDB5reader_v2(HDB5reader):
             pyHDB object for storing the hydrodynamic database.
         """
 
-        for ibody in xrange(pyHDB.nb_bodies):
+        for ibody in range(0, pyHDB.nb_bodies):
             body_path = '/Bodies/Body_%u' % ibody
 
             # Index of the body.
