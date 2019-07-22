@@ -509,11 +509,11 @@ class pyHDB():
 
         print("")
         print("-- Interpolations --")
-        print(" Min frequency: %16.8f" % self.min_wave_freq)
-        print(" Max frequency: %16.8f" % self.max_wave_freq)
+        print(" Min frequency: %3.2f" % self.min_wave_freq)
+        print(" Max frequency: %3.2f" % self.max_wave_freq)
         print(" Nb Wave frequencies: %i" % self.nb_wave_freq)
-        print(" Angle min: %16.8f" % self.min_wave_dir)
-        print(" Angle max: %16.8f" % self.max_wave_dir)
+        print(" Angle min: %3.2f" % self.min_wave_dir)
+        print(" Angle max: %3.2f" % self.max_wave_dir)
         print(" Nb Wave directions: %i" % self.nb_wave_dir)
         print("")
 
@@ -627,8 +627,8 @@ class pyHDB():
 
         print("")
         print("-- Symmetrization --")
-        print(" Angle min: %16.8f" % self.min_wave_dir)
-        print(" Angle max: %16.8f" % self.max_wave_dir)
+        print(" Angle min: %3.2f" % self.min_wave_dir)
+        print(" Angle max: %3.2f" % self.max_wave_dir)
         print(" Nb Wave directions: %i" % self.nb_wave_dir)
         print("")
 
