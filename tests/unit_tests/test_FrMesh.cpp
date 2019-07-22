@@ -9,7 +9,30 @@
 using namespace frydom;
 using namespace geom;
 
-void CreateCustomMesh(mesh::FrMesh& mesh, double Lx, double Ly, double Lz) {
+
+class TestMesh : public ::testing::Test, public mesh::FrMesh {
+
+protected:
+
+    FRAME_CONVENTION fc = NWU;
+
+    std::shared_ptr<geom::FrPlane> m_plane;
+
+protected:
+
+    void SetUp() override;
+
+    void CreateCustomMesh(mesh::FrMesh& mesh, double Lx, double Ly, double Lz);
+
+    void SetClippingPlane(const Position& planeOrigin, const Direction& planeNormal);
+
+    void Clip();
+
+    bool TestIntegrals(double volume, const Position& COG);
+
+};
+
+void TestMesh::CreateCustomMesh(mesh::FrMesh &mesh, double Lx, double Ly, double Lz){
 
     // generate vertices
     mesh::FrMesh::VertexHandle vhandle[8];
@@ -77,39 +100,42 @@ void CreateCustomMesh(mesh::FrMesh& mesh, double Lx, double Ly, double Lz) {
 
 }
 
+void TestMesh::SetUp() {
 
-TEST(FrMesh,Polygon) {
+    CreateBox(10, 10, 10);
 
-    FRAME_CONVENTION fc = NWU;
+}
 
-    mesh::FrMesh mesh;
+void TestMesh::SetClippingPlane(const Position& planeOrigin, const Direction& planeNormal) {
+    m_plane = std::make_shared<geom::FrPlane>(planeOrigin, planeNormal, fc);
+}
 
-    mesh.CreateBox(10,10,10);
+void TestMesh::Clip() {
 
-    mesh.Translate({5.,5.,5.});
+//    Position origin(5.,5.,5.);
+//
+//    Direction normal(1.,0.,1.);
+//    normal.normalize();
+//
+//    auto plane = std::make_shared<geom::FrPlane>(origin, normal, fc);
 
-//    mesh.Write("testPolygon.obj");
-
-    Position origin(5.,5.,5.);
-//    Position origin(0.,0.,0.);
-//    origin.setRandom();
-
-    Direction normal(1.,0.,1.);
-    normal.normalize();
-
-    auto plane = std::make_shared<geom::FrPlane>(origin, normal, fc);
-
-    auto clippingSurface = std::make_shared<mesh::FrClippingPlane>(plane);
+    auto clippingSurface = std::make_shared<mesh::FrClippingPlane>(m_plane);
 
     mesh::FrMeshClipper clipper;
     clipper.SetClippingSurface(clippingSurface);
 
-    clipper.Apply(&mesh);
+    clipper.Apply(this);
 
-//    mesh.Write("testPolygon.obj");
+}
+
+
+bool TestMesh::TestIntegrals(double volume, const Position& COG) {
+
+    auto normal = m_plane->GetNormal(fc);
+    auto origin = m_plane->GetOrigin(fc);
 
     // Test on polygon
-    auto polygonSet = mesh.GetBoundaryPolygonSet();
+    auto polygonSet = GetBoundaryPolygonSet();
 
     EXPECT_TRUE(!polygonSet.empty());
 
@@ -122,28 +148,114 @@ TEST(FrMesh,Polygon) {
     EXPECT_NEAR(planeTest.GetDistanceToPoint(origin,fc), 0, 1E-8);
 
     // Test on integrals
-    EXPECT_NEAR(mesh.GetVolume(), 500, 1E-8);
+    EXPECT_NEAR(std::abs(GetVolume() - volume)/std::abs(volume), 0, 1E-5);
 
-    std::cout<<"G : ("<<mesh.GetCOG().GetX()<<","<<mesh.GetCOG().GetY()<<","<<mesh.GetCOG().GetZ()<<")"<<std::endl;
+    std::cout<<"G : ("<<GetCOG().GetX()<<","<<GetCOG().GetY()<<","<<GetCOG().GetZ()<<")"<<std::endl;
 
-    double h = 5./3.;
-    Position testCOG = origin + Position(-h,0.,-h) - mesh.GetCOG();
+//    double h = 5./3.;
+//    Position testCOG = origin + Position(-h,0.,-h) - GetCOG();
 //    Position testCOG = Position(2*h,5.,2*h) - mesh.GetCOG();
-    EXPECT_NEAR(testCOG.norm(), 0, 1E-8);
+    Position testCOG = origin + COG - GetCOG();
+    EXPECT_NEAR(testCOG.norm(), 0, 1E-5);
 
-    //
+};
 
-//    mesh::FrMesh customMesh;
-//
-//    CreateCustomMesh(customMesh, 10, 10, 10);
-//
-//    customMesh.Translate({5.,5.,5.});
-//
-//    customMesh.Write("customMesh.obj");
-//
-//
-//    std::cout<<"G2 : ("<<customMesh.GetCOG().GetX()<<","<<customMesh.GetCOG().GetY()<<","<<customMesh.GetCOG().GetZ()<<")"<<std::endl;
+TEST_F(TestMesh,X){
+
+    SetClippingPlane(Position(), Direction(1.,0.,0.));
+    Clip();
+    TestIntegrals(500, Position(-2.5,0.,0.));
+
+}
+
+TEST_F(TestMesh,Y){
+
+    SetClippingPlane(Position(), Direction(0.,1.,0.));
+    Clip();
+    TestIntegrals(500, Position(0.,-2.5,0.));
+
+}
+
+TEST_F(TestMesh,Z){
+
+    SetClippingPlane(Position(), Direction(0.,0.,1.));
+    Clip();
+    TestIntegrals(500, Position(0.,0.,-2.5));
+
+}
+
+TEST_F(TestMesh,XZ){
+
+    Direction normal(1.,0.,1.); normal.normalize();
+
+    SetClippingPlane(Position(), normal);
+    Clip();
+    double h = 5./3.;
+    TestIntegrals(500, Position(-h,0.,-h));
+
+}
 
 
+
+TEST_F(TestMesh,Xtrans){
+
+    Translate({5.,5.,5.});
+    SetClippingPlane(Position(5.,5.,5.), Direction(1.,0.,0.));
+    Clip();
+    TestIntegrals(500, Position(-2.5,0.,0.));
+
+}
+
+TEST_F(TestMesh,Ytrans){
+
+    Translate({5.,5.,5.});
+    SetClippingPlane(Position(5.,5.,5.), Direction(0.,1.,0.));
+    Clip();
+    TestIntegrals(500, Position(0.,-2.5,0.));
+
+}
+
+TEST_F(TestMesh,Ztrans){
+
+    Translate({5.,5.,5.});
+    SetClippingPlane(Position(5.,5.,5.), Direction(0.,0.,1.));
+    Clip();
+    TestIntegrals(500, Position(0.,0.,-2.5));
+
+}
+
+TEST_F(TestMesh,XZtrans){
+
+    Translate({5.,5.,5.});
+    Direction normal(1.,0.,1.); normal.normalize();
+
+    SetClippingPlane(Position(5.,5.,5.), normal);
+    Clip();
+    double h = 5./3.;
+    TestIntegrals(500, Position(-h,0.,-h));
+
+}
+
+
+
+TEST_F(TestMesh,Xrot){
+
+    Rotate(MU_PI_4, 0., 0.);
+    SetClippingPlane(Position(), Direction(1.,0.,0.));
+    Clip();
+    Write("Xrot.obj");
+    TestIntegrals(500, Position(-2.5,0.,0.));
+
+}
+
+
+TEST_F(TestMesh,XrotTrans){
+
+    Rotate(MU_PI_4, 0., 0.);
+    Translate({5.,5.,5.});
+    SetClippingPlane(Position(5.,5.,5.), Direction(1.,0.,0.));
+    Clip();
+    Write("Xrot.obj");
+    TestIntegrals(500, Position(-2.5,0.,0.));
 
 }
