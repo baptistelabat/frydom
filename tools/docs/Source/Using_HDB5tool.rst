@@ -7,6 +7,7 @@ Using HDB5tool
     * The command line options may be combined.
     * Indexes present in arguments start from 0 (for instance, the first body has an index of 0).
     * Physical quantities are expressed at the center of gravity of each body.
+    * Negative numbers written with a scientific notation are not read by the command line argument parser, please use a decimal notation in this case. Thus, write -1000 instead of -10e3.
 
 .. contents:: Content
     :local:
