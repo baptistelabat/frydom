@@ -135,7 +135,7 @@ namespace frydom {
 
             for (auto& vertex : m_vertexList){
                 auto distance = plane.GetDistanceToPoint(vertex, NWU);
-                planar &= (distance<1E-8);
+                planar &= (distance<1E-4);
             }
 
             return planar;

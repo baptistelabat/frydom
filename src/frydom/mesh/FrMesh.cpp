@@ -321,63 +321,103 @@ namespace frydom {
             UpdateAllProperties();
         }
 
-        void FrMesh::Rotate(double phi, double theta, double psi) {
+        void FrMesh::Rotate(const mathutils::Matrix33<double>& Rot_matrix) {
 
-            // This function rotates the mesh.
-
-            // Rotation matrix.
-            double Norm_angles = std::sqrt(phi*phi + theta*theta + psi*psi);
-            double nx = phi / Norm_angles;
-            double ny = theta / Norm_angles;
-            double nz = psi / Norm_angles;
-            double nxny = nx*ny;
-            double nxnz = nx*nz;
-            double nynz = ny*nz;
-            double nx2 = nx*nx;
-            double ny2 = ny*ny;
-            double nz2 = nz*nz;
-            double ctheta = std::cos(Norm_angles);
-            double stheta = std::sin(Norm_angles);
-
-            mathutils::Matrix33<double> Rot_matrix;
-
-            if(Norm_angles == 0){
-                Rot_matrix.SetIdentity();
-            }
-            else{
-
-                mathutils::Matrix33<double> Identity;
-                Identity.SetIdentity();
-
-                mathutils::Matrix33<double> Nsym;
-                Nsym << nx2, nxny, nxnz,
-                        nxny, ny2, nynz,
-                        nxnz, nynz, nz2;
-
-                mathutils::Matrix33<double> Nnosym;
-                Nnosym << 0., -nz, ny,
-                        nz, 0., -nx,
-                        -ny, nx, 0.;
-
-                Rot_matrix = ctheta*Identity + (1-ctheta)*Nsym + stheta*Nnosym;
-
+            if (!Rot_matrix.IsIdentity()) {
                 // Update the positions of every node.
                 mathutils::Vector3d<double> Node_position;
                 for (VertexIter v_iter = vertices_begin(); v_iter != vertices_end(); ++v_iter) {
 
                     // x = R*x (made with the same data structure).
-                    Node_position[0] = point(*v_iter)[0];
-                    Node_position[1] = point(*v_iter)[1];
-                    Node_position[2] = point(*v_iter)[2];
-                    Node_position = Rot_matrix*Node_position;
-                    point(*v_iter)[0] = Node_position[0];
-                    point(*v_iter)[1] = Node_position[1];
-                    point(*v_iter)[2] = Node_position[2];
+                    auto Node = OpenMeshPointToVector3d<Position>(point(*v_iter));
+                    Node = Rot_matrix*Node;
+                    point(*v_iter) = Vector3dToOpenMeshPoint(Node);
+
                 }
-
             }
-
             UpdateAllProperties();
+
+        }
+
+        void FrMesh::Rotate(double phi, double theta, double psi) {
+
+            // This function rotates the mesh.
+
+            // Rotation matrix.
+            double cphi = std::cos(phi);
+            double sphi = std::sin(phi);
+            double ctheta = std::cos(theta);
+            double stheta = std::sin(theta);
+            double cpsi = std::cos(psi);
+            double spsi = std::sin(psi);
+
+            mathutils::Matrix33<double> Rot_matrix;
+            Rot_matrix.at(0, 0) = ctheta * cpsi;
+            Rot_matrix.at(0, 1) = sphi * stheta * cpsi - cphi * spsi;
+            Rot_matrix.at(0, 2) = cphi * stheta * cpsi + sphi * spsi;
+            Rot_matrix.at(1, 0) = ctheta * spsi;
+            Rot_matrix.at(1, 1) = sphi * stheta * spsi + cphi * cpsi;
+            Rot_matrix.at(1, 2) = cphi * stheta * spsi - sphi * cpsi;
+            Rot_matrix.at(2, 0) = -stheta;
+            Rot_matrix.at(2, 1) = ctheta * sphi;
+            Rot_matrix.at(2, 2) = ctheta * cphi;
+
+//            std::cout<<Rot_matrix<<std::endl;
+            
+            if (!Rot_matrix.IsIdentity()) {
+                // Update the positions of every node.
+                mathutils::Vector3d<double> Node_position;
+                for (VertexIter v_iter = vertices_begin(); v_iter != vertices_end(); ++v_iter) {
+
+                    // x = R*x (made with the same data structure).
+                    auto Node = OpenMeshPointToVector3d<Position>(point(*v_iter));
+                    Node = Rot_matrix*Node;
+                    point(*v_iter) = Vector3dToOpenMeshPoint(Node);
+
+                }
+            }
+            UpdateAllProperties();
+            
+
+//            if(Norm_angles == 0){
+//                Rot_matrix.SetIdentity();
+//            }
+//            else{
+//
+//                mathutils::Matrix33<double> Identity;
+//                Identity.SetIdentity();
+//
+//                mathutils::Matrix33<double> Nsym;
+//                Nsym << nx2, nxny, nxnz,
+//                        nxny, ny2, nynz,
+//                        nxnz, nynz, nz2;
+//
+//                mathutils::Matrix33<double> Nnosym;
+//                Nnosym << 0., -nz, ny,
+//                        nz, 0., -nx,
+//                        -ny, nx, 0.;
+//
+//                Rot_matrix = ctheta*Identity + (1-ctheta)*Nsym + stheta*Nnosym;
+//
+//                std::cout<<Rot_matrix<<std::endl;
+//
+//                // Update the positions of every node.
+//                mathutils::Vector3d<double> Node_position;
+//                for (VertexIter v_iter = vertices_begin(); v_iter != vertices_end(); ++v_iter) {
+//
+//                    // x = R*x (made with the same data structure).
+//                    Node_position[0] = point(*v_iter)[0];
+//                    Node_position[1] = point(*v_iter)[1];
+//                    Node_position[2] = point(*v_iter)[2];
+//                    Node_position = Rot_matrix*Node_position;
+//                    point(*v_iter)[0] = Node_position[0];
+//                    point(*v_iter)[1] = Node_position[1];
+//                    point(*v_iter)[2] = Node_position[2];
+//                }
+//
+//            }
+//
+//            UpdateAllProperties();
         }
 
         void FrMesh::Write(std::string meshfile) const {

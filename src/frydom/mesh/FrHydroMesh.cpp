@@ -90,9 +90,7 @@ namespace frydom {
         // Rotating the mesh from the body reference frame to the world reference frame, and then translating
         // it vertically. The resulting mesh horizontal position is kept close to (0.,0.) for the clipping process
         // Rotation
-        double phi, theta, psi;
-        m_body->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
-        m_clippedMesh.Rotate(phi, theta, psi);
+        m_clippedMesh.Rotate(m_body->GetRotation().GetRotationMatrix());
 
         // Translation
         auto bodyPos = m_body->GetPosition(NWU); bodyPos.GetX() = 0.; bodyPos.GetY() = 0.;
@@ -120,9 +118,7 @@ namespace frydom {
 
         m_initMesh = mesh::FrMesh(meshFile);
         m_initMesh.Translate(mesh::Vector3dToOpenMeshPoint(meshOffset.GetPosition(NWU)));
-        double phi, theta, psi;
-        meshOffset.GetRotation().GetCardanAngles_RADIANS(phi,theta,psi,NWU);
-        m_initMesh.Rotate(phi, theta, psi);
+        m_initMesh.Rotate(meshOffset.GetRotation().GetRotationMatrix());
 
         return m_initMesh;
     }

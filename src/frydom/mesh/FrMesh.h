@@ -12,16 +12,6 @@
 #ifndef FRYDOM_DICE_DMESH_H
 #define FRYDOM_DICE_DMESH_H
 
-//#include <iostream>
-//#include <list>
-//#include <memory>
-
-
-//#include "fmt/format.h"
-
-//#include "OpenMesh/Core/IO/MeshIO.hh"
-//#include "OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh"
-
 #include "MathUtils/MathUtils.h"
 
 #include "frydom/core/math/FrVector.h"
@@ -85,6 +75,8 @@ namespace frydom {
             /// This function rotates the mesh.
             void Rotate(double phi, double theta, double psi);
 
+            void Rotate(const mathutils::Matrix33<double>& Rot_matrix);
+
 
             void Write(std::string meshfile) const;
 
@@ -100,6 +92,8 @@ namespace frydom {
 
 
 
+            PolygonSet GetBoundaryPolygonSet();
+
             BoundingBox GetBoundingBox() const;
 
 
@@ -114,7 +108,7 @@ namespace frydom {
 
             const double GetVolume();
 
-            const Position GetCOG();;
+            const Position GetCOG();
 
 
 
@@ -133,8 +127,6 @@ namespace frydom {
 //                // Pour chaque polygone, on appelle la methode de verif prenant en entree la FrClippingSurface
 //
 //            }
-
-            PolygonSet GetBoundaryPolygonSet();
 
         private:
 

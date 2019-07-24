@@ -48,7 +48,41 @@ namespace frydom {
         // Computing temporaries
         double rg = m_waterDensity * m_gravityAcceleration;
 
-        // FIXME
+        for (auto& polygon : m_clippedMesh.GetBoundaryPolygonSet()) {
+
+            auto BoundaryPolygonsSurfaceIntegral = polygon.GetSurfaceIntegrals();
+
+            m_waterPlaneArea += BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_1);
+
+            m_hydrostaticTensor.K33 +=  rg * m_waterPlaneArea;
+            m_hydrostaticTensor.K34 +=  rg * (BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_Y)
+                                             -m_centerOfGravity[1] * m_waterPlaneArea);
+            m_hydrostaticTensor.K35 += -rg * (BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_X)
+                                             -m_centerOfGravity[0] * m_waterPlaneArea);
+            m_hydrostaticTensor.K45 += -rg * (BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_XY)
+                                             -m_centerOfGravity[1] * BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_X)
+                                             -m_centerOfGravity[0] * BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_Y)
+                                             +m_centerOfGravity[0]*m_centerOfGravity[1]*m_waterPlaneArea);
+
+            m_waterPlaneCenter += Position ( // FIXME: valable uniquement avant les corrections precedentes sur le point de calcul !!!
+                    -m_hydrostaticTensor.K35 / m_hydrostaticTensor.K33,
+                    m_hydrostaticTensor.K34 / m_hydrostaticTensor.K33,
+                    0.
+            );
+
+            m_transversalMetacentricRadius  +=
+                    (BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_Y2)
+                     -2.*m_centerOfGravity[1]*BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_Y)
+                     +m_centerOfGravity[1]*m_centerOfGravity[1]*m_waterPlaneArea)
+                    / m_volumeDisplacement;
+            m_longitudinalMetacentricRadius +=
+                    (BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_X2)
+                     -2.*m_centerOfGravity[0]*BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_X)
+                     +m_centerOfGravity[0]*m_centerOfGravity[0]*m_waterPlaneArea)
+                    / m_volumeDisplacement;
+
+        }
+
 //        m_waterPlaneArea = m_clippedMesh.GetBoundaryPolygonsSurfaceIntegral(mesh::POLY_1);
 //
 //        m_hydrostaticTensor.K33 =  rg * m_waterPlaneArea;

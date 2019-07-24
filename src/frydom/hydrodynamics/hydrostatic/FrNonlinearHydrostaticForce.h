@@ -57,6 +57,8 @@ namespace frydom {
         /// Initialize the log
         void AddFields() override;
 
+        Position Test();
+
         /// Get the center of buoyancy position of the clipped mesh in the body reference frame
         /// Be careful that the center of buoyancy definition is not valid for a mesh clipped by the incident wave
         /// \param fc frame convention (NED/NWU)
@@ -104,6 +106,8 @@ namespace frydom {
     /// This function creates a (fully or weakly) nonlinear hydrostatic force object.
     std::shared_ptr<FrNonlinearHydrostaticForce>
     make_nonlinear_hydrostatic_force(const std::shared_ptr<FrBody>& body, const std::shared_ptr<FrHydroMesh>& HydroMesh);
+
+    double NeumaierSum(std::vector<double> vector);
 
 }  // end namespace frydom
 
