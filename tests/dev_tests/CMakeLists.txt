@@ -11,7 +11,6 @@ set(REFACTORING_TESTS
         test_WNL_and_NL_hydrostatics
         test_FrFunction
         dev_Carriage
-        dev_FrMesh
         )
 
 #include(Add_matplotlib-cpp)
