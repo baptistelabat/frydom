@@ -362,8 +362,6 @@ namespace frydom {
             Rot_matrix.at(2, 1) = ctheta * sphi;
             Rot_matrix.at(2, 2) = ctheta * cphi;
 
-//            std::cout<<Rot_matrix<<std::endl;
-            
             if (!Rot_matrix.IsIdentity()) {
                 // Update the positions of every node.
                 mathutils::Vector3d<double> Node_position;
@@ -377,47 +375,7 @@ namespace frydom {
                 }
             }
             UpdateAllProperties();
-            
 
-//            if(Norm_angles == 0){
-//                Rot_matrix.SetIdentity();
-//            }
-//            else{
-//
-//                mathutils::Matrix33<double> Identity;
-//                Identity.SetIdentity();
-//
-//                mathutils::Matrix33<double> Nsym;
-//                Nsym << nx2, nxny, nxnz,
-//                        nxny, ny2, nynz,
-//                        nxnz, nynz, nz2;
-//
-//                mathutils::Matrix33<double> Nnosym;
-//                Nnosym << 0., -nz, ny,
-//                        nz, 0., -nx,
-//                        -ny, nx, 0.;
-//
-//                Rot_matrix = ctheta*Identity + (1-ctheta)*Nsym + stheta*Nnosym;
-//
-//                std::cout<<Rot_matrix<<std::endl;
-//
-//                // Update the positions of every node.
-//                mathutils::Vector3d<double> Node_position;
-//                for (VertexIter v_iter = vertices_begin(); v_iter != vertices_end(); ++v_iter) {
-//
-//                    // x = R*x (made with the same data structure).
-//                    Node_position[0] = point(*v_iter)[0];
-//                    Node_position[1] = point(*v_iter)[1];
-//                    Node_position[2] = point(*v_iter)[2];
-//                    Node_position = Rot_matrix*Node_position;
-//                    point(*v_iter)[0] = Node_position[0];
-//                    point(*v_iter)[1] = Node_position[1];
-//                    point(*v_iter)[2] = Node_position[2];
-//                }
-//
-//            }
-//
-//            UpdateAllProperties();
         }
 
         void FrMesh::Write(std::string meshfile) const {
@@ -430,11 +388,11 @@ namespace frydom {
         void FrMesh::WriteInc(std::string meshfile, int i) {
             m_writer.Reinit(i);
             m_writer.SetFileBase(meshfile);
-//            m_writer(*this);
+            m_writer(*this);
         }
 
         void FrMesh::WriteInc() {
-//            m_writer(*this);
+            m_writer(*this);
         }
 
         void FrMesh::UpdateAllProperties() {

@@ -57,8 +57,6 @@ namespace frydom {
         /// Initialize the log
         void AddFields() override;
 
-        Position Test();
-
         /// Get the center of buoyancy position of the clipped mesh in the body reference frame
         /// Be careful that the center of buoyancy definition is not valid for a mesh clipped by the incident wave
         /// \param fc frame convention (NED/NWU)

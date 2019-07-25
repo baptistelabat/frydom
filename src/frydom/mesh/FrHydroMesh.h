@@ -68,6 +68,8 @@ namespace frydom {
         /// \return reference to the initial mesh
         mesh::FrMesh& GetInitialMesh();
 
+        ClippingSupport GetClippingSupport() const;
+
 
     private:
 

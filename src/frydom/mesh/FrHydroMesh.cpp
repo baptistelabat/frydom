@@ -123,6 +123,10 @@ namespace frydom {
         return m_initMesh;
     }
 
+    FrHydroMesh::ClippingSupport FrHydroMesh::GetClippingSupport() const {
+        return m_clippingSupport;
+    }
+
     std::shared_ptr<FrHydroMesh> make_hydro_mesh(const std::shared_ptr<FrBody>& body, FrHydroMesh::ClippingSupport support) {
 
         auto hydroMesh = std::make_shared<FrHydroMesh>(body->GetSystem(), body, support);
