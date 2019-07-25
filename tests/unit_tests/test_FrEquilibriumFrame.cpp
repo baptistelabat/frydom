@@ -66,8 +66,8 @@ Vector TestFrEquilibriumFrame::ReadVector(FrHDF5Reader& reader, std::string fiel
 }
 
 void TestFrEquilibriumFrame::SetUp() {
-    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
-    LoadData(resources_path.resolve("TNR_database.h5").path(), "/equilibrium_frame/");
+    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
+    LoadData(system.GetDataPath("TNR_database.h5"), "/equilibrium_frame/");
 
     body = system.NewBody();
     body->SetPosition(m_PositionInWorld, NWU);
