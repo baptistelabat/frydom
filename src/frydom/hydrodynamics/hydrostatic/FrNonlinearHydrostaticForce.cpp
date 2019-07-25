@@ -66,12 +66,6 @@ namespace frydom {
             }
         }
 
-//        Position meshPos = m_body->GetPosition(NWU); meshPos.GetZ() = 0;
-//
-//        // This function computes the nonlinear hydrostatic loads.
-//        SetForceTorqueInWorldAtPointInWorld(GetHydrostaticForceInWorld(NWU), GetHydrostaticTorqueInWorld(NWU), meshPos, NWU);
-////        SetForceInWorldAtPointInWorld(GetHydrostaticForceInWorld(NWU), GetCenterOfBuoyancyInWorld(NWU), NWU);
-
     }
 
 
@@ -152,8 +146,6 @@ namespace frydom {
 
         }
 
-        auto COG = clippedMesh->GetCOG();
-
         // Multiplication by rho*g
         Ms *= m_body->GetSystem()->GetGravityAcceleration() * m_body->GetSystem()->GetEnvironment()->GetFluidDensity(WATER);
 
@@ -179,29 +171,6 @@ namespace frydom {
         body->AddExternalForce(forceHst);
 
         return forceHst;
-    }
-
-
-    double NeumaierSum(std::vector<double> vector) {
-
-        double sum = 0.;
-        double compensation = 0.;
-
-        for (auto& in:vector) {
-
-            auto t = sum + in;
-
-            if (std::abs(sum) >= std::abs(in)){
-                compensation += (sum - t) + in;
-            }
-            else {
-                compensation += (in - t) + sum;
-            }
-
-            sum = t;
-        }
-
-        return sum + compensation;
     }
 
 

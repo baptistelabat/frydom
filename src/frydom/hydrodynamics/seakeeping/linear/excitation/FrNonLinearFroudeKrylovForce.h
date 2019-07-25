@@ -42,27 +42,15 @@ namespace frydom {
 
     private:
 
-        /// Froude-Krylov force;
-        Force m_FKforce;
-
-        /// Froude-Krylov torque;
-        Torque m_FKtorque;
-
-        /// Hydrodynamic mesh.
-        std::shared_ptr<FrHydroMesh> m_hydroMesh;
+        std::shared_ptr<FrHydroMesh> m_hydroMesh;   ///< clipped mesh container
 
     public:
 
-        explicit FrNonLinearFroudeKrylovForce(const std::shared_ptr<FrHydroMesh>& HydroMesh) {
-            m_hydroMesh = HydroMesh;
-        };
+        explicit FrNonLinearFroudeKrylovForce(const std::shared_ptr<FrHydroMesh>& HydroMesh);
 
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "NonLinearFroudeKrylovForce"; }
-
-        /// This function compute the incident pressure integration.
-        void CalcIncidentPressureIntegration();
 
     private:
 

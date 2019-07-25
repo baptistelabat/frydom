@@ -105,8 +105,6 @@ namespace frydom {
     std::shared_ptr<FrNonlinearHydrostaticForce>
     make_nonlinear_hydrostatic_force(const std::shared_ptr<FrBody>& body, const std::shared_ptr<FrHydroMesh>& HydroMesh);
 
-    double NeumaierSum(std::vector<double> vector);
-
 }  // end namespace frydom
 
 #endif //FRYDOM_FRNONLINEARHYDROSTATICFORCE_H
