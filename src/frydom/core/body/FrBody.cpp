@@ -481,8 +481,6 @@ namespace frydom {
         m_externalForces.clear();
     }
 
-    // ##CC adding for monitoring load
-
     Force FrBody::GetTotalExtForceInWorld(FRAME_CONVENTION fc) const {
         auto chronoForce = m_chronoBody->Get_Xforce();
         auto force = internal::ChVectorToVector3d<Force>(m_chronoBody->Get_Xforce());
@@ -1034,7 +1032,7 @@ namespace frydom {
                  [this] () {return GetTotalExtForceInBody(GetLogFrameConvention());});
         // Total External Torque at COG
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("TotalTotalTorqueInBodyAtCOG","Nm",fmt::format("Total external torque at COG, expressed in body reference frame in {}", GetLogFrameConvention()),
+                ("TotalExtTorqueInBodyAtCOG","Nm",fmt::format("Total external torque at COG, expressed in body reference frame in {}", GetLogFrameConvention()),
                  [this] () {return GetTotalTorqueInBodyAtCOG(GetLogFrameConvention());});
         // Total External Force in world
         m_message->AddField<Eigen::Matrix<double, 3, 1>>

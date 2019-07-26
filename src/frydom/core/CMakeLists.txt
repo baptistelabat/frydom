@@ -33,6 +33,7 @@ list(APPEND SRC_FILES
 list(APPEND SRC_FILES
 
         link/FrLinkBase.cpp
+        link/FrLinkMaskBase.cpp
 
         link/links_lib/actuators/FrActuator.cpp
         link/links_lib/actuators/FrLinearActuator.cpp
@@ -40,6 +41,7 @@ list(APPEND SRC_FILES
 
         link/constraint/FrConstraint.cpp
         link/constraint/FrCGeometrical.cpp
+        link/constraint/FrConstraintTwoBodiesBase.cpp
 
         link/links_lib/FrLink.cpp
         link/links_lib/FrCylindricalLink.cpp

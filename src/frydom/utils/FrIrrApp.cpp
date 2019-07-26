@@ -36,7 +36,8 @@ namespace frydom {
 
         AddCustomCamera(irr::core::vector3df(-(irr::f32)dist, (irr::f32)dist*0, (irr::f32)dist),
                          irr::core::vector3df(0, (irr::f32)SQ2_2, (irr::f32)SQ2_2));
-        AddTypicalLogo("frydom_logo.png");
+        cppfs::FilePath resources_path(std::string(RESOURCES_VIZU_PATH));
+        AddTypicalLogo(resources_path.resolve("frydom_logo.png").path());
     }
 
     FrIrrApp::~FrIrrApp() = default;
@@ -46,9 +47,11 @@ namespace frydom {
     // Note that the default ChIrrApp::AddTypicalSky() uses Y up.
     // -----------------------------------------------------------------------------
     void FrIrrApp::SetSkyBox() {
-        std::string str_lf = "sky_lf.jpg";
-        std::string str_up = "sky_up.jpg";
-        std::string str_dn = "sky_dn.jpg";
+        cppfs::FilePath resources_path(std::string(RESOURCES_VIZU_PATH));
+        resources_path = resources_path.resolve("skybox");
+        std::string str_lf = resources_path.resolve("sky_lf.jpg").path();
+        std::string str_up = resources_path.resolve("sky_up.jpg").path();
+        std::string str_dn = resources_path.resolve("sky_dn.jpg").path();
 
         irr::video::ITexture* map_skybox_side = GetVideoDriver()->getTexture(str_lf.c_str());
         irr::scene::ISceneNode* mbox = GetSceneManager()->addSkyBoxSceneNode(

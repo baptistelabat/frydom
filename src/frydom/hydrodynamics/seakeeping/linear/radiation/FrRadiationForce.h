@@ -48,8 +48,6 @@ namespace frydom {
         /// Method to be applied at the end of steps
         //void StepFinalize() override;
 
-//        FrRadiationModel* GetRadiationModel() const;
-
     };
 
 
@@ -62,6 +60,11 @@ namespace frydom {
      */
     class FrRadiationConvolutionForce: public FrRadiationForce {
 
+    private:
+
+        Force c_forceInertiaPart;
+        Torque c_torqueInertiaPart;
+
     public:
 
         /// Get the type name of this object
@@ -72,14 +75,38 @@ namespace frydom {
         /// \param radiationModel Radiation model where the radiation force is applied
         explicit FrRadiationConvolutionForce(FrRadiationConvolutionModel* radiationModel);
 
+        void AddFields() override;
+
         /// Method to initialize the radiation convolution force
         void Initialize() override;
+
+        /// Methods to be applied at the end of each time step
+        void StepFinalize() override;
 
     private:
 
         /// Compute the radiation force via convolution
         /// \param time Current time of the simulation from beginning, in seconds
         void Compute(double time) override;
+
+        /// Update the part of the radiation force linked with body acceleration (for logging)
+        void UpdateForceInertiaPart();
+
+        /// Return the force component of the inertia part of the radiation force in body reference frame
+        /// \param fc Frame convention
+        Force GetForceInertiaPartInBody(FRAME_CONVENTION fc) const;
+
+        /// Return the torque component of the inertia part of the radiation force in body reference frame
+        /// \param fc Frame convention
+        Torque GetTorqueInertiaPartInBody(FRAME_CONVENTION fc) const;
+
+        /// Return the force component of the inertia part of the radiation force in  world reference frame
+        /// \param fc Frame convention
+        Force GetForceInertiaPartInWorld(FRAME_CONVENTION fc) const;
+
+        /// Return the torque component of the inertia part of the radiation force in world reference frame
+        /// \param fc Frame convention
+        Torque GetTorqueInertiaPartInWorld(FRAME_CONVENTION fc) const;
 
     };
 

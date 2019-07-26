@@ -112,6 +112,8 @@ namespace frydom {
 
             FrFrame GetConstraintViolation();
 
+            void BuildLinkType(chrono::ChLinkLock::LinkType link_type) override;
+
         };
 
     }  // end namespace frydom::internal

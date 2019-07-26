@@ -99,7 +99,8 @@ Vector TestLinearHydrostaticForce_::ReadVector(FrHDF5Reader& reader, std::string
 void TestLinearHydrostaticForce_::SetUp() {
     body = std::make_shared<FrBody_>();
     system.AddBody(body);
-    LoadData("TNR_database.h5");
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+    LoadData(resources_path.resolve("TNR_database.h5").path());
     system.Initialize();
 }
 

@@ -37,12 +37,15 @@ set(UNIT_TESTS
         test_FrMesh
         )
 
+# Set the path definition of the data resources
+set(unit_test_resources_path ${CMAKE_SOURCE_DIR}/tests/data/unit_test/)
 
 foreach(test ${UNIT_TESTS})
     message(STATUS "        ...add ${test}")
 
     add_executable(${test} ${test}.cpp)
     target_link_libraries(${test} FRyDoM_Engine gtest_main)
+    target_compile_definitions(${test} PUBLIC RESOURCES_PATH="${unit_test_resources_path}")
     add_test(NAME ${test}
             COMMAND ${test})
 endforeach()
@@ -55,14 +58,3 @@ set(subdirs
 foreach (subdir ${subdirs})
     add_subdirectory(${subdir})
 endforeach ()
-
-configure_file(../data/TNR_database.h5 . COPYONLY)
-configure_file(../data/ship/Ship_PolarCurrentCoeffs.json . COPYONLY)
-configure_file(../data/ship/Ship_PolarWindCoeffs.json . COPYONLY)
-
-configure_file(../data/Mesh_clipper/MagneViking.obj . COPYONLY)
-configure_file(../data/Mesh_clipper/MagneViking_clip.obj . COPYONLY)
-configure_file(../data/Mesh_clipper/searev.obj . COPYONLY)
-configure_file(../data/Mesh_clipper/searev_clip.obj . COPYONLY)
-configure_file(../data/Mesh_clipper/BARGE.obj . COPYONLY)
-configure_file(../data/platform/Platform_GVA7500.obj . COPYONLY)

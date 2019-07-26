@@ -11,13 +11,16 @@ HDB5tool is packaged for every major OS (Unix, Windows) for both 32/64 bit syste
 Installing with pip
 -------------------
 
-In frydom_GPL/tools/pyHDB, do::
+In *tools/frydom*, do::
 
     pip install -e .
 
 Please, do not forget the dot.
 
-It is also necessary to update your Python path with the following paths::
+The version of *matplotlib* needs to be 2.0.0 or higher::
 
-    path/to/frydom/tools/
-    path/to/frydom/tools/frydom/pyHDB/
+    pip install matplotlib==2.0.0
+
+The following package has to be installed::
+
+    pip install rstcloth
