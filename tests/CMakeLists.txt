@@ -5,6 +5,9 @@ message(STATUS "Test programs for FRyDoM framework...")
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/tests)
 include(URL_DEMO_DATA.conf)
 
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/tests/data)
+include(ResourcesPath.conf)
+
 if (${frydom_build_dev_test})
     add_subdirectory(dev_tests)
 endif()

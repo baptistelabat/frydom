@@ -12,7 +12,7 @@ if (NOT EXISTS ${OUT})
     if( error_code )
         execute_process(
             COMMAND
-                ${CMAKE_COMMAND} -E remove_directory ${CMAKE_SOURCE_DIR}/tests/data/${test}/
+                ${CMAKE_COMMAND} -E remove ${OUT}
             WORKING_DIRECTORY
                 ${CMAKE_SOURCE_DIR}/tests/data/
         )
@@ -21,7 +21,7 @@ if (NOT EXISTS ${OUT})
             COMMAND
                 ${CMAKE_COMMAND} -E tar xzf ${OUT}
             WORKING_DIRECTORY
-                ${CMAKE_SOURCE_DIR}/tests/data/${test}
+                ${CMAKE_SOURCE_DIR}/tests/data
         )
     endif()
 endif()
