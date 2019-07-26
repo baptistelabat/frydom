@@ -1,10 +1,10 @@
 message(STATUS "      ...URL_DEMO_DATA")
 
 set(AWS_URL https://frydom-ce-data.s3.amazonaws.com/demo)
-set(VERSION "1.0.1")
+set(VERSION "1.0.2")
 set(DATA_FILE data_v${VERSION}.tar.gz)
 
-set(OUT ${CMAKE_SOURCE_DIR}/tests/data/data_v${VERSION}.tar.gz)
+set(OUT ${CMAKE_SOURCE_DIR}/tests/data/${DATA_FILE})
 
 if (NOT EXISTS ${OUT})
     file(DOWNLOAD ${AWS_URL}/${DATA_FILE} ${OUT} STATUS status)
