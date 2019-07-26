@@ -22,7 +22,6 @@ list(APPEND SRC_FILES
         common/FrPhysicsItem.cpp
         common/FrFEAMesh.cpp
         common/FrRotation.cpp
-        common/FrGeometrical.cpp
         )
 
 # FORCE
@@ -41,6 +40,7 @@ list(APPEND SRC_FILES
         link/links_lib/actuators/FrAngularActuator.cpp
 
         link/constraint/FrConstraint.cpp
+        link/constraint/FrCGeometrical.cpp
         link/constraint/FrConstraintTwoBodiesBase.cpp
 
         link/links_lib/FrLink.cpp

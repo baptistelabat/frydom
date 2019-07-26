@@ -12,8 +12,8 @@ Six different constraints are defined :
 - Perpendicular 
 - Parallel. 
 
-They are based either on points, axis and planes, and can be defined within FRyDoM using respectively the FrPoint, 
-FrAxis, and FrPlane classes. Those are just plain abstractions of their geometric counterparts, based on FrNode. 
+They are based either on points, axis and planes, and can be defined within FRyDoM using respectively the FrCPoint, 
+FrCAxis, and FrCPlane classes. Those are just plain abstractions of their geometric counterparts, based on FrNode. 
 Since FrNodes belong to bodies, the constraints are applied in fine on the bodies. It is however easier to define these 
 constraints using the aforementioned classes rather than the FrBody and FrNode directly.
 

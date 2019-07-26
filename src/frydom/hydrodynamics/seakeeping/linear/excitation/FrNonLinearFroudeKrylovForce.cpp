@@ -23,25 +23,20 @@
 
 namespace frydom {
 
+    FrNonLinearFroudeKrylovForce::FrNonLinearFroudeKrylovForce(const std::shared_ptr<FrHydroMesh> &HydroMesh) {
+        m_hydroMesh = HydroMesh;
+    }
+
     void FrNonLinearFroudeKrylovForce::Compute(double time) {
 
         // This function computes the fully or weakly nonlinear Froude-Krylov forces from the pressure integration.
 
-        // Computate of the Froude-Krylov force and torque loads at CoG
-        CalcIncidentPressureIntegration();
+        Force FKforce = {};
+        Torque FKtorque = {};
 
-        // Set the force and torque loads at CoG
-        SetForceTorqueInWorldAtCOG(m_FKforce,m_FKtorque, NWU);
-
-    }
-
-    void FrNonLinearFroudeKrylovForce::CalcIncidentPressureIntegration(){
-
-        // This function performs the incident pressure integration.
-        m_FKforce.setZero();
-        m_FKtorque.setZero();
-        Position CoG = m_body->GetCOG(NWU);
         Position NormalPos;
+
+        auto bodyPos = m_body->GetPosition(NWU); bodyPos.GetZ() = 0;
 
         auto clippedMesh = &(m_hydroMesh->GetClippedMesh());
         
@@ -60,7 +55,7 @@ namespace frydom {
 
             // Incident pressure.
             // The pressure is assumed constant over a panel.
-            double Pressure = waveField->GetPressure(Centroid.GetX(),Centroid.GetY(),Centroid.GetZ(),NWU);
+            auto Pressure = waveField->GetPressure(Centroid + bodyPos, NWU);
 
             // Area.
             double Area = clippedMesh->GetArea(f_iter);
@@ -69,16 +64,17 @@ namespace frydom {
             double PA = -Pressure*Area;
 
             // Froude-Krylov force.
-            m_FKforce += PA*NormalPos;
-
-            // GM vect n;
-            auto GM = Centroid - CoG;
-            auto GMvectNormal = GM.cross(NormalPos);
+            FKforce += PA*NormalPos;
 
             // Froude-Krylov torque.
-            m_FKtorque += PA*GMvectNormal;
+            FKtorque += PA*Centroid.cross(NormalPos);
 
         }
+
+        Position meshPos = m_body->GetPosition(NWU);
+        meshPos.GetZ() = 0;
+
+        SetForceTorqueInWorldAtPointInWorld(FKforce, FKtorque, meshPos, NWU);
 
     }
 

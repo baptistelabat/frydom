@@ -155,6 +155,7 @@ namespace frydom {
         /// \return Pressure.
         virtual double GetPressure(double x, double y, double z, FRAME_CONVENTION fc) const = 0;
 
+        double GetPressure(Position position, FRAME_CONVENTION fc) const;
         //
         // Wave frequencies and direction
         //

@@ -22,9 +22,76 @@ namespace frydom {
 
     //Forward declarations
     class FrFreeSurface;
-    class FrPlane;
+
+    namespace geom {
+        class FrPlane;
+    }
 
     namespace mesh {
+
+        enum FacePositionType {
+            // Position code is composed of 3 digit AOU where A is the number of vertices above the clipping surface,
+            // O the number of vertices on and U the number of vertices under.
+                    FPT_003 = 3,  // TODO : simplifier la representation de cas en enum, on peut certainemet nommer de maniere unique les cas entierement mouille, sec ou a couper
+            //  -----------  totally wet
+            //       *
+            //      / \
+            //     /   \
+            //    *-----*
+                    FPT_012 = 12,
+            //   ------*------ totally wet
+            //        / \
+            //       /   \
+            //      *-----*
+                    FPT_021 = 21,
+            //  ----*-----*---- totally wet
+            //       \   /
+            //        \ /
+            //         *
+                    FPT_030 = 30,
+            //  ----*----*----*  Lying on the clipping surface, should be removed
+
+            FPT_102 = 102,
+            //         *    Face to clip
+            //        / \
+            //    ---o---o---
+            //      /     \
+            //     *-------*
+                    FPT_111 = 111,
+            //          *               *    Face to clip
+            //         /|               |\
+            //        / |               | \
+            //    ---*--o---    or   ---o--*---
+            //        \ |               | /
+            //         \|               |/
+            //          *               *
+                    FPT_120 = 120,
+            //          *  totally dry
+            //         / \
+            //        /   \
+            //   ----*-----*----
+
+            FPT_201 = 201,
+            //       *-------*  Face to clip
+            //        \     /
+            //      ---o---o---
+            //          \ /
+            //           *
+                    FPT_210 = 210,
+            //        *-----*  totally dry
+            //         \   /
+            //          \ /
+            //       ----*----
+                    FPT_300 = 300,
+            //           *  totally dry
+            //          / \
+            //         /   \
+            //        *-----*
+            //
+            //   ----------------
+
+            FPT_UNDEFINED = -1
+        };
 
         /**
         * \class FrClippingSurface
@@ -60,17 +127,19 @@ namespace frydom {
 
         private:
 
-            std::shared_ptr<FrPlane> m_plane;
+            std::shared_ptr<geom::FrPlane> m_plane;
 
         public:
 
-            explicit FrClippingPlane(const std::shared_ptr<FrPlane>& plane) : m_plane(plane) {};
+            explicit FrClippingPlane(const std::shared_ptr<geom::FrPlane>& plane);;
 
             /// This function gives the distance to the plane.
             double GetDistance(const FrMesh::Point &point) const override;
 
             /// This function gives the intersection node position between an edge and the plane.
             FrMesh::Point GetIntersection(const FrMesh::Point &p0, const FrMesh::Point &p1) override;
+
+            geom::FrPlane* GetPlane() const;
 
         };
 
