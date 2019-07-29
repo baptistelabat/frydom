@@ -274,7 +274,7 @@ class HydrostaticDB(object):
         elif value.shape[0] == 6 and value.shape[1] == 6:
             self._matrix = value[2:5, 2:5]
         else:
-            print("Warning: the size of the matrix, considered as square is neither 3 not 6.")
+            print("Warning: the size of the matrix, considered as square is neither 3 nor 6.")
 
     @property
     def matrix33(self):

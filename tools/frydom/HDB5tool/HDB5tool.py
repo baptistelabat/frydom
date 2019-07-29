@@ -42,12 +42,12 @@ def get_parser(parser):
                 Path to the folder including the file Nemoh.cal.""")
 
     # Discretization - Wave directions.
-    parser.add_argument('--discretization_waves','--discretization_wave','-dis_waves', '-dis_wave', '-dw', action="store", nargs=1, metavar='Arg', help="""
+    parser.add_argument('--discretization_waves','--discretization_wave','-dis_waves', '-dis_wave', '-dw', '-dbeta', action="store", nargs=1, metavar='Arg', help="""
                 Integer for the new discretization of the wave directions.""")
 
     # Discretization - Wave frequencies.
     parser.add_argument('--discretization_frequencies','--discretization_freq','--discretization_frequency','-dis_freq','-dis_frequency',
-                        '-dis_frequencies','-df', action="store", nargs =1, metavar='Arg', help="""
+                        '-dis_frequencies', '-df', action="store", nargs =1, metavar='Arg', help="""
                 Integer for the new discretization of the wave frequencies.""")
 
     # Discretization - Final time.

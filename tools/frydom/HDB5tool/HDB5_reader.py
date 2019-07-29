@@ -89,7 +89,7 @@ class HDB5reader():
 
         # Solver.
         try:
-            pyHDB.solver = str(np.array(reader['Solver']).decode("utf-8"))
+            pyHDB.solver = str(np.array(reader['Solver']))
         except:
             pyHDB.solver = "Nemoh"
 
