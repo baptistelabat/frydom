@@ -28,6 +28,7 @@ set(BENCH
         SphereIrregular
         DTMB5512_captive
         Cables
+        NonlinearHydrostaticBox
         )
 
 # Resource data loading / path definition

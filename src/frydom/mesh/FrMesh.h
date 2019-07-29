@@ -36,7 +36,10 @@ namespace frydom {
         // TODO : ce genre de classe devrait etre placeee dans un namespace "_<class=DMesh>internal" puis typedefee
         // dans la classe utilisatrice (DMesh).
         // Reporter cette regle lors de l'elaboration du guide de bonnes pratiques de programmation FRyDoM
-        struct BoundingBox { // TODO: placer cette classe ailleurs
+        /**
+         * Class for an Axis Aligned Bounding Box (AABB)
+         */
+        struct FrAABoundingBox { // TODO: placer cette classe ailleurs
             double xmin = 0.;
             double xmax = 0.;
             double ymin = 0.;
@@ -94,7 +97,7 @@ namespace frydom {
 
             PolygonSet GetBoundaryPolygonSet();
 
-            BoundingBox GetBoundingBox() const;
+            FrAABoundingBox GetBoundingBox() const;
 
 
             /// This function gives the value of a surface integral over the meshed surface

@@ -74,7 +74,16 @@ namespace frydom {
 
         };
 
-        // Forward Declarations
+
+        /**
+         * Class for a 2D Axis Aligned Bounding Box (AABB)
+         */
+        struct Fr2DAABB { // TODO: placer cette classe ailleurs
+            double xmin = 0.;
+            double xmax = 0.;
+            double ymin = 0.;
+            double ymax = 0.;
+        };
 
         class FrPolygon {
 
@@ -93,6 +102,8 @@ namespace frydom {
             double GetSurfaceIntegral(IntegrandType type) const;
 
             geom::FrPlane GetPlane() const;
+
+            Fr2DAABB GetBoundingBox() const;
 
         private:
 

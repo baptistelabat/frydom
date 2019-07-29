@@ -155,7 +155,9 @@ namespace frydom {
             AddBlankLine();
 
             AddLine("DRAUGHT", "M", hp.m_draught);
-            AddLine("LENGTH OVERALL SUBMERGED");
+            AddLine("LENGTH OVERALL SUBMERGED", "M", hp.m_lengthOverallSubmerged);
+            AddLine("BREADTH OVERALL SUBMERGED", "M", hp.m_breadthOverallSubmerged);
+            AddLine("LENGTH AT WATERLINE LWL", "M", hp.m_lengthAtWaterLine);
             AddBlankLine();
 
             AddLine("TRANSVERSAL METACENTRIC RADIUS", "M",        hp.m_transversalMetacentricRadius);

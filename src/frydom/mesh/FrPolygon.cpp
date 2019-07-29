@@ -167,6 +167,23 @@ namespace frydom {
             return geom::FrPlane(m_vertexList, NWU);
         }
 
+        Fr2DAABB FrPolygon::GetBoundingBox() const {
+            Fr2DAABB bbox;
+
+            bbox.xmin = m_vertexList[0].GetX();
+            bbox.xmax = m_vertexList[0].GetX();
+            bbox.ymin = m_vertexList[0].GetY();
+            bbox.ymax = m_vertexList[0].GetY();
+
+            for (auto& vertex : m_vertexList) {
+                bbox.xmin = fmin(bbox.xmin, vertex.GetX());
+                bbox.xmax = fmax(bbox.xmax, vertex.GetX());
+                bbox.ymin = fmin(bbox.ymin, vertex.GetY());
+                bbox.ymax = fmax(bbox.ymax, vertex.GetY());
+            }
+            return bbox;
+        }
+
 
     } // end namespace frydom::mesh
 

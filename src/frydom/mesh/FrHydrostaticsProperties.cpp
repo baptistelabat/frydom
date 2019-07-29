@@ -55,7 +55,13 @@ namespace frydom {
         // Computing temporaries
         double rg = m_waterDensity * m_gravityAcceleration;
 
+        m_hullWetArea = m_clippedMesh.GetArea();
+
+        double xMin, xMax;
+
         for (auto& polygon : m_clippedMesh.GetBoundaryPolygonSet()) {
+
+            assert(polygon.GetPlane().GetFrame().GetRotation().GetQuaternion().GetRotationMatrix().IsIdentity());
 
             auto BoundaryPolygonsSurfaceIntegral = polygon.GetSurfaceIntegrals();
 
@@ -87,6 +93,11 @@ namespace frydom {
                      -2.*m_centerOfGravity[0]*BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_X)
                      +m_centerOfGravity[0]*m_centerOfGravity[0]*m_waterPlaneArea)
                     / m_volumeDisplacement;
+
+            m_hullWetArea -= polygon.GetArea();
+
+            xMin = fmin(xMin, polygon.GetBoundingBox().xmin);
+            xMax = fmax(xMax, polygon.GetBoundingBox().xmax);
 
         }
 
@@ -128,7 +139,9 @@ namespace frydom {
         m_hydrostaticTensor.K44 = rgV * m_transversalMetacentricHeight;
         m_hydrostaticTensor.K55 = rgV * m_longitudinalMetacentricHeight;
 
-        m_hullWetArea = m_clippedMesh.GetArea();
+        m_lengthOverallSubmerged = m_clippedMesh.GetBoundingBox().xmax - m_clippedMesh.GetBoundingBox().xmin;
+        m_breadthOverallSubmerged = m_clippedMesh.GetBoundingBox().ymax - m_clippedMesh.GetBoundingBox().ymin;
+        m_lengthAtWaterLine = xMax - xMin;
 
     }
 
