@@ -25,6 +25,10 @@ The following Python packages have to be installed::
     pip install rstcloth
     pip install matplotlib==2.0.0
 
+It is also necessary to install *Meshmagick* to manage meshes:
+
+    https://github.com/LHEEA/meshmagick
+
 Furthermore, the documentation generator *Sphinx* needs to be installed::
 
     sudo apt-get install python3-sphinx

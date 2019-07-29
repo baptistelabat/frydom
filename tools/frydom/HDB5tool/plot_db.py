@@ -202,7 +202,6 @@ def plot_AB(data, w, ibody_force, iforce, ibody_motion, idof, show = True, save 
         plt.savefig(filename)
     plt.close()
 
-
 def plot_AB_array(data, w, ibody_force, ibody_motion, pyHDB):
     """Plots ALL the radiation coefficients of a body.
 
