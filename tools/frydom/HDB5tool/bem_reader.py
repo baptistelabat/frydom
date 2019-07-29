@@ -171,8 +171,7 @@ class _BEMReader(object):
             This is based on the assumption of having at least %u faces by wave length corresponding to the higher
             wave frequency.
             """ % (wmax_mesh, pyHDB.max_wave_freq, n)
-            print((msg.upper()))
-
+            # print((msg.upper()))
 
 class NemohReaderError(Exception):
     pass
@@ -512,7 +511,7 @@ class NemohReader(_BEMReader):
         if test:
             self.test_mesh_frequency_consistency(pyHDB)
 
-    def _read_nemoh_results(self,pyHDB):  # FIXME: methode de reader nemoh
+    def _read_nemoh_results(self, pyHDB):  # FIXME: methode de reader nemoh
         """Reads the Nemoh's results from the Forces.dat file.
 
         Parameter
