@@ -55,7 +55,7 @@ def plot_loads(data, w, DiffOrFKOrExc, ibody, iforce, beta, show = True, save = 
             ylabel2 = r'$Arg\left[F_{Diff}^{%s}(\omega,\beta)\right] (deg)$'% Dof_notation[iforce]
 
         # Title.
-        title = r'Diffraction loads in %s of body %u for the wave direction %.1f deg' % \
+        title = r'Diffraction loads in %s of body %u for a wave of direction %.1f deg' % \
                 (Dof_name[iforce], ibody + 1, np.degrees(beta))
     elif(DiffOrFKOrExc == 1): # Froude-Krylov loads.
 
@@ -72,7 +72,7 @@ def plot_loads(data, w, DiffOrFKOrExc, ibody, iforce, beta, show = True, save = 
             ylabel2 = r'$Arg\left[F_{FK}^{%s}(\omega,\beta)\right] (deg)$' % Dof_notation[iforce]
 
         # Title.
-        title = r'Froude-Krylov loads in %s of body %u for the wave direction %.1f deg' % \
+        title = r'Froude-Krylov loads in %s of body %u for a wave of direction %.1f deg' % \
                 (Dof_name[iforce], ibody + 1, np.degrees(beta))
     elif(DiffOrFKOrExc == 2): # Excitation loads.
 
@@ -89,7 +89,7 @@ def plot_loads(data, w, DiffOrFKOrExc, ibody, iforce, beta, show = True, save = 
             ylabel2 = r'$Arg\left[F_{Exc}^{%s}(\omega,\beta)\right] (deg)$' % Dof_notation[iforce]
 
         # Title.
-        title = r'Excitation loads in %s of body %u for the wave direction %.1f deg' % \
+        title = r'Excitation loads in %s of body %u for a wave of direction %.1f deg' % \
                 (Dof_name[iforce], ibody + 1, np.degrees(beta))
 
     # Units.
@@ -168,7 +168,7 @@ def plot_AB(data, w, ibody_force, iforce, ibody_motion, idof, show = True, save 
             ylabel2 += r' $(kg\,m^2/s)$'
             motion_str = 'rotation'
 
-    title = r"Radiation coefficients giving %s in %s of body %u " \
+    title = r"Radiation coefficients giving the %s in %s of body %u " \
             r"for a %s in %s of body %u" \
             % (force_str, Dof_name[iforce], ibody_force + 1, motion_str, Dof_name[idof], ibody_motion + 1)
 
@@ -329,10 +329,10 @@ def plot_irf(data, time, SpeedOrNot, ibody_force, iforce, ibody_motion, idof, sh
     plt.ylabel(ylabel, fontsize=18)  # TODO: mettre une unite
     if (save == False):
         if(SpeedOrNot == 0): # Without forward speed.
-            plt.title('Impulse response function of %s in %s of body %u for a %s in %s of body %u' %
+            plt.title('Impulse response function of the radiation %s in %s of body %u for a %s in %s of body %u' %
                   (force_str, Dof_name[iforce], ibody_force + 1, Dof_name[idof], motion_str, ibody_motion + 1), fontsize = 20)
         else: # With forward speed.
-            plt.title('Impulse response function with forward speed of %s in %s of body %u for a %s in %s of body %u' %
+            plt.title('Impulse response function with forward speed of the radiation %s in %s of body %u for a %s in %s of body %u' %
                       (force_str, Dof_name[iforce], ibody_force + 1, Dof_name[idof], motion_str, ibody_motion + 1), fontsize=20)
     plt.grid()
 
@@ -395,10 +395,10 @@ def plot_filering(data, time, SpeedOrNot, coeff, ibody_force, iforce, ibody_moti
     plt.xlabel(r'$t$'+' $(s)$', fontsize=18)
     plt.ylabel(ylabel, fontsize=18)  # TODO: mettre une unite
     if (SpeedOrNot == 0): # Without forward speed.
-        plt.title('Impulse response function of %s in %s of body %u for a %s in %s of body %u' %
+        plt.title('Impulse response function of the %s in %s of body %u for a %s in %s of body %u' %
                   (force_str, Dof_name[iforce], ibody_force + 1, motion_str, Dof_name[idof], ibody_motion + 1), fontsize=20)
     else: # With forward speed.
-        plt.title('Impulse response function with forward speed of %s in %s of body %u for a %s in %s of body %u' %
+        plt.title('Impulse response function with forward speed of the %s in %s of body %u for a %s in %s of body %u' %
                   (force_str, Dof_name[iforce], ibody_force + 1, motion_str, Dof_name[idof], ibody_motion + 1), fontsize=20)
     plt.legend()
     plt.grid()
