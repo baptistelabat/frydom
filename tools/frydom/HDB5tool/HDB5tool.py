@@ -267,8 +267,8 @@ def get_Arg_part_1_CE(args, database):
     if (args.cutoff_irf is not None):
         nb_cut_off_irf = len(args.cutoff_irf)
         for j in range(0, nb_cut_off_irf):
-            database.Cutoff_scaling_IRF(tc=float(args.cutoff_irf[j][0]), ibody_force=int(args.cutoff_irf[j][1]), iforce=int(args.cutoff_irf[j][2]),
-                                        ibody_motion=int(args.cutoff_irf[j][3]), idof=int(args.cutoff_irf[j][4]))
+            database.Cutoff_scaling_IRF(tc=float(args.cutoff_irf[j][0]), ibody_force=int(args.cutoff_irf[j][1] - 1), iforce=int(args.cutoff_irf[j][2] - 1),
+                                        ibody_motion=int(args.cutoff_irf[j][3] - 1), idof=int(args.cutoff_irf[j][4]) - 1)
 
     # Filtering ALL impulse response functions.
     if (args.cutoff_irf_all is not None):
@@ -283,8 +283,8 @@ def get_Arg_part_1_CE(args, database):
     if (args.cutoff_irf_speed is not None):
         nb_cut_off_irf_speed = len(args.cutoff_irf_speed)
         for j in range(0, nb_cut_off_irf_speed):
-            database.Cutoff_scaling_IRF_speed(tc=float(args.cutoff_irf_speed[j][0]), ibody_force=int(args.cutoff_irf_speed[j][1]), iforce=int(args.cutoff_irf_speed[j][2]),
-                                              ibody_motion=int(args.cutoff_irf_speed[j][3]), idof=int(args.cutoff_irf_speed[j][4]))
+            database.Cutoff_scaling_IRF_speed(tc=float(args.cutoff_irf_speed[j][0]), ibody_force=int(args.cutoff_irf_speed[j][1] - 1), iforce=int(args.cutoff_irf_speed[j][2] - 1),
+                                              ibody_motion=int(args.cutoff_irf_speed[j][3] - 1), idof=int(args.cutoff_irf_speed[j][4] - 1))
 
     # Filtering ALL impulse response functions with forward speed.
     if (args.cutoff_irf_all_speed is not None):
@@ -319,40 +319,40 @@ def get_Arg_part_3_CE(args, database):
     if (args.plot_radiation is not None):
         nb_plots_radiation = len(args.plot_radiation)
         for j in range(0, nb_plots_radiation):
-            database.Plot_Radiation_coeff(ibody_force=int(args.plot_radiation[j][0]), iforce=int(args.plot_radiation[j][1]), ibody_motion=int(args.plot_radiation[j][2]),
-                                          idof=int(args.plot_radiation[j][3]))
+            database.Plot_Radiation_coeff(ibody_force=int(args.plot_radiation[j][0]) - 1, iforce=int(args.plot_radiation[j][1]) - 1, ibody_motion=int(args.plot_radiation[j][2]) - 1,
+                                          idof=int(args.plot_radiation[j][3]) - 1)
 
     # Plot diffraction loads.
     if (args.plot_diffraction is not None):
         nb_plots_diffraction = len(args.plot_diffraction)
         for j in range(0, nb_plots_diffraction):
-            database.Plot_Diffraction(ibody=int(args.plot_diffraction[j][0]), iforce=int(args.plot_diffraction[j][1]), iwave=int(args.plot_diffraction[j][2]))
+            database.Plot_Diffraction(ibody=int(args.plot_diffraction[j][0]) - 1, iforce=int(args.plot_diffraction[j][1]) - 1, iwave=int(args.plot_diffraction[j][2]) - 1)
 
     # Plot Froude-Krylov loads.
     if (args.plot_froude_krylov is not None):
         nb_plots_froude_krylov = len(args.plot_froude_krylov)
         for j in range(0, nb_plots_froude_krylov):
-            database.Plot_Froude_Krylov(ibody=int(args.plot_froude_krylov[j][0]), iforce=int(args.plot_froude_krylov[j][1]), iwave=int(args.plot_froude_krylov[j][2]))
+            database.Plot_Froude_Krylov(ibody=int(args.plot_froude_krylov[j][0]) - 1, iforce=int(args.plot_froude_krylov[j][1]) - 1, iwave=int(args.plot_froude_krylov[j][2]) - 1)
 
     # Plot excitation loads.
     if (args.plot_excitation is not None):
         nb_plots_excitation = len(args.plot_excitation)
         for j in range(0, nb_plots_excitation):
-            database.Plot_Excitation(ibody=int(args.plot_excitation[j][0]), iforce=int(args.plot_excitation[j][1]), iwave=int(args.plot_excitation[j][2]))
+            database.Plot_Excitation(ibody=int(args.plot_excitation[j][0]) - 1, iforce=int(args.plot_excitation[j][1]) - 1, iwave=int(args.plot_excitation[j][2]) - 1)
 
     # Plot impulse response functions.
     if (args.plot_irf is not None):
         nb_plots_irf = len(args.plot_irf)
         for j in range(0, nb_plots_irf):
-            database.Plot_IRF(ibody_force=int(args.plot_irf[j][0]), iforce=int(args.plot_irf[j][1]), ibody_motion=int(args.plot_irf[j][2]),
-                              idof=int(args.plot_irf[j][3]))
+            database.Plot_IRF(ibody_force=int(args.plot_irf[j][0]) - 1, iforce=int(args.plot_irf[j][1]) - 1, ibody_motion=int(args.plot_irf[j][2]) - 1,
+                              idof=int(args.plot_irf[j][3]) - 1)
 
     # Plot impulse response function with speed velocity.
     if (args.plot_irf_speed is not None):
         nb_plots_irf_speed = len(args.plot_irf_speed)
         for j in range(0, nb_plots_irf_speed):
-            database.Plot_IRF_speed(ibody_force=int(args.plot_irf_speed[j][0]), iforce=int(args.plot_irf_speed[j][1]), ibody_motion=int(args.plot_irf_speed[j][2]),
-                                    idof=int(args.plot_irf_speed[j][3]))
+            database.Plot_IRF_speed(ibody_force=int(args.plot_irf_speed[j][0]) - 1, iforce=int(args.plot_irf_speed[j][1]) - 1, ibody_motion=int(args.plot_irf_speed[j][2]) - 1,
+                                    idof=int(args.plot_irf_speed[j][3]) - 1)
 
     return database
 

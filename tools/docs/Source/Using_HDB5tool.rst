@@ -5,7 +5,7 @@ Using HDB5tool
 
     * So far, only the ouput files of **Nemoh** may be read.
     * The command line options may be combined.
-    * Indexes present in arguments start from 0 (for instance, the first body has an index of 0).
+    * Indexes present in arguments start from 1 (for instance, the first body has an index of 1, the surge too).
     * Physical quantities are expressed at the center of gravity of each body.
     * Negative numbers written with a scientific notation are not read by the command line argument parser, please use a decimal notation in this case. Thus, write -1000 instead of -10e3.
 
@@ -307,4 +307,4 @@ K55                       :math:`1.699\times10^1` \\(N.m\\)
 
 We want to generate the corresponding *.hdb5* file, named *Sphere.hdb5*, after doing a new discretization of the hydrodynamic database for 41 wave directions, 150 wave frequencies, computing the impulse reponse functions with a final time of :math:`100` \\(s\\) and a time step of :math:`0.01` \\(s\\), providing the hydrostatic and inertia matrices and applying a cutoff scaling function with a cutoff tume of :math:`10` \\(s\\) to :math:`K_{33}` and :math:`{Ku}_{33}`. We also want to plot the following quantities: :math:`A_{33}`, :math:`B_{44}`, :math:`F^{Diff}_{3}`, :math:`F^{Diff}_{4}`, :math:`F^{FK}_{4}`, :math:`F^{Exc}_{3}`, :math:`F^{Exc}_{4}`, :math:`K_{33}` and :math:`{Ku}_{44}`. The command is:: 
 
-    hdb5tool -cal . -dw 41 -df 150 -ft 100 -dt 0.01 -hs 1 3.082e4 1.699e1 1.699e1 0 0 0 -i 1 2094.39 837.76 837.76 837.76 0 0 0 -sym -w Sphere.hdb5 -pab 0 2 0 2 -prad 0 3 0 3 -pd 0 2 0 -pd 0 3 0 -pfk 0 2 0 -pfk 0 3 0 -pe 0 2 0 -pe 0 3 0 -pirf 0 2 0 2 -pirf_speed 0 3 0 3 -coirf 10 0 2 0 2 -coirf_speed 10 0 2 0 2
+    hdb5tool -cal . -dw 41 -df 150 -ft 100 -dt 0.01 -hs 1 3.082e4 1.699e1 1.699e1 0 0 0 -i 1 2094.39 837.76 837.76 837.76 0 0 0 -sym -w Sphere.hdb5 -pab 1 3 1 3 -prad 1 4 1 4 -pd 1 3 1 -pd 1 4 1 -pfk 1 3 1 -pfk 1 4 1 -pe 1 3 1 -pe 1 4 1 -pirf 1 3 1 3 -pirf_speed 1 4 1 4 -coirf 10 1 3 1 3 -coirf_speed 10 1 3 1 3
