@@ -4,7 +4,8 @@
 
 #include "FrMeshClipper.h"
 
-#include "frydom/core/common/FrGeometrical.h"
+//#include "frydom/core/link/constraint/FrCGeometrical.h"
+#include "FrPlane.h"
 
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
@@ -19,6 +20,8 @@ namespace frydom {
 
         // -----------------------------------------------------------------------------------------------------------------
 
+        FrClippingPlane::FrClippingPlane(const std::shared_ptr<geom::FrPlane> &plane) : m_plane(plane) {}
+
         VectorT<double, 3>
         FrClippingPlane::GetIntersection(const VectorT<double, 3> &p0, const VectorT<double, 3> &p1) {
             // Find the abscissa on [P0P1] of the intersection with the plan :
@@ -29,20 +32,20 @@ namespace frydom {
             Position P0 = {p0[0],p0[1],p0[2]};
             Position P1 = {p1[0],p1[1],p1[2]};
 
-            // Application of the horizontal translation.
-            auto BodyPos = m_bodyPosition; BodyPos.GetZ() = 0.;
-
-            P0 += BodyPos;
-            P1 += BodyPos;
-
-            auto n = m_plane->GetNormaleInWorld(NWU);
+            auto n = m_plane->GetNormal(NWU);
 
             // check if P0P1 is parallel to the plan / or P0P1 null
             Direction line = (P1 - P0); assert(line.norm()>1E-16);
             assert(line.dot(n)!=0);
 
             // P0O
-            Direction vector = m_plane->GetOriginInWorld(NWU) - P0;
+            auto planeOrigin = m_plane->GetOrigin(NWU);
+
+            // Application of the horizontal translation.
+            auto BodyPos = m_bodyPosition; BodyPos.GetZ() = 0.;
+            planeOrigin -= BodyPos;
+
+            Direction vector = planeOrigin - P0;
 
             // s_i
             double s = vector.dot(n) / line.dot(n);
@@ -60,14 +63,20 @@ namespace frydom {
 
             auto PointInWorld = OpenMeshPointToVector3d<Position>(point);
 
+            auto planeOrigin = m_plane->GetOrigin(NWU);
+
             // Application of the horizontal translation.
             auto BodyPos = m_bodyPosition; BodyPos.GetZ() = 0.;
-            const Position temp = PointInWorld + BodyPos;
+            planeOrigin -= BodyPos;
 
-            Position vector = temp - m_plane->GetOriginInWorld(NWU);
+            Position vector = PointInWorld - planeOrigin;
 
-            return vector.dot(m_plane->GetNormaleInWorld(NWU));
+            return vector.dot(m_plane->GetNormal(NWU));
 
+        }
+
+        geom::FrPlane *FrClippingPlane::GetPlane() const {
+            return m_plane.get();
         }
 
         // -----------------------------------------------------------------------------------------------------------------
@@ -216,7 +225,7 @@ namespace frydom {
             FrMesh::FFIter ff_iter = m_mesh->ff_iter(fh);
             for (; ff_iter.is_valid(); ++ff_iter) {
                 m_mesh->update_normal(*ff_iter);
-                m_mesh->CalcFacePolynomialIntegrals(*ff_iter);
+//                m_mesh->CalcFacePolynomialIntegrals(*ff_iter); //FIXME
             }
         }
 

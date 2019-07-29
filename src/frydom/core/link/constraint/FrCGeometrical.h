@@ -17,7 +17,7 @@ namespace frydom {
 
     enum AXISLABEL {XAXIS, YAXIS, ZAXIS};
 
-    class FrGeometrical {
+    class FrCGeometrical {
 
     protected:
 
@@ -25,24 +25,24 @@ namespace frydom {
 
     public:
 
-        explicit FrGeometrical(const std::shared_ptr<FrNode>& node);
+        explicit FrCGeometrical(const std::shared_ptr<FrNode>& node);
 
         std::shared_ptr<FrNode> GetNode() const;
 
     };
 
-    class FrPoint : public FrGeometrical {
+    class FrCPoint : public FrCGeometrical {
 
     public:
 
-        explicit FrPoint(const std::shared_ptr<FrNode>& node);
+        explicit FrCPoint(const std::shared_ptr<FrNode>& node);
 
         Position GetPositionInWorld(FRAME_CONVENTION fc) const;
 
     };
 
 
-    class FrAxis : public FrGeometrical {
+    class FrCAxis : public FrCGeometrical {
 
     private:
 
@@ -50,9 +50,9 @@ namespace frydom {
 
     public:
 
-        explicit FrAxis(const std::shared_ptr<FrNode>& node);
+        explicit FrCAxis(const std::shared_ptr<FrNode>& node);
 
-        FrAxis(const std::shared_ptr<FrNode>& node, AXISLABEL axis);
+        FrCAxis(const std::shared_ptr<FrNode>& node, AXISLABEL axis);
 
         Position GetOriginInWorld(FRAME_CONVENTION fc) const;
 
@@ -62,7 +62,7 @@ namespace frydom {
 
     };
 
-    class FrPlane : public FrGeometrical {
+    class FrCPlane : public FrCGeometrical {
 
     private:
 
@@ -70,14 +70,19 @@ namespace frydom {
 
     public:
 
-        explicit FrPlane(const std::shared_ptr<FrNode>& node);
+        explicit FrCPlane(const std::shared_ptr<FrNode>& node);
 
-        FrPlane(const std::shared_ptr<FrNode>& node, AXISLABEL axis);
+        FrCPlane(const std::shared_ptr<FrNode>& node, AXISLABEL axis);
 
         Position GetOriginInWorld(FRAME_CONVENTION fc) const;
 
         Direction GetNormaleInWorld(FRAME_CONVENTION fc) const;
 
+        double GetDistanceToPointInWorld(Position PointInWorld, FRAME_CONVENTION fc) const;
+
+        Position GetIntersectionWithLineInWorld(Position P0, Position P1, FRAME_CONVENTION fc) const;
+
+        Position GetClosestPointOnPlaneInWorld(Position PointInWorld, FRAME_CONVENTION fc) const;
 
     };
 
