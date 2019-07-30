@@ -25,10 +25,9 @@ class DataBase(object):
 
     def get_last_data(self):
         files = list(self._bucket.objects.filter(Prefix="demo/data_"))
-        self._file_archive = files[-1].key[5:]
+        self._file_archive, str_version = self.find_last_version(files)
 
-        print("Last remote version : %s" % self._file_archive[6:-7])
-        self._version = list(int(val) for val in self._file_archive[6:-7].split('.'))
+        print("Last remote version : %s" % str_version)
 
     def download_file_archive(self):
 
@@ -46,18 +45,18 @@ class DataBase(object):
 
     def add(self, fname):
         if fname not in self._additional_elements:
-            self._additional_elements.append(fname)
+            self._additional_elements.append(os.path.normpath(fname))
         return
 
     def _compare_folders(self, dir1, dir2):
 
         comp = Compare(dir1, dir2)
 
-        new_dir = [os.path.join(dir1, item) for item in comp.left_only if valuable_item(item)]
+        new_dir = [os.path.normpath(os.path.join(dir1, item)) for item in comp.left_only if valuable_item(item)]
 
         self._new_dir.extend(new_dir)
 
-        diff_files = [os.path.join(dir1, item) for item in comp.diff_files]
+        diff_files = [os.path.normpath(os.path.join(dir1, item)) for item in comp.diff_files]
 
         self._diff_files.extend(diff_files)
 
@@ -69,6 +68,27 @@ class DataBase(object):
 
         return
 
+    def find_last_version(self, files):
+
+        list_version = []
+        for file in files:
+            file = file.key[5:]
+            list_version.append(list(int(val) for val in file[6:-7].split('.')))
+
+        temp = [val for val in list_version if val[0] == max(list_version)[0]]
+        temp2 = [val for val in temp if val[1] == max(temp)[1]]
+        temp3 = [val for val in temp2 if val[2] == max(temp2)[2]]
+
+        if len(temp3) > 1 or len(temp3) == 0:
+            print("error : unable to find maximum version")
+        else:
+            self._version = temp3[0]
+
+        str_version = '{}.{}.{}'.format(*self._version)
+        file_archive = "data_v" + str_version + ".tar.gz"
+
+        return file_archive, str_version
+
     def compare_to_local(self):
 
         print("Check for update... ")
@@ -77,35 +97,34 @@ class DataBase(object):
 
         self._compare_folders('.', '.temp/')
 
-        temp = []
-        for elem in self._additional_elements:
-            if elem in self._new_dir:
-                temp.append(elem)
-            else:
-                print("update info: %s is already present in archive: omitted to completion" % elem)
-        self._additional_elements = temp
+        #temp = []
+        #for elem in self._additional_elements:
+        #    if elem in self._new_dir:
+        #        temp.append(elem)
+        #    else:
+        #        print("update info: %s is already present in archive: omitted to completion" % elem)
+        #self._additional_elements = temp
 
         for item in self._new_dir:
             if item not in self._additional_elements:
                 self._omitted_elements.append(item)
 
         if len(self._additional_elements) > 0:
-            print("\n    Added to archived :\n")
+            print("\n--> Added to archive :\n")
             for elem in self._additional_elements:
                 print("    %s" % elem)
-            print("")
 
         if len(self._omitted_elements) > 0:
-            print("\n    Omitted elements : \n")
+            print("\n--> Omitted elements : \n")
             for elem in self._omitted_elements:
                 print("    %s" % elem)
-            print("")
 
         if len(self._diff_files) > 0:
-            print("\n    Diff files : \n")
+            print("\n--> Diff files : \n")
             for elem in self._diff_elements:
                 print("    %s" % elem)
-            print("")
+
+        print("")
         
     def update_file(self, fname):
         if fname not in self.updated_files:
@@ -155,7 +174,7 @@ class DataBase(object):
                 for item in os.listdir('.temp/'):
                     f.add(item)
                 for item in self._additional_elements:
-                    f.add(item)
+                    f.add(item, arcname=item)
 
             self._file_archive = new_archive
 
@@ -267,8 +286,8 @@ def main():
 
     data.download_file_archive()
 
-    data.add("./Cylinder")
-    data.add("./unit_test")
+    #data.add("./Cylinder")
+    data.add("./bench/sphere")
     data.update_archive("minor")
 
     #data.upload_archive()
