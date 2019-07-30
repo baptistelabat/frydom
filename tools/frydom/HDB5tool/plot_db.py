@@ -301,23 +301,27 @@ def plot_irf(data, time, SpeedOrNot, ibody_force, iforce, ibody_motion, idof, sh
     """
 
     # Labels.
-    if (iforce <= 2):
-        force_str = 'force'
-        if (idof <= 2): # Translation.
-            motion_str = 'translation'
-        else: # Rotation.
-            motion_str = 'rotation'
-    else:
-        force_str = 'moment'
-        if (idof <= 2): # Translation.
-            motion_str = 'translation'
-        else: # Rotation.
-            motion_str = 'rotation'
-
     if (SpeedOrNot == 0): # Without forward speed.
         ylabel = r'$K_{%s}$' % (Dof_notation[iforce]+"_"+str(ibody_force+1) + Dof_notation[idof]+"_"+str(ibody_motion+1))
     else: # With forward speed.
         ylabel = r'$Ku_{%s}$' % (Dof_notation[iforce]+"_"+str(ibody_force+1) + Dof_notation[idof]+"_"+str(ibody_motion+1))
+
+    if (iforce <= 2):
+        force_str = 'force'
+        if (idof <= 2): # Translation.
+            ylabel += r' $(kg/s^2)$'
+            motion_str = 'translation'
+        else: # Rotation.
+            ylabel += r' $(kg\,m/s^2)$'
+            motion_str = 'rotation'
+    else:
+        force_str = 'moment'
+        if (idof <= 2): # Translation.
+            ylabel += r' $(kg\,m/s^2)$'
+            motion_str = 'translation'
+        else: # Rotation.
+            ylabel += r' $(kg\,m^2/s^2)$'
+            motion_str = 'rotation'
 
     # Plots.
     if (save == False):
@@ -330,10 +334,10 @@ def plot_irf(data, time, SpeedOrNot, ibody_force, iforce, ibody_motion, idof, sh
     if (save == False):
         if(SpeedOrNot == 0): # Without forward speed.
             plt.title('Impulse response function of the radiation %s in %s of body %u for a %s in %s of body %u' %
-                  (force_str, Dof_name[iforce], ibody_force + 1, Dof_name[idof], motion_str, ibody_motion + 1), fontsize = 20)
+                  (force_str, Dof_name[iforce], ibody_force + 1, motion_str, Dof_name[idof], ibody_motion + 1), fontsize = 20)
         else: # With forward speed.
             plt.title('Impulse response function with forward speed of the radiation %s in %s of body %u for a %s in %s of body %u' %
-                      (force_str, Dof_name[iforce], ibody_force + 1, Dof_name[idof], motion_str, ibody_motion + 1), fontsize=20)
+                      (force_str, Dof_name[iforce], ibody_force + 1, motion_str, Dof_name[idof], ibody_motion + 1), fontsize=20)
     plt.grid()
 
     if (show == True):
