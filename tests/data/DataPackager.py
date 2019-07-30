@@ -13,11 +13,13 @@ class DataBase(object):
         self._file_archive = None
         self._version = tuple()
         self._additional_elements = []
-        self._left_only = []
+        self._new_dir = []
+        self._omitted_elements = []
         self._diff_files = []
         self._bucket = self._connect("frydom-ce-data")
 
     def _connect(self, name_bucket):
+        print("Connect resources S3 : %s" % name_bucket)
         s3 = boto3.resource('s3')
         return s3.Bucket(name_bucket)
 
@@ -25,16 +27,18 @@ class DataBase(object):
         files = list(self._bucket.objects.filter(Prefix="demo/data_"))
         self._file_archive = files[-1].key[5:]
 
-        print("File : %s" % self._file_archive)
-        print("Version : %s" % self._file_archive[6:-7])
+        print("Last remote version : %s" % self._file_archive[6:-7])
         self._version = list(int(val) for val in self._file_archive[6:-7].split('.'))
 
     def download_file_archive(self):
-        print("Downloading : %s" % self._file_archive)
+
+        self.get_last_data()
+
         if not os.path.isfile(self._file_archive):
+            print("Downloading : %s" % self._file_archive)
             self._bucket.download_file('demo/' + self._file_archive, self._file_archive)
         else:
-            print("Already Up To Date")
+            pass
 
     def extract_file_archive(self):
         with tarfile.open(self._file_archive, 'r') as f:
@@ -44,9 +48,68 @@ class DataBase(object):
         if fname not in self._additional_elements:
             self._additional_elements.append(fname)
         return
+
+    def _compare_folders(self, dir1, dir2):
+
+        comp = Compare(dir1, dir2)
+
+        new_dir = [os.path.join(dir1, item) for item in comp.left_only if valuable_item(item)]
+
+        self._new_dir.extend(new_dir)
+
+        diff_files = [os.path.join(dir1, item) for item in comp.diff_files]
+
+        self._diff_files.extend(diff_files)
+
+        for name in comp.diff_files:
+            ldiffer(os.path.join(dir1, name), os.path.join(dir2, name))
+
+        for subdir in comp.common_dirs:
+            self._compare_folders(os.path.join(dir1, subdir), os.path.join(dir2, subdir))
+
+        return
+
+    def compare_to_local(self):
+
+        print("Check for update... ")
+
+        self.extract_file_archive()
+
+        self._compare_folders('.', '.temp/')
+
+        temp = []
+        for elem in self._additional_elements:
+            if elem in self._new_dir:
+                temp.append(elem)
+            else:
+                print("update info: %s is already present in archive: omitted to completion" % elem)
+        self._additional_elements = temp
+
+        for item in self._new_dir:
+            if item not in self._additional_elements:
+                self._omitted_elements.append(item)
+
+        if len(self._additional_elements) > 0:
+            print("\n    Added to archived :\n")
+            for elem in self._additional_elements:
+                print("    %s" % elem)
+            print("")
+
+        if len(self._omitted_elements) > 0:
+            print("\n    Omitted elements : \n")
+            for elem in self._omitted_elements:
+                print("    %s" % elem)
+            print("")
+
+        if len(self._diff_files) > 0:
+            print("\n    Diff files : \n")
+            for elem in self._diff_elements:
+                print("    %s" % elem)
+            print("")
         
     def update_file(self, fname):
         if fname not in self.updated_files:
+            print("Adding %s to archive" % fname)
             self.updated_files.append(fname)
         else:
             print("warning : %s already in archive (not add).")
@@ -68,31 +131,40 @@ class DataBase(object):
             
         return
 
-    def update_archive(self):
+    def update_archive(self, type_version):
 
-        print("Updating archive...")
+        self.compare_to_local()
 
-        str_version = '{}.{}.{}'.format(*self._version)
-        new_archive = "data_v" + str_version + ".tar.gz"
-        copyfile(self._file_archive, new_archive)
+        if len(self._additional_elements) > 0:
+            print("Updating archive...")
 
-        if os.path.exists('.temp/'):
+            self.update_version(type_version)
+
+            str_version = '{}.{}.{}'.format(*self._version)
+            new_archive = "data_v" + str_version + ".tar.gz"
+            copyfile(self._file_archive, new_archive)
+
+            if os.path.exists('.temp/'):
+                rmtree('.temp/')
+            with tarfile.open(self._file_archive, 'r') as f:
+                print("--> Extract data from previous archive")
+                f.extractall(".temp/")
+
+            with tarfile.open(new_archive, 'w:bz2') as f:
+                print("--> Create new archive")
+                for item in os.listdir('.temp/'):
+                    f.add(item)
+                for item in self._additional_elements:
+                    f.add(item)
+
+            self._file_archive = new_archive
+
+            print("--> Delete temporary data")
             rmtree('.temp/')
-        with tarfile.open(self._file_archive, 'r') as f:
-            print("Extract data from previous archive")
-            f.extractall(".temp/")
 
-        with tarfile.open(new_archive, 'w:bz2') as f:
-            print("Create new archive")
-            for item in os.listdir('.temp/'):
-                f.add(item)
-            for item in self._additional_elements:
-                f.add(item)
-
-        self._file_archive = new_archive
-
-        print("Delete temporary data")
-        rmtree('.temp/')
+            print("New archive %s created" % new_archive)
+        else:
+            print("Archive %s is already up to date" % self._file_archive)
 
     def upload_archive(self):
         print("Upload %s to AWS S3" % self._file_archive)
@@ -138,7 +210,7 @@ def valuable_item(item):
         pass
 
     try:
-        if item == 'DataManager.py':
+        if item == 'DataPackager.py':
             return False
     except:
         pass
@@ -193,18 +265,13 @@ def main():
 
     data = DataBase()
 
-    data.get_last_data()
     data.download_file_archive()
-    data.extract_file_archive()
 
-    text1, text2 = compare_directories('.', '.temp/')
-    report_compared(text1, text2)
+    data.add("./Cylinder")
+    data.add("./unit_test")
+    data.update_archive("minor")
 
-    data.update_version("minor")
-    data.add("Cylinder")
-    data.update_archive()
-
-    data.upload_archive()
+    #data.upload_archive()
 
 
 if __name__ == "__main__":
