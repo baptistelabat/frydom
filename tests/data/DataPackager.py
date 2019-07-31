@@ -231,6 +231,8 @@ class DataBase(object):
                 for item in self._additional_elements:
                     f.add(item, arcname=item)
 
+                f.add("package_version.info")
+
             self._file_archive = new_archive
 
             print("--> Delete temporary data")
@@ -246,7 +248,7 @@ class DataBase(object):
 
     def update_package_version(self):
 
-        with open(os.path.join(".temp/", "package_version.info"), 'w') as f:
+        with open(os.path.join("package_version.info"), 'w') as f:
 
             d = datetime.now()
 
