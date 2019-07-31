@@ -5,6 +5,7 @@ import filecmp
 from difflib import Differ
 import difflib
 from shutil import copyfile, rmtree
+import numpy as np
 
 
 class DataBase(object):
@@ -25,7 +26,7 @@ class DataBase(object):
 
     def get_last_data(self):
         files = list(self._bucket.objects.filter(Prefix="demo/data_"))
-        self._file_archive, str_version = self.find_last_version(files)
+        self._file_archive, str_version = self.find_version(files)
 
         print("Last remote version : %s" % str_version)
 
@@ -83,6 +84,24 @@ class DataBase(object):
             print("error : unable to find maximum version")
         else:
             self._version = temp3[0]
+
+        str_version = '{}.{}.{}'.format(*self._version)
+        file_archive = "data_v" + str_version + ".tar.gz"
+
+        return file_archive, str_version
+
+    def find_version(self, files, nhead=0):
+
+        table_version = np.array([], dtype=np.uint8)
+        for file in files:
+            file = file.key[5:]
+            list_version = list(int(val) for val in file[6:-7].split('.'))
+            table_version = np.append(table_version, list_version)
+        table_version = table_version.reshape((len(files), 3))
+
+        table_ordered = table_version[np.lexsort(np.fliplr(table_version).T)]
+
+        self._version = table_ordered[-nhead-1]
 
         str_version = '{}.{}.{}'.format(*self._version)
         file_archive = "data_v" + str_version + ".tar.gz"
@@ -169,7 +188,7 @@ class DataBase(object):
                 print("--> Extract data from previous archive")
                 f.extractall(".temp/")
 
-            with tarfile.open(new_archive, 'w:bz2') as f:
+            with tarfile.open(new_archive, 'w:gz') as f:
                 print("--> Create new archive")
                 for item in os.listdir('.temp/'):
                     f.add(item)
@@ -181,6 +200,8 @@ class DataBase(object):
             print("--> Delete temporary data")
             rmtree('.temp/')
 
+            self.update_package_version()
+
             print("New archive %s created" % new_archive)
         else:
             print("Archive %s is already up to date" % self._file_archive)
@@ -189,6 +210,16 @@ class DataBase(object):
         print("Upload %s to AWS S3" % self._file_archive)
         with open(self._file_archive, 'rb') as data:
             self._bucket.upload_fileobj(data, "demo/"+self._file_archive, ExtraArgs={'ACL':'public-read'})
+
+    def update_package_version(self):
+
+        with open("package_version.info", 'a') as f:
+
+            for item in self._additional_elements:
+
+                for (dirpath, dirnames, filenames) in os.walk(item):
+                    for file in filenames:
+                        f.write(os.path.join(dirpath, file)+"\n")
 
 
 def print_diff_files(dcmp):
@@ -286,7 +317,7 @@ def main():
 
     data.download_file_archive()
 
-    #data.add("./Cylinder")
+    data.add("./Cylinder")
     data.add("./bench/sphere")
     data.update_archive("minor")
 
