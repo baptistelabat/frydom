@@ -6,6 +6,8 @@ from difflib import Differ
 import difflib
 from shutil import copyfile, rmtree
 import numpy as np
+from datetime import date, datetime
+import time
 
 
 class DataBase(object):
@@ -18,6 +20,10 @@ class DataBase(object):
         self._omitted_elements = []
         self._diff_files = []
         self._bucket = self._connect("frydom-ce-data")
+
+    @property
+    def str_version(self):
+        return '{}.{}.{}'.format(*self._version)
 
     def _connect(self, name_bucket):
         print("Connect resources S3 : %s" % name_bucket)
@@ -49,13 +55,34 @@ class DataBase(object):
             self._additional_elements.append(os.path.normpath(fname))
         return
 
+    def add2(self, fname):
+
+        if os.path.isdir(fname):
+            for (dirpath, dirnames, filenames) in os.walk(fname):
+                for file in filenames:
+                    filepath = os.path.join(dirpath, file)
+                    if filepath not in self._additional_elements:
+                        self._additional_elements.append(os.path.normpath(filepath))
+        elif os.path.isfile(fname):
+            self._additional_elements.append(os.path.normpath(fname))
+        else:
+            print("warning : %s unknown file or dir" % fname)
+
+        return
+
     def _compare_folders(self, dir1, dir2):
 
         comp = Compare(dir1, dir2)
 
         new_dir = [os.path.normpath(os.path.join(dir1, item)) for item in comp.left_only if valuable_item(item)]
 
-        self._new_dir.extend(new_dir)
+        for elem in new_dir:
+            if os.path.isdir(elem):
+                for (dirpath, dirnames, filenames) in os.walk(elem):
+                    for file in filenames:
+                        self._new_dir.append(os.path.join(dirpath, file))
+            elif os.path.isfile(elem):
+                self._new_dir.append(os.path.normpath(elem))
 
         diff_files = [os.path.normpath(os.path.join(dir1, item)) for item in comp.diff_files]
 
@@ -116,13 +143,16 @@ class DataBase(object):
 
         self._compare_folders('.', '.temp/')
 
-        #temp = []
-        #for elem in self._additional_elements:
-        #    if elem in self._new_dir:
-        #        temp.append(elem)
-        #    else:
-        #        print("update info: %s is already present in archive: omitted to completion" % elem)
-        #self._additional_elements = temp
+        temp = []
+        sys.stdout.write("\033[1;31m")
+        for elem in self._additional_elements:
+            if elem in self._new_dir:
+                temp.append(elem)
+            else:
+                print("update info: %s is already present in archive: omitted to completion" % elem)
+        self._additional_elements = temp
+
+        sys.stdout.write("\033[0;0m")
 
         for item in self._new_dir:
             if item not in self._additional_elements:
@@ -130,13 +160,17 @@ class DataBase(object):
 
         if len(self._additional_elements) > 0:
             print("\n--> Added to archive :\n")
+            sys.stdout.write("\033[0;32m")
             for elem in self._additional_elements:
                 print("    %s" % elem)
+            sys.stdout.write("\033[0;0m")
 
         if len(self._omitted_elements) > 0:
             print("\n--> Omitted elements : \n")
+            sys.stdout.write("\033[1;31m")
             for elem in self._omitted_elements:
                 print("    %s" % elem)
+            sys.stdout.write("\033[0;0m")
 
         if len(self._diff_files) > 0:
             print("\n--> Diff files : \n")
@@ -188,6 +222,8 @@ class DataBase(object):
                 print("--> Extract data from previous archive")
                 f.extractall(".temp/")
 
+            self.update_package_version()
+
             with tarfile.open(new_archive, 'w:gz') as f:
                 print("--> Create new archive")
                 for item in os.listdir('.temp/'):
@@ -199,9 +235,6 @@ class DataBase(object):
 
             print("--> Delete temporary data")
             rmtree('.temp/')
-
-            self.update_package_version()
-
             print("New archive %s created" % new_archive)
         else:
             print("Archive %s is already up to date" % self._file_archive)
@@ -213,13 +246,20 @@ class DataBase(object):
 
     def update_package_version(self):
 
-        with open("package_version.info", 'a') as f:
+        with open(os.path.join(".temp/", "package_version.info"), 'w') as f:
 
-            for item in self._additional_elements:
+            d = datetime.now()
 
-                for (dirpath, dirnames, filenames) in os.walk(item):
-                    for file in filenames:
-                        f.write(os.path.join(dirpath, file)+"\n")
+            f.write("Version : %s\n" % self.str_version)
+            f.write("Date : %s\n" % d.strftime("%Y/%m/%d %H:%M"))
+            f.write("\n")
+
+            for (dirpath, dirnames, filenames) in os.walk('.temp/'):
+                for file in filenames:
+                    f.write(os.path.join(os.path.basename(dirpath), file)+"\n")
+
+            for file in self._additional_elements:
+                f.write(file+"\n")
 
 
 def print_diff_files(dcmp):
@@ -317,8 +357,9 @@ def main():
 
     data.download_file_archive()
 
-    data.add("./Cylinder")
-    data.add("./bench/sphere")
+    data.add2("./FOSWEC")
+    data.add2("./Cylinder")
+    data.add2("./bench/sphere")
     data.update_archive("minor")
 
     #data.upload_archive()
