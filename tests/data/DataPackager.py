@@ -51,11 +51,6 @@ class DataBase(object):
             f.extractall(".temp/")
 
     def add(self, fname):
-        if fname not in self._additional_elements:
-            self._additional_elements.append(os.path.normpath(fname))
-        return
-
-    def add2(self, fname):
 
         if os.path.isdir(fname):
             for (dirpath, dirnames, filenames) in os.walk(fname):
@@ -203,7 +198,7 @@ class DataBase(object):
             
         return
 
-    def update_archive(self, type_version):
+    def update(self, type_version):
 
         self.compare_to_local()
 
@@ -241,7 +236,7 @@ class DataBase(object):
         else:
             print("Archive %s is already up to date" % self._file_archive)
 
-    def upload_archive(self):
+    def upload(self):
         print("Upload %s to AWS S3" % self._file_archive)
         with open(self._file_archive, 'rb') as data:
             self._bucket.upload_fileobj(data, "demo/"+self._file_archive, ExtraArgs={'ACL':'public-read'})
@@ -362,9 +357,10 @@ def main():
     data.add2("./FOSWEC")
     data.add2("./Cylinder")
     data.add2("./bench/sphere")
-    data.update_archive("minor")
 
-    #data.upload_archive()
+    data.update("minor")
+
+    #data.upload()
 
 
 if __name__ == "__main__":
