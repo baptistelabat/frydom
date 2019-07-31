@@ -8,9 +8,10 @@ from shutil import copyfile, rmtree
 import numpy as np
 from datetime import date, datetime
 import time
+import re
 
 
-class DataBase(object):
+class Packager(object):
 
     def __init__(self):
         self._file_archive = None
@@ -30,15 +31,21 @@ class DataBase(object):
         s3 = boto3.resource('s3')
         return s3.Bucket(name_bucket)
 
-    def get_last_data(self):
+    def get_last_data(self, nhead=0):
         files = list(self._bucket.objects.filter(Prefix="demo/data_"))
-        self._file_archive, str_version = self.find_version(files)
+        self._file_archive, str_version = self.find_version(files, nhead)
 
         print("Last remote version : %s" % str_version)
 
-    def download_file_archive(self):
+    def download_file_archive(self, version="", nhead=0):
 
-        self.get_last_data()
+        if not version and nhead == 0:
+            self.get_last_data()
+        elif not version:
+            self.get_last_data(nhead)
+        elif version:
+            self._version = list(int(val) for val in version.split('.'))
+            self._file_archive = "data_v" + version + ".tar.gz"
 
         if not os.path.isfile(self._file_archive):
             print("Downloading : %s" % self._file_archive)
@@ -169,7 +176,7 @@ class DataBase(object):
 
         if len(self._diff_files) > 0:
             print("\n--> Diff files : \n")
-            for elem in self._diff_elements:
+            for elem in self._diff_files:
                 print("    %s" % elem)
 
         print("")
@@ -182,32 +189,35 @@ class DataBase(object):
             print("warning : %s already in archive (not add).")
         return
             
-    def update_version(self, type_version):        
+    def update_version(self, version):
         
-        if type_version == "release":
+        if version == "release":
             self._version[0] += 1
             self._version[1] = 0
             self._version[2] = 0
-        elif type_version == "major":
+        elif version == "major":
             self._version[1] += 1
             self._version[2] = 0
-        elif type_version == "minor":
+        elif version == "minor":
             self._version[2] += 1
         else:
-            print("warning : unknown type version.")
+            try:
+                self._version = list(int(val) for val in version.split('.'))
+            except:
+                print("warning : unknown type version.")
             
         return
 
-    def update(self, type_version):
+    def update(self, version):
 
         self.compare_to_local()
 
         if len(self._additional_elements) > 0:
             print("Updating archive...")
 
-            self.update_version(type_version)
-
+            self.update_version(version)
             str_version = '{}.{}.{}'.format(*self._version)
+
             new_archive = "data_v" + str_version + ".tar.gz"
             copyfile(self._file_archive, new_archive)
 
@@ -350,7 +360,7 @@ def report_compared(text1, text2):
 
 def main():
 
-    data = DataBase()
+    data = Packager()
 
     data.download_file_archive()
 

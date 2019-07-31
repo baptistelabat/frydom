@@ -26,7 +26,7 @@ except:
     acok = False
 
 
-def creation_parser():
+def create_parser():
 
     parser = argparse.ArgumentParser(
         description=
@@ -43,25 +43,29 @@ def creation_parser():
 def get_parser(parser):
 
     parser.add_argument('--add', '-a', nargs='+',
-                        help='List of directories or files to be added to the archive')
+                        help="List of directories or files to be added to the archive")
 
     parser.add_argument('--type_revision', '-tr', nargs=1, metavar='type_revision',
-                        help='Type of revision to be applied (release/major/minor)')
+                        help="Type of revision to be applied (release/major/minor)",
+                        default=["minor"])
 
-    parser.add_argument('-no_upload', metavar="upload_data", action="store_false",
-                        help='Deactivate data upload to Amazon S3')
+    parser.add_argument('-no_upload', action='store_true',
+                        help="Deactivate data upload to Amazon S3")
 
-    parser.add_argument('--diff', '-d', metavar="get_diff", action="store_true",
+    parser.add_argument('--diff', '-d', action='store_true',
                         help="Show difference with local data")
 
     parser.add_argument('--remote_version', '-rv', nargs=1, metavar='remote_version',
-                        help='Specify the version of the data loaded from Amazon S3')
+                        help="Specify the version of the data loaded from Amazon S3")
 
     parser.add_argument('--new_version', '-nv', nargs=1, metavar='new_version',
-                        help='Specify the version of the new archive to be created')
+                        help="Specify the version of the new archive to be created")
 
-    parser.add_argumment('--remove', '-r', nargs='+',
-                         help='Remove directories or files from the data archive')
+    parser.add_argument('--remove', '-r', nargs='+',
+                        help="Remove directories or files from the data archive")
+
+    parser.add_argument('--nhead', '-nhead', nargs=1,
+                        help="Get the nth version data from head")
 
     return parser
 
@@ -80,16 +84,32 @@ def main():
 
     package = DataPackager.Packager()
 
+    # Download data
+
+    if args.remote_version:
+        package.download_file_archive(version=args.remote_version[0])
+    elif args.nhead:
+        package.download_file_archive(nhead=int(args.nhead[0]))
+    else:
+        package.download_file_archive()
+
     if args.add is not None:
         for element in args.add:
             package.add(element)
 
-    package.update()
+    if args.diff:
+        package.compare_to_local()
+        return 0
 
-    #if args.upload_data:
-    #    package.upload()
+    if args.new_version:
+        package.update(version=args.new_version[0])
+    elif args.type_revision:
+        package.update(args.type_revision[0])
 
+    if not args.no_upload:
+        package.upload()
 
+    return 0
 
 
 if __name__ == '__main__':
