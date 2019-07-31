@@ -98,6 +98,9 @@ namespace frydom {
 
         mathutils::MatrixMN<double> GetHydrostaticMatrix() const;
 
+        double GetTransversalMetacentricHeight() const {return m_transversalMetacentricHeight;}
+        double GetLongitudinalMetacentricHeight() const {return m_longitudinalMetacentricHeight;}
+
     };
 
     /**

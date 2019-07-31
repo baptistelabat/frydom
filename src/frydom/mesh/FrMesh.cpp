@@ -514,6 +514,8 @@ namespace frydom {
         FrAABoundingBox FrMesh::GetBoundingBox() const {
             FrAABoundingBox bbox;
 
+            if (vertices_empty()) return {0.,0.,0.,0.,0.,0.};
+            
             Point p = point(*vertices_begin());
 
             bbox.xmin = fmin(bbox.xmin, p[0]);

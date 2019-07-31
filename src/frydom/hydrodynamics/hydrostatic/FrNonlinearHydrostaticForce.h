@@ -93,6 +93,8 @@ namespace frydom {
         /// \return hydrostatic torque in the word reference frame, at the center of the clipped mesh
         Torque GetHydrostaticTorqueInWorld(FRAME_CONVENTION fc);
 
+        Position GetMetacentricHeight();
+
     private:
 
         /// Update nonlinear hydrostatic force.

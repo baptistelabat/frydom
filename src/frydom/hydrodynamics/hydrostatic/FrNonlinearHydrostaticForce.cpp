@@ -15,6 +15,7 @@
 
 #include "frydom/mesh/FrMesh.h"
 #include "frydom/mesh/FrHydroMesh.h"
+#include "frydom/mesh/FrHydrostaticsProperties.h"
 
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOcean.h"
@@ -39,6 +40,9 @@ namespace frydom {
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
                 ("CenterOfBuoyancyInWorld","m", fmt::format("Center of buoyancy in world reference frame in {}", GetLogFrameConvention()),
                  [this]() {return GetCenterOfBuoyancyInWorld(GetLogFrameConvention());});
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("MetacentricHeights","m", "Transversal and longitudinal metacentric heights",
+                 [this]() {return GetMetacentricHeight();});
 
 //        m_message->AddField<Eigen::Matrix<double, 3, 1>>
 //                ("ForceInWorld","N", fmt::format("Hydrostatic force, at CoB, in world reference frame in {}", GetLogFrameConvention()),
@@ -76,6 +80,9 @@ namespace frydom {
     // Not working for clipped mesh with wave plane
     Position FrNonlinearHydrostaticForce::GetCenterOfBuoyancyInWorld(FRAME_CONVENTION fc) {
         // clipped mesh is expressed in the world reference frame, but its horizontal position is centered around (0.,0.)
+
+        if (m_hydroMesh->GetClippedMesh().vertices_empty()) return {0.,0.,0.};
+
         auto CoBInWorld = m_hydroMesh->GetClippedMesh().GetCOG();
 
         // Addition of the horizontal position of the body
@@ -157,6 +164,19 @@ namespace frydom {
 
     Torque FrNonlinearHydrostaticForce::GetHydrostaticTorqueInBody(FRAME_CONVENTION fc) {
         return m_body->ProjectVectorInBody(GetHydrostaticTorqueInWorld(fc),fc);
+    }
+
+    Position FrNonlinearHydrostaticForce::GetMetacentricHeight() {
+
+        auto clippedMesh = m_hydroMesh->GetClippedMesh();
+
+        FrHydrostaticsProperties hsp(m_body->GetSystem()->GetEnvironment()->GetFluidDensity(WATER),
+                                     m_body->GetSystem()->GetGravityAcceleration(),
+                                     clippedMesh,
+                                     m_body->GetCOGPositionInWorld(NWU));
+        hsp.Process();
+
+        return {hsp.GetTransversalMetacentricHeight(), hsp.GetLongitudinalMetacentricHeight(), 0.};
     }
 
     std::shared_ptr<FrNonlinearHydrostaticForce>

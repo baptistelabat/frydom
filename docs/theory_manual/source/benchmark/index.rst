@@ -12,6 +12,14 @@ Heaving sphere
     heaving_sphere_regular_wave
     heaving_sphere_irregular_wave
 
+
+Hydrostatics and stability of a box
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. toctree::
+    :maxdepth: 2
+
+    hydrostatics
+
 DTM5512
 ~~~~~~~
 .. toctree::
