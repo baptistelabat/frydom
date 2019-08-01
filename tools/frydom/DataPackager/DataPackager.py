@@ -390,7 +390,7 @@ class Packager(object):
             with tarfile.open(new_archive, 'w:gz') as f:
                 print("--> Create new archive")
                 for item in os.listdir('.temp/'):
-                    f.add(os.path.join('.temp/', item))
+                    f.add(os.path.join('.temp/', item), arcname=item)
                 for item in self._additional_elements:
                     f.add(item, arcname=item)
 
