@@ -50,7 +50,11 @@ def ldiffer(file1, file2):
 # ----------------------------------------------------------------
 
 def valuable_item(item):
-    res = True
+    """
+    Identify files or directory to be ignore in the data archive
+    :param item: File name or directory
+    :return: None
+    """
 
     try:
         if item[-6:] == 'tar.gz':
