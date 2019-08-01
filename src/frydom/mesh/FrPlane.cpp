@@ -64,7 +64,7 @@ namespace frydom {
             return origin;
         }
 
-        void FrPlane::GetOrigin(Position origin, FRAME_CONVENTION fc) const {
+        void FrPlane::GetOrigin(Position &origin, FRAME_CONVENTION fc) const {
             origin = GetOrigin(fc);
         }
 
@@ -80,7 +80,7 @@ namespace frydom {
             return normal;
         }
 
-        void FrPlane::GetNormal(Direction normal, FRAME_CONVENTION fc) const {
+        void FrPlane::GetNormal(Direction& normal, FRAME_CONVENTION fc) const {
             normal = GetNormal(fc);
         }
 
@@ -129,10 +129,10 @@ namespace frydom {
 
             Direction z = m_normal;
 
-            Direction x = m_normal.cross(Direction(1,0,0));
+            Direction x = m_normal.cross(Direction(0,-1,0));
             x.normalize();
 
-            if (x.norm()<1E-8) x = m_normal.cross(Direction(0,1,0));
+            if (x.norm()<1E-8) x = m_normal.cross(Direction(1,0,0));
             Direction y = z.cross(x); y.normalize();
 
             Matrix33<double> matrix;

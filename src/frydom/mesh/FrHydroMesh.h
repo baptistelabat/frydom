@@ -25,6 +25,7 @@
 
 namespace frydom {
 
+    // Forward declarations
     class FrOffshoreSystem;
     class FrBody;
     namespace geom { class FrPlane; }
@@ -45,13 +46,14 @@ namespace frydom {
         /// Constructor.
         FrHydroMesh(FrOffshoreSystem* system, const std::shared_ptr<FrBody>& body, FrHydroMesh::ClippingSupport support);
 
+        /// Constructor.
         FrHydroMesh(FrOffshoreSystem* system, const std::shared_ptr<FrBody>& body, const std::string& meshFile, FrFrame meshOffsset, FrHydroMesh::ClippingSupport support);
 
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "HydroMesh"; }
 
-        /// Initialize the nonlinear hydrostatic force model.
+        /// Initialize the hydromesh
         void Initialize() override;
 
         /// Import a mesh and apply the mesh frame offset transformation, so that the mesh can be expressed in the body reference frame
@@ -68,6 +70,8 @@ namespace frydom {
         /// \return reference to the initial mesh
         mesh::FrMesh& GetInitialMesh();
 
+        /// Get the clipping support (PLANESUPPORT/WAVESUPPORT)
+        /// \return clipping support
         ClippingSupport GetClippingSupport() const;
 
 
@@ -89,7 +93,6 @@ namespace frydom {
 
         ClippingSupport m_clippingSupport;              ///< Support for the clipping procedure
 
-//        std::shared_ptr<FrNode> c_nodeForClippingPlane; ///< node for defining the FrPlane needed by FrClippingPlane
         std::shared_ptr<geom::FrPlane> c_clippingPlane; ///< plane for the FrClippingPane
 
     };

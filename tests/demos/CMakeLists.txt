@@ -28,6 +28,7 @@ set(BENCH
         SphereIrregular
         DTMB5512_captive
         Cables
+        NonlinearHydrostaticBox
         )
 
 # Resource data loading / path definition
@@ -36,6 +37,7 @@ if(${frydom_download_demo_data})
     include(URL_DEMO_DATA.conf)
 endif()
 
+set(NonlinearHydrostaticBox_resources_path ${box_resources_path})
 set(SphereDecay_resources_path ${sphere_resources_path})
 set(SphereIrregular_resources_path ${sphere_resources_path})
 set(SphereRegular_resources_path ${sphere_resources_path})

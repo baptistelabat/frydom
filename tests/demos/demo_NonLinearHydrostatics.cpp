@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
 
     // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
     FrOffshoreSystem system;
-    system.SetName("NonLinearHydrostatics_FreeTrans");
+    system.SetName("NonLinearHydrostatics");
     system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
 
     system.GetEnvironment()->GetOcean()->SetDensity(1023.);
