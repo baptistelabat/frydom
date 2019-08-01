@@ -51,7 +51,6 @@ set(CMAKE_CXX_STANDARD 14)
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 
-
 #=============================================================================
 # Adding Thirparty libraries to the project
 #=============================================================================

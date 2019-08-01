@@ -12,20 +12,18 @@ using namespace frydom;
 
 void DemoModel(FrOffshoreSystem& system, bool flap1_fixed, bool flap2_fixed, double initial_angle) {
 
-    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
-    std::cout << "Resources path : " << resources_path.path() << std::endl;
-
     // System
 
     system.GetPathManager()->SetLogFrameConvention(NWU);
     system.GetPathManager()->SetLogOutputPath("../results/");
+    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
     system.GetEnvironment()->GetOcean()->GetFreeSurface()->GetFreeSurfaceGridAsset()->SetGrid(-1, 1, 2, -1, 1, 2);
 
     // PLatform
 
     auto platform = system.NewBody();
     platform->SetName("platform");
-    platform->AddMeshAsset(resources_path.resolve("FullPlatform.obj").path());
+    platform->AddMeshAsset(system.GetDataPath("FullPlatform.obj"));
 
     FrInertiaTensor inertia_b(153.8, 37.88, 29.63, 1., 0., 0., 0., Position(0., 0., 0.460), NWU);
     platform->SetInertiaTensor(inertia_b);
@@ -44,7 +42,7 @@ void DemoModel(FrOffshoreSystem& system, bool flap1_fixed, bool flap2_fixed, dou
 
     auto flap1 = system.NewBody();
     flap1->SetName("flap1");
-    flap1->AddMeshAsset(resources_path.resolve("FullFlap_mesh.obj").path());
+    flap1->AddMeshAsset(system.GetDataPath("FullFlap_mesh.obj"));
     flap1->SetPosition(Position(-0.65, 0., -0.29), NWU);
 
     FrInertiaTensor inertia_f1(23.1, 1.42, 1.19, 1.99, 0., 0., 0., Position(0., 0., 0.), NWU);
@@ -68,7 +66,7 @@ void DemoModel(FrOffshoreSystem& system, bool flap1_fixed, bool flap2_fixed, dou
 
     auto flap2 = system.NewBody();
     flap2->SetName("flap2");
-    flap2->AddMeshAsset(resources_path.resolve("FullFlap_mesh.obj").path());
+    flap2->AddMeshAsset(system.GetDataPath("FullFlap_mesh.obj"));
     flap2->SetPosition(Position(0.65, 0., -0.29), NWU);
 
     FrInertiaTensor inertia_f2(23.1, 1.42, 1.19, 1.99, 0., 0., 0., Position(0., 0., 0.), NWU);
@@ -86,7 +84,7 @@ void DemoModel(FrOffshoreSystem& system, bool flap1_fixed, bool flap2_fixed, dou
 
     // Hydrodynamic and radiation model
 
-    auto hdb = make_hydrodynamic_database(resources_path.resolve("FOSWEC_phase2_filtered.hdb5").path());
+    auto hdb = make_hydrodynamic_database(system.GetDataPath("FOSWEC_phase2_filtered.hdb5"));
 
     auto eqFrame0 = std::make_shared<FrEquilibriumFrame>(platform.get());
     auto eqFrame1 = std::make_shared<FrEquilibriumFrame>(Position(-0.65, 0., -0.29), FrRotation(), NWU, flap1.get());

@@ -45,6 +45,7 @@ int main(int argc, char* argv[]) {
 
     system.GetPathManager()->SetLogOutputPath("../results/");
     system.GetPathManager()->SetLogFrameConvention(NWU);
+    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
     system.SetName("Langlee_draft8_5");
 
     // Environment
@@ -64,7 +65,7 @@ int main(int argc, char* argv[]) {
 
     auto barge = system.NewBody();
     barge->SetName("barge");
-    barge->AddMeshAsset("barge_draft8_5.obj");
+    barge->AddMeshAsset(system.GetDataPath("barge_draft8_5.obj"));
     barge->SetPosition(Position(0., 0., -8.5), NWU);
 
     double mass_b = 1.089825e6;
@@ -91,7 +92,7 @@ int main(int argc, char* argv[]) {
     // -- Position
     auto flap1 = system.NewBody();
     flap1->SetName("flap1");
-    flap1->AddMeshAsset("FullFlap1.obj");
+    flap1->AddMeshAsset(system.GetDataPath("FullFlap1.obj"));
     flap1->SetPosition(Position(-12.5, 0., -8.5), NWU);
 
     // -- Inertia
@@ -123,7 +124,7 @@ int main(int argc, char* argv[]) {
     // -- Position
     auto flap2 = system.NewBody();
     flap2->SetName("flap2");
-    flap2->AddMeshAsset("FullFlap1.obj");
+    flap2->AddMeshAsset(sytsem.GetDataPath("FullFlap1.obj"));
     flap2->SetPosition(Position(12.5, 0., -8.5), NWU);
 
     flap2->SetInertiaTensor(InertiaTensor_flap);
@@ -146,7 +147,7 @@ int main(int argc, char* argv[]) {
 
     // Hydrodynamic
 
-    auto hdb = make_hydrodynamic_database("Langlee_draft8_5_filtered.hdb5");
+    auto hdb = make_hydrodynamic_database(system.GetDataPath("Langlee_draft8_5_filtered.hdb5"));
 
     auto eqFrame0 = std::make_shared<FrEquilibriumFrame>(barge.get());
     auto eqFrame1 = std::make_shared<FrEquilibriumFrame>(flap1.get());
@@ -174,10 +175,12 @@ int main(int argc, char* argv[]) {
     //flap2->AddExternalForce(diffBuoyForce2);
 
     // -- Nonlinear
-    auto flap1Mesh = make_hydro_mesh(flap1, "FullFlap_sym_wsep_draft8_5_fillet.obj", FrFrame(), FrHydroMesh::ClippingSupport::PLANESURFACE);
+    auto flap1Mesh = make_hydro_mesh(flap1, system.GetDataPath("FullFlap_sym_wsep_draft8_5_fillet.obj"),
+            FrFrame(), FrHydroMesh::ClippingSupport::PLANESURFACE);
     auto forceHst1 = make_nonlinear_hydrostatic_force(flap1, flap1Mesh);
 
-    auto flap2Mesh = make_hydro_mesh(flap2, "FullFlap_sym_wsep_draft8_5_fillet.obj", FrFrame(), FrHydroMesh::ClippingSupport::PLANESURFACE);
+    auto flap2Mesh = make_hydro_mesh(flap2, system.GetDataPath("FullFlap_sym_wsep_draft8_5_fillet.obj"),
+            FrFrame(), FrHydroMesh::ClippingSupport::PLANESURFACE);
     auto forceHst2 = make_nonlinear_hydrostatic_force(flap2, flap2Mesh);
 
     //flap1Mesh->GetInitialMesh().Write("HydroMesh_Flap1_Initial.obj");

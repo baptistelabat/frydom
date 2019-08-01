@@ -14,14 +14,14 @@ int main(int argc, char* argv[]) {
     // System
 
     FrOffshoreSystem system;
-
     system.GetEnvironment()->GetOcean()->GetFreeSurface()->GetFreeSurfaceGridAsset()->SetGrid(-1, 1, 2, -1, 1, 2);
+    system.SetResourcesPath(std::string(RESOURCES_PATH));
 
     // Platform
 
     auto platform = system.NewBody();
     platform->SetName("platform");
-    platform->AddMeshAsset("FullPlatform.obj");
+    platform->AddMeshAsset(system.GetDataPath("FullPlatform.obj"));
 
     FrInertiaTensor inertia_b(153.8, 37.88, 29.63, 1., 0., 0., 0., Position(0., 0., 0.460), NWU);
     platform->SetInertiaTensor(inertia_b);
@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
 
     auto flap1 = system.NewBody();
     flap1->SetName("flap1");
-    flap1->AddMeshAsset("FullFlap_mesh.obj");
+    flap1->AddMeshAsset(system.GetDataPath("FullFlap_mesh.obj"));
     flap1->SetPosition(Position(-0.65, 0., -0.29), NWU);
 
     FrInertiaTensor inertia_f1(23.1, 1.42, 1.19, 1.99, 0., 0., 0., Position(0., 0., 0.), NWU);
@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
 
     auto flap2 = system.NewBody();
     flap2->SetName("flap2");
-    flap2->AddMeshAsset("FullFlap_mesh.obj");
+    flap2->AddMeshAsset(system.GetDataPath("FullFlap_mesh.obj"));
     flap2->SetPosition(Position(0.65, 0., -0.29), NWU);
 
     FrInertiaTensor inertia_f2(23.1, 1.42, 1.19, 1.99, 0., 0., 0., Position(0., 0., 0.), NWU);
@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
 
     // Hydrodynamic
 
-    auto hdb = make_hydrodynamic_database("FOSWEC.hdb5");
+    auto hdb = make_hydrodynamic_database(system.GetDataPath("FOSWEC.hdb5"));
 
     auto eqFrame0 = std::make_shared<FrEquilibriumFrame>(platform.get());
     auto eqFrame1 = std::make_shared<FrEquilibriumFrame>(flap1.get());
