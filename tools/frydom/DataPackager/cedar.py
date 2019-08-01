@@ -17,7 +17,7 @@
 import os
 import argparse
 
-import DataPackager
+from frydom.DataPackager import DataPackager
 
 try:
     import argcomplete
