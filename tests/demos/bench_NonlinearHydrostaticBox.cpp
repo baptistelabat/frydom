@@ -65,8 +65,8 @@ int main(int argc, char* argv[]) {
                  " Benchmark test : Nonlinear hydrostatics on a box \n"
                  " ===================================================== " << std::endl;
 
-//    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
-    cppfs::FilePath resources_path("/home/lletourn/Documents/DEV/frydom/tests/data/bench/box");
+    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+//    cppfs::FilePath resources_path("/home/lletourn/Documents/DEV/frydom/tests/data/bench/box");
 
     // -- System
 
