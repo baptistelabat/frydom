@@ -96,12 +96,11 @@ int main(int argc, char* argv[]) {
 //    if (argv[1]) { iPeriod = atoi(argv[1]); }
 //    if (argv[2]) { iSteepness = atoi(argv[2]); }
 
-    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
-
     // -- System
 
     FrOffshoreSystem system;
     system.SetName("Sphere_IW");
+    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
 
     // -- Ocean
 
@@ -144,7 +143,7 @@ int main(int argc, char* argv[]) {
 
     auto body = system.NewBody();
     body->SetName("Sphere");
-    body->AddMeshAsset(resources_path.resolve("Sphere_6200_faces.obj").path());
+    body->AddMeshAsset(system.GetDataPath("Sphere_6200_faces.obj"));
     body->SetColor(Yellow);
 
     Position COGPosition(0., 0., -2.);
@@ -173,7 +172,7 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrodynamics
 
-    auto hdb = make_hydrodynamic_database(resources_path.resolve("sphere_hdb.h5").path());
+    auto hdb = make_hydrodynamic_database(system.GetDataPath("sphere_hdb.h5"));
 
     auto eqFrame = std::make_shared<FrEquilibriumFrame>(body.get());
     system.AddPhysicsItem(eqFrame);

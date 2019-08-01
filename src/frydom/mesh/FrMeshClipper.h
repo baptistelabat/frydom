@@ -22,9 +22,76 @@ namespace frydom {
 
     //Forward declarations
     class FrFreeSurface;
-    class FrPlane;
+
+    namespace geom {
+        class FrPlane;
+    }
 
     namespace mesh {
+
+        enum FacePositionType {
+            // Position code is composed of 3 digit AOU where A is the number of vertices above the clipping surface,
+            // O the number of vertices on and U the number of vertices under.
+                    FPT_003 = 3,  // TODO : simplifier la representation de cas en enum, on peut certainemet nommer de maniere unique les cas entierement mouille, sec ou a couper
+            //  -----------  totally wet
+            //       *
+            //      / \
+            //     /   \
+            //    *-----*
+                    FPT_012 = 12,
+            //   ------*------ totally wet
+            //        / \
+            //       /   \
+            //      *-----*
+                    FPT_021 = 21,
+            //  ----*-----*---- totally wet
+            //       \   /
+            //        \ /
+            //         *
+                    FPT_030 = 30,
+            //  ----*----*----*  Lying on the clipping surface, should be removed
+
+            FPT_102 = 102,
+            //         *    Face to clip
+            //        / \
+            //    ---o---o---
+            //      /     \
+            //     *-------*
+                    FPT_111 = 111,
+            //          *               *    Face to clip
+            //         /|               |\
+            //        / |               | \
+            //    ---*--o---    or   ---o--*---
+            //        \ |               | /
+            //         \|               |/
+            //          *               *
+                    FPT_120 = 120,
+            //          *  totally dry
+            //         / \
+            //        /   \
+            //   ----*-----*----
+
+            FPT_201 = 201,
+            //       *-------*  Face to clip
+            //        \     /
+            //      ---o---o---
+            //          \ /
+            //           *
+                    FPT_210 = 210,
+            //        *-----*  totally dry
+            //         \   /
+            //          \ /
+            //       ----*----
+                    FPT_300 = 300,
+            //           *  totally dry
+            //          / \
+            //         /   \
+            //        *-----*
+            //
+            //   ----------------
+
+            FPT_UNDEFINED = -1
+        };
 
         /**
         * \class FrClippingSurface
@@ -34,9 +101,9 @@ namespace frydom {
 
         protected:
 
-            double m_ThresholdDichotomy = 1e-4;
+            double m_ThresholdDichotomy = 1e-4;     ///< threshold for the dichotomy in the intersection computation
 
-            Position m_bodyPosition = {0.,0.,0.};
+            Position m_bodyPosition = {0.,0.,0.};   ///< horizontal position of the body, related to the mesh to be clipped
 
         public:
 
@@ -60,17 +127,19 @@ namespace frydom {
 
         private:
 
-            std::shared_ptr<FrPlane> m_plane;
+            std::shared_ptr<geom::FrPlane> m_plane;     ///< plane used for clipping
 
         public:
 
-            explicit FrClippingPlane(const std::shared_ptr<FrPlane>& plane) : m_plane(plane) {};
+            explicit FrClippingPlane(const std::shared_ptr<geom::FrPlane>& plane);;
 
             /// This function gives the distance to the plane.
             double GetDistance(const FrMesh::Point &point) const override;
 
             /// This function gives the intersection node position between an edge and the plane.
             FrMesh::Point GetIntersection(const FrMesh::Point &p0, const FrMesh::Point &p1) override;
+
+            geom::FrPlane* GetPlane() const;
 
         };
 
@@ -82,7 +151,7 @@ namespace frydom {
 
         private:
 
-            FrFreeSurface* m_freeSurface;
+            FrFreeSurface* m_freeSurface;   ///< free surface used for clipping
 
         public:
 
@@ -123,24 +192,40 @@ namespace frydom {
             /// This function initializes the MeshClipper object from an input mesh and performs the clipping.
             void Apply(FrMesh* mesh);
 
-            void SetEps(double eps);
+            /// Set the threshold used for crossing and classifying computations
+            /// \param eps threshold
+            void SetThreshold(double eps);
 
+            /// Set the threshold used for projection computations
+            /// \param projectionThresholdRatio threshold
             void SetProjectionThresholdRatio(double projectionThresholdRatio);
 
+            /// Set the clipping surface to be used
+            /// \param clippingSurface clipping surface
             void SetClippingSurface(std::shared_ptr<FrClippingSurface> clippingSurface);
 
         private:
 
+            /// Initialize the mesh clipper
             void Initialize();
 
+            /// Clear the mesh
             void Clear();
 
+            /// This function classify the vertices wrt the clipping surface.
             void ClassifyVertices();
 
+            /// This function computes the distance wrt the clipping surface and classifies the nodes.
+            /// \param vh vertex to be classified
+            /// \return vertex position with respect to the clipping surface
             VertexPosition ClassifyVertex(const FrMesh::VertexHandle &vh) const;
 
+            /// This function classfies faces wrt the incident clipping surface.
+            /// \param fh face to be classified
+            /// \return face position with respect to the clipping surface
             FacePositionType ClassifyFace(const FrMesh::FaceHandle &fh);
 
+            /// Clip the mesh with the given clipping surface
             void Clip();
 
             void UpdateModifiedFaceProperties(FaceHandle fh);

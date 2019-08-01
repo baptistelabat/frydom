@@ -42,15 +42,16 @@ def get_parser(parser):
                 Path to the folder including the file Nemoh.cal.""")
 
     # Discretization - Wave directions.
-    parser.add_argument('--discretization_waves','--discretization_wave','-dis_waves', '-dis_wave', '-dw', action="store", nargs=1, metavar='Arg', help="""
+    parser.add_argument('--discretization_waves','--discretization_wave','-dis_waves', '-dis_wave', '-dw', '-dbeta', action="store", nargs=1, metavar='Arg', help="""
                 Integer for the new discretization of the wave directions.""")
 
     # Discretization - Wave frequencies.
-    parser.add_argument('--discretization_frequencies','--discretization_freq','--discretization_frequency','-dis_freq','-dis_frequency','-dis_frequencies','-df', action="store", nargs =1, metavar='Arg',help="""
+    parser.add_argument('--discretization_frequencies','--discretization_freq','--discretization_frequency','-dis_freq','-dis_frequency',
+                        '-dis_frequencies', '-df', action="store", nargs =1, metavar='Arg', help="""
                 Integer for the new discretization of the wave frequencies.""")
 
     # Discretization - Final time.
-    parser.add_argument('--final_time_irf','--final_time', '-ft', action="store", nargs = 1, metavar = 'Arg', help="""
+    parser.add_argument('--final_time_irf','--final_time', '-ft', '-tf', action="store", nargs = 1, metavar = 'Arg', help="""
                 Final time for the computation of the impulse response functions.""")
 
     # Discretization - Time step.
@@ -58,31 +59,31 @@ def get_parser(parser):
                     Time step for the computation of the impulse response functions.""")
 
     # Body - Activate hydrostatics (useless).
-    parser.add_argument('--activate_hydrostatics','--activate_hydrostatic', '-active_hs', '-activate_hs', nargs = '+', metavar = 'Arg', action="append",help="""
+    parser.add_argument('--activate_hydrostatics','--activate_hydrostatic', '-active_hs', '-activate_hs', nargs = '+', metavar = 'Arg', action="append", help="""
                 Activate hydrostatics for the body of index given in argument.""")
 
     # Body - Hydrostatic matrix.
-    parser.add_argument('--hydrostatics','--hydrostatic', '-hs', nargs=7, metavar=('id', 'k33', 'k44', 'k55', 'k34', 'k35', 'k45'), action="append",help="""
-                Hydrostatic coefficients (K33, K44, K55, K34, K35, K45) for the body of index given in first argument.""")
+    parser.add_argument('--hydrostatics','--hydrostatic', '-hs', metavar=('id', 'k33', 'k44', 'k55', 'k34', 'k35', 'k45'), nargs=7, type = float, action="append", help="""
+    #             Hydrostatic coefficients (K33, K44, K55, K34, K35, K45) for the body of index given in first argument.""")
 
     # Body - Activate inertia (useless).
-    parser.add_argument('--activate_inertia', '-active_i', action="append",nargs='+', metavar='Arg',help="""
+    parser.add_argument('--activate_inertia', '-active_i', action="append",nargs='+', metavar='Arg', help="""
                 Activate inertia for the body of index given in argument.""")
 
     # Body - Inertia matrix (inertias and mass).
-    parser.add_argument('--inertia', '-i', nargs=8, metavar=('id', 'mass', 'i44', 'i55', 'i66', 'i45', 'i46', 'i56'), action="append",help="""
+    parser.add_argument('--inertia', '-i', nargs=8, metavar=('id', 'mass', 'i44', 'i55', 'i66', 'i45', 'i46', 'i56'), type = float, action="append", help="""
                 Inertia coefficients and mass (Mass, I44, I55, I66, I45, I46, I56) for the body of index given in first argument.""")
 
     # Body - Inertia matrix (inertia only).
-    parser.add_argument('--inertia_only', '-io', nargs=7, metavar=('id', 'i44', 'i55', 'i66', 'i45', 'i46', 'i56'), action="append",help="""
+    parser.add_argument('--inertia_only', '-io', nargs=7, metavar=('id', 'i44', 'i55', 'i66', 'i45', 'i46', 'i56'), type = float, action="append", help="""
                 Inertia coefficients only (I44, I55, I66, I45, I46, I56) for the body of index given in first argument.""")
 
     # Body - Mass.
-    parser.add_argument('--mass', '--Mass', '-m', nargs=2, metavar=('id', 'mass'), action="append",help="""
+    parser.add_argument('--mass', '--Mass', '-m', nargs=2, metavar=('id', 'mass'), action="append", help="""
                 Mass of the body of index given in argument.""")
 
     # Filtering impulse response functions.
-    parser.add_argument('--cutoff_irf','-co_irf', '-coirf', nargs = 5, metavar=('tc', 'ibody_force', 'iforce', 'ibody_motion', 'idof'), action="append",help="""
+    parser.add_argument('--cutoff_irf','-co_irf', '-coirf', nargs = 5, metavar=('tc', 'ibody_force', 'iforce', 'ibody_motion', 'idof'), action="append", help="""
                 Application of the filter with a cutoff time tc to the impulse response functions of ibody_force along iforce for a motion of ibody_motion along idof and plot the irf.""")
 
     # Filtering ALL impulse response functions.
@@ -90,7 +91,7 @@ def get_parser(parser):
                     Application of the filter with a cutoff time tc to ALL impulse response functions.""")
 
     # Filtering impulse response functions with forward speed.
-    parser.add_argument('--cutoff_irf_speed','-co_irf_speed', '-coirf_speed', nargs = 5, metavar=('tc', 'ibody_force', 'iforce', 'ibody_motion', 'idof'), action="append",help="""
+    parser.add_argument('--cutoff_irf_speed','-co_irf_speed', '-coirf_speed', nargs = 5, metavar=('tc', 'ibody_force', 'iforce', 'ibody_motion', 'idof'), action="append", help="""
                 Application of the filter with a cutoff time tc to the impulse response functions with forward speed of ibody_force along iforce for a motion of ibody_motion along idof and plot the irf.""")
 
     # Filtering ALL impulse response functions with forward speed.
@@ -98,7 +99,7 @@ def get_parser(parser):
                     Application of the filter with a cutoff time tc to ALL impulse response functions with forward speed .""")
 
     # No symmetrization of the HDB.
-    parser.add_argument('--sym_hdb','-sym', '-s', action="store_true",help="""
+    parser.add_argument('--sym_hdb','-sym', '-s', action="store_true", help="""
                 Symmetrization of the HDB.""")
 
     # Update the radiation mask.
@@ -106,39 +107,41 @@ def get_parser(parser):
                     Update the radiation mask of all bodies.""")
 
     # Writing the hdb5 output file.
-    parser.add_argument('--write', '--export','-w', action="store",help="""
+    parser.add_argument('--write', '--export','-w', action="store", help="""
                 Writing the hdb5 output file with the given name.""")
 
     # Plot added mass and damping coefficients.
-    parser.add_argument('--plot_radiation', '--plots_radiation', '--plot_AB','-pab', '-prad', nargs = 4, metavar=('ibody_force', 'iforce', 'ibody_motion', 'idof'), action="append",help="""
+    parser.add_argument('--plot_radiation', '--plots_radiation', '--plot_AB','-pab', '-prad', nargs = 4, metavar=('ibody_force', 'iforce', 'ibody_motion', 'idof')
+                        , action="append", help="""
                 Plot the added mass and damping coefficients of ibody_force along iforce for a motion of ibody_motion along idof.""")
 
     # Plot diffraction loads.
-    parser.add_argument('--plot_diffraction', '--plots_diffraction', '--plot_diff','-pd', '-pdiff', nargs = 3, metavar=('ibody', 'iforce', 'iwave'), action="append",help="""
+    parser.add_argument('--plot_diffraction', '--plots_diffraction', '--plot_diff','-pd', '-pdiff', nargs = 3, metavar=('ibody', 'iforce', 'iwave'), action="append", help="""
                 Plot the diffraction loads of ibody along iforce for iwave.""")
 
     # Plot Froude-Krylov loads.
-    parser.add_argument('--plot_froude_krylov', '--plots_froude_krylov', '--plot_fk','-pfk', nargs = 3, metavar=('ibody', 'iforce', 'iwave'), action="append",help="""
+    parser.add_argument('--plot_froude_krylov', '--plots_froude_krylov', '--plot_fk','-pfk', nargs = 3, metavar=('ibody', 'iforce', 'iwave'), action="append", help="""
                 Plot the Froude-Krylov loads of ibody along iforce for iwave.""")
 
     # Plot excitation loads.
-    parser.add_argument('--plot_excitation', '--plots_excitation', '--plot_exc','-pe', '-pexc', nargs = 3, metavar=('ibody', 'iforce', 'iwave'), action="append",help="""
+    parser.add_argument('--plot_excitation', '--plots_excitation', '--plot_exc','-pe', '-pexc', nargs = 3, metavar=('ibody', 'iforce', 'iwave'), action="append", help="""
                 Plot the excitation loads of ibody along iforce for iwave.""")
 
     # Plot IRF.
-    parser.add_argument('--plot_irf', '--plots_irf','-pirf', nargs = 4, metavar=('ibody_force', 'iforce', 'ibody_motion', 'idof'), action="append",help="""
+    parser.add_argument('--plot_irf', '--plots_irf','-pirf', nargs = 4, metavar=('ibody_force', 'iforce', 'ibody_motion', 'idof'), action="append", help="""
                 Plot the impulse response functions of ibody_force along iforce for a motion of ibody_motion along idof.""")
 
     # Plot IRF speed.
-    parser.add_argument('--plot_irf_speed', '--plots_irf_speed', '--plot_irf_ku','-pirfs','-pirfku', '-pirf_speed', nargs = 4, metavar=('ibody_force', 'iforce', 'ibody_motion', 'idof'), action="append",help="""
+    parser.add_argument('--plot_irf_speed', '--plots_irf_speed', '--plot_irf_ku','-pirfs','-pirfku', '-pirf_speed', nargs = 4,
+                        metavar=('ibody_force', 'iforce', 'ibody_motion', 'idof'), action="append", help="""
                 Plot the impulse response functions with speed velocity of ibody_force along iforce for a motion of ibody_motion along idof.""")
 
     # Reading a hdb5 file.
-    parser.add_argument('--read','-r', action="store",help="""
+    parser.add_argument('--read','-r', action="store", help="""
                 Reading a hdb5 file with the given name.""")
 
     # Initialization of the hdb.
-    parser.add_argument('--initialization','-init', action="store_true",help="""
+    parser.add_argument('--initialization','-init', action="store_true", help="""
                 Initialization of the hydrodynamic database: computation of the Froude-Krylov loads, IRF, etc.""")
 
     return parser
@@ -212,14 +215,15 @@ def get_Arg_part_1_CE(args, database):
     # Body - Hydrostatic matrix.
     if (args.hydrostatics is not None):
         nb_hydrostatics = len(args.hydrostatics)
+
         for j in range(0, nb_hydrostatics):
             database.body[int(args.hydrostatics[j][0]) - 1].activate_hydrostatic()
-            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k33 = args.hydrostatics[j][1]
-            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k44 = args.hydrostatics[j][2]
-            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k55 = args.hydrostatics[j][3]
-            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k34 = args.hydrostatics[j][4]
-            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k35 = args.hydrostatics[j][5]
-            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k45 = args.hydrostatics[j][6]
+            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k33 = float(args.hydrostatics[j][1])
+            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k44 = float(args.hydrostatics[j][2])
+            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k55 = float(args.hydrostatics[j][3])
+            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k34 = float(args.hydrostatics[j][4])
+            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k35 = float(args.hydrostatics[j][5])
+            database.body[int(args.hydrostatics[j][0]) - 1].hydrostatic.k45 = float(args.hydrostatics[j][6])
 
     # Body - Active inertia (useless).
     if (args.activate_inertia is not None):
@@ -232,39 +236,39 @@ def get_Arg_part_1_CE(args, database):
         nb_inertia = len(args.inertia)
         for j in range(0, nb_inertia):
             database.body[int(args.inertia[j][0]) - 1].activate_inertia()
-            database.body[int(args.inertia[j][0]) - 1].inertia.mass = args.inertia[j][1]
-            database.body[int(args.inertia[j][0]) - 1].inertia.I44 = args.inertia[j][2]
-            database.body[int(args.inertia[j][0]) - 1].inertia.I55 = args.inertia[j][3]
-            database.body[int(args.inertia[j][0]) - 1].inertia.I66 = args.inertia[j][4]
-            database.body[int(args.inertia[j][0]) - 1].inertia.I45 = args.inertia[j][5]
-            database.body[int(args.inertia[j][0]) - 1].inertia.I46 = args.inertia[j][6]
-            database.body[int(args.inertia[j][0]) - 1].inertia.I56 = args.inertia[j][7]
+            database.body[int(args.inertia[j][0]) - 1].inertia.mass = float(args.inertia[j][1])
+            database.body[int(args.inertia[j][0]) - 1].inertia.I44 = float(args.inertia[j][2])
+            database.body[int(args.inertia[j][0]) - 1].inertia.I55 = float(args.inertia[j][3])
+            database.body[int(args.inertia[j][0]) - 1].inertia.I66 = float(args.inertia[j][4])
+            database.body[int(args.inertia[j][0]) - 1].inertia.I45 = float(args.inertia[j][5])
+            database.body[int(args.inertia[j][0]) - 1].inertia.I46 = float(args.inertia[j][6])
+            database.body[int(args.inertia[j][0]) - 1].inertia.I56 = float(args.inertia[j][7])
 
     # Body - Inertia matrix.
     if (args.inertia_only is not None):
         nb_inertia_only = len(args.inertia_only)
         for j in range(0, nb_inertia_only):
             database.body[int(args.inertia_only[j][0]) - 1].activate_inertia()
-            database.body[int(args.inertia_only[j][0]) - 1].inertia.I44 = args.inertia_only[j][1]
-            database.body[int(args.inertia_only[j][0]) - 1].inertia.I55 = args.inertia_only[j][2]
-            database.body[int(args.inertia_only[j][0]) - 1].inertia.I66 = args.inertia_only[j][3]
-            database.body[int(args.inertia_only[j][0]) - 1].inertia.I45 = args.inertia_only[j][4]
-            database.body[int(args.inertia_only[j][0]) - 1].inertia.I46 = args.inertia_only[j][5]
-            database.body[int(args.inertia_only[j][0]) - 1].inertia.I56 = args.inertia_only[j][6]
+            database.body[int(args.inertia_only[j][0]) - 1].inertia.I44 = float(args.inertia_only[j][1])
+            database.body[int(args.inertia_only[j][0]) - 1].inertia.I55 = float(args.inertia_only[j][2])
+            database.body[int(args.inertia_only[j][0]) - 1].inertia.I66 = float(args.inertia_only[j][3])
+            database.body[int(args.inertia_only[j][0]) - 1].inertia.I45 = float(args.inertia_only[j][4])
+            database.body[int(args.inertia_only[j][0]) - 1].inertia.I46 = float(args.inertia_only[j][5])
+            database.body[int(args.inertia_only[j][0]) - 1].inertia.I56 = float(args.inertia_only[j][6])
 
     # Body - Mass.
     if (args.mass is not None):
         nb_mass = len(args.mass)
         for j in range(0, nb_mass):
             database.body[int(args.mass[j][0]) - 1].activate_inertia()
-            database.body[int(args.mass[j][0]) - 1].inertia.mass = args.mass[j][1]
+            database.body[int(args.mass[j][0]) - 1].inertia.mass = float(args.mass[j][1])
 
     # Filtering impulse response functions.
     if (args.cutoff_irf is not None):
         nb_cut_off_irf = len(args.cutoff_irf)
         for j in range(0, nb_cut_off_irf):
-            database.Cutoff_scaling_IRF(tc=float(args.cutoff_irf[j][0]), ibody_force=int(args.cutoff_irf[j][1]), iforce=int(args.cutoff_irf[j][2]),
-                                        ibody_motion=int(args.cutoff_irf[j][3]), idof=int(args.cutoff_irf[j][4]))
+            database.Cutoff_scaling_IRF(tc=float(args.cutoff_irf[j][0]), ibody_force=int(args.cutoff_irf[j][1] - 1), iforce=int(args.cutoff_irf[j][2] - 1),
+                                        ibody_motion=int(args.cutoff_irf[j][3] - 1), idof=int(args.cutoff_irf[j][4]) - 1)
 
     # Filtering ALL impulse response functions.
     if (args.cutoff_irf_all is not None):
@@ -279,8 +283,8 @@ def get_Arg_part_1_CE(args, database):
     if (args.cutoff_irf_speed is not None):
         nb_cut_off_irf_speed = len(args.cutoff_irf_speed)
         for j in range(0, nb_cut_off_irf_speed):
-            database.Cutoff_scaling_IRF_speed(tc=float(args.cutoff_irf_speed[j][0]), ibody_force=int(args.cutoff_irf_speed[j][1]), iforce=int(args.cutoff_irf_speed[j][2]),
-                                              ibody_motion=int(args.cutoff_irf_speed[j][3]), idof=int(args.cutoff_irf_speed[j][4]))
+            database.Cutoff_scaling_IRF_speed(tc=float(args.cutoff_irf_speed[j][0]), ibody_force=int(args.cutoff_irf_speed[j][1] - 1), iforce=int(args.cutoff_irf_speed[j][2] - 1),
+                                              ibody_motion=int(args.cutoff_irf_speed[j][3] - 1), idof=int(args.cutoff_irf_speed[j][4] - 1))
 
     # Filtering ALL impulse response functions with forward speed.
     if (args.cutoff_irf_all_speed is not None):
@@ -315,40 +319,40 @@ def get_Arg_part_3_CE(args, database):
     if (args.plot_radiation is not None):
         nb_plots_radiation = len(args.plot_radiation)
         for j in range(0, nb_plots_radiation):
-            database.Plot_Radiation_coeff(ibody_force=int(args.plot_radiation[j][0]), iforce=int(args.plot_radiation[j][1]), ibody_motion=int(args.plot_radiation[j][2]),
-                                          idof=int(args.plot_radiation[j][3]))
+            database.Plot_Radiation_coeff(ibody_force=int(args.plot_radiation[j][0]) - 1, iforce=int(args.plot_radiation[j][1]) - 1, ibody_motion=int(args.plot_radiation[j][2]) - 1,
+                                          idof=int(args.plot_radiation[j][3]) - 1)
 
     # Plot diffraction loads.
     if (args.plot_diffraction is not None):
         nb_plots_diffraction = len(args.plot_diffraction)
         for j in range(0, nb_plots_diffraction):
-            database.Plot_Diffraction(ibody=int(args.plot_diffraction[j][0]), iforce=int(args.plot_diffraction[j][1]), iwave=int(args.plot_diffraction[j][2]))
+            database.Plot_Diffraction(ibody=int(args.plot_diffraction[j][0]) - 1, iforce=int(args.plot_diffraction[j][1]) - 1, iwave=int(args.plot_diffraction[j][2]) - 1)
 
     # Plot Froude-Krylov loads.
     if (args.plot_froude_krylov is not None):
         nb_plots_froude_krylov = len(args.plot_froude_krylov)
         for j in range(0, nb_plots_froude_krylov):
-            database.Plot_Froude_Krylov(ibody=int(args.plot_froude_krylov[j][0]), iforce=int(args.plot_froude_krylov[j][1]), iwave=int(args.plot_froude_krylov[j][2]))
+            database.Plot_Froude_Krylov(ibody=int(args.plot_froude_krylov[j][0]) - 1, iforce=int(args.plot_froude_krylov[j][1]) - 1, iwave=int(args.plot_froude_krylov[j][2]) - 1)
 
     # Plot excitation loads.
     if (args.plot_excitation is not None):
         nb_plots_excitation = len(args.plot_excitation)
         for j in range(0, nb_plots_excitation):
-            database.Plot_Excitation(ibody=int(args.plot_excitation[j][0]), iforce=int(args.plot_excitation[j][1]), iwave=int(args.plot_excitation[j][2]))
+            database.Plot_Excitation(ibody=int(args.plot_excitation[j][0]) - 1, iforce=int(args.plot_excitation[j][1]) - 1, iwave=int(args.plot_excitation[j][2]) - 1)
 
     # Plot impulse response functions.
     if (args.plot_irf is not None):
         nb_plots_irf = len(args.plot_irf)
         for j in range(0, nb_plots_irf):
-            database.Plot_IRF(ibody_force=int(args.plot_irf[j][0]), iforce=int(args.plot_irf[j][1]), ibody_motion=int(args.plot_irf[j][2]),
-                              idof=int(args.plot_irf[j][3]))
+            database.Plot_IRF(ibody_force=int(args.plot_irf[j][0]) - 1, iforce=int(args.plot_irf[j][1]) - 1, ibody_motion=int(args.plot_irf[j][2]) - 1,
+                              idof=int(args.plot_irf[j][3]) - 1)
 
     # Plot impulse response function with speed velocity.
     if (args.plot_irf_speed is not None):
         nb_plots_irf_speed = len(args.plot_irf_speed)
         for j in range(0, nb_plots_irf_speed):
-            database.Plot_IRF_speed(ibody_force=int(args.plot_irf_speed[j][0]), iforce=int(args.plot_irf_speed[j][1]), ibody_motion=int(args.plot_irf_speed[j][2]),
-                                    idof=int(args.plot_irf_speed[j][3]))
+            database.Plot_IRF_speed(ibody_force=int(args.plot_irf_speed[j][0]) - 1, iforce=int(args.plot_irf_speed[j][1]) - 1, ibody_motion=int(args.plot_irf_speed[j][2]) - 1,
+                                    idof=int(args.plot_irf_speed[j][3]) - 1)
 
     return database
 

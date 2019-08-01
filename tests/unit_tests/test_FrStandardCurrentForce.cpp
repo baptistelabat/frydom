@@ -63,8 +63,8 @@ void TestFrStandardCurrentForce::LoadData(std::string filename) {
 
 void TestFrStandardCurrentForce::SetUp() {
 
-    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
-    LoadData(resources_path.resolve("TNR_database.h5").path());
+    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
+    LoadData(system.GetDataPath("TNR_database.h5"));
 
     force = std::make_shared<FrCurrentStandardForce>();
     force->SetLengthBetweenPerpendicular(m_lengthBetweenPerpendicular);

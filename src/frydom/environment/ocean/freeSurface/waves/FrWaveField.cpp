@@ -143,6 +143,10 @@ namespace frydom {
         if (!m_infinite_depth) {c_depth = m_freeSurface->GetOcean()->GetDepth(NWU);};
     }
 
+    double FrWaveField::GetPressure(Position position, FRAME_CONVENTION fc) const {
+        return GetPressure(position.GetX(),position.GetY(),position.GetZ(),fc);
+    }
+
 
     // FrNullWaveField definitions
 

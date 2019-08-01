@@ -25,8 +25,10 @@
 
 namespace frydom {
 
+    // Forward declarations
     class FrOffshoreSystem;
     class FrBody;
+    namespace geom { class FrPlane; }
 
     /**
      * \class FrHydroMesh
@@ -44,13 +46,14 @@ namespace frydom {
         /// Constructor.
         FrHydroMesh(FrOffshoreSystem* system, const std::shared_ptr<FrBody>& body, FrHydroMesh::ClippingSupport support);
 
+        /// Constructor.
         FrHydroMesh(FrOffshoreSystem* system, const std::shared_ptr<FrBody>& body, const std::string& meshFile, FrFrame meshOffsset, FrHydroMesh::ClippingSupport support);
 
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "HydroMesh"; }
 
-        /// Initialize the nonlinear hydrostatic force model.
+        /// Initialize the hydromesh
         void Initialize() override;
 
         /// Import a mesh and apply the mesh frame offset transformation, so that the mesh can be expressed in the body reference frame
@@ -66,6 +69,10 @@ namespace frydom {
         /// Get a reference to the initial mesh (as defined and read from the input file)
         /// \return reference to the initial mesh
         mesh::FrMesh& GetInitialMesh();
+
+        /// Get the clipping support (PLANESUPPORT/WAVESUPPORT)
+        /// \return clipping support
+        ClippingSupport GetClippingSupport() const;
 
 
     private:
@@ -84,11 +91,9 @@ namespace frydom {
         mesh::FrMesh m_initMesh;                        ///< Input mesh file (as defined and read from the input file)
         mesh::FrMesh m_clippedMesh;                     ///< Clipped mesh (its frame follows the body frame in its motions)
 
-        FrFrame m_meshOffset;                           ///< Offset frame between mesh and body frame (defined initially)
-
         ClippingSupport m_clippingSupport;              ///< Support for the clipping procedure
 
-        std::shared_ptr<FrNode> c_nodeForClippingPlane;                   ///< node for defining the FrPlane needed by FrClippingPlane
+        std::shared_ptr<geom::FrPlane> c_clippingPlane; ///< plane for the FrClippingPane
 
     };
 

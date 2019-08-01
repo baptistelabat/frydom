@@ -32,6 +32,9 @@ set(UNIT_TESTS
         test_edge_splitting
         test_FrAssembly
         test_FrClippingSurface
+        test_FrPlane
+        test_FrPolygon
+        test_FrMesh
         )
 
 # Set the path definition of the data resources

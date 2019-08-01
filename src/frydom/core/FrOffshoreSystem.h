@@ -401,6 +401,10 @@ namespace frydom {
 
         void AddFields() override;
 
+        // Resources path
+
+        std::string GetDataPath(const std::string& relPath) const;
+
     protected:
 
         std::string BuildPath(const std::string& rootPath) override;

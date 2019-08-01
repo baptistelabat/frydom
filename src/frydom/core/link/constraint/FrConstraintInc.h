@@ -6,5 +6,6 @@
 #define FRYDOM_FRCONSTRAINTINC_H
 
 #include "FrConstraint.h"
+#include "FrCGeometrical.h"
 
 #endif //FRYDOM_FRCONSTRAINTINC_H

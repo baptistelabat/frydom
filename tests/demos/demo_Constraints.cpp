@@ -68,7 +68,7 @@ int main(int argc, char* argv[]) {
             fixedNode->ShowAsset(true);
             fixedNode->GetAsset()->SetSize(10);
 
-            auto fixedPoint = std::make_shared<FrPoint>(fixedNode);
+            auto fixedPoint = std::make_shared<FrCPoint>(fixedNode);
 
             // Definition of the moving body, node and point
             makeItBox(movingBody, 10, 5, 1, 1000);
@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
             movingNode->ShowAsset(true);
             movingNode->GetAsset()->SetSize(10);
 
-            auto movingPoint = std::make_shared<FrPoint>(movingNode);
+            auto movingPoint = std::make_shared<FrCPoint>(movingNode);
 
             // Definition of the constraint between the two points
             bool autoDistance = false;
@@ -107,7 +107,7 @@ int main(int argc, char* argv[]) {
             fixedNode->ShowAsset(true);
             fixedNode->GetAsset()->SetSize(10);
 
-            auto fixedAxis = std::make_shared<FrAxis>(fixedNode,YAXIS);
+            auto fixedAxis = std::make_shared<FrCAxis>(fixedNode,YAXIS);
 
             // Definition of the moving body, node and point
             makeItBox(movingBody, 10, 5, 1, 100);
@@ -119,7 +119,7 @@ int main(int argc, char* argv[]) {
             movingNode->ShowAsset(true);
             movingNode->GetAsset()->SetSize(10);
 
-            auto movingPoint = std::make_shared<FrPoint>(movingNode);
+            auto movingPoint = std::make_shared<FrCPoint>(movingNode);
 
             // Definition of the constraint of a distance of a point to an axis
             auto constraint = make_constraint_distance_to_axis(fixedAxis, movingPoint, &system, false, distance);
@@ -147,7 +147,7 @@ int main(int argc, char* argv[]) {
             fixedNode->ShowAsset(true);
             fixedNode->GetAsset()->SetSize(10);
 
-            auto fixedPlane = std::make_shared<FrPlane>(fixedNode,ZAXIS);
+            auto fixedPlane = std::make_shared<FrCPlane>(fixedNode,ZAXIS);
 
             // Definition of the moving body, node and point
             makeItSphere(movingBody, 2.5, 100);
@@ -159,7 +159,7 @@ int main(int argc, char* argv[]) {
             movingNode->ShowAsset(true);
             movingNode->GetAsset()->SetSize(10);
 
-            auto movingPoint = std::make_shared<FrPoint>(movingNode);
+            auto movingPoint = std::make_shared<FrCPoint>(movingNode);
 
             // Definition of the point on plane constraint
             double distance = 0.5;
@@ -189,7 +189,7 @@ int main(int argc, char* argv[]) {
             fixedNode->ShowAsset(true);
             fixedNode->GetAsset()->SetSize(10);
 
-            auto fixedLine = std::make_shared<FrAxis>(fixedNode,YAXIS);
+            auto fixedLine = std::make_shared<FrCAxis>(fixedNode,YAXIS);
 
             // Definition of the moving body, node and point
             makeItSphere(movingBody, 1.5, 100);
@@ -200,7 +200,7 @@ int main(int argc, char* argv[]) {
             movingNode->ShowAsset(true);
             movingNode->GetAsset()->SetSize(10);
 
-            auto movingPoint = std::make_shared<FrPoint>(movingNode);
+            auto movingPoint = std::make_shared<FrCPoint>(movingNode);
 
             // Definition of the point on plane constraint
             auto constraint = make_constraint_point_on_line(fixedLine, movingPoint, &system);
@@ -226,7 +226,7 @@ int main(int argc, char* argv[]) {
             fixedNode->ShowAsset(true);
             fixedNode->GetAsset()->SetSize(10);
 
-            auto fixedPlane = std::make_shared<FrPlane>(fixedNode,ZAXIS);
+            auto fixedPlane = std::make_shared<FrCPlane>(fixedNode,ZAXIS);
 
             // Definition of the moving body, node and point
             makeItBox(movingBody, 10, 5, 1, 100);
@@ -237,7 +237,7 @@ int main(int argc, char* argv[]) {
             movingNode->ShowAsset(true);
             movingNode->GetAsset()->SetSize(10);
 
-            auto movingPlane = std::make_shared<FrPlane>(movingNode,ZAXIS);
+            auto movingPlane = std::make_shared<FrCPlane>(movingNode,ZAXIS);
 
             // Definition of the plane on plane constraint
             bool flipped = false;
@@ -263,7 +263,7 @@ int main(int argc, char* argv[]) {
             fixedNode->ShowAsset(true);
             fixedNode->GetAsset()->SetSize(10);
 
-            auto fixedAxis = std::make_shared<FrAxis>(fixedNode,YAXIS);
+            auto fixedAxis = std::make_shared<FrCAxis>(fixedNode,YAXIS);
 
             // Definition of the moving body, node and point
             makeItCylinder(movingBody, 1, 10, 100);
@@ -273,7 +273,7 @@ int main(int argc, char* argv[]) {
             movingNode->ShowAsset(true);
             movingNode->GetAsset()->SetSize(10);
 
-            auto movingAxis = std::make_shared<FrAxis>(movingNode,YAXIS);
+            auto movingAxis = std::make_shared<FrCAxis>(movingNode,YAXIS);
 
             // Definition of the perpendicular constraint
             auto constraint = make_constraint_perpendicular(fixedAxis, movingAxis, &system);
@@ -297,7 +297,7 @@ int main(int argc, char* argv[]) {
             fixedNode->ShowAsset(true);
             fixedNode->GetAsset()->SetSize(10);
 
-            auto fixedAxis = std::make_shared<FrAxis>(fixedNode,YAXIS);
+            auto fixedAxis = std::make_shared<FrCAxis>(fixedNode,YAXIS);
 
             // Definition of the moving body, node and point
             makeItCylinder(movingBody, 1, 10, 100);
@@ -307,7 +307,7 @@ int main(int argc, char* argv[]) {
             movingNode->ShowAsset(true);
             movingNode->GetAsset()->SetSize(10);
 
-            auto movingAxis = std::make_shared<FrAxis>(movingNode,YAXIS);
+            auto movingAxis = std::make_shared<FrCAxis>(movingNode,YAXIS);
 
             // Definition of the perpendicular constraint
             auto constraint = make_constraint_parallel(fixedAxis, movingAxis, &system);

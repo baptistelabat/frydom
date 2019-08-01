@@ -179,16 +179,16 @@ class pyHDB():
         self.max_dir_kochin = self.max_wave_dir
         self.wave_dir_kochin = np.radians(np.linspace(self.min_dir_kochin, self.max_dir_kochin, self.nb_dir_kochin, dtype=np.float))
 
-    @property
-    def wave_dir(self):
-        """Wave direction angles array of BEM computations in radians
-
-        Returns
-        -------
-        np.ndarray
-            angles array in radians.
-        """
-        return self.wave_dir
+    # @property
+    # def wave_dir(self):
+    #     """Wave direction angles array of BEM computations in radians
+    #
+    #     Returns
+    #     -------
+    #     np.ndarray
+    #         angles array in radians.
+    #     """
+    #     return self.wave_dir
 
     def append(self, body):
 
@@ -509,11 +509,11 @@ class pyHDB():
 
         print("")
         print("-- Interpolations --")
-        print(" Min frequency: %16.8f" % self.min_wave_freq)
-        print(" Max frequency: %16.8f" % self.max_wave_freq)
+        print(" Min frequency: %3.2f" % self.min_wave_freq)
+        print(" Max frequency: %3.2f" % self.max_wave_freq)
         print(" Nb Wave frequencies: %i" % self.nb_wave_freq)
-        print(" Angle min: %16.8f" % self.min_wave_dir)
-        print(" Angle max: %16.8f" % self.max_wave_dir)
+        print(" Angle min: %3.2f" % self.min_wave_dir)
+        print(" Angle max: %3.2f" % self.max_wave_dir)
         print(" Nb Wave directions: %i" % self.nb_wave_dir)
         print("")
 
@@ -627,8 +627,8 @@ class pyHDB():
 
         print("")
         print("-- Symmetrization --")
-        print(" Angle min: %16.8f" % self.min_wave_dir)
-        print(" Angle max: %16.8f" % self.max_wave_dir)
+        print(" Angle min: %3.2f" % self.min_wave_dir)
+        print(" Angle max: %3.2f" % self.max_wave_dir)
         print(" Nb Wave directions: %i" % self.nb_wave_dir)
         print("")
 

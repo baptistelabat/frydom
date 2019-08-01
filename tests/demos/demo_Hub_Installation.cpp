@@ -30,6 +30,7 @@ int main(int argc, char* argv[]) {
     // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
     FrOffshoreSystem system;
     system.SetName("Hub_Installation");
+    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
 
     auto steel = std::make_shared<chrono::ChMaterialSurfaceSMC>();
     steel->SetYoungModulus(1e8);
@@ -90,7 +91,7 @@ int main(int argc, char* argv[]) {
 
     auto barge = system.NewBody();
     barge->SetName("Barge");
-    barge->AddMeshAsset(resources_path.resolve("barge.obj").path());
+    barge->AddMeshAsset(system.GetDataPath("barge.obj"));
     barge->SetColor(Yellow);
 
     auto collisionModel = std::make_shared<FrCollisionModel>();
@@ -108,7 +109,7 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrodynamics
 
-    auto hdb = make_hydrodynamic_database(resources_path.resolve("Barge_HDB.h5").path());
+    auto hdb = make_hydrodynamic_database(system.GetDataPath("Barge_HDB.h5"));
 
     auto eqFrame = std::make_shared<FrEquilibriumFrame>(barge.get());
     eqFrame->SetLogged(true);

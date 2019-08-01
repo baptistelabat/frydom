@@ -18,6 +18,10 @@
 
 #include "frydom/core/common/FrConvention.h"
 
+#ifndef RESOURCES_PATH
+#define RESOURCES_PATH
+#endif
+
 namespace frydom {
 
     //Forward declaration
@@ -39,6 +43,7 @@ namespace frydom {
         cppfs::FilePath m_outputPath;
         cppfs::FilePath m_projectPath;
         cppfs::FilePath m_runPath;
+        cppfs::FilePath m_resourcesPath;
 
     public:
 
@@ -73,6 +78,10 @@ namespace frydom {
         std::string BuildPath(const std::string& rootPath, const std::string& relPath) const;
 
         std::string BuildPath(const std::string& absPath) const;
+
+        void SetResourcesPath(std::string absPath);
+
+        std::string GetDataPath(const std::string& relPath) const;
 
     private:
         /// Read the config file

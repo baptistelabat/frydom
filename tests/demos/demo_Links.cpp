@@ -32,6 +32,7 @@ int main(int argc, char* argv[]) {
     system.GetEnvironment()->ShowFreeSurface(false);
     system.GetEnvironment()->ShowSeabed(false);
     system.SetName("demo_Links");
+    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
 
     // Bodies definition
     auto fixedBody = system.NewBody();

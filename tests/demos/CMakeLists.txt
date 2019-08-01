@@ -28,6 +28,7 @@ set(BENCH
         SphereIrregular
         DTMB5512_captive
         Cables
+        NonlinearHydrostaticBox
         )
 
 # Resource data loading / path definition
@@ -36,17 +37,15 @@ if(${frydom_download_demo_data})
     include(URL_DEMO_DATA.conf)
 endif()
 
-set(SphereDecay_resources_path ${CMAKE_SOURCE_DIR}/tests/data/bench/sphere/)
-set(SphereIrregular_resources_path ${CMAKE_SOURCE_DIR}/tests/data/bench/sphere/)
-set(SphereRegular_resources_path ${CMAKE_SOURCE_DIR}/tests/data/bench/sphere/)
-
-set(Hydrodynamic_resources_path ${CMAKE_SOURCE_DIR}/tests/data/platform/)
-set(Morison_resources_path ${CMAKE_SOURCE_DIR}/tests/data/platform/)
-
-set(NonLinearHydrostatics_resources_path ${CMAKE_SOURCE_DIR}/tests/data/Cylinder/)
-set(Hub_Installation_resources_path ${CMAKE_SOURCE_DIR}/tests/data/barge/)
-
-set(DTMB5512_captive_resources_path ${CMAKE_SOURCE_DIR}/tests/data/bench/DTMB5512/)
+set(NonlinearHydrostaticBox_resources_path ${box_resources_path})
+set(SphereDecay_resources_path ${sphere_resources_path})
+set(SphereIrregular_resources_path ${sphere_resources_path})
+set(SphereRegular_resources_path ${sphere_resources_path})
+set(Hydrodynamic_resources_path ${platform_resources_path})
+set(Morison_resources_path ${platform_resources_path})
+set(NonLinearHydrostatics_resources_path ${cylinder_resources_path})
+set(Hub_Installation_resources_path ${barge_resources_path})
+set(DTMB5512_captive_resources_path ${DTMB5512_resources_path})
 
 # Compile target
 foreach(test ${DEMOS})

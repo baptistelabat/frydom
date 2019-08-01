@@ -1,6 +1,13 @@
+// ==========================================================================
+// FRyDoM - frydom-ce.org
 //
-// Created by frongere on 24/05/18.
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+//
+// ==========================================================================
 
 #ifndef FRYDOM_DICE_HYDROSTATICSPROPERTIES_H
 #define FRYDOM_DICE_HYDROSTATICSPROPERTIES_H
@@ -67,29 +74,43 @@ namespace frydom {
 
     public:
 
-        FrHydrostaticsProperties() : m_waterDensity(1023.), m_gravityAcceleration(9.81) {}
+        /// Constructors.
+        FrHydrostaticsProperties();
 
-        FrHydrostaticsProperties(double waterDensity, double gravityAcceleration) :
-                m_waterDensity(waterDensity),
-                m_gravityAcceleration(gravityAcceleration) {}
+        FrHydrostaticsProperties(double waterDensity, double gravityAcceleration);
 
-        FrHydrostaticsProperties(double waterDensity, double gravityAcceleration, mesh::FrMesh& clipped_mesh, Position cog) :
-                m_waterDensity(waterDensity),
-                m_gravityAcceleration(gravityAcceleration),
-                m_clippedMesh(clipped_mesh),
-                m_centerOfGravity(cog) {}
+        FrHydrostaticsProperties(double waterDensity, double gravityAcceleration, mesh::FrMesh& clipped_mesh, Position cog);
 
+        /// Compute the geometric and hydrostatic properties
         void Process();
 
-        const mesh::FrMesh& GetHydrostaticMesh() const { return m_clippedMesh; }
-
-        void CalcGeometricProperties();
-
-        double CalcHydrostaticProperties();
-
+        /// Get the hydrostatic report as a string
+        /// \return hydrostatic report
         std::string GetReport() const;
 
+        /// Get the mesh used for the hydrostatic computations
+        /// \return mesh used for computations
+        const mesh::FrMesh& GetHydrostaticMesh() const;
+
+        /// Get the reduced hydrostatic matrix (K33 to K55)
+        /// \return reduced hydrostatic matrix
         mathutils::MatrixMN<double> GetHydrostaticMatrix() const;
+
+        /// Get the tranversal metacentric height
+        /// \return tranversal metacentric height
+        double GetTransversalMetacentricHeight() const;
+
+        /// Get the longitudinal metacentric height
+        /// \return longitudinal metacentric height
+        double GetLongitudinalMetacentricHeight() const;
+
+    private:
+
+        /// Compute the geometric properties
+        void CalcGeometricProperties();
+
+        /// Compute the hydrostatic properties
+        double CalcHydrostaticProperties();
 
     };
 
@@ -148,7 +169,9 @@ namespace frydom {
             AddBlankLine();
 
             AddLine("DRAUGHT", "M", hp.m_draught);
-            AddLine("LENGTH OVERALL SUBMERGED");
+            AddLine("LENGTH OVERALL SUBMERGED", "M", hp.m_lengthOverallSubmerged);
+            AddLine("BREADTH OVERALL SUBMERGED", "M", hp.m_breadthOverallSubmerged);
+            AddLine("LENGTH AT WATERLINE LWL", "M", hp.m_lengthAtWaterLine);
             AddBlankLine();
 
             AddLine("TRANSVERSAL METACENTRIC RADIUS", "M",        hp.m_transversalMetacentricRadius);

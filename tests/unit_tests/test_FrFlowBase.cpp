@@ -62,8 +62,8 @@ Vector TestFrFlowBase::ReadVector(FrHDF5Reader& reader, std::string field) const
 
 void TestFrFlowBase::SetUp() {
 
-    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
-    LoadData(resources_path.resolve("TNR_database.h5").path());
+    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
+    LoadData(system.GetDataPath("TNR_database.h5"));
     system.GetEnvironment()->GetOcean()->GetCurrent()->MakeFieldUniform();
     flow = std::make_shared<FrCurrent>(system.GetEnvironment()->GetOcean());
     flow->MakeFieldUniform();
