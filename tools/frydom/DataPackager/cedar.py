@@ -67,6 +67,9 @@ def get_parser(parser):
     parser.add_argument('--nhead', '-nhead', nargs=1,
                         help="Get the nth version data from head")
 
+    parser.add_argument('--force', '-f', action='store_true',
+                        help="Force upload")
+
     return parser
 
 
@@ -131,6 +134,10 @@ def main():
     # ----------------------------------------------------------
 
     if not args.no_upload:
+
+        if args.force:
+            package.set_forced(True)
+
         package.upload()
 
     return 0

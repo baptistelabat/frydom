@@ -96,6 +96,7 @@ class Packager(object):
         self._omitted_elements = []
         self._diff_files = []
         self._bucket = self._connect("frydom-ce-data")
+        self._forced_upload = False
 
     @property
     def str_version(self):
@@ -104,6 +105,15 @@ class Packager(object):
         :return: "x.y.z"
         """
         return '{}.{}.{}'.format(*self._version)
+
+    def set_forced(self, val):
+        """
+        Force upload
+        :param val: True/False
+        :return: None
+        """
+        self._forced_upload = val
+        return
 
     def _connect(self, name_bucket):
         """
@@ -421,8 +431,15 @@ class Packager(object):
         print("-----------------------------------------")
         print("Upload %s to AWS S3" % self._file_archive)
         print("-----------------------------------------")
-        with open(self._file_archive, 'rb') as data:
-            self._bucket.upload_fileobj(data, "demo/"+self._file_archive, ExtraArgs={'ACL':'public-read'})
+
+        files = list(self._bucket.objects.filter(Prefix='demo/' + self._file_archive))
+
+        if len(files) == 0 or self._forced_upload:
+            with open(self._file_archive, 'rb') as data:
+                self._bucket.upload_fileobj(data, "demo/"+self._file_archive, ExtraArgs={'ACL':'public-read'})
+        else:
+            print("error : %s already present on Amazon S3" % self._file_archive)
+
         return
 
 
