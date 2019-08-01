@@ -51,13 +51,16 @@ namespace frydom {
 
         typedef std::vector<FrPolygon> PolygonSet;
 
+        /**
+         * Class for a triangular mesh, derived from OpenMesh::TriMesh_ArrayKernelT templated with FrMeshTraits
+         */
         class FrMesh : public TriMesh_ArrayKernelT<FrMeshTraits> { // FrMesh must be a triangular mesh.
 
         private:
 
-            meshutils::FrIncrementalMeshWriter m_writer;
+            meshutils::FrIncrementalMeshWriter m_writer;    ///< mesh writer
 
-            mutable FrCache<PolygonSet> m_polygonSet;
+            mutable FrCache<PolygonSet> m_polygonSet;       ///< set of boundary polygons delimiting the surface mesh
 
         public:
 
@@ -70,53 +73,84 @@ namespace frydom {
             /// This function loads the mesh file.
             void Load(std::string meshfile);
 
+            /// Create a meshed box
+            /// \param Lx length
+            /// \param Ly width
+            /// \param Lz height
             void CreateBox(double Lx, double Ly, double Lz);
 
             /// This function translates the mesh.
             void Translate(const Point t);
 
-            /// This function rotates the mesh.
+            /// This function rotates the mesh, based on Cardan angles
             void Rotate(double phi, double theta, double psi);
 
+            /// Rotates the mesh, based on a rotation matrix
+            /// \param Rot_matrix
             void Rotate(const mathutils::Matrix33<double>& Rot_matrix);
 
-
+            /// Write the mesh in an output file
+            /// \param meshfile name of the output file
             void Write(std::string meshfile) const;
 
+            /// Write the file in an output file, by incrementing it
+            /// \param meshfile name of the output file
+            /// \param i indice of the increment
             void WriteInc(std::string meshfile, int i);
 
+            /// Write the file in an output file, by incrementing it
             void WriteInc();
-
-
 
 
             /// This function updates all properties of faces and vertices (normals, centroids, surface integrals).
             void UpdateAllProperties();
 
 
-
+            /// Get the set of boundary polygons delimiting the surface mesh
+            /// \returnset of boundary polygons
             PolygonSet GetBoundaryPolygonSet();
 
+            /// Get the Axis Aligned Bounding Box (AABB) of the mesh
+            /// \return AABB
             FrAABoundingBox GetBoundingBox() const;
 
 
-            /// This function gives the value of a surface integral over the meshed surface
+            /// Get the value of a surface integral over the meshed surface : iint_S type ds
+            /// \param type integrand type
+            /// \return surface integral of the integrand over the mesh surface
             double GetMeshedSurfaceIntegral(IntegrandType type);
 
+            /// Get the value of a surface integral over the meshed surface : iint_S type . n(iNormal) ds
+            /// \param iNormal indice of the normal component [0:2]
+            /// \param type integrand type
+            /// \return surface integral of the integrand over the mesh
             double GetMeshedSurfaceIntegral(int iNormal, IntegrandType type);
 
+            /// Get the area of the triangular element fh
+            /// \param fh triangular element
+            /// \return area (m^2)
             const double GetArea(const FaceHandle &fh) const;
 
+            /// Get the area of the surface mesh, closed by the set of boundary polygons
+            /// \return area (m^2)
             const double GetArea();
 
+            /// Get the volume delimited by the surface mesh and the set of boundary polygons
+            /// \return volume (m^3)
             const double GetVolume();
 
+            /// Get the position of the center of gravity of the domain delimited by the surface mesh and the set of
+            /// boundary polygons, under the assumption of uniform weight distribution.
+            /// \return center of gravity (m)
             const Position GetCOG();
 
 
-
+            /// Check if the surface mesh has boundaries
+            /// \return true if the surface mesh has boundaries
             bool HasBoundaries() const;
 
+            /// Check if the domain delimited by the surface mesh and the set of boundary polygons is water tight
+            /// \return true if the domain is water tight
             bool IsWatertight() const;
 
 
@@ -140,18 +174,21 @@ namespace frydom {
             /// This function updates the computations of the polynomial surface integrals.
             void UpdateFacesPolynomialIntegrals();
 
-            // Computes triangular faces surface integration of some polynomial integrands using analytical formulas
-            // established by transforming surface integrals into contour integrals and deriving analytical expressions.
-            // Extended from Eberly... TODO: mettre la reference
+            /// Computes triangular faces surface integration of some polynomial integrands using analytical formulas
+            /// established by transforming surface integrals into contour integrals and deriving analytical expressions.
+            /// Extended from Eberly... https://d-ice.gitlab.host/common/technical_reports/mesh-integrals
             void CalcFacePolynomialIntegrals(const FrMesh::FaceHandle &fh);
 
-
+            /// Find the first untagged boundary halfedge
+            /// \return first untagged boundary halfedge
             HalfedgeHandle FindFirstUntaggedBoundaryHalfedge() const;
 
+            /// Compute the set of boundary polygons
             void CalcBoundaryPolygonSet();
-            // TODO: check pour voir si les polygones obtenus sont bien inscrits dans la surface de coupe
 
-
+            /// Check that the set of boundary polygons is located on the given plane
+            /// \param plane reference plane
+            /// \return true if the set of polygons is on the plane
             bool CheckBoundaryPolygon(FrClippingPlane* plane);
 
 

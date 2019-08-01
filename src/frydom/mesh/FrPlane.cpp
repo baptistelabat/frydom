@@ -64,7 +64,7 @@ namespace frydom {
             return origin;
         }
 
-        void FrPlane::GetOrigin(Position origin, FRAME_CONVENTION fc) const {
+        void FrPlane::GetOrigin(Position &origin, FRAME_CONVENTION fc) const {
             origin = GetOrigin(fc);
         }
 
@@ -80,7 +80,7 @@ namespace frydom {
             return normal;
         }
 
-        void FrPlane::GetNormal(Direction normal, FRAME_CONVENTION fc) const {
+        void FrPlane::GetNormal(Direction& normal, FRAME_CONVENTION fc) const {
             normal = GetNormal(fc);
         }
 
