@@ -1,14 +1,14 @@
 .. dtmb5512_captive_test:
 
-Captive test for the DTMB5512 surface combatant in regular head waves
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+DTMB5512 surface combatant in regular head waves
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This benchmark corresponds to the simulation of the surface combatant DTMB5512 in captive motion submitted to regular head wave. The DTMB5512 is a 3.048m geosym of the DTMB5415 which have been chosen by the International Towing Tank Conference (ITTC) as an international benchmark for CFD validation. Description of this test case and comparison of the result with experimental results are summarized in the following.
+This benchmark corresponds to the simulation of the surface combatant DTMB5512 with constant forward speed submitted to regular head waves. The DTMB5512 is a 3.048m geosym of the DTMB5415 which has been chosen by the International Towing Tank Conference (ITTC) as an international benchmark for CFD validation. Two configurations are considered, captive motion and free motion in pitch and heave (3DOF). Description of this test case and comparison to experimental results are summarized in the following.
 
 Description of the test case
 ----------------------------
 
-In this simulation, the 1:46.6 scale is taken which correspond to the laboratory scale of the DTMB 5512 geometry used in the experimental campaigned made by the Iowa Institute of Hydraulic Research (IIHR). The hull model with no appendage, no propeller and no rudder is considered. The CAD model is freely available. The main characteristics of the vessel are summarized in table (ref). The x-axis is pointing forward to the vessel and z-axis is pointing upward as represented in Fig (ref).
+In this simulation, the 1:46.6 scale is considered which corresponds to the laboratory scale of the DTMB 5512 geometry used in the experimental campaigned made by the Iowa Institute of Hydraulic Research (IIHR). The hull model with no appendage, no propeller and no rudder is considered. The CAD model is freely available. The main characteristics of the vessel are summarized in the following table. The x-axis is pointing forward to the vessel and z-axis is pointing upward as represented in the following figure.
 
 .. _fig_DTMB5512_geometry
 .. figure:: _static/DTMB5512_configuration.png
@@ -29,9 +29,7 @@ LCG                   m                1.536
 VCG                   m                0.162
 ===================== ================ =====================
 
-A constant speed is applied in surge motion whereas other degrees of freedom are fixed by constrains. Four differents speed are considered which correspond to a low (0.19), medium (0.28), mid-high (0.34) and high (0.41) froude numbers.
-
-Hydrostatic coefficients are determined for a 0.132 m draft (table ref).
+Hydrostatic coefficients are summarized in the next table.
 
 ===================== ====================
 Hydrostatic coeff.    Value :math:`(x10^3)`
@@ -40,6 +38,16 @@ k33                   :math:`9.68`
 k55                   :math:`5.42`
 k35                   :math:`1.25`
 ===================== ====================
+
+The DTMB5512 is mounted on a carriage with constant forward speed as represented in next figure.
+
+.. _fig_simulation_picture
+.. figure:: _static/DTMB5512_simulation_picture.png
+    :align: center
+    :alt: DTMB5512 simulation
+    :scale: 50%
+
+For the captive test , the DTMB5512 model is fixed on the carriage whereas for pitch and heave motion test the DTMB5512 model is free to moove in heave and pitch. Four differents speed are considered which correspond to a low (0.19), medium (0.28), mid-high (0.34) and high (0.41) froude numbers.
 
 The regular wave field propagates in negative x-direction. Four differents wave amplitudes are considered corresponding to small (0.025), small-median (0.05, 0.075) and median (0.1) steepness. The wave frequency is equal to 4.5 Hz.
 
@@ -51,7 +59,7 @@ Resistance force (ITTC57)
 
 Due to the forward speed the vessel is submitted to a resistance force in surge motion and additional heave and pitch steady force. These forces are determined from the experimental results in steady motion with no waves.
 
-Resistance force is computed from the ITTC57 standard with a hul factor :math:`k=0.03`. Based on experimental results a residual coefficient :math:`C_R` is estimated for vessel speed (Table <>)
+Resistance force is computed according to the ITTC57 standard with a hull factor :math:`k=0.03`. Based on experimental results, a residual coefficient :math:`C_R` is estimated for the different vessel speed.
 
 ================ =====================
 Froude Number         Residual coeff.
@@ -65,7 +73,7 @@ Froude Number         Residual coeff.
 User defined forces
 ...................
 
-Based on experimental results with forward speed and no waves, steady user defined force for pitch :math:`M_{y,user}` and :math:`F_{z,user}` are used:
+Based on the experimental results with forward speed and no waves, steady forces for pitch :math:`M_{y,user}` and :math:`F_{z,user}` are defined:
 
 .. math::
     F_{z,user} = -12.3 u^3 - 2.9 u^2 \\
@@ -83,7 +91,7 @@ For regular wave, the wave drift force is estimated from the following formula:
 
 where :math:`A` is the wave amplitude, :math:`\omega` is the wave frequency and :math:`C_{wd}` the mean wave drift coefficient.
 
-In this test case, the mean wave drift coefficient :math:`C_{wd}` is estimate from experimental results and added resistance given by :
+In this test case, the mean wave drift coefficient :math:`C_{wd}` is estimated from experimental results and added resistance given by :
 
 .. math::
     C_{T,ad} = \bar{C_T} - C_{T,st}
@@ -96,13 +104,13 @@ Estimation of the mean wave drift coefficient in surge :math:`C_{wd, x}` for var
 .. figure:: _static/Cwd.png
     :align: center
     :alt: Mean Wave drift
-    :scale: 70 %
+    :scale: 50 %
 
     Estimation of the mean wave drift coefficient depending on wave frequencies.
 
 
-Results
--------
+Adimentionalization of the forces
+---------------------------------
 
 To compare forces and moment applied on the vessel to the experimental results, the following adimentionalization is applied:
 
@@ -118,10 +126,14 @@ Following [ref], harmonic decomposition of the forces and moment are applied as 
 
 where :math:`X_0` is the constant part and :math:`X_n` the :math:`n^{th}` harmonic coefficient of the function :math:`X_F`.
 
+
+Captive test results
+--------------------
+
 The zeroth and first harmonic coefficients of :math:`C_T`, :math:`C_H` and :math:`C_M` are compared to experimental results in :numref:`fig_zeroth_coeff` and :numref:`fig_first_harmonic`.
 
 .. _fig_zeroth_coeff:
-.. figure:: _static/zero_harmonic_plot_vert.png
+.. figure:: _static/zero_harmonic_plot.png
     :align: center
     :alt: Zeroth coefficient
     :scale: 50%
@@ -129,7 +141,7 @@ The zeroth and first harmonic coefficients of :math:`C_T`, :math:`C_H` and :math
     Comparison of the zeroth coefficients from FRyDoM (continous lines) with experimental results (discontinous lines).
 
 .. _fig_first_harmonic:
-.. figure:: _static/first_harmonic_plot_vert.png
+.. figure:: _static/first_harmonic_plot.png
     :align: center
     :alt: First coefficient
     :scale: 50%
@@ -137,6 +149,24 @@ The zeroth and first harmonic coefficients of :math:`C_T`, :math:`C_H` and :math
     Comparison of the first harmonic coefficient from FRyDoM (continuous lines) with experimental results (discontinuous lines).
 
 
+Pitch and Heave Motion test results
+-----------------------------------
 
+.. _fig_heave_motion:
+.. figure:: _static/DTMB5512_HeaveAmplitude.png
+    :align: center
+    :alt: Heave motion
+    :scale: 50%
+
+    Comparison of the Heave RAO results from FRyDoM with experimental data for different regular wave frequency. Results for different froude number (0.19, 0.24, 0.34, 0.41) from left to right and top to bottom.
+
+.. _fig_pitch_motion:
+.. figure:: _static/DTMB5512_PitchAmplitude.png
+    :align: center
+    :alt: Pitch motion
+    :scale: 50%
+
+
+    Comparison of the Pitch RAO results from FRyDoM with experimental data for different regular wave frequency. Results for different froude number (0.19, 0.24, 0.34, 0.41) from left to right and top to bottom.
 
 
