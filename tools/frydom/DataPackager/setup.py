@@ -21,7 +21,7 @@ setup(
     install_requires=['numpy', 'boto3', 'argcomplete'],
 
     entry_points={
-        'console_scripts': ['cedar=DataPackager.cedar:main']
+        'console_scripts': ['cedar=cedar:main']
     },
 
     classifiers=[
