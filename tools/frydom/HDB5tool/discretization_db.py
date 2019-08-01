@@ -292,11 +292,11 @@ class DiscretizationDB(object):
 
         print("")
         print("-- Input parameters --")
-        print(" Min frequency: %16.8f" % pyHDB.min_wave_freq)
-        print(" Max frequency: %16.8f" % pyHDB.max_wave_freq)
+        print(" Min frequency: %3.2f" % pyHDB.min_wave_freq)
+        print(" Max frequency: %3.2f" % pyHDB.max_wave_freq)
         print(" Nb Wave frequencies: %i" % pyHDB.nb_wave_freq)
-        print(" Angle min: %16.8f" % pyHDB.min_wave_dir)
-        print(" Angle max: %16.8f" % pyHDB.max_wave_dir)
+        print(" Angle min: %3.2f" % pyHDB.min_wave_dir)
+        print(" Angle max: %3.2f" % pyHDB.max_wave_dir)
         print(" Nb Wave directions: %i" % pyHDB.nb_wave_dir)
         print("")
 

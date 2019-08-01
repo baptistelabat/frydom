@@ -4,7 +4,7 @@
 
 #include "FrConstraint.h"
 
-#include "frydom/core/common/FrGeometrical.h"
+#include "FrCGeometrical.h"
 #include "frydom/core/common/FrNode.h"
 #include "frydom/core/common/FrFrame.h"
 
@@ -110,7 +110,7 @@ namespace frydom {
 
     //------------------------------------------------------------------------------------------------------------------
 
-    FrConstraintParallel::FrConstraintParallel(const std::shared_ptr<FrAxis>& axis1, const std::shared_ptr<FrAxis>& axis2, FrOffshoreSystem* system) :
+    FrConstraintParallel::FrConstraintParallel(const std::shared_ptr<FrCAxis>& axis1, const std::shared_ptr<FrCAxis>& axis2, FrOffshoreSystem* system) :
             FrConstraint(axis1->GetNode(), axis2->GetNode(), system), m_axis1(axis1), m_axis2( axis2) {
             m_chronoConstraint = std:: make_shared<chrono::ChLinkMateParallel>();
     }
@@ -127,8 +127,8 @@ namespace frydom {
     }
     std::shared_ptr<FrConstraintParallel>
     make_constraint_parallel(
-            const std::shared_ptr<FrAxis>& axis1,
-            const std::shared_ptr<FrAxis>& axis2,
+            const std::shared_ptr<FrCAxis>& axis1,
+            const std::shared_ptr<FrCAxis>& axis2,
             FrOffshoreSystem* system) {
 
         auto constraint = std::make_shared<FrConstraintParallel>(axis1, axis2, system);
@@ -140,7 +140,7 @@ namespace frydom {
 
     //------------------------------------------------------------------------------------------------------------------
 
-    FrConstraintPerpendicular::FrConstraintPerpendicular(const std::shared_ptr<FrAxis>& axis1, const std::shared_ptr<FrAxis>& axis2, FrOffshoreSystem* system) :
+    FrConstraintPerpendicular::FrConstraintPerpendicular(const std::shared_ptr<FrCAxis>& axis1, const std::shared_ptr<FrCAxis>& axis2, FrOffshoreSystem* system) :
             FrConstraint(axis1->GetNode(), axis2->GetNode(), system), m_axis1(axis1), m_axis2( axis2) {
         m_chronoConstraint = std:: make_shared<chrono::ChLinkMateOrthogonal>();
     }
@@ -158,8 +158,8 @@ namespace frydom {
 
     std::shared_ptr<FrConstraintPerpendicular>
     make_constraint_perpendicular(
-            const std::shared_ptr<FrAxis>& axis1,
-            const std::shared_ptr<FrAxis>& axis2,
+            const std::shared_ptr<FrCAxis>& axis1,
+            const std::shared_ptr<FrCAxis>& axis2,
             FrOffshoreSystem* system) {
 
         auto constraint = std::make_shared<FrConstraintPerpendicular>(axis1, axis2, system);
@@ -170,8 +170,8 @@ namespace frydom {
 
     //------------------------------------------------------------------------------------------------------------------
 
-    FrConstraintPlaneOnPlane::FrConstraintPlaneOnPlane(const std::shared_ptr<FrPlane> &plane1,
-                                                       const std::shared_ptr<FrPlane> &plane2,
+    FrConstraintPlaneOnPlane::FrConstraintPlaneOnPlane(const std::shared_ptr<FrCPlane> &plane1,
+                                                       const std::shared_ptr<FrCPlane> &plane2,
                                                        FrOffshoreSystem *system,
                                                        bool flipped,
                                                        double distance) :
@@ -202,8 +202,8 @@ namespace frydom {
 
     std::shared_ptr<FrConstraintPlaneOnPlane>
     make_constraint_plane_on_plane(
-            const std::shared_ptr<FrPlane>& plane1,
-            const std::shared_ptr<FrPlane>& plane2,
+            const std::shared_ptr<FrCPlane>& plane1,
+            const std::shared_ptr<FrCPlane>& plane2,
             FrOffshoreSystem* system,
             bool flipped,
             double distance) {
@@ -216,8 +216,8 @@ namespace frydom {
 
     //------------------------------------------------------------------------------------------------------------------
 
-    FrConstraintPointOnPlane::FrConstraintPointOnPlane(const std::shared_ptr<FrPlane>& plane,
-                                                       const std::shared_ptr<FrPoint> &point,
+    FrConstraintPointOnPlane::FrConstraintPointOnPlane(const std::shared_ptr<FrCPlane>& plane,
+                                                       const std::shared_ptr<FrCPoint> &point,
                                                        FrOffshoreSystem *system,
                                                        double distance):
         FrConstraint(plane->GetNode(), point->GetNode(), system), m_plane(plane), m_point(point){
@@ -240,8 +240,8 @@ namespace frydom {
 
     std::shared_ptr<FrConstraintPointOnPlane>
     make_constraint_point_on_plane(
-            const std::shared_ptr<FrPlane>& plane,
-            const std::shared_ptr<FrPoint>& point,
+            const std::shared_ptr<FrCPlane>& plane,
+            const std::shared_ptr<FrCPoint>& point,
             FrOffshoreSystem* system,
             double distance) {
 
@@ -254,8 +254,8 @@ namespace frydom {
 
     //------------------------------------------------------------------------------------------------------------------
 
-    FrConstraintPointOnLine::FrConstraintPointOnLine(const std::shared_ptr<FrAxis>& line,
-                            const std::shared_ptr<FrPoint>& point,
+    FrConstraintPointOnLine::FrConstraintPointOnLine(const std::shared_ptr<FrCAxis>& line,
+                            const std::shared_ptr<FrCPoint>& point,
                             FrOffshoreSystem* system,
                             double distance):
         FrConstraint(line->GetNode(), point->GetNode(), system), m_point(point), m_axis(line){
@@ -281,8 +281,8 @@ namespace frydom {
     }
     std::shared_ptr<FrConstraintPointOnLine>
     make_constraint_point_on_line(
-            const std::shared_ptr<FrAxis>& line,
-            const std::shared_ptr<FrPoint>& point,
+            const std::shared_ptr<FrCAxis>& line,
+            const std::shared_ptr<FrCPoint>& point,
             FrOffshoreSystem* system) {
 
         auto constraint = std::make_shared<FrConstraintPointOnLine>(line, point, system);
@@ -295,8 +295,8 @@ namespace frydom {
 
     //------------------------------------------------------------------------------------------------------------------
 
-    FrConstraintDistanceToAxis::FrConstraintDistanceToAxis(const std::shared_ptr<FrAxis> &axis,
-                                                           const std::shared_ptr<FrPoint> &point,
+    FrConstraintDistanceToAxis::FrConstraintDistanceToAxis(const std::shared_ptr<FrCAxis> &axis,
+                                                           const std::shared_ptr<FrCPoint> &point,
                                                            FrOffshoreSystem *system,
                                                            bool autoDistance,
                                                            double distance) :
@@ -325,8 +325,8 @@ namespace frydom {
 
     std::shared_ptr<FrConstraintDistanceToAxis>
     make_constraint_distance_to_axis(
-            const std::shared_ptr<FrAxis>& axis,
-            const std::shared_ptr<FrPoint>& point,
+            const std::shared_ptr<FrCAxis>& axis,
+            const std::shared_ptr<FrCPoint>& point,
             FrOffshoreSystem* system,
             bool autoDistance,
             double distance) {
@@ -341,8 +341,8 @@ namespace frydom {
     //------------------------------------------------------------------------------------------------------------------
 
     FrConstraintDistanceBetweenPoints::FrConstraintDistanceBetweenPoints(
-            const std::shared_ptr<FrPoint> &point1,
-            const std::shared_ptr<FrPoint> &point2,
+            const std::shared_ptr<FrCPoint> &point1,
+            const std::shared_ptr<FrCPoint> &point2,
             FrOffshoreSystem *system,
             bool autoDistance,
             double distance) :
@@ -370,8 +370,8 @@ namespace frydom {
     }
 
     std::shared_ptr<FrConstraintDistanceBetweenPoints>
-    make_constraint_distance_between_points(const std::shared_ptr<FrPoint>& point1,
-                                            const std::shared_ptr<FrPoint>& point2,
+    make_constraint_distance_between_points(const std::shared_ptr<FrCPoint>& point1,
+                                            const std::shared_ptr<FrCPoint>& point2,
                                             FrOffshoreSystem* system,
                                             bool autoDistance,
                                             double distance) {

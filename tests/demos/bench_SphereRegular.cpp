@@ -180,7 +180,7 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrodynamic mesh
 
-//    auto bodyMesh = make_hydro_mesh(body,resources_path.resolve("Sphere_6200_faces.obj").path(), FrFrame(), true);
+//    auto bodyMesh = make_hydro_mesh(body,resources_path.resolve("Sphere_6200_faces.obj").path(), FrFrame(), FrHydroMesh::ClippingSupport::WAVESURFACE);
 //    bodyMesh->GetInitialMesh().Write("Mesh_Initial.obj");
 
     // -- Nonlinear hydrostatics

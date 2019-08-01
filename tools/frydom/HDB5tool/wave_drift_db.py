@@ -501,5 +501,5 @@ class WaveDriftDB(object):
 
             for i_dir, angle in enumerate(mode.heading):
 
-                print("mode: %s ;heading_%i:%16.8f ;size_freq(%s)" % (key, i_dir, angle * 180./pi, str(mode.data[i_dir].size)))
+                print("mode: %s ;heading_%i:%16.8f ;size_freq(%s)" % (key, i_dir, np.degrees(angle), str(mode.data[i_dir].size)))
 

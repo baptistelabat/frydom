@@ -12,9 +12,10 @@
 #include "FrHydroMesh.h"
 
 #include "FrMeshClipper.h"
+#include "FrPlane.h"
 
 #include "frydom/core/body/FrBody.h"
-#include "frydom/core/common/FrGeometrical.h"
+#include "frydom/core/link/constraint/FrCGeometrical.h"
 
 namespace frydom {
 
@@ -48,13 +49,14 @@ namespace frydom {
         // Clipping surface.
         switch (m_clippingSupport) {
             case ClippingSupport::PLANESURFACE: {
-                c_nodeForClippingPlane = m_body->GetSystem()->GetWorldBody()->NewNode();
+//                c_nodeForClippingPlane = m_body->GetSystem()->GetWorldBody()->NewNode();
                 Position Tide(0., 0., m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU));
-                c_nodeForClippingPlane->SetPositionInBody(Tide, NWU);
+//                c_nodeForClippingPlane->SetPositionInBody(Tide, NWU);
+//
+//                auto plane = std::make_shared<FrCPlane>(c_nodeForClippingPlane);
 
-                auto plane = std::make_shared<FrPlane>(c_nodeForClippingPlane);
-
-                auto clippingSurface = std::make_shared<mesh::FrClippingPlane>(plane);
+                c_clippingPlane = std::make_shared<geom::FrPlane>(Tide,Direction(0,0,1),NWU);
+                auto clippingSurface = std::make_shared<mesh::FrClippingPlane>(c_clippingPlane);
                 m_clipper->SetClippingSurface(clippingSurface);
                 break;
             }
@@ -88,9 +90,7 @@ namespace frydom {
         // Rotating the mesh from the body reference frame to the world reference frame, and then translating
         // it vertically. The resulting mesh horizontal position is kept close to (0.,0.) for the clipping process
         // Rotation
-        double phi, theta, psi;
-        m_body->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
-        m_clippedMesh.Rotate(phi, theta, psi);
+        m_clippedMesh.Rotate(m_body->GetRotation().GetRotationMatrix());
 
         // Translation
         auto bodyPos = m_body->GetPosition(NWU); bodyPos.GetX() = 0.; bodyPos.GetY() = 0.;
@@ -98,11 +98,12 @@ namespace frydom {
 
         // Set the body position for horizontal correction in the clipping surface
         m_clipper->GetClippingSurface()->SetBodyPosition(m_body->GetPosition(NWU));
-        
+
         // Update the node vertical position for the clippingplane to the position of the tidal height (mean free surface position) 
         if (m_clippingSupport == ClippingSupport::PLANESURFACE) {
             Position Tide(0., 0., m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU));
-            c_nodeForClippingPlane->SetPositionInBody(Tide, NWU);
+//            c_nodeForClippingPlane->SetPositionInBody(Tide, NWU);
+            c_clippingPlane->SetOrigin(Tide, NWU);
         }
 
         // Application of the mesh clipper on the updated init mesh to obtain the clipped mesh
@@ -117,11 +118,13 @@ namespace frydom {
 
         m_initMesh = mesh::FrMesh(meshFile);
         m_initMesh.Translate(mesh::Vector3dToOpenMeshPoint(meshOffset.GetPosition(NWU)));
-        double phi, theta, psi;
-        meshOffset.GetRotation().GetCardanAngles_RADIANS(phi,theta,psi,NWU);
-        m_initMesh.Rotate(phi, theta, psi);
+        m_initMesh.Rotate(meshOffset.GetRotation().GetRotationMatrix());
 
         return m_initMesh;
+    }
+
+    FrHydroMesh::ClippingSupport FrHydroMesh::GetClippingSupport() const {
+        return m_clippingSupport;
     }
 
     std::shared_ptr<FrHydroMesh> make_hydro_mesh(const std::shared_ptr<FrBody>& body, FrHydroMesh::ClippingSupport support) {
