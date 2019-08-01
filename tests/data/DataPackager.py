@@ -10,13 +10,84 @@ from datetime import date, datetime
 import time
 import re
 
+# --------------------------------------------------------------
+# Derived class of filecmp.dircmp for recursive comparison
+# --------------------------------------------------------------
+
+
+class Compare(filecmp.dircmp):
+
+    def phase3(self):
+        """
+        Override for recursive comparison
+        :return: None
+        """
+        fcomp = filecmp.cmpfiles(self.left, self.right, self.common_files, shallow=False)
+        self.same_files, self.diff_files, self.funny_files = fcomp
+        return
+
+
+def ldiffer(file1, file2):
+    """
+    Print comparison of two files
+    :param file1: Name of the file 1
+    :param file2: Name of the file 2
+    :return: None
+    """
+    print(" ----- Compare files : %s and %s ------------- " % (file1, file2))
+
+    with open(file1, 'r') as f1, open(file2, 'r') as f2:
+        differ = Differ()
+
+        for line in difflib.unified_diff(f1.readlines(), f2.readlines()):
+            print(line)
+
+    print(" ---- End compare ----------------------------")
+
+
+# ----------------------------------------------------------------
+# Method to identify ignored files
+# ----------------------------------------------------------------
+
+def valuable_item(item):
+    res = True
+
+    try:
+        if item[-6:] == 'tar.gz':
+            return False
+    except:
+        pass
+
+    try:
+        if item == 'DataPackager.py':
+            return False
+    except:
+        pass
+
+    try:
+        if item[0] == '.':
+            return False
+    except:
+        pass
+
+    return True
+
+# -------------------------------------------------------------------
+# Data packager object
+# -------------------------------------------------------------------
+
 
 class Packager(object):
 
     def __init__(self):
+        """
+        Initialize packager object.
+        By default the package is connected to frydom-ce-data
+        """
         self._file_archive = None
         self._version = tuple()
         self._additional_elements = []
+        self._removed_data = []
         self._new_dir = []
         self._omitted_elements = []
         self._diff_files = []
@@ -24,21 +95,43 @@ class Packager(object):
 
     @property
     def str_version(self):
+        """
+        Return the current package version with format "x.y.z"
+        :return: "x.y.z"
+        """
         return '{}.{}.{}'.format(*self._version)
 
     def _connect(self, name_bucket):
+        """
+        Method to connect to a specific bucket in Amazon S3
+        :param name_bucket: Name of the bucket
+        :return: Bucket object
+        """
         print("Connect resources S3 : %s" % name_bucket)
         s3 = boto3.resource('s3')
         return s3.Bucket(name_bucket)
 
     def get_last_data(self, nhead=0):
+        """
+        Find the data archive with the highest version number.
+        If nhead not equal to 0, find the package at the nth position before the last package
+        Save the package name on file_archive
+        :param nhead: Position of the file archive before the file with the highest version number
+        :return: None
+        """
         files = list(self._bucket.objects.filter(Prefix="demo/data_"))
         self._file_archive, str_version = self.find_version(files, nhead)
 
         print("Last remote version : %s" % str_version)
+        return
 
     def download_file_archive(self, version="", nhead=0):
-
+        """
+        Download a specific data archive from Amazon S3
+        :param version: Version number with format 'x.y.z' (optional)
+        :param nhead: Position of the file archive before the file with the highest version number (optional)
+        :return: None
+        """
         if not version and nhead == 0:
             self.get_last_data()
         elif not version:
@@ -52,13 +145,23 @@ class Packager(object):
             self._bucket.download_file('demo/' + self._file_archive, self._file_archive)
         else:
             pass
+        return
 
     def extract_file_archive(self):
+        """
+        Extract file archive to a temporary folder .temp/
+        :return: None
+        """
         with tarfile.open(self._file_archive, 'r') as f:
             f.extractall(".temp/")
+        return
 
     def add(self, fname):
-
+        """
+        Add folder or file to the archive
+        :param fname: Name of the new item
+        :return: None
+        """
         if os.path.isdir(fname):
             for (dirpath, dirnames, filenames) in os.walk(fname):
                 for file in filenames:
@@ -72,8 +175,48 @@ class Packager(object):
 
         return
 
-    def _compare_folders(self, dir1, dir2):
+    def remove(self, fname):
+        """
+        Remove folder or file to the archive
+        :param fname: Name of the item to be removed
+        :return: None
+        """
+        self._removed_data.append(fname)
+        return
 
+    def find_version(self, files, nhead=0):
+        """
+        Find the version number of the file placed at the nth position before
+        the file with the highest version number on Amazon S3
+        :param files: List of files
+        :param nhead: Nth position before head
+        :return:
+            file_archive: Name of the file archive
+            str_version: Version number with format 'x.y.z'
+        """
+        table_version = np.array([], dtype=np.uint8)
+        for file in files:
+            file = file.key[5:]
+            list_version = list(int(val) for val in file[6:-7].split('.'))
+            table_version = np.append(table_version, list_version)
+        table_version = table_version.reshape((len(files), 3))
+
+        table_ordered = table_version[np.lexsort(np.fliplr(table_version).T)]
+
+        self._version = table_ordered[-nhead-1]
+
+        str_version = '{}.{}.{}'.format(*self._version)
+        file_archive = "data_v" + str_version + ".tar.gz"
+
+        return file_archive, str_version
+
+    def _compare_folders(self, dir1, dir2):
+        """
+        Compare files of two folders
+        :param dir1: First folder (left)
+        :param dir2: Second folder (right)
+        :return: None
+        """
         comp = Compare(dir1, dir2)
 
         new_dir = [os.path.normpath(os.path.join(dir1, item)) for item in comp.left_only if valuable_item(item)]
@@ -98,47 +241,11 @@ class Packager(object):
 
         return
 
-    def find_last_version(self, files):
-
-        list_version = []
-        for file in files:
-            file = file.key[5:]
-            list_version.append(list(int(val) for val in file[6:-7].split('.')))
-
-        temp = [val for val in list_version if val[0] == max(list_version)[0]]
-        temp2 = [val for val in temp if val[1] == max(temp)[1]]
-        temp3 = [val for val in temp2 if val[2] == max(temp2)[2]]
-
-        if len(temp3) > 1 or len(temp3) == 0:
-            print("error : unable to find maximum version")
-        else:
-            self._version = temp3[0]
-
-        str_version = '{}.{}.{}'.format(*self._version)
-        file_archive = "data_v" + str_version + ".tar.gz"
-
-        return file_archive, str_version
-
-    def find_version(self, files, nhead=0):
-
-        table_version = np.array([], dtype=np.uint8)
-        for file in files:
-            file = file.key[5:]
-            list_version = list(int(val) for val in file[6:-7].split('.'))
-            table_version = np.append(table_version, list_version)
-        table_version = table_version.reshape((len(files), 3))
-
-        table_ordered = table_version[np.lexsort(np.fliplr(table_version).T)]
-
-        self._version = table_ordered[-nhead-1]
-
-        str_version = '{}.{}.{}'.format(*self._version)
-        file_archive = "data_v" + str_version + ".tar.gz"
-
-        return file_archive, str_version
-
     def compare_to_local(self):
-
+        """
+        Compare files of the archive with local files
+        :return: None
+        """
         print("Check for update... ")
 
         self.extract_file_archive()
@@ -179,9 +286,20 @@ class Packager(object):
             for elem in self._diff_files:
                 print("    %s" % elem)
 
+        if len(self._removed_data) > 0:
+            print("\n--> Removed files : \n")
+            for elem in self._removed_data:
+                print("    %s" % elem)
+
         print("")
+        return
         
     def update_file(self, fname):
+        """
+        Add file to the updated list
+        :param fname: Name of the file
+        :return: None
+        """
         if fname not in self.updated_files:
             print("Adding %s to archive" % fname)
             self.updated_files.append(fname)
@@ -190,7 +308,11 @@ class Packager(object):
         return
             
     def update_version(self, version):
-        
+        """
+        Update the version number of the archive
+        :param version: Type of revision (release/major/minor) or version number (x.y.z)
+        :return: None
+        """
         if version == "release":
             self._version[0] += 1
             self._version[1] = 0
@@ -208,11 +330,36 @@ class Packager(object):
             
         return
 
-    def update(self, version):
+    def update_package_version(self):
+        """
+        Update the package version information file
+        :return: None
+        """
+        with open(os.path.join("package_version.info"), 'w') as f:
 
+            d = datetime.now()
+
+            f.write("Version : %s\n" % self.str_version)
+            f.write("Date : %s\n" % d.strftime("%Y/%m/%d %H:%M"))
+            f.write("\n")
+
+            for (dirpath, dirnames, filenames) in os.walk('.temp/'):
+                for file in filenames:
+                    f.write(os.path.join(os.path.basename(dirpath), file)+"\n")
+
+            for file in self._additional_elements:
+                f.write(file+"\n")
+            return
+
+    def update(self, version):
+        """
+        Update archive
+        :param version: Type of revision (release/major/minor) or version (x.y.z)
+        :return: None
+        """
         self.compare_to_local()
 
-        if len(self._additional_elements) > 0:
+        if len(self._additional_elements) > 0 or len(self._removed_data) > 0:
             print("Updating archive...")
 
             self.update_version(version)
@@ -226,6 +373,13 @@ class Packager(object):
             with tarfile.open(self._file_archive, 'r') as f:
                 print("--> Extract data from previous archive")
                 f.extractall(".temp/")
+
+            for relpath in self._removed_data:
+                path = os.path.join('.temp', relpath)
+                if os.path.isdir(path):
+                    rmtree(path)
+                elif os.path.isfile(path):
+                    os.remove(path)
 
             self.update_package_version()
 
@@ -242,139 +396,31 @@ class Packager(object):
 
             print("--> Delete temporary data")
             rmtree('.temp/')
-            print("New archive %s created" % new_archive)
+
+            print("***************************************************")
+            print("* New archive is created successfully")
+            print("* File : %s" % self._file_archive)
+            print("* Version : %s" % self.str_version)
+            print("* ")
+            print("* Not follow to update your project with corresponding version : ")
+            print("*     - ResourcePath.conf.cmake ")
+            print("*     - URL_DEMO_DATA.conf.cmake ")
+            print("****************************************************")
+
         else:
             print("Archive %s is already up to date" % self._file_archive)
 
     def upload(self):
+        """
+        Upload archive on Amazon S3
+        :return: None
+        """
+        print("-----------------------------------------")
         print("Upload %s to AWS S3" % self._file_archive)
+        print("-----------------------------------------")
         with open(self._file_archive, 'rb') as data:
             self._bucket.upload_fileobj(data, "demo/"+self._file_archive, ExtraArgs={'ACL':'public-read'})
-
-    def update_package_version(self):
-
-        with open(os.path.join("package_version.info"), 'w') as f:
-
-            d = datetime.now()
-
-            f.write("Version : %s\n" % self.str_version)
-            f.write("Date : %s\n" % d.strftime("%Y/%m/%d %H:%M"))
-            f.write("\n")
-
-            for (dirpath, dirnames, filenames) in os.walk('.temp/'):
-                for file in filenames:
-                    f.write(os.path.join(os.path.basename(dirpath), file)+"\n")
-
-            for file in self._additional_elements:
-                f.write(file+"\n")
-
-
-def print_diff_files(dcmp):
-    for name in dcmp.diff_files:
-        print("diff_file %s found in %s and %s" % (name, dcmp.left, dcmp.right))
-    for sub_dcmp in dcmp.subdirs.values():
-        print_diff_files(sub_dcmp)
-
-
-class Compare(filecmp.dircmp):
-    
-    def phase3(self):
-        fcomp = filecmp.cmpfiles(self.left, self.right, self.common_files, shallow=False)
-        self.same_files, self.diff_files, self.funny_files = fcomp
-
-
-def ldiffer(file1, file2):
-    
-    print(" ----- Compare files : %s and %s ------------- " % (file1, file2))
-    
-    with open(file1, 'r') as f1, open(file2, 'r') as f2:
-        differ = Differ()
-        
-        for line in difflib.unified_diff(f1.readlines(), f2.readlines()):
-            print(line)
-            
-    print(" ---- End compare ----------------------------")
-
-
-def valuable_item(item):
-       
-    res = True   
-       
-    try:
-        if item[-6:] == 'tar.gz':
-            return False
-    except:
-        pass
-
-    try:
-        if item == 'DataPackager.py':
-            return False
-    except:
-        pass
-    
-    try:
-        if item[0] == '.':
-            return False
-    except:
-        pass
-        
-        
-    return True
-    
-        
-def compare_directories(dir1, dir2):
-
-    comp = Compare(dir1, dir2)
-
-    new_dir = [item for item in comp.left_only if valuable_item(item)]
-
-    format_list = [dir1+'/{:>3}' for item in new_dir]
-    sl = '\n'.join(format_list)+'\n'
-    list_left_only = sl.format(*new_dir)
-
-    format_list = [dir1+'/{:>3}' for item in comp.diff_files]
-    sd = '\n'.join(format_list)+'\n'
-    list_diff_files = sd.format(*comp.diff_files)
-
-    for name in comp.diff_files:
-        ldiffer(os.path.join(dir1, name), os.path.join(dir2, name))
-
-    for subdir in comp.common_dirs:
-        res1, res2 = compare_directories(os.path.join(dir1, subdir), os.path.join(dir2, subdir))
-        list_left_only += res1
-        list_diff_files += res2
-
-    return list_left_only, list_diff_files
-
-
-def report_compared(text1, text2):
-    
-    print("")
-    
-    print(" -- New folder :\n")
-    print(text1)
-    
-    print(" -- Diff files : \n")
-    print(text2)
-    
-
-def main():
-
-    data = Packager()
-
-    data.download_file_archive()
-
-    data.add2("./FOSWEC")
-    data.add2("./Cylinder")
-    data.add2("./bench/sphere")
-
-    data.update("minor")
-
-    #data.upload()
-
-
-if __name__ == "__main__":
-    main()
+        return
 
 
 

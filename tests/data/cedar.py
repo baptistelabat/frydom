@@ -72,7 +72,9 @@ def get_parser(parser):
 
 def main():
 
+    # -------------------------------------------------------
     # Set parser
+    # -------------------------------------------------------
 
     parser = create_parser()
     parser = get_parser(parser)
@@ -84,7 +86,9 @@ def main():
 
     package = DataPackager.Packager()
 
-    # Download data
+    # --------------------------------------------------------
+    # Download data from Amazon S3
+    # --------------------------------------------------------
 
     if args.remote_version:
         package.download_file_archive(version=args.remote_version[0])
@@ -93,18 +97,38 @@ def main():
     else:
         package.download_file_archive()
 
+    # ---------------------------------------------------------
+    # Add / Remove elements
+    # ---------------------------------------------------------
+
     if args.add is not None:
         for element in args.add:
             package.add(element)
+
+    if args.remove is not None:
+        for element in args.remove:
+            package.remove(element)
+
+    # ---------------------------------------------------------
+    # Run diff
+    # ---------------------------------------------------------
 
     if args.diff:
         package.compare_to_local()
         return 0
 
+    # ---------------------------------------------------------
+    # Update archive
+    # ---------------------------------------------------------
+
     if args.new_version:
         package.update(version=args.new_version[0])
     elif args.type_revision:
         package.update(args.type_revision[0])
+
+    # ----------------------------------------------------------
+    # Upload
+    # ----------------------------------------------------------
 
     if not args.no_upload:
         package.upload()
