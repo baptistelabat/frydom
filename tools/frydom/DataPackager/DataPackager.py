@@ -406,9 +406,8 @@ class Packager(object):
             print("* File : %s" % self._file_archive)
             print("* Version : %s" % self.str_version)
             print("* ")
-            print("* Not follow to update your project with corresponding version : ")
-            print("*     - ResourcePath.conf.cmake ")
-            print("*     - URL_DEMO_DATA.conf.cmake ")
+            print("* Don't forget to update your project with corresponding")
+            print("* version in  URL_DEMO_DATA.conf.cmake ")
             print("****************************************************")
 
         else:
