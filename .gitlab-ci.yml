@@ -12,7 +12,7 @@
 #    script: *test_script
 
 
-image: alpine
+image: gvincke/frydom-ee-build:latest
 
 test:
     script:
