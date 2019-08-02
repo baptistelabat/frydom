@@ -80,4 +80,4 @@ def solve_wave_dispersion_relation(omega, depth, grav):
                     return y
                 y = dx
 
-    return np.asarray(map(xtanhx, omega2h_g), dtype=np.float) / depth
+    return np.asarray(list(map(xtanhx, omega2h_g)), dtype=np.float) / depth

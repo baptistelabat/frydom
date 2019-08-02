@@ -1,5 +1,5 @@
 Benchmark for the cable models (bench_Cables.cpp) {#tutorial_bench_cables}
-==============================
+=================================================
 
 This benchmark aims at comparing the two cable models implemented in FRyDoM: quasi-static catenary line and FEA dynamic cable.
 

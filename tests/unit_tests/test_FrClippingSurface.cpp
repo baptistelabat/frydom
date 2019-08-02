@@ -16,19 +16,17 @@ using namespace frydom;
 
 TEST(FrClippingPlaneTest,GetDistance) {
 
+    FRAME_CONVENTION fc = NWU;
+
     double x = 1., y = 5., z = 8.;
 
-    FrOffshoreSystem system;
-    auto body = system.NewBody();
-    auto node = body->NewNode();
-
-    auto planeXOY = std::make_shared<FrPlane>(node);
+    auto planeXOY = std::make_shared<geom::FrPlane>(Position(), Direction(0.,0.,1.), fc);
     mesh::FrClippingPlane clippingPlaneXOY(planeXOY);
 
-    auto planeYOZ = std::make_shared<FrPlane>(node, XAXIS);
+    auto planeYOZ = std::make_shared<geom::FrPlane>(Position(), Direction(1.,0.,0.), fc);
     mesh::FrClippingPlane clippingPlaneYOZ(planeYOZ);
 
-    auto planeZOX = std::make_shared<FrPlane>(node, YAXIS);
+    auto planeZOX = std::make_shared<geom::FrPlane>(Position(), Direction(0.,1,0.), fc);
     mesh::FrClippingPlane clippingPlaneZOX(planeZOX);
 
     EXPECT_NEAR(clippingPlaneXOY.GetDistance(mesh::FrMesh::Point(x, y , z)), z, 1E-16);
@@ -39,29 +37,26 @@ TEST(FrClippingPlaneTest,GetDistance) {
 
 TEST(FrClippingPlaneTest,GetIntersection) {
 
+    FRAME_CONVENTION fc = NWU;
+
     VectorT<double, 3> p0 (1., 5. , 8.);
     VectorT<double, 3> p1 (1., 5. , 3.);
 
-    FrOffshoreSystem system;
-    auto body = system.NewBody();
-    auto node = body->NewNode();
-    node->SetPositionInBody(Position(1,2,-3), NWU);
-
-    auto planeXOY = std::make_shared<FrPlane>(node);
+    auto planeXOY = std::make_shared<geom::FrPlane>(Position(1,2,-3),Direction(0.,0.,1.), fc);
     mesh::FrClippingPlane clippingPlaneXOY(planeXOY);
     clippingPlaneXOY.SetBodyPosition(Position(6,5,4));
 
-    std::cout<<clippingPlaneXOY.GetIntersection(p0, p1)<<std::endl;
+//    std::cout<<clippingPlaneXOY.GetIntersection(p0, p1)<<std::endl;
 
 
 
     VectorT<double, 3> p2 (1., 5. , 8.);
     VectorT<double, 3> p3 (1., 8. , 8.);
 
-    auto planeXOZ = std::make_shared<FrPlane>(node, YAXIS);
+    auto planeXOZ = std::make_shared<geom::FrPlane>(Position(1,2,-3),Direction(0.,1.,0.), fc);
     mesh::FrClippingPlane clippingPlaneXOZ(planeXOZ);
     clippingPlaneXOZ.SetBodyPosition(Position(6,5,4));
 
-    std::cout<<clippingPlaneXOZ.GetIntersection(p2, p3)<<std::endl;
+//    std::cout<<clippingPlaneXOZ.GetIntersection(p2, p3)<<std::endl;
 
 }

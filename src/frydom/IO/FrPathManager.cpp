@@ -123,5 +123,14 @@ namespace frydom{
         return filePath.path();
     }
 
+    void FrPathManager::SetResourcesPath(std::string absPath) {
+        m_resourcesPath.setPath(absPath);
+    }
+
+    std::string FrPathManager::GetDataPath(const std::string& relPath) const {
+        //cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+        cppfs::FilePath filePath = m_resourcesPath.resolve(fmt::format("{}", relPath));
+        return filePath.path();
+    }
 
 }// end namespace frydom

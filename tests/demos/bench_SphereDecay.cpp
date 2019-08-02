@@ -19,13 +19,12 @@ int main(int argc, char* argv[]) {
                  " Benchmark test : Sphere Decay \n"
                  " ===================================================== " << std::endl;
 
-    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
-
     // -- System
 
     FrOffshoreSystem system;
     system.SetName("Sphere_Decay");
     system.GetPathManager()->SetLogFrameConvention(NWU);
+    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
 
     auto Ocean = system.GetEnvironment()->GetOcean();
     Ocean->SetDensity(1000);
@@ -59,7 +58,8 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrodynamics
 
-    auto hdb = make_hydrodynamic_database(resources_path.resolve("sphere_hdb.h5").path());
+    //auto hdb = make_hydrodynamic_database(resources_path.resolve("sphere_hdb.h5").path());
+    auto hdb = make_hydrodynamic_database(system.GetDataPath("sphere_hdb.h5"));
 
     auto eqFrame = std::make_shared<FrEquilibriumFrame>(body.get());
     system.AddPhysicsItem(eqFrame);

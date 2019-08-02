@@ -1,6 +1,13 @@
+// ==========================================================================
+// FRyDoM - frydom-ce.org
 //
-// Created by frongere on 24/05/18.
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+//
+// ==========================================================================
 
 #include "FrHydrostaticsProperties.h"
 
@@ -18,6 +25,19 @@ namespace frydom {
         return tensor;
     }
 
+    FrHydrostaticsProperties::FrHydrostaticsProperties() : m_waterDensity(1023.), m_gravityAcceleration(9.81) {}
+
+    FrHydrostaticsProperties::FrHydrostaticsProperties(double waterDensity, double gravityAcceleration) :
+            m_waterDensity(waterDensity),
+            m_gravityAcceleration(gravityAcceleration) {}
+
+    FrHydrostaticsProperties::FrHydrostaticsProperties(double waterDensity, double gravityAcceleration,
+                                                       mesh::FrMesh &clipped_mesh, Position cog) :
+            m_waterDensity(waterDensity),
+            m_gravityAcceleration(gravityAcceleration),
+            m_clippedMesh(clipped_mesh),
+            m_centerOfGravity(cog) {}
+
     void FrHydrostaticsProperties::Process() {
         CalcGeometricProperties();
         CalcHydrostaticProperties();
@@ -26,8 +46,21 @@ namespace frydom {
     void FrHydrostaticsProperties::CalcGeometricProperties() {
         auto bbox = m_clippedMesh.GetBoundingBox();
         m_draught = fabs(bbox.zmin);
-        m_lengthAtWaterLine = bbox.xmax - bbox.xmin; // FIXME: attention, ca ne fonctione pas !! Il faut iterer sur les polygones frontiere pour en tirer la bbox...
-        // TODO: terminer !!!
+
+        double xMin, xMax;
+        xMin = m_clippedMesh.GetBoundaryPolygonSet()[0].GetBoundingBox().xmin;
+        xMax = m_clippedMesh.GetBoundaryPolygonSet()[0].GetBoundingBox().xmax;
+
+        for (auto& polygon : m_clippedMesh.GetBoundaryPolygonSet()) {
+            xMin = fmin(xMin, polygon.GetBoundingBox().xmin);
+            xMax = fmax(xMax, polygon.GetBoundingBox().xmax);
+        }
+
+        m_lengthOverallSubmerged = m_clippedMesh.GetBoundingBox().xmax - m_clippedMesh.GetBoundingBox().xmin;
+        m_breadthOverallSubmerged = m_clippedMesh.GetBoundingBox().ymax - m_clippedMesh.GetBoundingBox().ymin;
+        m_lengthAtWaterLine = xMax - xMin;
+
+
     }
 
     double FrHydrostaticsProperties::CalcHydrostaticProperties() {
@@ -48,34 +81,46 @@ namespace frydom {
         // Computing temporaries
         double rg = m_waterDensity * m_gravityAcceleration;
 
-        m_waterPlaneArea = m_clippedMesh.GetBoundaryPolygonsSurfaceIntegral(mesh::POLY_1);
+        m_hullWetArea = m_clippedMesh.GetArea();
 
-        m_hydrostaticTensor.K33 =  rg * m_waterPlaneArea;
-        m_hydrostaticTensor.K34 =  rg * (m_clippedMesh.GetBoundaryPolygonsSurfaceIntegral(mesh::POLY_Y)
-                                         -m_centerOfGravity[1] * m_waterPlaneArea);
-        m_hydrostaticTensor.K35 = -rg * (m_clippedMesh.GetBoundaryPolygonsSurfaceIntegral(mesh::POLY_X)
-                                         -m_centerOfGravity[0] * m_waterPlaneArea);
-        m_hydrostaticTensor.K45 = -rg * (m_clippedMesh.GetBoundaryPolygonsSurfaceIntegral(mesh::POLY_XY)
-                                         -m_centerOfGravity[1] * m_clippedMesh.GetBoundaryPolygonsSurfaceIntegral(mesh::POLY_X)
-                                         -m_centerOfGravity[0] * m_clippedMesh.GetBoundaryPolygonsSurfaceIntegral(mesh::POLY_Y)
-                                         +m_centerOfGravity[0]*m_centerOfGravity[1]*m_waterPlaneArea);
+        for (auto& polygon : m_clippedMesh.GetBoundaryPolygonSet()) {
 
-        m_waterPlaneCenter = { // FIXME: valable uniquement avant les corrections precedentes sur le point de calcul !!!
-                -m_hydrostaticTensor.K35 / m_hydrostaticTensor.K33,
-                m_hydrostaticTensor.K34 / m_hydrostaticTensor.K33,
-                0.
-        };
+            assert(polygon.GetPlane().GetFrame().GetRotation().GetQuaternion().GetRotationMatrix().IsIdentity());
 
-        m_transversalMetacentricRadius  =
-                (m_clippedMesh.GetBoundaryPolygonsSurfaceIntegral(mesh::POLY_Y2)
-                 -2.*m_centerOfGravity[1]*m_clippedMesh.GetBoundaryPolygonsSurfaceIntegral(mesh::POLY_Y)
-                 +m_centerOfGravity[1]*m_centerOfGravity[1]*m_waterPlaneArea)
-                / m_volumeDisplacement;
-        m_longitudinalMetacentricRadius =
-                (m_clippedMesh.GetBoundaryPolygonsSurfaceIntegral(mesh::POLY_X2)
-                 -2.*m_centerOfGravity[0]*m_clippedMesh.GetBoundaryPolygonsSurfaceIntegral(mesh::POLY_X)
-                 +m_centerOfGravity[0]*m_centerOfGravity[0]*m_waterPlaneArea)
-                / m_volumeDisplacement;
+            auto BoundaryPolygonsSurfaceIntegral = polygon.GetSurfaceIntegrals();
+
+            m_waterPlaneArea += BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_1);
+
+            m_hydrostaticTensor.K33 +=  rg * m_waterPlaneArea;
+            m_hydrostaticTensor.K34 +=  rg * (BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_Y)
+                                             -m_centerOfGravity[1] * m_waterPlaneArea);
+            m_hydrostaticTensor.K35 += -rg * (BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_X)
+                                             -m_centerOfGravity[0] * m_waterPlaneArea);
+            m_hydrostaticTensor.K45 += -rg * (BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_XY)
+                                             -m_centerOfGravity[1] * BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_X)
+                                             -m_centerOfGravity[0] * BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_Y)
+                                             +m_centerOfGravity[0]*m_centerOfGravity[1]*m_waterPlaneArea);
+
+            m_waterPlaneCenter += Position ( // FIXME: valable uniquement avant les corrections precedentes sur le point de calcul !!!
+                    -m_hydrostaticTensor.K35 / m_hydrostaticTensor.K33,
+                    m_hydrostaticTensor.K34 / m_hydrostaticTensor.K33,
+                    0.
+            );
+
+            m_transversalMetacentricRadius  +=
+                    (BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_Y2)
+                     -2.*m_centerOfGravity[1]*BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_Y)
+                     +m_centerOfGravity[1]*m_centerOfGravity[1]*m_waterPlaneArea)
+                    / m_volumeDisplacement;
+            m_longitudinalMetacentricRadius +=
+                    (BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_X2)
+                     -2.*m_centerOfGravity[0]*BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_X)
+                     +m_centerOfGravity[0]*m_centerOfGravity[0]*m_waterPlaneArea)
+                    / m_volumeDisplacement;
+
+            m_hullWetArea -= polygon.GetArea();
+
+        }
 
         double zb_zg = m_buoyancyCenter[2] - m_centerOfGravity[2];
 
@@ -85,8 +130,6 @@ namespace frydom {
         double rgV = rg * m_volumeDisplacement;
         m_hydrostaticTensor.K44 = rgV * m_transversalMetacentricHeight;
         m_hydrostaticTensor.K55 = rgV * m_longitudinalMetacentricHeight;
-
-        m_hullWetArea = m_clippedMesh.GetArea();
 
     }
 
@@ -104,6 +147,18 @@ namespace frydom {
         mat(0, 2) = mat(2, 0) = m_hydrostaticTensor.K35;
         mat(1, 2) = mat(2, 1) = m_hydrostaticTensor.K45;
         return mat;
+    }
+
+    const mesh::FrMesh &FrHydrostaticsProperties::GetHydrostaticMesh() const {
+        return m_clippedMesh;
+    }
+
+    double FrHydrostaticsProperties::GetTransversalMetacentricHeight() const {
+        return m_transversalMetacentricHeight;
+    }
+
+    double FrHydrostaticsProperties::GetLongitudinalMetacentricHeight() const {
+        return m_longitudinalMetacentricHeight;
     }
 
 }  // end namespace frydom

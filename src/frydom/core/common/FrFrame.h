@@ -14,6 +14,7 @@
 #define FRYDOM_FRFRAME_H
 
 #include "chrono/core/ChFrame.h"
+#include "chrono/core/ChMatrixDynamic.h"
 
 #include "frydom/core/math/FrVector.h"
 #include "frydom/core/math/FrEulerAngles.h"
@@ -359,6 +360,8 @@ namespace frydom {
         }
 
         Position GetPointPositionInParent(const Position& framePos, FRAME_CONVENTION fc) const;
+
+        Position GetPointPositionInFrame(const Position& parentPos, FRAME_CONVENTION fc) const;
 
 
         friend std::ostream&operator<<(std::ostream& os, const FrFrame& frame);

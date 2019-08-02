@@ -1,5 +1,5 @@
 Benchmark for a sphere in regular waves (bench_SphereRegular.cpp) {#tutorial_bench_sphere_regular}
-=======================================
+=================================================================
 
 This benchmark corresponds to the simulation of a sphere in heave motion submitted to regular waves. This simulation is 
 presented by the International Energy Agency (IEA) Offshore Energy System (OES) Task 10 [OES10] as a benchmark case for 
