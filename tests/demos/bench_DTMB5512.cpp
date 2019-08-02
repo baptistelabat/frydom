@@ -53,7 +53,7 @@ FrLinearActuator* make_carriage(FrOffshoreSystem* system, const std::shared_ptr<
     makeItBox(tankWall, tankLength, 0.1*tankWidth, 1.25*tankDepth, mass);
 
     Position tankWallPosition = shipNode->GetPositionInWorld(fc); tankWallPosition.GetZ() = 0.;
-    tankWallPosition -= Position(-0.45*tankLength,0.55*tankWidth,0.375*tankDepth);
+    tankWallPosition -= Position(-0.45*tankLength,0.5*tankWidth,0.375*tankDepth);
     tankWall->SetPosition(tankWallPosition,fc);
 
     auto wallNode = tankWall->NewNode();
@@ -66,6 +66,7 @@ FrLinearActuator* make_carriage(FrOffshoreSystem* system, const std::shared_ptr<
 
     auto carriage = system->NewBody();
     carriage->SetName("Carriage");
+    carriage->SetPositionOfBodyPoint(Position(0.,-0.5*tankWidth,0.), wallNode->GetPositionInWorld(fc), fc);
 
     double xSize = 0.1*tankWidth;
     double ySize = 1.1*tankWidth;
@@ -82,16 +83,18 @@ FrLinearActuator* make_carriage(FrOffshoreSystem* system, const std::shared_ptr<
     double Izz = (1./12.) * mass * (xSize2 + ySize2);
 
     carriage->SetInertiaTensor(FrInertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., Position(), NWU));
-    carriage->AddMeshAsset(resources_path.resolve("carriage_scale5.obj").path());
+
+    auto carriageAsset = std::make_shared<FrTriangleMeshConnected>();
+    carriageAsset->LoadWavefrontMesh(resources_path.resolve("carriage.obj").path());
+    carriageAsset->Scale(tankWidth);
+    carriage->AddMeshAsset(carriageAsset);
 
     auto carriageToWallNode = carriage->NewNode();
     carriageToWallNode->SetPositionInBody(Position(0.,-0.5*tankWidth,0.), fc);
     carriageToWallNode->RotateAroundYInBody(-90*DEG2RAD,fc);
 
     auto carriageToShipNode = carriage->NewNode();
-    //auto shipToCarriagePosition = Position(0., 0., -0.25*tankDepth - 0.5*tankWidth + 0.03);
-    auto shipToCarriagePosition = Position(0., 0., 0.03);
-    carriageToShipNode->SetPositionInWorld(shipToCarriagePosition, fc);
+    carriageToShipNode->SetPositionInWorld(shipNode->GetPositionInWorld(fc), fc);
     carriageToShipNode->RotateAroundYInBody(90*DEG2RAD,fc);
     carriageToShipNode->RotateAroundXInBody(90*DEG2RAD,fc);
 
@@ -99,7 +102,10 @@ FrLinearActuator* make_carriage(FrOffshoreSystem* system, const std::shared_ptr<
     // Link definitions
     // --------------------------------------------------
 
-    auto linkToShip = make_prismatic_revolute_link(carriageToShipNode, shipNode, system);
+    if (is_captive)
+        auto linkToShip = make_fixed_link(carriageToShipNode, shipNode, system);
+    else
+        auto linkToShip = make_prismatic_revolute_link(carriageToShipNode, shipNode, system);
 
     auto rail = make_prismatic_link(wallNode, carriageToWallNode, system);
 
@@ -183,7 +189,7 @@ int main(int argc, char* argv[]) {
     double Tk = atof(argv[3]);      // Wave period (s)
     char* name = argv[4];     // Output director prefix name
 
-    bool captive_test = false;      // fixed heave and pitch motions
+    bool captive_test = true;      // fixed heave and pitch motions
 
     // -- System
 
@@ -277,13 +283,6 @@ int main(int argc, char* argv[]) {
 
     auto carriage = make_carriage(&system, shipNode, captive_test);
     carriage->SetMotorFunction(FrConstantFunction(speed));
-
-    if (captive_test) {
-        body->GetDOFMask()->SetLock_Z(true);
-        body->GetDOFMask()->SetLock_Ry(true);
-    }
-
-    // -- Simulation
 
     auto dt = 0.008;
 
