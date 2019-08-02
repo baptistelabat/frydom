@@ -38,6 +38,11 @@ Demonstration of particular application cases
 
 -   @subpage tutorial_demo_HexagonalArticulatedBuoy
 
+-   @subpage tutorial_demo_Langlee
+
+-   @subpage tutorial_demo_FOSWEC
+
+
 Benchmarks
 ==========
 
