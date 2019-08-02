@@ -21,8 +21,6 @@ The following Python packages have to be installed::
 
     pip install numpy
     pip install scipy
-    pip install vtk
-    pip install rstcloth
     pip install matplotlib==2.0.0
 
 It is also necessary to install *Meshmagick* to manage meshes:
