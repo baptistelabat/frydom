@@ -36,6 +36,8 @@ Demonstration of particular application cases
 
 -   @subpage tutorial_demo_Hub_Installation
 
+-   @subpage tutorial_demo_HexagonalArticulatedBuoy
+
 Benchmarks
 ==========
 
