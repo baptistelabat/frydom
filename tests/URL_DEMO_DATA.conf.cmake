@@ -1,7 +1,7 @@
 message(STATUS "      ...URL_DEMO_DATA")
 
 set(AWS_URL https://frydom-ce-data.s3.amazonaws.com/demo)
-set(VERSION "1.0.4")
+set(VERSION "1.0.5")
 set(DATA_FILE data_v${VERSION}.tar.gz)
 
 set(OUT ${CMAKE_SOURCE_DIR}/tests/data/${DATA_FILE})
