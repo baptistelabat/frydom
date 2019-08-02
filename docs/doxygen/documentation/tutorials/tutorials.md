@@ -18,6 +18,10 @@ Illustration of FRyDoM features and capabilities
     
 -   @subpage tutorial_demo_MooringLines
 
+-   @subpage tutorial_demo_Links
+
+-   @subpage tutorial_demo_Hydrostatics
+
 
 Demonstration of particular application cases
 =============================================
@@ -25,8 +29,6 @@ Demonstration of particular application cases
 -   @subpage tutorial_demo_Ballistic
 
 -   @subpage tutorial_demo_Cable
-
--   @subpage tutorial_demo_Links
 
 -   @subpage tutorial_demo_Constraints
 
@@ -40,6 +42,8 @@ Benchmarks
 -   @subpage tutorial_bench_cables
 
 -   @subpage tutorial_bench_DTMB
+
+-   @subpage tutorial_bench_HSNL_box
 
 -   @subpage tutorial_bench_sphere_decay
 

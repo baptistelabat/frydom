@@ -66,7 +66,6 @@ int main(int argc, char* argv[]) {
                  " ===================================================== " << std::endl;
 
     cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
-//    cppfs::FilePath resources_path("/home/lletourn/Documents/DEV/frydom/tests/data/bench/box");
 
     // -- System
 
@@ -118,7 +117,7 @@ int main(int argc, char* argv[]) {
     system.Initialize();
 
     // Decay test initial position.
-    FrRotation decayRot; //decayRot.RotX_DEGREES(10., NWU);
+    FrRotation decayRot;
     decayRot.SetCardanAngles_DEGREES(20.,0.,0.,NWU);
     body->SetPosition(Position(0., 0., 2.), NWU);
     body->SetRotation(decayRot);

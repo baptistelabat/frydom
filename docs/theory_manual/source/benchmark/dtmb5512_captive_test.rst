@@ -10,7 +10,7 @@ Description of the test case
 
 In this simulation, the 1:46.6 scale is considered which corresponds to the laboratory scale of the DTMB 5512 geometry used in the experimental campaigned made by the Iowa Institute of Hydraulic Research (IIHR). The hull model with no appendage, no propeller and no rudder is considered. The CAD model is freely available. The main characteristics of the vessel are summarized in the following table. The x-axis is pointing forward to the vessel and z-axis is pointing upward as represented in the following figure.
 
-.. _fig_DTMB5512_geometry
+.. _fig_DTMB5512_geometry:
 .. figure:: _static/DTMB5512_configuration.png
     :align: center
     :alt: DTMB5512 geometry
@@ -41,7 +41,7 @@ k35                   :math:`1.25`
 
 The DTMB5512 is mounted on a carriage with constant forward speed as represented in next figure.
 
-.. _fig_simulation_picture
+.. _fig_simulation_picture:
 .. figure:: _static/DTMB5512_simulation_picture.png
     :align: center
     :alt: DTMB5512 simulation

@@ -1,5 +1,5 @@
-Demonstration of kinematic links (demo_Links.cpp) {#tutorial_demo_Links}
-=====================================================
+Creating and setting up kinematic links (demo_Links.cpp) {#tutorial_demo_Links}
+========================================================
 
 This demo features kinematic links between bodies :
 - Fixed, 
