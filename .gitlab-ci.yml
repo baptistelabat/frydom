@@ -33,6 +33,7 @@ test:
         - mkdir build
         - cd build
         - cmake -Dfrydom_download_demo_data=OFF ..
+        - cmake -Dfrydom_download_demo_data=OFF ..
         - make all test -j4
 #    except:
 #        - master
