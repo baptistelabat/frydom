@@ -25,7 +25,7 @@ DTM5512
 .. toctree::
     :maxdepth: 2
 
-    dtmb5512_captive_test
+    dtmb5512_test
 
 Cables
 ~~~~~~
