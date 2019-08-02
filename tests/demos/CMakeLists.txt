@@ -26,7 +26,7 @@ set(BENCH
         SphereDecay
         SphereRegular
         SphereIrregular
-        DTMB5512_captive
+        DTMB5512
         Cables
         NonlinearHydrostaticBox
         )
@@ -45,7 +45,6 @@ set(Hydrodynamic_resources_path ${platform_resources_path})
 set(Morison_resources_path ${platform_resources_path})
 set(NonLinearHydrostatics_resources_path ${cylinder_resources_path})
 set(Hub_Installation_resources_path ${barge_resources_path})
-set(DTMB5512_captive_resources_path ${DTMB5512_resources_path})
 
 # Compile target
 foreach(test ${DEMOS})
