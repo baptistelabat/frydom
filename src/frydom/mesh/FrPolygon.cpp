@@ -27,7 +27,7 @@ namespace frydom {
 
             c_planar = CheckPlanar();
 
-            UpdateBoundariesSurfacePolynomialIntegrals();
+            ComputeSurfacePolynomialIntegrals();
         }
 
         std::vector<Position> FrPolygon::GetVertexList(FRAME_CONVENTION fc) const {
@@ -57,7 +57,7 @@ namespace frydom {
             return GetSurfaceIntegral(POLY_1);
         }
 
-        void FrPolygon::UpdateBoundariesSurfacePolynomialIntegrals() {
+        void FrPolygon::ComputeSurfacePolynomialIntegrals() {
 
             assert(IsPlanar());
 
@@ -107,11 +107,11 @@ namespace frydom {
             IntX2 /= 12.;
             IntY2 /= -12.;
 
-            c_surfaceIntegrals = BoundaryPolygonSurfaceIntegrals(Int1, IntX, IntY, IntXY, IntX2, IntY2);
+            c_surfaceIntegrals = PolygonSurfaceIntegrals(Int1, IntX, IntY, IntXY, IntX2, IntY2);
 
         }
 
-        BoundaryPolygonSurfaceIntegrals FrPolygon::GetSurfaceIntegrals() const {
+        PolygonSurfaceIntegrals FrPolygon::GetSurfaceIntegrals() const {
             return c_surfaceIntegrals;
         }
 
@@ -165,6 +165,25 @@ namespace frydom {
 
         geom::FrPlane FrPolygon::GetPlane() const {
             return geom::FrPlane(m_vertexList, NWU);
+        }
+
+        Fr2DAABB FrPolygon::GetBoundingBox() const {
+            Fr2DAABB bbox;
+
+            //FIXME : plutôt utiliser GetVertexInPlane? --> semi-OOBB?
+
+            bbox.xmin = m_vertexList[0].GetX();
+            bbox.xmax = m_vertexList[0].GetX();
+            bbox.ymin = m_vertexList[0].GetY();
+            bbox.ymax = m_vertexList[0].GetY();
+
+            for (auto& vertex : m_vertexList) {
+                bbox.xmin = fmin(bbox.xmin, vertex.GetX());
+                bbox.xmax = fmax(bbox.xmax, vertex.GetX());
+                bbox.ymin = fmin(bbox.ymin, vertex.GetY());
+                bbox.ymax = fmax(bbox.ymax, vertex.GetY());
+            }
+            return bbox;
         }
 
 

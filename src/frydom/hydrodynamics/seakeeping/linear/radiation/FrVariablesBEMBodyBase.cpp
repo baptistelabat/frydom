@@ -124,8 +124,6 @@ namespace frydom {
 
             if (vect.Equals(GetVariablesQb(HDB->GetBody(m_BEMBody)))) {
 
-                std::cout << "Compute_inc_Mb_v : Qb == vect" << std::endl;
-
                 for (auto bodyMotion = HDB->begin(); bodyMotion != HDB->end(); bodyMotion++) {
                     if (bodyMotion->second->IsActive()) {
                         auto qb = GetVariablesQb(bodyMotion->second);
@@ -140,8 +138,6 @@ namespace frydom {
                 }
 
             } else {
-
-                std::cout << "Compute_inc_Mb_v : Qb != vect" << std::endl;
 
                 auto generalizedMass = m_radiationModelBase->GetGeneralizedMass(m_BEMBody, m_BEMBody);
 

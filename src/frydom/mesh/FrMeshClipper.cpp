@@ -164,7 +164,7 @@ namespace frydom {
             m_ProjectionThresholdRatio = projectionThresholdRatio;
         }
 
-        void FrMeshClipper::SetEps(double eps) {
+        void FrMeshClipper::SetThreshold(double eps) {
             m_Threshold = eps;
         }
 
@@ -231,7 +231,7 @@ namespace frydom {
 
         bool FrMeshClipper::HasProjection(const FaceHandle &fh) {
 
-            /// This function performs the clipping of a panel with the incoming wave field.
+            /// This function performs the clipping of a panel with the clipping surface.
 
             bool anyVertexProjected = false; // Initialization.
             double dist, edge_length;
@@ -302,7 +302,7 @@ namespace frydom {
         VertexPosition FrMeshClipper::ClassifyVertex(const VertexHandle &vh) const {
             double distance = GetVertexDistanceToSurface(vh);
 
-            // This function computes the distance wrt the incident wave and classifies the nodes.
+            // This function computes the distance wrt the clipping surface and classifies the nodes.
 
             // TODO: On peut projeter le vertex si distance est petit (si plus petit que meanEdgeLength * m_threshold)
 
@@ -322,13 +322,13 @@ namespace frydom {
         FacePositionType
         FrMeshClipper::ClassifyFace(const FaceHandle &fh) { // TODO: renvoyer le resultat !!
 
-            /// This function classfies faces wrt the incident wave field.
+            /// This function classfies faces wrt the clipping surface.
 
             FacePositionType fPos;
             unsigned int nbAbove, nbUnder;
             nbAbove = nbUnder = 0;
 
-            // Counting the number of vertices above and under the plane.
+            // Counting the number of vertices above and under the clipping surface.
             FrMesh::FaceVertexIter fv_iter = m_mesh->fv_iter(fh);
             for (; fv_iter.is_valid(); ++fv_iter) {
 
@@ -340,7 +340,7 @@ namespace frydom {
                 }
             }
 
-            // Face under or on the free surface.
+            // Face under or on the clipping surface.
             if (nbAbove == 0) {
                 if (nbUnder == 0) {
                     fPos = FPT_030;
@@ -351,7 +351,7 @@ namespace frydom {
                 } else {
                     fPos = FPT_003;
                 }
-                // Face crossing the free surface.
+                // Face crossing the clipping surface.
             } else if (nbAbove == 1) {
                 if (nbUnder == 0) {
                     fPos = FPT_120;
@@ -360,14 +360,14 @@ namespace frydom {
                 } else {
                     fPos = FPT_102;
                 }
-                // Face crossing the free surface.
+                // Face crossing the clipping surface.
             } else if (nbAbove == 2) {
                 if (nbUnder == 0) {
                     fPos = FPT_210;
                 } else {
                     fPos = FPT_201;
                 }
-                // Face above the free surface.
+                // Face above the clipping surface.
             } else {
                 fPos = FPT_300;
             }
@@ -398,7 +398,7 @@ namespace frydom {
                     // Totally wet, we keep the face
                     break;
                 case FPT_030:
-                    // Face on the free surface.
+                    // Face on the clipping surface.
                     FlagFaceToBeDeleted(fh);
                     break;
                 case FPT_102:
@@ -448,7 +448,7 @@ namespace frydom {
                     break;
 
                 case FPT_120:
-                    // Face above and on the free surface.
+                    // Face above and on the clipping surface.
                     FlagFaceToBeDeleted(fh);
                     break;
 
@@ -471,12 +471,12 @@ namespace frydom {
                     break;
 
                 case FPT_210:
-                    // Face above and on the free surface.
+                    // Face above and on the clipping surface.
                     FlagFaceToBeDeleted(fh);
                     break;
 
                 case FPT_300:
-                    // Face above the free surface.
+                    // Face above the clipping surface.
                     FlagFaceToBeDeleted(fh);
                     break;
 
@@ -525,7 +525,7 @@ namespace frydom {
 
         bool FrMeshClipper::IsEdgeCrossing(const EdgeHandle &eh) {
 
-            /// This function checks if an edge crossed the free surface or not.
+            /// This function checks if an edge crossed the clipping surface or not.
 
             FrMesh::HalfedgeHandle heh = m_mesh->halfedge_handle(eh, 0);
             double dz_0 = GetVertexDistanceToSurface(m_mesh->from_vertex_handle(heh));
@@ -536,7 +536,7 @@ namespace frydom {
             if (fabs(dz_0) < m_Threshold || fabs(dz_1) < m_Threshold) {
                 out = false;
             } else {
-                // If prof is negative, the two vertices are not on the same side of the free surface.
+                // If prof is negative, the two vertices are not on the same side of the clipping surface.
                 out = (prod < 0.);
             }
 
@@ -545,14 +545,14 @@ namespace frydom {
 
         bool FrMeshClipper::IsHalfEdgeCrossing(const HalfedgeHandle &heh) {
 
-            /// This function checks if a halfedge crossed the free surface or not.
+            /// This function checks if a halfedge crossed the clipping surface or not.
 
             return IsEdgeCrossing(m_mesh->edge_handle(heh));
         }
 
         bool FrMeshClipper::IsHalfEdgeDownCrossing(const HalfedgeHandle &heh) {
 
-            /// This function checks if a halfedge crossed the free surface downwardly.
+            /// This function checks if a halfedge crossed the clipping surface downwardly.
 
             double dz_from = GetVertexDistanceToSurface(m_mesh->from_vertex_handle(heh));
             double dz_to = GetVertexDistanceToSurface(m_mesh->to_vertex_handle(heh));
@@ -567,7 +567,7 @@ namespace frydom {
 
         bool FrMeshClipper::IsHalfEdgeUpCrossing(const HalfedgeHandle &heh) {
 
-            /// This function checks if a halfedge crossed the free surface upwardly.
+            /// This function checks if a halfedge crossed the clipping surface upwardly.
 
             double dz_from = GetVertexDistanceToSurface(m_mesh->from_vertex_handle(heh));
             double dz_to = GetVertexDistanceToSurface(m_mesh->to_vertex_handle(heh));
@@ -582,7 +582,7 @@ namespace frydom {
 
         HalfedgeHandle FrMeshClipper::FindUpcrossingHalfEdge(const FaceHandle &fh) {
 
-            /// This function tracks the halfedge which crosses the free surface upwardly.
+            /// This function tracks the halfedge which crosses the clipping surface upwardly.
 
             // TODO: throw error if no upcrossing halfedge is found
             FrMesh::HalfedgeHandle heh = m_mesh->halfedge_handle(fh);
@@ -594,7 +594,7 @@ namespace frydom {
 
         HalfedgeHandle FrMeshClipper::FindDowncrossingHalfEdge(const FaceHandle &fh) {
 
-            /// This function tracks the halfedge which crosses the free surface downwardly.
+            /// This function tracks the halfedge which crosses the clipping surface downwardly.
 
             // TODO: throw error if no downcrossing halfedge is found
             FrMesh::HalfedgeHandle heh = m_mesh->halfedge_handle(fh);

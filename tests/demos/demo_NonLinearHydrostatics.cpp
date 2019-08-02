@@ -37,12 +37,10 @@ int main(int argc, char* argv[]) {
 
     // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
     FrOffshoreSystem system;
-    system.SetName("NonLinearHydrostatics_FreeTrans");
+    system.SetName("NonLinearHydrostatics");
+    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
 
     system.GetEnvironment()->GetOcean()->SetDensity(1023.);
-
-    // Resources path
-    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
 
     // --------------------------------------------------
     // Environment
@@ -113,7 +111,7 @@ int main(int argc, char* argv[]) {
 //    meshOffset.SetRotation(cylRotation);
 
     // -- Hydrodynamic mesh
-    auto CylinderMesh = make_hydro_mesh(cylinder, resources_path.resolve("Free_cylinder_2900_panels.obj").path(),
+    auto CylinderMesh = make_hydro_mesh(cylinder, system.GetDataPath("Free_cylinder_2900_panels.obj"),
             meshOffset, FrHydroMesh::ClippingSupport::PLANESURFACE);
 
     // Writing the initial mesh, for checking only

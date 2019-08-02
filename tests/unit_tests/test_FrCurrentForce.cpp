@@ -119,7 +119,9 @@ void TestFrUniformCurrent_::LoadData(std::string filename) {
 
 void TestFrUniformCurrent_::SetUp() {
 
-    LoadData("TNR_database.h5");
+    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
+
+    LoadData(system.GetDataPath("TNR_database.h5"));
 //    system.GetEnvironment()->GetOcean()->GetCurrent()->GetField()->Set(m_angle, m_speed, m_angleUnit, m_speedUnit, m_frame, m_convention);
     system.GetEnvironment()->GetOcean()->GetCurrent()->GetFieldUniform()->Set(m_angle, m_speed, m_angleUnit, m_speedUnit, m_frame, m_convention);
 
@@ -215,9 +217,9 @@ public:
 
 void TestFrCurrentForce_::SetUp() {
 
-    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
 
-    this->LoadData(resources_path.resolve("TNR_database.h5").path());
+    this->LoadData(system.GetDataPath("TNR_database.h5"));
 
     body = std::make_shared<FrBody_>();
     body->SetPosition(bodyPositionInWorld, NWU);

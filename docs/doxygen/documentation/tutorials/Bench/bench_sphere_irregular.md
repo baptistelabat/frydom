@@ -1,5 +1,5 @@
 Benchmark for a sphere in irregular waves (bench_SphereIrregular.cpp) {#tutorial_bench_sphere_irregular}
-=======================================
+=====================================================================
 
 This comparison corresponds to the simulation of a sphere in heave motion submitted to irregular waves. The model is 
 presented by the International Energy Agency (IEA) Offshore Energy System (OES) Task 10 [OES10] as a benchmark case for 

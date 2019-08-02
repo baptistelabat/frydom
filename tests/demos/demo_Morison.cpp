@@ -32,9 +32,7 @@ int main(int argc, char* argv[]) {
     // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
     FrOffshoreSystem system;
     system.SetName("demo_Morison");
-
-    // Resources path
-    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
 
     // ------------------ Wave Field ------------------ //
 
@@ -99,7 +97,7 @@ int main(int argc, char* argv[]) {
         auto Platform = system.NewBody();
         Platform->SetName("platform");
 
-        Platform->AddMeshAsset(resources_path.resolve("Platform_GVA7500.obj").path());
+        Platform->AddMeshAsset(system.GetDataPath("Platform_GVA7500.obj"));
 
         Platform->SetFixedInWorld(true);
 

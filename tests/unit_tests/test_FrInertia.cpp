@@ -80,8 +80,8 @@ void TestInertia::LoadData(std::string filename) {
 
 void TestInertia::SetUp() {
 
-    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
-    this->LoadData(resources_path.resolve("TNR_database.h5").path());
+    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
+    this->LoadData(system.GetDataPath("TNR_database.h5"));
 
     body = system.NewBody();
     body->SetPosition(m_BodyPositionInWorld, NWU);

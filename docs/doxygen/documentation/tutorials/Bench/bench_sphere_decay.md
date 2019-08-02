@@ -1,5 +1,5 @@
-Benchmark for a decay test on a sphere (bench_SphereDecay.cpp.cpp) {#tutorial_bench_sphere_decay}
-==========================
+Benchmark for a decay test on a sphere (bench_SphereDecay.cpp) {#tutorial_bench_sphere_decay}
+==================================================================
 
 This benchmark corresponds to the simulation of a sphere in free-decay test. This simulation is presented by the 
 International Energy Agency (IEA) Offshore Energy System (OES) Task 10 [OES10] as a benchmark case for model validation 

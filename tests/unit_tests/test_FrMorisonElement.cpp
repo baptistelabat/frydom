@@ -352,8 +352,8 @@ TEST_F(TestMorison, SingleElementConstructor) {
 
 TEST_F(TestMorison, SingleElementForce) {
 
-    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
-    LoadData(resources_path.resolve("TNR_database.h5").path());
+    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
+    LoadData(system.GetDataPath("TNR_database.h5"));
 
     auto morison = std::make_shared<TestMorisonSingleElement>(body.get(), m_pointA, m_pointB, m_diameter, m_addedMass, m_dragCoeff,
                                                               m_frictionCoeff);
@@ -369,8 +369,8 @@ TEST_F(TestMorison, SingleElementForce) {
 
 TEST_F(TestMorison, SingleElementForceWithNode) {
 
-    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
-    LoadData(resources_path.resolve("TNR_database.h5").path());
+    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
+    LoadData(system.GetDataPath("TNR_database.h5"));
 
     auto nodeA = std::make_shared<FrNode>(body.get());
     nodeA->SetPositionInBody(m_pointA,NWU);
@@ -391,8 +391,8 @@ TEST_F(TestMorison, SingleElementForceWithNode) {
 
 TEST_F(TestMorison, CompositeElementWithPositions) {
 
-    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
-    LoadData(resources_path.resolve("TNR_database.h5").path());
+    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
+    LoadData(system.GetDataPath("TNR_database.h5"));
 
     auto morison = std::make_shared<FrMorisonCompositeElement>(body.get());
 
@@ -409,8 +409,8 @@ TEST_F(TestMorison, CompositeElementWithPositions) {
 
 TEST_F(TestMorison, CompositeElementWithNodes) {
 
-    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
-    LoadData(resources_path.resolve("TNR_database.h5").path());
+    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
+    LoadData(system.GetDataPath("TNR_database.h5"));
 
     auto morison = std::make_shared<FrMorisonCompositeElement>(body.get());
 
@@ -432,8 +432,8 @@ TEST_F(TestMorison, CompositeElementWithNodes) {
 
 TEST_F(TestMorison, ElementDiscretization) {
 
-    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
-    LoadData(resources_path.resolve("TNR_database.h5").path());
+    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
+    LoadData(system.GetDataPath("TNR_database.h5"));
 
     auto morison = std::make_shared<FrMorisonCompositeElement>(body.get());
 
@@ -450,8 +450,8 @@ TEST_F(TestMorison, ElementDiscretization) {
 
 TEST_F(TestMorison, TwoElements) {
 
-    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
-    LoadData(resources_path.resolve("TNR_database.h5").path());
+    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
+    LoadData(system.GetDataPath("TNR_database.h5"));
 
     auto morison = std::make_shared<FrMorisonCompositeElement>(body.get());
 
@@ -509,8 +509,8 @@ TEST_F(TestMorison, CompositeDiameter) {
 
 TEST_F(TestMorison, CompositionElementGeneralProperty) {
 
-    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
-    LoadData(resources_path.resolve("TNR_database.h5").path());
+    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
+    LoadData(system.GetDataPath("TNR_database.h5"));
 
     auto morison = std::make_shared<FrMorisonCompositeElement>(body.get());
 
@@ -532,8 +532,8 @@ TEST_F(TestMorison, CompositionElementGeneralProperty) {
 
 TEST_F(TestMorison, CompositionElementGeneralPropertyNode) {
 
-    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
-    LoadData(resources_path.resolve("TNR_database.h5").path());
+    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
+    LoadData(system.GetDataPath("TNR_database.h5"));
 
     auto morison = std::make_shared<FrMorisonCompositeElement>(body.get());
 

@@ -101,9 +101,9 @@ namespace frydom {
 
         protected:
 
-            double m_ThresholdDichotomy = 1e-4;
+            double m_ThresholdDichotomy = 1e-4;     ///< threshold for the dichotomy in the intersection computation
 
-            Position m_bodyPosition = {0.,0.,0.};
+            Position m_bodyPosition = {0.,0.,0.};   ///< horizontal position of the body, related to the mesh to be clipped
 
         public:
 
@@ -127,7 +127,7 @@ namespace frydom {
 
         private:
 
-            std::shared_ptr<geom::FrPlane> m_plane;
+            std::shared_ptr<geom::FrPlane> m_plane;     ///< plane used for clipping
 
         public:
 
@@ -151,7 +151,7 @@ namespace frydom {
 
         private:
 
-            FrFreeSurface* m_freeSurface;
+            FrFreeSurface* m_freeSurface;   ///< free surface used for clipping
 
         public:
 
@@ -192,24 +192,40 @@ namespace frydom {
             /// This function initializes the MeshClipper object from an input mesh and performs the clipping.
             void Apply(FrMesh* mesh);
 
-            void SetEps(double eps);
+            /// Set the threshold used for crossing and classifying computations
+            /// \param eps threshold
+            void SetThreshold(double eps);
 
+            /// Set the threshold used for projection computations
+            /// \param projectionThresholdRatio threshold
             void SetProjectionThresholdRatio(double projectionThresholdRatio);
 
+            /// Set the clipping surface to be used
+            /// \param clippingSurface clipping surface
             void SetClippingSurface(std::shared_ptr<FrClippingSurface> clippingSurface);
 
         private:
 
+            /// Initialize the mesh clipper
             void Initialize();
 
+            /// Clear the mesh
             void Clear();
 
+            /// This function classify the vertices wrt the clipping surface.
             void ClassifyVertices();
 
+            /// This function computes the distance wrt the clipping surface and classifies the nodes.
+            /// \param vh vertex to be classified
+            /// \return vertex position with respect to the clipping surface
             VertexPosition ClassifyVertex(const FrMesh::VertexHandle &vh) const;
 
+            /// This function classfies faces wrt the incident clipping surface.
+            /// \param fh face to be classified
+            /// \return face position with respect to the clipping surface
             FacePositionType ClassifyFace(const FrMesh::FaceHandle &fh);
 
+            /// Clip the mesh with the given clipping surface
             void Clip();
 
             void UpdateModifiedFaceProperties(FaceHandle fh);
