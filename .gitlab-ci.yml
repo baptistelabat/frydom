@@ -12,13 +12,27 @@
 #    script: *test_script
 
 
-image: alpine
+image: gvincke/frydom-ee-build:latest
 
 test:
+    before_script:
+        # check this out: https://docs.gitlab.com/ee/ci/ssh_keys/
+       - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+       - eval $(ssh-agent -s)
+       - mkdir -p ~/.ssh
+       - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+       - chmod 700 ~/.ssh
+       - chmod 700 ~/.ssh/id_rsa
+       - ssh-add
+       # also add the known hosts so we don't have to accept when connecting to the host
+       - echo "$SSH_KNOWN_HOSTS" | tr -d '\r' > ~/.ssh/known_hosts
+
+
     script:
         - rm -rf build
         - mkdir build
         - cd build
+        - cmake -Dfrydom_download_demo_data=OFF ..
         - cmake -Dfrydom_download_demo_data=OFF ..
         - make all test -j4
 #    except:
@@ -37,6 +51,17 @@ pages:
         - master
 
 theory:
+    before_script:
+        # check this out: https://docs.gitlab.com/ee/ci/ssh_keys/
+       - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+       - eval $(ssh-agent -s)
+       - mkdir -p ~/.ssh
+       - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+       - chmod 700 ~/.ssh
+       - chmod 700 ~/.ssh/id_rsa
+       - ssh-add
+       # also add the known hosts so we don't have to accept when connecting to the host
+       - echo "$SSH_KNOWN_HOSTS" | tr -d '\r' > ~/.ssh/known_hosts
     script:
         - cd docs/theory_manual
         - make html
