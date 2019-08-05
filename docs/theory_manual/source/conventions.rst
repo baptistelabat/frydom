@@ -14,17 +14,24 @@ Two frame conventions are defined:
 .. image:: _static/frame_convention.png
     :align: center
 
-The frame convention has to be specified for all methods setting positions, velocities, directions of bodies, flows, etc.
+.. important::
+    The frame convention has to be specified for all methods setting positions, velocities, directions of bodies, flows, etc.
 
 Direction conventions
 =====================
 
-Two direction conventions are defined: GOTO and COMEFROM. A GOTO North direction is opposed to a COMEFROM North direction.
+Two direction conventions are defined:
+
+- GOTO
+- COMEFROM. 
+
+A GOTO North direction is opposed to a COMEFROM North direction.
 
 .. image:: _static/direction_convention.png
     :align: center
 
-The direction convention is required for setting velocity flow, ship heading, wave direction, etc.
+
+.. important::
+    The direction convention is required for setting velocity flow, ship heading, wave direction, etc.
 
 
-[CC : pourquoi cette partie n'est pas dans "Coordinate systems" ?]
