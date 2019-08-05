@@ -12,7 +12,7 @@
 #    script: *test_script
 
 
-image: gvincke/frydom-ee-build:latest
+image: diceengineering/frydom-ce:latest
 
 test:
     before_script:
