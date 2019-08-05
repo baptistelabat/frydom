@@ -107,4 +107,3 @@ where :math:`\omega_0` is the natural period of the system and :math:`\xi` is th
 
 The behaviour of the system is adjusted with :math:`T_0 = 2\pi/\omega_0`, which can be seen as a "cutoff time" in seconds and :math:`\xi` the damping rate coefficient.
 
-[graphique avec la localisation de T0 et pour différentes valeurs de :math:`\xi` ?]

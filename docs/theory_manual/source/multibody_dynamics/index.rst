@@ -3,9 +3,7 @@
 Multibody dynamics
 ******************
 
-A multibody dynamics system is composed of different :any:`bodies <body>` or items linked with :any:`constraints <links>`,
- :any:`motor <motors>`, :any:`cables <line_theory>`, etc. Each body is associated to a body reference frame, defined
- in regards to the world reference frame.
+A multibody dynamics system is composed of different :any:`bodies <body>` or items linked with :any:`constraints <links>`, :any:`motor <motors>`, :any:`cables <line_theory>`, etc. Each body is associated to a body reference frame, defined in regards to the world reference frame.
 
 .. _multibody_big_picture:
 .. figure:: _static/multibody_big_picture.png

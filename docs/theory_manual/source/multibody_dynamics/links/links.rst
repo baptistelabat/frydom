@@ -13,9 +13,9 @@ defined using nodes attached to the two bodies.
 
     Representation of a cylindrical link between two bodies.
 
-In the previous figure, :math:`b_1` and :math:`b2` are respectively the reference frame of the first and second body, :math:`m_1` and :math:`m_2` are the node position to which the link is applied.
+In the previous figure, :math:`b_1` and :math:`b_2` are respectively the reference frame of the first and second body, :math:`m_1` and :math:`m_2` are the node positions to which the link is applied.
 
-Various kinematic links are implemented in FRyDoM (see next table)
+Various kinematic links are implemented in FRyDoM. They are listed in the following table.
 
 .. |cylindrical| image:: _static/cylindrical_lowRes.gif
     :align: middle

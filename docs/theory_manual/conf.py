@@ -18,7 +18,7 @@
 #
 import os
 import sys
-# sys.path.insert(0, os.path.abspath('.'))
+#sys.path.insert(0, os.path.abspath('.'))
 
 # -- General configuration ------------------------------------------------
 
@@ -37,11 +37,11 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
-#    'sphinx_numfig',
+    #'sphinx_numfig',
     'sphinx.ext.viewcode',
     'sphinx.ext.inheritance_diagram',
     'sphinx.ext.graphviz',
-    # 'sphinxarg.ext',
+    #'sphinxarg.ext',
     #'sphinxcontrib.programoutput',
     #'sphinxcontrib.bibtex',
     'sphinx.ext.autosummary'

@@ -11,7 +11,7 @@ structure coming from drag and inertial effects such as viscous effects or turbu
 framework, the Morison model can be applied to any offshore structure. A Morison model can be
 composed of multiple Morison elements, corresponding to a cylinder with drag and added mass
 coefficients. :any:`The following figure <fig_morison_model>` represents the definition a Morison structure applied on a platform. A Morison
-element is defined by a couple of two points (represented by black dots) corresponding to the extremity of
+element is defined by a couple of two points (represented by red dots) corresponding to the extremity of
 the cylinder and a discretization.
 
 .. _fig_morison_model:
@@ -24,12 +24,10 @@ the cylinder and a discretization.
 Morison force on a Morison element
 ----------------------------------
 
-Each Morison element is associated to a local frame located at the middle of the Morison element (Figure 4).
+Each Morison element is associated to a local frame located at the middle of the Morison element.
 By default, this local frame has its third axis :math:`\mathbf{e3}` parallel to the direction of the Morison element,
 the first axis :math:`\mathbf{e1}` is  parallel to the horizontal plane XY and :math:`\mathbf{e2}` is defined such that the frame
 :math:`(\mathbf{e1}, \mathbf{e2}, \mathbf{e3})` is orthonormal direct.
-
-[CC : rajouter la figure pour les conventions d'orientation de frame]
 
 The Morison force in the local frame coordinates is defined as follows:
 
@@ -50,7 +48,5 @@ where
 In this formulation, anisotropic Morison element can be represented by a set of anisotropic definition of the added mass
 and drag coefficients in function of the axis direction.
 
-References
-----------
 
 

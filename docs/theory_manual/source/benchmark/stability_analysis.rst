@@ -1,52 +1,4 @@
-.. hydrostatics:
-
-Hydrostatic equilibrium
------------------------
-
-We simulate the hydrostatic equilibrium of a box in heave and pitch, comparing the solution given by the linear and nonlinear
-approximations.
-
-We consider a box with the following dimensions :math:`(L,B,H) = (8,4,2)m`, with a center of gravity located at the center of the box.
-Its mass is taken as
-
-.. math::
-    mass = \dfrac{1}{2} \rho_{water}\times  V_{box} =  \dfrac{1}{2} \rho_{water}\times  L \times B \times H
-
-An artificial linear damping force is introduced, to make for the hydrodynamic radiation damping. (see :any:`other_damping`).
-The diagonal coefficients are taken at :math:`1E4` for the translation and rotation degrees of freedom.
-
-
-
-.. _fig_heave_L:
-.. figure:: _static/hydrostatics/heave.png
-    :align: center
-    :alt: decay test in heave, in small amplitude motions
-
-    Decay test in heave, in small amplitude motions : blue = linear approximation, orange = nonlinear approximation
-
-
-.. _fig_heave_NL:
-.. figure:: _static/hydrostatics/heaveNL.png
-    :align: center
-    :alt: decay test in heave, in large amplitude motions
-
-    Decay test in heave, in large amplitude motions : green = linear approximation, red = nonlinear approximation
-
-.. _fig_pitch_L:
-.. figure:: _static/hydrostatics/pitch.png
-    :align: center
-    :alt: decay test in pitch, in small amplitude motions
-
-    Decay test in pitch, in small amplitude motions : violet = linear approximation, brown = nonlinear approximation
-
-
-.. _fig_pitch_NL:
-.. figure:: _static/hydrostatics/pitchNL.png
-    :align: center
-    :alt: decay test in pitch, in large amplitude motions
-
-    Decay test in pitch, in large amplitude motions : pink = linear approximation, grey = nonlinear approximation
-
+.. stability_analysis:
 
 Stability analysis
 ------------------
@@ -113,7 +65,7 @@ For the previous conditions (:math:`(L,B,H) = (8,4,2)m` and :math:`c = 0.5`), th
 
 
 Unstable box
-------------
+............
 
 For a box of dimensions :math:`(L,B,H) = (5,5,5)m`, the conditions are true only for the density values given in the
 figure :numref:`fig_stab_conditions`.
@@ -129,7 +81,7 @@ For a density :math:`c = 0.5`, and an initial roll angle :math:`\phi = 2^{\circ}
 on the box mesh are :math:`GM_T = GM_L = -0.41667`. Negative values induce unstable initial behavior of the box.
 
 Linear approximation
-~~~~~~~~~~~~~~~~~~~~
+....................
 
 In linear approximation, the roll and pitch restoring coefficients are computed based on the metacentric heights:
 
@@ -154,7 +106,7 @@ The roll solution in linear approximation is given in the figure :numref:`fig_st
 
 
 Nonlinear approximation
-~~~~~~~~~~~~~~~~~~~~~~~
+.......................
 
 In nonlinear approximation, the hydrostatic force and torque are computed on the mesh, following the box in its motions.
 This means that the metacentric heights can be computed also for each position. A :math:`2^{\circ}` initial roll angle will
@@ -198,8 +150,7 @@ The same box, with a varying density is considered, along with the nonlinear hyd
 
 
 
-The following gif :numref:`fig_stab_density_gif` and figures :numref`fig_stab_density_pos`,
-:numref`fig_stab_density_heights` illustrates the behavior of the box. We can find the two density values :math:`c_1 = 0.211`
+The following :numref:`fig_stab_density_gif`, :numref:`fig_stab_density_pos` and :numref:`fig_stab_density_heights` illustrates the behavior of the box. We can find the two density values :math:`c_1 = 0.211`
 and :math:`c_2 = 0.789` for which the metacentric heights become negative. The box turns over slightly after theses two
 density values, with a delay due to the inertia and damping forces. The first turn over ends up on the orientation previously
 observed (roll at 45 degrees and pitch around 33 degrees). For the second turn over, the box recovers its initial orientation
@@ -229,6 +180,6 @@ observed (roll at 45 degrees and pitch around 33 degrees). For the second turn o
 
 
 References
-----------
+~~~~~~~~~~
 
 .. [Gilloteaux] Gilloteaux, J. C. (2007). Mouvements de grande amplitude d'un corps flottant en fluide parfait. Application à la récupération de l'énergie des vagues (Doctoral dissertation).

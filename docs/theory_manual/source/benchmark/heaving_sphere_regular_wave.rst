@@ -32,20 +32,20 @@ The sphere is submitted to a regular wave field propagating positive along the x
 Results in RAO
 --------------
 
-The response amplitude operator (RAO) in heave motion obtained from FRyDoM is presented in Fig. <fig_sphere_regular_wave>_. Very good agreement with the results obtained by Nemoh [Nemoh]_ can be observed.
+The response amplitude operator (RAO) in heave motion obtained from FRyDoM is presented in :numref:`fig_sphere_regular_wave`. Very good agreement with the results obtained by Nemoh [Nemoh]_ can be observed.
 
 .. _fig_shere_regular_wave:
 .. figure:: _static/sphere_regular_s0_002.png
     :align: center
     :alt: Heave RAO
 
+    Response Amplitude Operator (RAO) in heave motion. Comparison of the numerical results from FRyDoM to those from Nemoh
 
-For illustrative prupose, the restuls obtained from the other numerical models presented in [OES10]_ for the same test case are shown in the next figure:
+.. For illustrative prupose, the restuls obtained from the other numerical models presented in [OES10]_ for the same test case are shown in the next figure:
 
-.. _fig_shere_regular_wave_oes:
-.. figure:: _static/sphere_regular_s0_002_oes.png
-    :align: center
-    :alt: Heave RAO
+.. .. _fig_shere_regular_wave_oes: 
+..    :align: center
+..    :alt: Heave RAO
 
 Effects of a nonlinear hydrostatic and Froude-Krylov approach
 -------------------------------------------------------------

@@ -14,7 +14,7 @@ A frame is defined with an origin position :math:`\mathbf{P}` and three unit axe
 
 
 .. note::
-    A frame can also be considered as a frame transformation from a parent frame, with a translation vector and a rotation
+    A frame can also be considered as a transformation function from a parent frame, with a translation vector and a rotation
     matrix. Note that a frame has no reference to its parent frame, even if it is constructed based on this parent frame.
     The frame hierarchy co-exists with its associated item hierarchy :
     system (world reference frame) --> body (body reference frame) --> node (node reference frame) for example.
@@ -66,16 +66,11 @@ Cardan angles
 .. Euler Angle Sequence (1,2,3)
 
 The Cardan angles are denoted as yaw, pitch and roll, and correspond to the Euler sequence (1,2,3).
-It consists of three consecutive rotations, as shown in  :any:`the following figure <fig_Cardan_angles>` :
+It consists of three consecutive rotations (:numref:`fig_Cardan_angles`) :
 
-- first rotation of an angle :math:`\psi` around the z axis,
+- first rotation of an angle :math:`\psi` around the z-axis,
 - second rotation of an angle :math:`\theta` around the y''' axis,
 - third rotation of an angle :math:`phi` around the x'' axis.
-
-The body reference frame x axis is defined toward the front of the body for both NED and NWU :any:`frame convention <conventions>`.
-However in NED the y axis is along the starboard while the z axis downward. In NWU, the y axis point to port and the z upward.
-The direct implications on rotation is that a positive change in :math:`\theta` corresponds to pitching downward in NWU,
-and upward in NED.
 
 
 .. _fig_Cardan_angles:
@@ -84,6 +79,9 @@ and upward in NED.
     :alt: Cardan angles
 
     Representation of the Cardan angles, from Diebel [DIEBEL]_
+
+The body reference frame's x-axis is defined toward the front of the body for both NED and NWU :any:`frame convention <conventions>`.
+However in NED the y-axis is along the starboard (with the z-axis pointing downward) while, in NWU, the y-axis is along to the port (with the z-axis pointing upward). The direct implications on rotation is that a positive change in :math:`\theta` corresponds to a pitching downward in the NWU convention, and a pitching upward in the NED convention.
 
 For more information on rotation matrix, and function that pass Cardan angles to their corresponding unit quaternion,
 please refer to Diebel [DIEBEL]_.
