@@ -19,7 +19,7 @@ The static equilibrium is solved using a dynamic simulation with relaxation of t
 consists in setting to null the velocity and/or acceleration of the bodies.
 
 .. note::
-    The assembly of body linked is not solved in this analysis, but is done during the initialisation of the system, as a
+    The assembly of body linked is not solved in this analysis, but is done during the initialization of the system, as a
     prerequisite of any static or dynamic simulation. This means that the positions of the elements of the system do not
     need to be setup as already linked.
 

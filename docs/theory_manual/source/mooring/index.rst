@@ -9,18 +9,19 @@ A mooring system can be composed of several components, including :
 - mooring buoys,
 - clumpweights,
 - fairlead,
-- anchor, ets.
+- anchor, 
+- etc...
 
-Its general purpose is to restrict the motions of a floating structure (ship, platform, ets.) in a specified area.
+Its general purpose is to restrict the motions of a floating structure (ship, platform, etc.) in a specified area.
 Mooring systems can be more complex than a single line connected to an anchor and fulfill multiple objectives.
 
 
 Line
 ====
 
-In construction
+*(In construction)*
 
-A mooring line can connect different kinds of elements : floating structures, buoys, anchors, etc.
+A mooring line is used to connect different kinds of elements : floating structures, buoys, anchors, etc.
 
 
 See :any:`line theory <line_theory>`.
@@ -60,17 +61,17 @@ See :any:`other damping<other_damping>` for more information.
 Clumpweight
 ===========
 
-In construction (and development)
+*In construction (and development)*
 
 Anchor
 ======
 
-In construction (and development)
+*In construction (and development)*
 
 
 Soil Interaction
 ================
 
-In construction (and development)
+*In construction (and development)*
 
 

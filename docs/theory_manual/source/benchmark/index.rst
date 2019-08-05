@@ -18,7 +18,8 @@ Hydrostatics and stability of a box
 .. toctree::
     :maxdepth: 2
 
-    hydrostatics
+    hydrostatics_equilibrium
+    stability_analysis
 
 DTM5512
 ~~~~~~~
