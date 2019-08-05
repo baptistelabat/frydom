@@ -6,9 +6,9 @@ High level overview of FRyDoM's features and capabilities.
 
 ---
 
-@subpage tutorial_table_of_content_quickstart 
+@subpage tutorial_table_of_content_installation 
 
-Instructions for configuring, and building FRyDoM. Detailed lists of necessary dependencies. 
+Instructions for installaing, configuring, and building FRyDoM. Detailed lists of necessary dependencies. 
 
 ---
 

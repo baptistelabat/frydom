@@ -1,5 +1,5 @@
-Quickstart {#tutorial_table_of_content_quickstart}
-==========
+Installation guide {#tutorial_table_of_content_installation}
+==================
 
 ## Installing/building FRyDoM and its dependencies
 
