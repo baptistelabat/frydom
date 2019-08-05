@@ -34,7 +34,8 @@ set(mathutils_TAG master)
 
 # TimeZone
 set(timezone_URL https://github.com/HowardHinnant/date.git)
-set(timezone_TAG v2.4.1)
+#set(timezone_TAG v2.4.1)
+set(timezone_TAG master)
 
 # YAML-CPP
 #-set(yamlcpp_URL https://github.com/jbeder/yaml-cpp.git)
