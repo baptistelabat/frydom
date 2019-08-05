@@ -3,9 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-*******************
-FRyDoM Theory Guide
-*******************
+*****************************
+FRyDoM |version| Theory Guide
+*****************************
 
 .. Contents:
 

@@ -77,7 +77,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'FRyDoM'
-copyright = u' '
+copyright = u'D-ICE Engineering / Ecole Centrale de Nantes'
 author = u' '
 
 # The version info for the project you're documenting, acts as replacement for
@@ -166,8 +166,8 @@ html_theme = 'sphinx_rtd_theme'
 
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
-#
-# html_title = u'FRyDoM vv0'
+
+html_title = u'%s %s Theory Guide' % (project, version)
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #
@@ -176,7 +176,7 @@ html_theme = 'sphinx_rtd_theme'
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
 #
-# html_logo = None
+html_logo = 'frydom_logo.png'
 
 # The name of an image file (relative to this directory) to use as a favicon of
 # the docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -300,7 +300,7 @@ latex_documents = [
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
 #
-# latex_logo = None
+latex_logo = 'frydom_logo.png'
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.
