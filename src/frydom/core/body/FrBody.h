@@ -193,7 +193,7 @@ namespace frydom {
         /// Return true if the body is active; i.e. it is neither fixed to ground
         /// nor is it in "sleep" mode. Return false otherwise.
         bool IsActive();
-        
+
         /// Return true if the body is included in the static analysis
         bool IncludedInStaticAnalysis() const {return true;}
 
@@ -320,9 +320,9 @@ namespace frydom {
 
         Force GetTotalExtForceInBody(FRAME_CONVENTION fc) const;
 
-        Torque GetTotalTorqueInBodyAtCOG(FRAME_CONVENTION fc) const;
+        Torque GetTotalExtTorqueInBodyAtCOG(FRAME_CONVENTION fc) const;
 
-        Torque GetTotalTorqueInWorldAtCOG(FRAME_CONVENTION fc) const;
+        Torque GetTotalExtTorqueInWorldAtCOG(FRAME_CONVENTION fc) const;
 
         // =============================================================================================================
         // NODES
@@ -589,7 +589,7 @@ namespace frydom {
         /// Get the velocity of the body reference frame with a vector expressed in WORLD frame
         /// \param fc frame convention (NED/NWU)
         /// \return body velocity in world reference frame
-        Velocity GetVelocityInWorld(FRAME_CONVENTION fc) const;
+        Velocity GetLinearVelocityInWorld(FRAME_CONVENTION fc) const;
 
         /// Get the velocity of the body reference frame with a vector expressed in BODY frame
         /// \param fc frame convention (NED/NWU)
@@ -600,7 +600,7 @@ namespace frydom {
         /// Get the velocity of the body COG with a vector expressed in WORLD frame
         /// \param fc frame convention (NED/NWU)
         /// \return COG velocity in world reference frame
-        Velocity GetCOGVelocityInWorld(FRAME_CONVENTION fc) const;
+        Velocity GetCOGLinearVelocityInWorld(FRAME_CONVENTION fc) const;
 
         /// Get the velocity of the body COG with a vector expressed in BODY frame
         /// \param fc frame convention (NED/NWU)
@@ -620,7 +620,7 @@ namespace frydom {
         /// Get the acceleration of the body reference frame with a vector expressed in WORLD frame
         /// \param fc frame convention (NED/NWU)
         /// \return body acceleration in world reference frame
-        Acceleration GetAccelerationInWorld(FRAME_CONVENTION fc) const;
+        Acceleration GetLinearAccelerationInWorld(FRAME_CONVENTION fc) const;
 
         /// Get the acceleration of the body reference frame with a vector expressed in BODY frame
         /// \param fc frame convention (NED/NWU)
@@ -630,7 +630,7 @@ namespace frydom {
         /// Get the acceleration of the body COG with a vector expressed in WORLD frame
         /// \param fc frame convention (NED/NWU)
         /// \return COG acceleration in world reference frame
-        Acceleration GetCOGAccelerationInWorld(FRAME_CONVENTION fc) const;
+        Acceleration GetCOGLinearAccelerationInWorld(FRAME_CONVENTION fc) const;
 
         /// Get the acceleration of the body COG with a vector expressed in BODY frame
         /// \param fc frame convention (NED/NWU)

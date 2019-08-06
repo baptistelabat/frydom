@@ -66,7 +66,7 @@ namespace frydom {
         if (m_relativeToFluid) {
             FrFrame cogFrame = m_body->GetFrameAtCOG(NWU);
             cogRelVel = -m_body->GetSystem()->GetEnvironment()->GetRelativeVelocityInFrame(
-                    cogFrame, m_body->GetCOGVelocityInWorld(NWU), m_fluidType, NWU);
+                    cogFrame, m_body->GetCOGLinearVelocityInWorld(NWU), m_fluidType, NWU);
 
         } else {
             cogRelVel = m_body->GetCOGVelocityInBody(NWU);
