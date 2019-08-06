@@ -200,7 +200,7 @@ namespace frydom{
             // Get the speed of the bodies to check the convergence
             c_residual = 0;
             for (auto &body : m_system->GetBodyList()) {
-                c_residual += body->GetVelocityInWorld(NWU).norm();
+                c_residual += body->GetLinearVelocityInWorld(NWU).norm();
             }
             for (auto &mesh : m_system->GetFEAMeshList()) {
                 c_residual += mesh->GetStaticResidual();
