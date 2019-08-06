@@ -57,6 +57,26 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 #add_subdirectory(thirdparty)
 
 
+# =============================================================================
+# FRyDoM DEPENDENCIES
+# =============================================================================
+
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/URL.conf.cmake)
+
+include(Add_googletest)
+
+include(Add_chrono)
+include(Add_MathUtils)
+include(Add_HDF5)
+
+include(Add_GeographicLib)
+include(Add_fmt)
+include(Add_cppfs)
+include(Add_TimeZone)
+include(Add_hermes)
+include(Add_OpenMesh)
+include(Add_json)
+
 #=============================================================================
 # Adding the FRyDoM project sources
 #=============================================================================
