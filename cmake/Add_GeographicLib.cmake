@@ -7,17 +7,12 @@ if (NOT GeographicLib_FOUND)
     include(FetchContent)
 
     FetchContent_Declare(GeographicLib
-            URL ${geographiclib_URL}
+            GIT_REPOSITORY ${geographiclib_URL}
+            GIT_TAG ${geographiclib_TAG}
             PATCH_COMMAND patch < "${PROJECT_SOURCE_DIR}/cmake/patches/${geographiclib_PATCH}"
             )
 
     FetchContent_GetProperties(GeographicLib)
-    message(STATUS GeographicLib)
-    message(STATUS ${geographiclib_POPULATED})
-    message(STATUS ${geographiclib_SOURCE_DIR})
-    message(STATUS ${geographiclib_BINARY_DIR})
-
-
     if(NOT geographiclib_POPULATED)
         message(STATUS "Downloading, Configuring and Generating 'GeographicLib' dependency")
         FetchContent_Populate(GeographicLib)
