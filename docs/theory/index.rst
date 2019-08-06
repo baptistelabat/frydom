@@ -7,6 +7,12 @@
 FRyDoM |version| Theory Guide
 *****************************
 
+FRyDoM official website:
+
+.. image:: frydom_logo.png
+   :target: https://frydom.org
+
+
 .. Contents:
 
 FRyDoM conventions
@@ -73,15 +79,3 @@ Benchmark
     :maxdepth: 2
 
     source/benchmark/index
-
-
-Indices and tables
-******************
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
-
-`Return to the main page <../../../main.html>`_
-
