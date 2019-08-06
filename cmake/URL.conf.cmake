@@ -13,7 +13,8 @@ set(fmt_TAG 4.1.0)
 
 
 # GeographicLib
-set(geographiclib_URL https://sourceforge.net/projects/geographiclib/files/distrib/GeographicLib-1.49.tar.gz/download)
+set(geographiclib_URL https://github.com/D-ICE/geographiclib.git)
+set(geographiclib_TAG v1.49)
 set(geographiclib_PATCH GeographicLib.patch)
 
 

@@ -61,7 +61,7 @@ namespace frydom {
 
     Velocity FrEquilibriumFrame::GetPerturbationVelocityInWorld(FRAME_CONVENTION fc) const {
         auto frameVelocity = this->GetVelocityInWorld(fc);
-        auto bodyVelocity = m_body->GetCOGVelocityInWorld(fc);
+        auto bodyVelocity = m_body->GetCOGLinearVelocityInWorld(fc);
         return bodyVelocity - frameVelocity;
     }
 
@@ -111,7 +111,7 @@ namespace frydom {
     }
 
     void FrEquilibriumFrame::SetVelocityToBodyVelocity() {
-        m_velocity = m_body->GetCOGVelocityInWorld(NWU);
+        m_velocity = m_body->GetCOGLinearVelocityInWorld(NWU);
         m_angularVelocity = 0.;
         m_initSpeedFromBody = false;
     }
@@ -181,7 +181,7 @@ namespace frydom {
                      [this]() {double phi, theta, psi;
                      GetPerturbationFrame().GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, GetLogFrameConvention());
                      return Vector3d<double>(phi, theta, psi);});
-            
+
         }
     }
 
@@ -226,7 +226,7 @@ namespace frydom {
         if (std::abs(time - m_prevTime) < FLT_EPSILON) return;
 
         auto bodyPosition = m_body->GetCOGPositionInWorld(NWU);
-        auto bodyVelocity = m_body->GetCOGVelocityInWorld(NWU);
+        auto bodyVelocity = m_body->GetCOGLinearVelocityInWorld(NWU);
         auto position = GetPosition(NWU);
 
         Force force;
@@ -293,7 +293,7 @@ namespace frydom {
 
         if (std::abs(time - m_prevTime) < FLT_EPSILON) return;
 
-        m_TrSpeedRec->Record(time, m_body->GetCOGVelocityInWorld(NWU));
+        m_TrSpeedRec->Record(time, m_body->GetCOGLinearVelocityInWorld(NWU));
         m_AglSpeedRec->Record(time, m_body->GetAngularVelocityInWorld(NWU).GetWz());
 
         m_velocity = m_TrSpeedRec->GetMean();

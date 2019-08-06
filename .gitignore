@@ -128,9 +128,9 @@ cmake-build-release
 /thirdparty/eigen_build/
 
 # Doxygen
-docs/doxygen/html
-docs/doxygen/latex
-docs/doxygen/xml
+docs/api/html
+docs/api/latex
+docs/api/xml
 tools/docs/_build
 
 # Old Nemoh2HDB rst files.

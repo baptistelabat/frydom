@@ -41,7 +41,7 @@ test:
 pages:
 #    stage: deploy
     script:
-        - cd docs/doxygen
+        - cd docs/api
         - doxygen Doxyfile
         - mv html/ ../../public/
     artifacts:
@@ -63,7 +63,7 @@ theory:
        # also add the known hosts so we don't have to accept when connecting to the host
        - echo "$SSH_KNOWN_HOSTS" | tr -d '\r' > ~/.ssh/known_hosts
     script:
-        - cd docs/theory_manual
+        - cd docs/theory
         - make html
         - scp -r ./build/html/* frydomusqo@ssh.cluster027.hosting.ovh.net:/homez.363/frydomusqo/theory-guide
     only:

@@ -3,9 +3,15 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-*******************
-FRyDoM Theory Guide
-*******************
+*****************************
+FRyDoM |version| Theory Guide
+*****************************
+
+FRyDoM official website:
+
+.. image:: frydom_logo.png
+   :target: https://frydom.org
+
 
 .. Contents:
 
@@ -73,15 +79,3 @@ Benchmark
     :maxdepth: 2
 
     source/benchmark/index
-
-
-Indices and tables
-******************
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
-
-`Return to the main page <../../../main.html>`_
-
