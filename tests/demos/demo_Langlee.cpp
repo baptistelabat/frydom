@@ -160,23 +160,23 @@ int main(int argc, char* argv[]) {
     // Hydrostatic
 
     // -- Linear
-    //auto forceHst1 = make_linear_hydrostatic_force(hdb, flap1);
-    //auto forceHst2 = make_linear_hydrostatic_force(hdb, flap2);
+    auto forceHst1 = make_linear_hydrostatic_force(hdb, flap1);
+    auto forceHst2 = make_linear_hydrostatic_force(hdb, flap2);
 
-    //auto diffBuoyForce1 = std::make_shared<FrDiffBuoyancyForce>();
-    //flap1->AddExternalForce(diffBuoyForce1);
+    auto diffBuoyForce1 = std::make_shared<FrDiffBuoyancyForce>();
+    flap1->AddExternalForce(diffBuoyForce1);
 
-    //auto diffBuoyForce2 = std::make_shared<FrDiffBuoyancyForce>();
-    //flap2->AddExternalForce(diffBuoyForce2);
+    auto diffBuoyForce2 = std::make_shared<FrDiffBuoyancyForce>();
+    flap2->AddExternalForce(diffBuoyForce2);
 
     // -- Nonlinear
-    auto flap1Mesh = make_hydro_mesh(flap1, system.GetDataPath("FullFlap_sym_wsep_draft8_5_fillet.obj"),
-            FrFrame(), FrHydroMesh::ClippingSupport::PLANESURFACE);
-    auto forceHst1 = make_nonlinear_hydrostatic_force(flap1, flap1Mesh);
+    //auto flap1Mesh = make_hydro_mesh(flap1, system.GetDataPath("FullFlap_sym_wsep_draft8_5_fillet.obj"),
+    //        FrFrame(), FrHydroMesh::ClippingSupport::PLANESURFACE);
+    //auto forceHst1 = make_nonlinear_hydrostatic_force(flap1, flap1Mesh);
 
-    auto flap2Mesh = make_hydro_mesh(flap2, system.GetDataPath("FullFlap_sym_wsep_draft8_5_fillet.obj"),
-            FrFrame(), FrHydroMesh::ClippingSupport::PLANESURFACE);
-    auto forceHst2 = make_nonlinear_hydrostatic_force(flap2, flap2Mesh);
+    //auto flap2Mesh = make_hydro_mesh(flap2, system.GetDataPath("FullFlap_sym_wsep_draft8_5_fillet.obj"),
+    //        FrFrame(), FrHydroMesh::ClippingSupport::PLANESURFACE);
+    //auto forceHst2 = make_nonlinear_hydrostatic_force(flap2, flap2Mesh);
 
     //flap1Mesh->GetInitialMesh().Write("HydroMesh_Flap1_Initial.obj");
     //flap2Mesh->GetInitialMesh().Write("HydroMesh_Flap2_Initial.obj");
@@ -199,10 +199,10 @@ int main(int argc, char* argv[]) {
     bool is_irrlicht = true;
 
     if (is_irrlicht) {
-        system.RunInViewer(0, 50, false);
+        system.RunInViewer(100, 50, false);
     } else {
         auto time = 0.;
-        while (time < 300.) {
+        while (time < 10.) {
             time += dt;
             system.AdvanceTo(time);
             std::cout << "Time : " << time << " s" << std::endl;

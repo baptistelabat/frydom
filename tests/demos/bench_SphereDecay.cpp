@@ -89,13 +89,13 @@ int main(int argc, char* argv[]) {
     system.Initialize();
 
     // Decay test initial position.
-    body->SetPosition(Position(0., 0., 4.99), NWU);
+    body->SetPosition(Position(0., 0., 1.), NWU);
 
     auto time = 0.;
 
     clock_t begin = clock();
 
-    while (time < 40.) {
+    while (time < 20.) {
         time += dt;
         system.AdvanceTo(time);
         std::cout << "time : " << time << std::endl;
