@@ -3,12 +3,20 @@
 DTMB5512 surface combatant in regular head waves
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This benchmark corresponds to the simulation of the surface combatant DTMB5512 with constant forward speed submitted to regular head waves. The DTMB5512 is a 3.048m geosym of the DTMB5415 which has been chosen by the International Towing Tank Conference (ITTC) as an international benchmark for CFD validation. Two configurations are considered, captive motion and free motion in pitch and heave (3DOF). Description of this test case and comparison to experimental results are summarized in the following.
+This benchmark corresponds to the simulation of the surface combatant DTMB5512 with constant forward speed submitted to
+regular head waves. The DTMB5512 is a 3.048m geosym of the DTMB5415 which has been chosen by the International Towing
+Tank Conference (ITTC) as an international benchmark for CFD validation. Two configurations are considered, captive
+motion and free motion in pitch and heave (3DOF). Description of this test case and comparison to experimental results
+are summarized in the following.
 
 Description of the test case
 ----------------------------
 
-In this simulation, the 1:46.6 scale is considered which corresponds to the laboratory scale of the DTMB 5512 geometry used in the experimental campaigned made by the Iowa Institute of Hydraulic Research (IIHR). The hull model with no appendage, no propeller and no rudder is considered. The CAD model is freely available. The main characteristics of the vessel are summarized in the following table. The x-axis is pointing forward to the vessel and z-axis is pointing upward as represented in the following figure.
+In this simulation, the 1:46.6 scale is considered which corresponds to the laboratory scale of the DTMB 5512 geometry
+used in the experimental campaigned made by the Iowa Institute of Hydraulic Research (IIHR). The hull model with no
+appendage, no propeller and no rudder is considered. The CAD model is freely available. The main characteristics of the
+vessel are summarized in the following table. The x-axis is pointing forward to the vessel and z-axis is pointing upward
+as represented in the following figure.
 
 .. _fig_DTMB5512_geometry:
 .. figure:: _static/DTMB5512_configuration.png
@@ -40,6 +48,7 @@ k35                   :math:`1.25`
 ===================== ====================
 
 The DTMB5512 is mounted on a carriage with constant forward speed as represented in next figure.
+A `video <https://www.youtube.com/watch?v=yUbBE2nytg0>`_ is also available for the semi captive test.
 
 .. _fig_simulation_picture:
 .. figure:: _static/DTMB5512_simulation_picture.png
@@ -47,7 +56,9 @@ The DTMB5512 is mounted on a carriage with constant forward speed as represented
     :alt: DTMB5512 simulation
     :scale: 50%
 
-For the captive test , the DTMB5512 model is fixed on the carriage whereas for pitch and heave motion test the DTMB5512 model is free to moove in heave and pitch. Four differents speed are considered which correspond to a low (0.19), medium (0.28), mid-high (0.34) and high (0.41) froude numbers.
+For the captive test , the DTMB5512 model is fixed on the carriage whereas for pitch and heave motion test the DTMB5512
+model is free to move in heave and pitch. Four different speed are considered which correspond to a low (0.19),
+medium (0.28), mid-high (0.34) and high (0.41) froude numbers.
 
 Integration of steady forces due to forward speed
 -------------------------------------------------
@@ -94,7 +105,7 @@ In this test case, the mean wave drift coefficient :math:`C_{wd}` is estimated f
 .. math::
     C_{T,ad} = \bar{C_T} - C_{T,st}
 
-where :math:`\bar{C_T}` is the mean unsteady resistance and :math:`C_{T,st}` is the steay resistance in calm water.
+where :math:`\bar{C_T}` is the mean unsteady resistance and :math:`C_{T,st}` is the steady resistance in calm water.
 
 Estimation of the mean wave drift coefficient in surge :math:`C_{wd, x}` for various wave frequencies is represented in :numref:`fig_wave_drift_coeff`
 
@@ -128,7 +139,7 @@ where :math:`X_0` is the constant part and :math:`X_n` the :math:`n^{th}` harmon
 Captive test results
 --------------------
 
-The regular wave field propagates in negative x-direction. Four differents wave amplitudes are considered corresponding to small (0.025), small-median (0.05, 0.075) and median (0.1) steepness. The wave period is equal to 0.22 seconds.
+The regular wave field propagates in negative x-direction. Four different wave amplitudes are considered corresponding to small (0.025), small-median (0.05, 0.075) and median (0.1) steepness. The wave period is equal to 0.22 seconds.
 
 The zeroth and first harmonic coefficients of :math:`C_T`, :math:`C_H` and :math:`C_M` are compared to experimental results in :numref:`fig_zeroth_coeff` and :numref:`fig_first_harmonic`.
 
@@ -138,7 +149,7 @@ The zeroth and first harmonic coefficients of :math:`C_T`, :math:`C_H` and :math
     :alt: Zeroth coefficient
     :scale: 50%
 
-    Comparison of the zeroth coefficients from FRyDoM (continous lines) with experimental results (discontinous lines).
+    Comparison of the zeroth coefficients from FRyDoM (continuous lines) with experimental results (discontinuous lines).
 
 .. _fig_first_harmonic:
 .. figure:: _static/first_harmonic_plot.png
@@ -153,10 +164,10 @@ Pitch and Heave Motion test results
 -----------------------------------
 
 The Response Amplitude Operator (RAO) of the DTMB5512 in pitch and heave motion are compared to experimental results.
-Five differents forward speed are considered corresponding to different value of the Froude number equal to 0., 0.19, 0.28, 0.34 and 0.41.
+Five different forward speed are considered corresponding to different value of the Froude number equal to 0., 0.19, 0.28, 0.34 and 0.41.
 The numerical results agree well with the experimental results for heave motion. The natural period of the model is around 1 Hz
-and the peack of amplitude increase with increasing speed. The results in pitch motion agree well with the experimental results
-in the case of no forward speed. Discrepancy are more pronouced for the case with forward speed. Work are still be done for this
+and the peak of amplitude increase with increasing speed. The results in pitch motion agree well with the experimental results
+in the case of no forward speed. Discrepancy are more pronounced for the case with forward speed. Work are still to be done for this
 test case in order to characterize these discrepancies.
 
 
@@ -166,7 +177,7 @@ test case in order to characterize these discrepancies.
     :alt: Heave motion
     :scale: 50%
 
-    Comparison of the Heave RAO results from FRyDoM with experimental data for different regular wave frequency. Results for different froude number (0.0, 0.19, 0.28, 0.34, 0.41) from left to right and top to bottom.
+    Comparison of the Heave RAO results from FRyDoM with experimental data for different regular wave frequency. Results for different Froude number (0.0, 0.19, 0.28, 0.34, 0.41) from left to right and top to bottom.
 
 .. _fig_pitch_motion:
 .. figure:: _static/DTMB5512_PitchAmplitude.png
@@ -175,12 +186,4 @@ test case in order to characterize these discrepancies.
     :scale: 50%
 
 
-    Comparison of the Pitch RAO results from FRyDoM with experimental data for different regular wave frequency. Results for different froude number (0.0, 0.19, 0.28, 0.34, 0.41) from left to right and top to bottom.
-
-
-References
-----------
-
-.. [VIDEO] `DTMB5512_video`_
-
-.. _DTMB5512_video: https://www.youtube.com/watch?v=yUbBE2nytg0
+    Comparison of the Pitch RAO results from FRyDoM with experimental data for different regular wave frequency. Results for different Froude number (0.0, 0.19, 0.28, 0.34, 0.41) from left to right and top to bottom.

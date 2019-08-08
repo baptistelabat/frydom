@@ -1,4 +1,4 @@
-.. _wave_stretching:
+.. wave_stretching:
 
 Kinematic stretching
 ~~~~~~~~~~~~~~~~~~~~

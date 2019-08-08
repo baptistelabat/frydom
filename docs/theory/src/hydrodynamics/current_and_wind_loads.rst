@@ -8,9 +8,6 @@ This method has been developed for tankers but can be applied on other vessel ty
 According to this method, only drag loads due to surge and sway relative velocity is considered; no drag loads due to
 yaw angular velocity is modeled.
 
-..
-    [CC : rajouter une courte présentation des méthodes OCIMF ou au minima le principe de base]
-
 .. note::
     While the OCIMF method calculates the drag loads on stationary bodies, with an absolute fluid velocity,
     FRyDoM consider instead the relative fluid velocity past the body.
@@ -25,10 +22,8 @@ where
 
 - :math:`(C_X, C_Y, C_N)` are the polar flow coefficients, respectively in surge sway and yaw, relatively to :math:`\theta` (no dimension),
 - :math:`\rho_{fluid}` is the fluid density (air or water),
-- :math:`\mathbf{u}` is the relative velocity of the fluid, past the body. See the :any:`following figure <fig_relative_flow_velocity>`.
-..  [CC: preciser. Est-ce qu'il s'agit de la vitesse relative par rapport à la vitesse instantannée du navire ou est-ce que l'on considère la vitesse stationnaire du navire ?]
+- :math:`\mathbf{u}` is the relative velocity of the fluid, past the body. See the :any:`Fig:A <fig_relative_wind_velocity>` and  :any:`Fig:B <fig_relative_current_velocity>`.
 - :math:`\theta` is the angle between the body heading and fluid flow velocity.
-..  [CC: attention on utilise \alpha ailleurs pour cet angle (Mean wave drift force)]
 - :math:`A_X, A_Y, A_N` are the projected area of the body: above the waterline for the wind, below the waterline for the current.
 
 .. note::

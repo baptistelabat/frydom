@@ -47,6 +47,8 @@ Seven different constraints are implemented in FRyDoM (see next table)
 
 .. |ParallelUrl| replace:: ``video`` Parallel
 .. _ParallelUrl: https://youtu.be/Q_uOsb45d9E
+
+
 =============================== =========================== ==============================
 Name                            Description                 Constrained degrees of freedom
 =============================== =========================== ==============================

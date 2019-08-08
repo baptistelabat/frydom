@@ -37,8 +37,8 @@ For more information on linear model forces, refer to
 - :any:`Hydrostatic force <linear_hydrostatics>`
 - :any:`Froude-Krylov force <linear_FroudeKrylov>`
 - :any:`Diffraction force <linear_diffraction>`
-- :any:`Radiation force <radiation>`
-- :any:`Wave drift force <wave_drift>`
+- :ref:`Radiation force <radiation>`
+- :ref:`Wave drift force <wave_drift>`
 
 
 .. _equilibrium_frame:

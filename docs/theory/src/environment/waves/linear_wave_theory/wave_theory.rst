@@ -75,7 +75,7 @@ where :math:`\bar{x}_n = x \cos(\theta_n) + y \sin(\theta_n)`.
 
 The wave frequency and direction discretizations are based on a uniform repartition, i.e the wave components are chosen to be equally spaced in frequency and direction.
 
-The wave component amplitudes, :math:`A_{mn}`, are given by the directional spectrum (see :any:`wave spectra<wave_spectra>`)
+The wave component amplitudes, :math:`A_{mn}`, are given by the directional spectrum (see :ref:`wave spectra <wave_spectra>`)
 
 .. math::
     A_{mn}^2 = 2S(\omega_m,\theta_n)\delta\omega\delta\theta

@@ -36,31 +36,6 @@ endforeach()
 # FRyDoM DEPENDENCIES
 # =============================================================================
 
-include(URL.conf)
-
-include(Add_googletest)
-
-include(Add_chrono)
-include(Add_MathUtils)
-include(Add_HDF5)
-
-include(Add_GeographicLib)
-include(Add_fmt)
-include(Add_cppfs)
-include(Add_TimeZone)
-include(Add_hermes)
-include(Add_OpenMesh)
-include(Add_json)
-
-#if (TARGET hermes)
-#    get_target_property(INC hermes INCLUDE_DIRECTORIES)
-#    message(STATUS "hermes INCLUDE_DIRS : ${INC}")
-#endif()
-
-# =============================================================================
-# FRyDoM DEPENDENCIES
-# =============================================================================
-
 # FRyDoM main shared library
 add_library(FRyDoM_Engine SHARED ${FRYDOM_SRC_FILES})
 target_link_libraries(FRyDoM_Engine

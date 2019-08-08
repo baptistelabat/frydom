@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -421,11 +421,11 @@ void Test_AllGetVelocity(const std::shared_ptr<FrBody> body,
 
     // Test getter for the body velocity, expressed in the world reference frame
     Velocity testVelocity;
-    testVelocity = body->GetVelocityInWorld(fc) - VelocityInWorld;
+    testVelocity = body->GetLinearVelocityInWorld(fc) - VelocityInWorld;
     EXPECT_TRUE(testVelocity.isZero());
     if (not(testVelocity.isZero())) {
         std::cout<<VelocityInWorld<<std::endl;
-        std::cout<<body->GetVelocityInWorld(fc)<<std::endl;
+        std::cout<<body->GetLinearVelocityInWorld(fc)<<std::endl;
     }
     // Test getter for the body velocity, expressed in the body reference frame
     testVelocity = body->GetVelocityInBody(fc) - VelocityInBody;
@@ -435,13 +435,13 @@ void Test_AllGetVelocity(const std::shared_ptr<FrBody> body,
 
     //-----------------COG Velocity-----------------//
     // Test Getter for the COG velocity expressed in the world reference frame
-    testVelocity = body->GetCOGVelocityInWorld(fc) - VelocityInWorld;
+    testVelocity = body->GetCOGLinearVelocityInWorld(fc) - VelocityInWorld;
     testVelocity -= AngularVelocityInWorld.cross(body->GetCOGPositionInWorld(fc) - body->GetPosition(fc));
     EXPECT_TRUE(testVelocity.isZero());
     if (not(testVelocity.isZero())) {
         std::cout<<VelocityInWorld +
         AngularVelocityInWorld.cross(body->GetCOGPositionInWorld(fc) - body->GetPosition(fc))<<std::endl;
-        std::cout<<body->GetCOGVelocityInWorld(fc)<<std::endl;
+        std::cout<<body->GetCOGLinearVelocityInWorld(fc)<<std::endl;
     }
 
     // Test Getter for the COG velocity expressed in the body reference frame
@@ -906,10 +906,10 @@ void Test_AllGetAcceleration(const std::shared_ptr<FrBody> body,
 
     //-----------------COG Acceleration-----------------//
     // Test Getter for the COG Acceleration expressed in the world reference frame
-    Acceleration testAcceleration = body->GetCOGAccelerationInWorld(fc) - COGAccelerationInWorld;
+    Acceleration testAcceleration = body->GetCOGLinearAccelerationInWorld(fc) - COGAccelerationInWorld;
     EXPECT_TRUE(testAcceleration.isZero());
     if (not(testAcceleration.isZero())) {
-        std::cout<<body->GetCOGAccelerationInWorld(fc)<<std::endl;
+        std::cout<<body->GetCOGLinearAccelerationInWorld(fc)<<std::endl;
         std::cout<<COGAccelerationInWorld<<std::endl;
     }
 

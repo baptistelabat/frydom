@@ -43,7 +43,7 @@ pages:
     script:
         - cd docs/api
         - doxygen Doxyfile
-        - mv html/ ../../public/
+        - mv build/html/ ../../public/
     artifacts:
         paths:
             - public

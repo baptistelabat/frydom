@@ -72,6 +72,14 @@ Static analysis
 
    src/static_analysis/static_analysis
 
+Numerical methods
+*****************
+
+.. toctree::
+   :maxdepth: 2
+
+   src/numerical_methods/index
+
 Benchmark
 *********
 

@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -32,7 +32,7 @@ public:
         auto infiniteAddedMass = BEMBody->GetInfiniteAddedMass(BEMBody);
 
         GeneralizedAcceleration acc;
-        acc.SetAcceleration(body->GetCOGAccelerationInWorld(NWU));
+        acc.SetAcceleration(body->GetCOGLinearAccelerationInWorld(NWU));
         acc.SetAngularAcceleration(body->GetAngularAccelerationInBody(NWU));
 
         m_force = -infiniteAddedMass * acc;

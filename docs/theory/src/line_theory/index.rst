@@ -5,7 +5,7 @@ Line theory
 
 Different line models are available, including quasi-static catenary line and dynamic (FEA) cable.
 
-All models rely on :any:`nodes <node>` to connect to bodies.
+All models rely on :any:`nodes <nodes>` to connect to bodies.
 
 
 .. toctree::

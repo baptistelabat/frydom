@@ -127,7 +127,7 @@ namespace frydom {
     void FrCurrentForce::Compute(double time) {
 
         FrFrame FrameAtCOG = m_body->GetFrameAtCOG(NWU);
-        Velocity VelocityInWorldAtCOG =  m_body->GetCOGVelocityInWorld(NWU);
+        Velocity VelocityInWorldAtCOG = m_body->GetCOGLinearVelocityInWorld(NWU);
 
         m_fluxVelocityInBody =
                 m_body->GetSystem()->GetEnvironment()->GetOcean()->GetCurrent()->GetRelativeVelocityInFrame(FrameAtCOG, VelocityInWorldAtCOG, NWU);
@@ -138,7 +138,7 @@ namespace frydom {
     void FrWindForce::Compute(double time) {
 
         FrFrame FrameAtCOG = m_body->GetFrameAtCOG(NWU);
-        Velocity VelocityInWorldAtCOG =  m_body->GetCOGVelocityInWorld(NWU);
+        Velocity VelocityInWorldAtCOG = m_body->GetCOGLinearVelocityInWorld(NWU);
 
         m_fluxVelocityInBody =
                 m_body->GetSystem()->GetEnvironment()->GetAtmosphere()->GetWind()->GetRelativeVelocityInFrame(FrameAtCOG, VelocityInWorldAtCOG, NWU);
