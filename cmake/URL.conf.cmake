@@ -38,11 +38,6 @@ set(timezone_URL https://github.com/HowardHinnant/date.git)
 #set(timezone_TAG v2.4.1)
 set(timezone_TAG master)
 
-# YAML-CPP
-#-set(yamlcpp_URL https://github.com/jbeder/yaml-cpp.git)
-#-set(yamlcpp_TAG yaml-cpp-0.6.2)
-#-set(yamlcpp_PATCH yaml-cpp.patch)
-
 # CPPFS
 set(cppfs_URL https://github.com/cginternals/cppfs.git)
 set(cppfs_TAG v1.2.0)
