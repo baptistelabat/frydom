@@ -1,4 +1,4 @@
-.. _RAO_quality_check
+.. RAO_quality_check
 
 ..
     How to check RAO :

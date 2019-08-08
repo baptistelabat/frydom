@@ -126,7 +126,7 @@ TEST_F(TestLinearDamping_, RelativeVelocity)  {
     force->SetDampingMatrix(damp);
     force->SetRelativeToFluid(true);
 
-    Velocity bodyVelocityInWorld = body->GetCOGVelocityInWorld(NWU);
+    Velocity bodyVelocityInWorld = body->GetCOGLinearVelocityInWorld(NWU);
     Velocity relativeVelocityInWorld = bodyVelocityInWorld - flowVelocity;
     Velocity relativeVelocityInBody = body->ProjectVectorInBody(relativeVelocityInWorld, NWU);
 

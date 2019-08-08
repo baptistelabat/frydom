@@ -59,6 +59,6 @@ where
 - :math:`y` is the slope coefficient,
 
 Reference:
-~~~~~~~~~
+~~~~~~~~~~
 
 .. [ITTC78]     ITTC, *1978 ITTC Performance, Prediction Method*, ITTC Recommended Procedures, 1978

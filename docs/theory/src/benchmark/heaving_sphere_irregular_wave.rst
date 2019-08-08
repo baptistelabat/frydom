@@ -1,7 +1,7 @@
 .. _heaving_sphere_irregular_wave:
 
 Heaving sphere in irregular waves
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This comparison corresponds to the simulation of a sphere in heave motion submitted to irregular waves. The model is presented by the International Energy Agency (IEA) Offshore Energy System (OES) Task 10 [OES10]_ as a benchmark case for model validation and verification regrouping 25 organizations. The goal of this section is to compare the use of a linear and nonlinear approach for the computation of the hydrostatic and Froude-Krylov loads.
 

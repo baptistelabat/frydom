@@ -31,4 +31,4 @@ where
 - :math:`\rho_{fluid}` is the fluid density.
 - :math:`C_i` are the damping coefficients,
 - :math:`S_i` are the projected surfaces, 
-- :math:`\mathbf{u} = \begin{bmatrix}u_x & u_y & u_z \end{bmatrix}` is the body velocity. It can also be taken relatively to a fluid flow velocity, but be careful not to use a :any:`flow force<flow_force>` which might be redundant.
+- :math:`\mathbf{u} = \begin{bmatrix}u_x & u_y & u_z \end{bmatrix}` is the body velocity. It can also be taken relatively to a fluid flow velocity, but be careful not to use a :any:`current load<current_and_wind_loads>` which might be redundant.

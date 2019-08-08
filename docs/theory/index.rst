@@ -21,8 +21,8 @@ FRyDoM conventions
 .. toctree::
     :maxdepth: 1
 
-    source/coordinate_systems
-    source/conventions
+    src/coordinate_systems
+    src/conventions
 
 Environment theory
 ******************
@@ -30,7 +30,7 @@ Environment theory
 .. toctree::
    :maxdepth: 2
 
-   source/environment/index
+   src/environment/index
 
 Multibody dynamics
 ******************
@@ -38,7 +38,7 @@ Multibody dynamics
 .. toctree::
    :maxdepth: 2
 
-   source/multibody_dynamics/index
+   src/multibody_dynamics/index
 
 Hydrodynamics
 *************
@@ -46,7 +46,7 @@ Hydrodynamics
 .. toctree::
    :maxdepth: 2
 
-   source/hydrodynamics/index
+   src/hydrodynamics/index
 
 Line theory
 ***********
@@ -54,7 +54,7 @@ Line theory
 .. toctree::
    :maxdepth: 2
 
-   source/line_theory/index
+   src/line_theory/index
 
 Mooring
 *******
@@ -62,7 +62,7 @@ Mooring
 .. toctree::
    :maxdepth: 2
 
-   source/mooring/index
+   src/mooring/index
 
 Static analysis
 ***************
@@ -70,7 +70,15 @@ Static analysis
 .. toctree::
    :maxdepth: 2
 
-   source/static_analysis/static_analysis
+   src/static_analysis/static_analysis
+
+Numerical methods
+*****************
+
+.. toctree::
+   :maxdepth: 2
+
+   src/numerical_methods/index
 
 Benchmark
 *********
@@ -78,4 +86,4 @@ Benchmark
 .. toctree::
     :maxdepth: 2
 
-    source/benchmark/index
+    src/benchmark/index
