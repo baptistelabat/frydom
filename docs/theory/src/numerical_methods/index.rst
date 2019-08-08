@@ -1,4 +1,9 @@
-.. _time_stepper
+.. _numerical_methods:
+
+Numerical methods
+*****************
+
+.. _time_steppers:
 
 Time steppers
 =============
@@ -19,3 +24,10 @@ bodies connected through links, finite element analysis or fluid solid interacti
 Others are more efficient for non-smooth dynamics : ie with friction and contact between bodies.
 
 For more information on these time steppers, please refer to `this page <http://www.projectchrono.org/assets/slides_3_0_0/3_Contact/3_Chrono_Solvers.pdf>`_.
+
+.. _constraint_solvers:
+
+Constraint Solvers
+==================
+
+*In construction*

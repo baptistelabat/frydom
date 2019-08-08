@@ -21,7 +21,9 @@ A frame is defined with an origin position :math:`\mathbf{P}` and three unit axe
 
 
 .. note::
-    By default, a local frame has no parent and depends on the object to which it is associated. When a frame is applied to a body its parent is the world reference frame whereas when a frame is applied to a :any:`node <node>` (links, cables,...) its parent is the body frame of reference.
+    By default, a local frame has no parent and depends on the object to which it is associated. When a frame is applied
+    to a body its parent is the world reference frame whereas when a frame is applied to a :any:`node <nodes>`
+    (links, cables,...) its parent is the body frame of reference.
 
 
 World reference frame
@@ -38,7 +40,7 @@ The two available :any:`frame conventions <conventions>` are indeed :
 Body reference frame
 ~~~~~~~~~~~~~~~~~~~~
 
-The body reference plane locates the body relatively to the :any:`world reference frame <frame>`. Its origin is defined arbitrary by
+The body reference plane locates the body relatively to the world reference frame. Its origin is defined arbitrary by
 the user: it can be located at the bow, on the keel, at the center of gravity, etc. Its orientation gives the direction of
 the degrees of freedom:
 

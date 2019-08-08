@@ -73,12 +73,15 @@ However, some of these degrees of freedom can be fixed by the user in the world 
 .. note::
     All degrees of freedom are solved even those fixed by constraints.
 
+
+.. _nodes:
+
 Nodes
 -----
 
 Nodes are specific frames, added to the body and fixed in the body reference frame. Their position and rotation, defined
-in the body reference frame, remain fixed with respect to this one during the simulation. They can be used to add :any:`links <link>`,
-:any:`cables <line_theory>` or :any:`motors <motor>` to the body at a given position. Also, they can be used to monitor
+in the body reference frame, remain fixed with respect to this one during the simulation. They can be used to add :any:`links <links>`,
+:any:`cables <line_theory>` or :any:`actuators <actuators>` to the body at a given position. Also, they can be used to monitor
 a specific quantity on the body.
 
 .. note::

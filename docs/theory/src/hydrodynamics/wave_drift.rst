@@ -10,7 +10,7 @@ The generalized mean wave drift force, given by the linear approximation, is:
 
 where
 
-- :math:`S(\omega,\theta)` is the :any:`wave spectrum amplitude <wave_spectra>`  for the circular frequency :math:`\omega`, and wave direction :math:`\theta`;
+- :math:`S(\omega,\theta)` is the :ref:`wave spectrum amplitude <wave_spectra>`  for the circular frequency :math:`\omega`, and wave direction :math:`\theta`;
 - :math:`\omega_e` is the encounter wave frequency, which depends on :math:`\omega`, :math:`\theta` and the constant speed of the vessel :math:`\mathbf{U}`;
 
 .. math::
