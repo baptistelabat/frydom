@@ -3,9 +3,15 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-*******************
-FRyDoM Theory Guide
-*******************
+*****************************
+FRyDoM |version| Theory Guide
+*****************************
+
+FRyDoM official website:
+
+.. image:: frydom_logo.png
+   :target: https://frydom.org
+
 
 .. Contents:
 
@@ -15,8 +21,8 @@ FRyDoM conventions
 .. toctree::
     :maxdepth: 1
 
-    source/coordinate_systems
-    source/conventions
+    src/coordinate_systems
+    src/conventions
 
 Environment theory
 ******************
@@ -24,7 +30,7 @@ Environment theory
 .. toctree::
    :maxdepth: 2
 
-   source/environment/index
+   src/environment/index
 
 Multibody dynamics
 ******************
@@ -32,7 +38,7 @@ Multibody dynamics
 .. toctree::
    :maxdepth: 2
 
-   source/multibody_dynamics/index
+   src/multibody_dynamics/index
 
 Hydrodynamics
 *************
@@ -40,7 +46,7 @@ Hydrodynamics
 .. toctree::
    :maxdepth: 2
 
-   source/hydrodynamics/index
+   src/hydrodynamics/index
 
 Line theory
 ***********
@@ -48,7 +54,7 @@ Line theory
 .. toctree::
    :maxdepth: 2
 
-   source/line_theory/index
+   src/line_theory/index
 
 Mooring
 *******
@@ -56,7 +62,7 @@ Mooring
 .. toctree::
    :maxdepth: 2
 
-   source/mooring/index
+   src/mooring/index
 
 Static analysis
 ***************
@@ -64,7 +70,7 @@ Static analysis
 .. toctree::
    :maxdepth: 2
 
-   source/static_analysis/static_analysis
+   src/static_analysis/static_analysis
 
 Benchmark
 *********
@@ -72,16 +78,4 @@ Benchmark
 .. toctree::
     :maxdepth: 2
 
-    source/benchmark/index
-
-
-Indices and tables
-******************
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
-
-`Return to the main page <../../../main.html>`_
-
+    src/benchmark/index

@@ -77,7 +77,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'FRyDoM'
-copyright = u' '
+copyright = u'D-ICE Engineering / Ecole Centrale de Nantes'
 author = u' '
 
 # The version info for the project you're documenting, acts as replacement for
@@ -166,8 +166,8 @@ html_theme = 'sphinx_rtd_theme'
 
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
-#
-# html_title = u'FRyDoM vv0'
+
+html_title = u'%s %s Theory Guide' % (project, version)
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #
@@ -176,7 +176,7 @@ html_theme = 'sphinx_rtd_theme'
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
 #
-# html_logo = None
+html_logo = 'frydom_logo.png'
 
 # The name of an image file (relative to this directory) to use as a favicon of
 # the docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -217,11 +217,11 @@ html_last_updated_fmt = ''
 
 # If false, no module index is generated.
 #
-# html_domain_indices = True
+html_domain_indices = True
 
 # If false, no index is generated.
 #
-# html_use_index = True
+html_use_index = True
 
 # If true, the index is split into individual pages for each letter.
 #
@@ -233,11 +233,11 @@ html_last_updated_fmt = ''
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
 #
-# html_show_sphinx = True
+html_show_sphinx = False
 
 # If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
 #
-# html_show_copyright = True
+html_show_copyright = True
 
 # If true, an OpenSearch description file will be output, and all pages will
 # contain a <link> tag referring to it.  The value of this option must be the
@@ -253,7 +253,7 @@ html_last_updated_fmt = ''
 #   'da', 'de', 'en', 'es', 'fi', 'fr', 'hu', 'it', 'ja'
 #   'nl', 'no', 'pt', 'ro', 'ru', 'sv', 'tr', 'zh'
 #
-# html_search_language = 'en'
+html_search_language = 'en'
 
 # A dictionary with options for the search language support, empty by default.
 # 'ja' uses this config value.
@@ -300,7 +300,7 @@ latex_documents = [
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
 #
-# latex_logo = None
+latex_logo = 'frydom_logo.png'
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.
