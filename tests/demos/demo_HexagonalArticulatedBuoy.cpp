@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
 
     auto ocean = system.GetEnvironment()->GetOcean();
     auto waveField = ocean->GetFreeSurface()->SetAiryRegularWaveField();
-    waveField->SetWavePeriod(0.5);
+    waveField->SetWavePeriod(3.);
     waveField->SetWaveHeight(0.1); //0.1
     waveField->SetDirection(0., DEG, NWU, GOTO);
 
@@ -53,13 +53,12 @@ int main(int argc, char* argv[]) {
     asset2->LoadWavefrontMesh(system.GetDataPath("cylinder_base_bar.obj"));
     asset2->Rotate(FrRotation(Direction(0., 0., 1.), -M_PI/3., NWU));
     cyl2->AddMeshAsset(asset2);
-//    cyl2->AddMeshAsset(system.GetDataPath("cylinder_base_bar_rz60m.obj"));
-    cyl2->SetColor(Red);
+    cyl2->SetColor(Yellow);
     cyl2->SetPosition(Position(-1.25, 2.165, 0.), NWU);
     FrInertiaTensor inertiaTensor2(
             805.033,
             318.66, 100.63, 318.66, 0., 0., 0.,
-            FrFrame(Position(0., 0., 0.), FrRotation(Direction(0., 0., 1.), M_PI/3., NWU), NWU),
+            FrFrame(Position(0., 0., 0.), FrRotation(Direction(0., 0., 1.), -M_PI/3., NWU), NWU),
             Position(0., 0., -0.1),
             NWU);
     cyl2->SetInertiaTensor(inertiaTensor2);
@@ -70,13 +69,12 @@ int main(int argc, char* argv[]) {
     asset3->LoadWavefrontMesh(system.GetDataPath("cylinder_base_bar.obj"));
     asset3->Rotate(FrRotation(Direction(0., 0., 1.), M_PI/3., NWU));
     cyl3->AddMeshAsset(asset3);
-//    cyl3->AddMeshAsset(system.GetDataPath("cylinder_base_bar_rz60.obj"));
     cyl3->SetColor(Yellow);
     cyl3->SetPosition(Position(1.25, 2.165, 0.), NWU);
     FrInertiaTensor inertiaTensor3(
             805.033,
             318.66, 100.63, 318.66, 0., 0., 0.,
-            FrFrame(Position(0., 0., 0.) ,FrRotation(Direction(0., 0., 1.), -M_PI/3., NWU), NWU),
+            FrFrame(Position(0., 0., 0.) ,FrRotation(Direction(0., 0., 1.), M_PI/3., NWU), NWU),
             Position(0., 0., -0.1),
             NWU);
     cyl3->SetInertiaTensor(inertiaTensor3);
@@ -102,7 +100,7 @@ int main(int argc, char* argv[]) {
     FrInertiaTensor inertiaTensor5(
             805.033,
             318.66, 100.63, 318.66, 0., 0., 0.,
-            FrFrame(Position(0., 0., 0.), FrRotation(Direction(0., 0., 1.), M_PI/3., NWU), NWU),
+            FrFrame(Position(0., 0., 0.), FrRotation(Direction(0., 0., 1.), -M_PI/3., NWU), NWU),
             Position(0., 0., -0.1),
             NWU);
     cyl5->SetInertiaTensor(inertiaTensor5);
@@ -115,7 +113,7 @@ int main(int argc, char* argv[]) {
     FrInertiaTensor inertiaTensor6(
             805.033,
             318.66, 100.63, 318.66, 0., 0., 0.,
-            FrFrame(Position(0., 0., 0.), FrRotation(Direction(0., 0., 1.), -M_PI/3., NWU), NWU),
+            FrFrame(Position(0., 0., 0.), FrRotation(Direction(0., 0., 1.), M_PI/3., NWU), NWU),
             Position(0., 0., -0.1),
             NWU);
     cyl6->SetInertiaTensor(inertiaTensor6);
