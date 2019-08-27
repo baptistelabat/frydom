@@ -40,9 +40,9 @@ namespace frydom {
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
                 ("CenterOfBuoyancyInWorld","m", fmt::format("Center of buoyancy in world reference frame in {}", GetLogFrameConvention()),
                  [this]() {return GetCenterOfBuoyancyInWorld(GetLogFrameConvention());});
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("MetacentricHeights","m", "Transversal and longitudinal metacentric heights",
-                 [this]() {return GetMetacentricHeight();});
+//        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                ("MetacentricHeights","m", "Transversal and longitudinal metacentric heights",
+//                 [this]() {return GetMetacentricHeight();});
 
 //        m_message->AddField<Eigen::Matrix<double, 3, 1>>
 //                ("ForceInWorld","N", fmt::format("Hydrostatic force, at CoB, in world reference frame in {}", GetLogFrameConvention()),

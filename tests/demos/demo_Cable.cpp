@@ -254,7 +254,7 @@ int main(int argc, char* argv[]) {
     system.SetTimeStep(0.01);
 
     // You can modify solver and time stepper parameters :
-//    system.SetSolver(FrOffshoreSystem::SOLVER::MINRES);
+    system.SetSolver(FrOffshoreSystem::SOLVER::MINRES);
     system.SetSolverWarmStarting(true);
     system.SetSolverMaxIterSpeed(200);
     system.SetSolverMaxIterStab(200);
@@ -264,7 +264,7 @@ int main(int argc, char* argv[]) {
 //    system.SetTimeStepper(FrOffshoreSystem::TIME_STEPPER::EULER_IMPLICIT_LINEARIZED);
 
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
-    // the time length of the simulation (here infinite) and the distance from the camera to the objectif (50).
+    // the time length of the simulation (here infinite) and the distance from the camera to the objective (50).
     // For saving snapshots of the simulation, just turn the boolean to true.
     system.RunInViewer(0., 50, false);
 

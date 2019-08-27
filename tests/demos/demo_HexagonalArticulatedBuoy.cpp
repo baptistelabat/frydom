@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
 
     auto ocean = system.GetEnvironment()->GetOcean();
     auto waveField = ocean->GetFreeSurface()->SetAiryRegularWaveField();
-    waveField->SetWavePeriod(3.);
+    waveField->SetWavePeriod(0.5);
     waveField->SetWaveHeight(0.1); //0.1
     waveField->SetDirection(0., DEG, NWU, GOTO);
 
@@ -49,8 +49,12 @@ int main(int argc, char* argv[]) {
 
     auto cyl2 = system.NewBody();
     cyl2->SetName("cyl2");
-    cyl2->AddMeshAsset(system.GetDataPath("cylinder_base_bar_rz60m.obj"));
-    cyl2->SetColor(Yellow);
+    auto asset2 = std::make_shared<FrTriangleMeshConnected>();
+    asset2->LoadWavefrontMesh(system.GetDataPath("cylinder_base_bar.obj"));
+    asset2->Rotate(FrRotation(Direction(0., 0., 1.), -M_PI/3., NWU));
+    cyl2->AddMeshAsset(asset2);
+//    cyl2->AddMeshAsset(system.GetDataPath("cylinder_base_bar_rz60m.obj"));
+    cyl2->SetColor(Red);
     cyl2->SetPosition(Position(-1.25, 2.165, 0.), NWU);
     FrInertiaTensor inertiaTensor2(
             805.033,
@@ -62,7 +66,11 @@ int main(int argc, char* argv[]) {
 
     auto cyl3 = system.NewBody();
     cyl3->SetName("cyl3");
-    cyl3->AddMeshAsset(system.GetDataPath("cylinder_base_bar_rz60.obj"));
+    auto asset3 = std::make_shared<FrTriangleMeshConnected>();
+    asset3->LoadWavefrontMesh(system.GetDataPath("cylinder_base_bar.obj"));
+    asset3->Rotate(FrRotation(Direction(0., 0., 1.), M_PI/3., NWU));
+    cyl3->AddMeshAsset(asset3);
+//    cyl3->AddMeshAsset(system.GetDataPath("cylinder_base_bar_rz60.obj"));
     cyl3->SetColor(Yellow);
     cyl3->SetPosition(Position(1.25, 2.165, 0.), NWU);
     FrInertiaTensor inertiaTensor3(
@@ -88,7 +96,7 @@ int main(int argc, char* argv[]) {
 
     auto cyl5 = system.NewBody();
     cyl5->SetName("cyl5");
-    cyl5->AddMeshAsset(system.GetDataPath("cylinder_base_bar_rz60m.obj"));
+    cyl5->AddMeshAsset(asset2);
     cyl5->SetColor(Yellow);
     cyl5->SetPosition(Position(1.25, -2.165, 0.), NWU);
     FrInertiaTensor inertiaTensor5(
@@ -101,7 +109,7 @@ int main(int argc, char* argv[]) {
 
     auto cyl6 = system.NewBody();
     cyl6->SetName("cyl6");
-    cyl6->AddMeshAsset(system.GetDataPath("cylinder_base_bar_rz60.obj"));
+    cyl6->AddMeshAsset(asset3);
     cyl6->SetColor(Yellow);
     cyl6->SetPosition(Position(-1.25, -2.165, 0.), NWU);
     FrInertiaTensor inertiaTensor6(
@@ -195,11 +203,11 @@ int main(int argc, char* argv[]) {
                                     FrHydroMesh::ClippingSupport::PLANESURFACE);
 
     auto cyl2Mesh = make_hydro_mesh(cyl2, system.GetDataPath("cylinder_base.obj"),
-                                    FrFrame(Position(0., 0., 0.), FrRotation(Direction(0., 0., 1.), M_PI/3., NWU), NWU),
+                                    FrFrame(Position(0., 0., 0.), FrRotation(Direction(0., 0., 1.), -M_PI/3., NWU), NWU),
                                     FrHydroMesh::ClippingSupport::PLANESURFACE);
 
     auto cyl3Mesh = make_hydro_mesh(cyl3, system.GetDataPath("cylinder_base.obj"),
-                                    FrFrame(Position(0., 0., 0.) ,FrRotation(Direction(0., 0., 1.), -M_PI/3., NWU), NWU),
+                                    FrFrame(Position(0., 0., 0.) ,FrRotation(Direction(0., 0., 1.), M_PI/3., NWU), NWU),
                                     FrHydroMesh::ClippingSupport::PLANESURFACE);
 
     auto cyl4Mesh = make_hydro_mesh(cyl4, system.GetDataPath("cylinder_base.obj"),
@@ -207,11 +215,11 @@ int main(int argc, char* argv[]) {
                                     FrHydroMesh::ClippingSupport::PLANESURFACE);
 
     auto cyl5Mesh = make_hydro_mesh(cyl5, system.GetDataPath("cylinder_base.obj"),
-                                    FrFrame(Position(0., 0., 0.), FrRotation(Direction(0., 0., 1.), M_PI/3., NWU), NWU),
+                                    FrFrame(Position(0., 0., 0.), FrRotation(Direction(0., 0., 1.), -M_PI/3., NWU), NWU),
                                     FrHydroMesh::ClippingSupport::PLANESURFACE);
 
     auto cyl6Mesh = make_hydro_mesh(cyl6, system.GetDataPath("cylinder_base.obj"),
-                                    FrFrame(Position(0., 0., 0.), FrRotation(Direction(0., 0., 1.), -M_PI/3., NWU), NWU),
+                                    FrFrame(Position(0., 0., 0.), FrRotation(Direction(0., 0., 1.), M_PI/3., NWU), NWU),
                                     FrHydroMesh::ClippingSupport::PLANESURFACE);
 
     auto forceHst1 = make_nonlinear_hydrostatic_force(cyl1, cyl1Mesh);
@@ -259,7 +267,7 @@ int main(int argc, char* argv[]) {
     bool is_irrlicht = true;
 
     if (is_irrlicht) {
-        system.RunInViewer(50., 50., true, 5);
+        system.RunInViewer(50., 10., false, 5);
     } else {
         auto time = 0.;
         while(time < 50.) {
