@@ -45,6 +45,7 @@ set(Hydrodynamic_resources_path ${platform_resources_path})
 set(Morison_resources_path ${platform_resources_path})
 set(NonLinearHydrostatics_resources_path ${cylinder_resources_path})
 set(Hub_Installation_resources_path ${barge_resources_path})
+set(HexagonalArticulatedBuoy_resources_path ${HexagonalArticulatedBuoy})
 
 # Compile target
 foreach(test ${DEMOS})
