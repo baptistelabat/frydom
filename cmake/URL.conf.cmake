@@ -36,7 +36,7 @@ set(mathutils_TAG master)
 # TimeZone
 set(timezone_URL https://github.com/HowardHinnant/date.git)
 #set(timezone_TAG v2.4.1)
-set(timezone_TAG master)
+set(timezone_TAG 9454aeda2bd6b23c5dabe997a6b392cef88e321d)
 
 # CPPFS
 set(cppfs_URL https://github.com/cginternals/cppfs.git)
