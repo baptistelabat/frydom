@@ -3,3 +3,9 @@
 v2.2
 ====
 
+hotfix
+------
+
+    - unnecessary data removed
+    - resource path missing for HexagonalArticulatedBuoy
+    - log FrNonLinearHydrostaticForce
