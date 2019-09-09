@@ -24,3 +24,4 @@ This file should be kept up to date following [these guidelines](https://keepach
 - Unnecessary data removed
 - Log FrNonlinearHydrostaticForce
 - Resource path for demo_HexagonalArticulatedBuoy
+- Timezone target fixed
