@@ -19,3 +19,8 @@ This file should be kept up to date following [these guidelines](https://keepach
 - Refactoring of HDB5Tool python utility
 - Update of the documentation with nice images (thanks Caroline Leguludec ;-) 
 - Benchmark data have been moved to Amazon S3 cloud storage
+
+### hotfix
+- Unnecessary data removed
+- Log FrNonlinearHydrostaticForce
+- Resource path for demo_HexagonalArticulatedBuoy
