@@ -34,18 +34,27 @@ namespace frydom {
             double m_Int_xy = 0.0;
             double m_Int_x2 = 0.0;
             double m_Int_y2 = 0.0;
+            double m_Int_x2y = 0.0;
+            double m_Int_y2x = 0.0;
+            double m_Int_x3 = 0.0;
+            double m_Int_y3 = 0.0;
 
         public:
 
             PolygonSurfaceIntegrals() = default;
 
-            PolygonSurfaceIntegrals(double Int_1, double Int_x, double Int_y, double Int_xy, double Int_x2, double Int_y2) {
+            PolygonSurfaceIntegrals(double Int_1, double Int_x, double Int_y, double Int_xy, double Int_x2, double Int_y2
+                    , double Int_x2y, double Int_y2x, double Int_x3, double Int_y3) {
                 m_Int_1 = Int_1;
                 m_Int_x = Int_x;
                 m_Int_y = Int_y;
                 m_Int_xy = Int_xy;
                 m_Int_x2 = Int_x2;
                 m_Int_y2 = Int_y2;
+                m_Int_x2y = Int_x2y;
+                m_Int_y2x = Int_y2x;
+                m_Int_x3 = Int_x3;
+                m_Int_y3 = Int_y3;
             }
 
             /// This function gives the surface integral of a mesh.
@@ -63,6 +72,14 @@ namespace frydom {
                         return m_Int_x2;
                     case POLY_Y2:
                         return m_Int_y2;
+                    case POLY_X2Y:
+                        return m_Int_x2y;
+                    case POLY_Y2X:
+                        return m_Int_y2x;
+                    case POLY_X3:
+                        return m_Int_x3;
+                    case POLY_Y3:
+                        return m_Int_y3;
                     default:
                         std::cerr << "No integration rule for integrand of type " << type << " for polygons" << std::endl;
                         exit(1);
