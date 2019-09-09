@@ -9,3 +9,4 @@ hotfix
     - unnecessary data removed
     - resource path missing for HexagonalArticulatedBuoy
     - log FrNonLinearHydrostaticForce
+    - timezone target fixed
