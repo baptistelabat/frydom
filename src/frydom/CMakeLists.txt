@@ -46,10 +46,10 @@ target_link_libraries(FRyDoM_Engine
         GeographicLib
         fmt
         cppfs
-        tz
+        timezone
         hermes
-	OpenMeshCore
-	nlohmann_json
+        OpenMeshCore
+        nlohmann_json
         )
 
 target_include_directories(FRyDoM_Engine PUBLIC

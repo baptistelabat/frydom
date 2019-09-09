@@ -32,9 +32,9 @@ if (NOT TimeZone_FOUND)
     endif()
 endif()
 
-if (TARGET tz)
+if (TARGET timezone)
 
-    get_target_property(DIR tz INCLUDE_DIRECTORIES)
+    get_target_property(DIR timezone INCLUDE_DIRECTORIES)
     message("Found TimeZone : ${DIR}")
 
 endif()
