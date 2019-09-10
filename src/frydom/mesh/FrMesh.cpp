@@ -411,6 +411,8 @@ namespace frydom {
 
             // Computation of surface polynomial integrals.
             UpdateFacesPolynomialIntegrals();
+
+            m_polygonSet.Invalidate();
         }
 
         void FrMesh::UpdateBaseProperties() {
@@ -600,9 +602,9 @@ namespace frydom {
 
             double third = 1./3.;
 
-            double intV_x2 = third * GetMeshedSurfaceIntegral(POLY_X3);
-            double intV_y2 = third * GetMeshedSurfaceIntegral(POLY_Y3);
-            double intV_z2 = third * GetMeshedSurfaceIntegral(POLY_Z3);
+            double intV_x2 = third * GetMeshedSurfaceIntegral(0,POLY_X3);
+            double intV_y2 = third * GetMeshedSurfaceIntegral(1,POLY_Y3);
+            double intV_z2 = third * GetMeshedSurfaceIntegral(2,POLY_Z3);
 
             double intV_xy = GetMeshedSurfaceIntegral(0,POLY_X2Y);
             double intV_yz = GetMeshedSurfaceIntegral(1,POLY_Y2Z);
@@ -802,7 +804,6 @@ namespace frydom {
 
             double val = 0.;
             for (FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
-                auto n = normal(*f_iter);
                 val += data(*f_iter).GetSurfaceIntegral(type);
             }
 
