@@ -579,7 +579,8 @@ namespace frydom {
                 auto plane = polygon.GetPlane();
                 auto frame = plane.GetFrame();
 
-                double e = frame.GetPosition(NWU).norm();
+//                double e = frame.GetPosition(NWU).norm();
+                double e = frame.GetPosition(NWU).GetZ();
                 double wc = plane.GetNormal(NWU).Getuz();
                 double R13 = frame.GetRotation().GetInverseRotationMatrix().at(0,2);
                 double R23 = frame.GetRotation().GetInverseRotationMatrix().at(1,2);
@@ -617,7 +618,8 @@ namespace frydom {
                 auto plane = polygon.GetPlane();
                 auto frame = plane.GetFrame();
 
-                double e = frame.GetPosition(NWU).norm();
+//                double e = frame.GetPosition(NWU).norm();
+                double e = frame.GetPosition(NWU).GetZ();
                 auto normal = plane.GetNormal(NWU);
                 auto rotMatrix = frame.GetRotation().GetInverseRotationMatrix();
 
