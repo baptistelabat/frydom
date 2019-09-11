@@ -62,10 +62,24 @@ namespace frydom {
         /// \return Velocity in local frame
         Velocity GetRelativeVelocityInFrame(const FrFrame &frame, const Velocity &worldVel, FRAME_CONVENTION fc) const;
 
-        /// Create a new templated field
-        /// \tparam Field templated field
-        template <class T>
-        void NewField();
+        /// Define a new field with derived type
+        /// \tparam T Derived type of the field
+        /// \param field Smart pointer to the new field
+        /// \return Field raw pointer with the derived type
+        template <typename T>
+        T* SetField(std::unique_ptr<T>&& field) {
+            auto ptr = field.get();
+            m_field = std::move(field);
+            return ptr;
+        }
+
+        /// Set a new field of the specified derived type
+        /// \tparam T Type of the field
+        /// \return Field raw pointer with the derived type
+        template <typename T>
+        T* NewField() {
+            return SetField(std::make_unique<T>());
+        }
 
         /// Create a uniform field
         void MakeFieldUniform();
@@ -74,7 +88,9 @@ namespace frydom {
         /// \tparam Field Field model
         /// \return Field model pointer
         template <class T=FrUniformField>
-        T* GetField() const;
+        T* GetField() const {
+            return dynamic_cast<T*>(m_field.get());
+        }
 
         /// Get the field as a uniform field
         /// \return uniform field
@@ -93,6 +109,7 @@ namespace frydom {
         virtual FrEnvironment* GetEnvironment() const = 0;
 
     };
+
 
 } // end of namespace frydom
 
