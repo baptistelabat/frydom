@@ -57,17 +57,18 @@ namespace frydom {
     }
 
     FrFrame FrNode::GetFrameInBody() const {
-        auto frame = GetFrameWRT_COG_InBody();
-//        frame.SetPosition(frame.GetPosition(NWU) + m_body->GetCOG(NWU), NWU);
-        frame.TranslateInParent(m_body->GetCOG(NWU), NWU);  // TODO : comparer cette implementation a la ligne precendente...
-        return frame;
-    }
-
-    FrFrame FrNode::GetFrameWRT_COG_InBody() const {
         return FrFrame(
+                // Chrono marker GetPos return position of the marker with respect to the body aux ref frame
                 internal::ChVectorToVector3d<Position>(m_chronoMarker->GetPos()),
                 internal::Ch2FrQuaternion(m_chronoMarker->GetRot()),
                 NWU);
+    }
+
+    FrFrame FrNode::GetFrameWRT_COG_InBody() const {
+        auto frame = GetFrameInBody();
+//        frame.SetPosition(frame.GetPosition(NWU) + m_body->GetCOG(NWU), NWU);
+        frame.TranslateInParent(-m_body->GetCOG(NWU), NWU);  // TODO : comparer cette implementation a la ligne precendente...
+        return frame;
     }
 
     void FrNode::SetFrameInBody(const FrFrame& frameInBody) {

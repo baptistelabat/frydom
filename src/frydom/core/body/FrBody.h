@@ -73,6 +73,7 @@ namespace frydom {
 
             /// Update the markers position, relatively to the new Center Of Gravity given
             /// \param newCOG new Center Of Gravity
+            // DEPRECATED
             void UpdateMarkerPositionToCOG(const chrono::ChVector<> newCOG);
 
             /// Removes an asset given its shared pointer
