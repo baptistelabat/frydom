@@ -43,32 +43,32 @@ TEST(FrNode,Position) {
 
     auto node = body->NewNode();
 
-    std::cout<<"SetPositionInBody"<<std::endl;
-    node->SetPositionInBody(NodePositionInBody, fc);
-
-    std::cout<<"GetNodePositionInBody\n"<<node->GetNodePositionInBody(fc)<<std::endl;
-    std::cout<<"GetPositionInWorld\n"<<node->GetPositionInWorld(fc)<<std::endl;
-
-
-    std::cout<<"GetPositionInWorld\n"<<body->GetPointPositionInWorld(NodePositionInBody,fc)<<std::endl;
-
-    std::cout<<"SetPositionInWorld"<<std::endl;
-    node->SetPositionInWorld(body->GetPointPositionInWorld(NodePositionInBody,fc), fc);
-
-    std::cout<<"GetNodePositionInBody\n"<<node->GetNodePositionInBody(fc)<<std::endl;
-    std::cout<<"GetPositionInWorld\n"<<node->GetPositionInWorld(fc)<<std::endl;
-
-
-
-
-
-
-
-    // test GetBody
+    //      test GetBody
     EXPECT_TRUE(body.get()==node->GetBody());
+
+    // SetPositionInBody
+    node->SetPositionInBody(NodePositionInBody, fc);
 
     // test GetPositionInWorld
     Position testPosition  = node->GetPositionInWorld(fc) - body->GetPointPositionInWorld(NodePositionInBody,fc);
+    EXPECT_TRUE(testPosition.isZero());
+    if (not(testPosition.isZero())){
+        std::cout<<body->GetPointPositionInWorld(NodePositionInBody,fc)<<std::endl;
+        std::cout<<node->GetPositionInWorld(fc)<<std::endl;
+    }
+
+    // test GetNodePositionInBody
+    testPosition = node->GetNodePositionInBody(fc) - NodePositionInBody;
+    EXPECT_TRUE(testPosition.isZero());
+    if (not(testPosition.isZero())){
+        std::cout<<NodePositionInBody<<std::endl;
+        std::cout<<node->GetNodePositionInBody(fc)<<std::endl;
+    }
+
+    node->SetPositionInWorld(body->GetPointPositionInWorld(NodePositionInBody,fc), fc);
+
+    // test GetPositionInWorld
+    testPosition  = node->GetPositionInWorld(fc) - body->GetPointPositionInWorld(NodePositionInBody,fc);
     EXPECT_TRUE(testPosition.isZero());
     if (not(testPosition.isZero())){
         std::cout<<body->GetPointPositionInWorld(NodePositionInBody,fc)<<std::endl;
@@ -142,17 +142,12 @@ TEST(FrNode,Position) {
         std::cout<<node->GetPositionInWorld(fc)<<std::endl;
     }
 
-//    /// test GetFrame
-//    bool testRotation = BodyRotationInWorld*NodeRotation == node2->GetFrameInWorld().GetRotation();
-//    EXPECT_TRUE(testRotation);
-//    if (not(testRotation)){
-//        std::cout<<BodyRotationInWorld*NodeRotation<<std::endl;
-//        std::cout<< node2->GetFrameInWorld().GetRotation()<<std::endl;
-//    }
-
-
-
-
-
+    // test GetFrame
+    bool testRotation = BodyRotationInWorld*NodeRotation == node2->GetFrameInWorld().GetRotation();
+    EXPECT_TRUE(testRotation);
+    if (not(testRotation)){
+        std::cout<<BodyRotationInWorld*NodeRotation<<std::endl;
+        std::cout<< node2->GetFrameInWorld().GetRotation()<<std::endl;
+    }
 
 }
