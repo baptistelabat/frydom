@@ -23,14 +23,8 @@ int main() {
 //    auto marker = std::make_shared<ChMarker>("marker0", &body,ChCoordsys<>(ChVector<>(4.,1.,2.)),ChCoordsys<>(),ChCoordsys<>());
     auto marker = std::make_shared<ChMarker>();
     body.AddMarker(marker);
-//    marker->SetBody(&body);
-    marker->SetCoord(ChCoordsys<>(ChVector<>(4.,1.,2.)));
-    marker->UpdateState();
-//    marker->Impose_Abs_Coord(ChCoordsys<>(ChVector<>(4.,1.,2.)));
-//    marker->SetPos(ChVector<>(4.,1.,2.));
-    GetLog()<<marker->GetPos()<<"Marker rel pos \n";
-//    body.Update();
-//    marker->Update(0.);
+
+    marker->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(4.,1.,2.)));
 
     GetLog()<<marker->GetPos()<<"Marker rel pos \n";
     GetLog()<<marker->GetAbsFrame().GetPos()<<"Marker abs pos \n";
@@ -40,11 +34,6 @@ int main() {
 
     GetLog()<<body.GetFrame_COG_to_abs().GetPos()<<"Frame_COG_to Abs \n";
     GetLog()<<marker->GetPos()<<"Marker rel pos \n";
-    GetLog()<<marker->GetAbsFrame().GetPos()<<"Marker abs pos \n";
-
-
-//    body.Update();
-    marker->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(4.,1.,2.)));
     GetLog()<<marker->GetAbsFrame().GetPos()<<"Marker abs pos \n";
 
 }

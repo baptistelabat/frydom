@@ -281,10 +281,20 @@ index 5ae3eb630..e15700ab8 100644
      /// Add a ChConstraintTwoBodies to mask (NOTE: later, the constraint will
      /// be automatically deleted when the mask will be deleted)
 diff --git a/src/chrono/physics/ChMarker.cpp b/src/chrono/physics/ChMarker.cpp
-index 0681da672..05bcdb506 100644
+index 0681da672..6d501ff0b 100644
 --- a/src/chrono/physics/ChMarker.cpp
 +++ b/src/chrono/physics/ChMarker.cpp
-@@ -239,7 +239,7 @@ void ChMarker::UpdateState() {
+@@ -139,7 +139,8 @@ void ChMarker::Impose_Abs_Coord(const Coordsys& m_coord) {
+     Coordsys csys;
+     // coordsys: transform the representation from the parent reference frame
+     // to the local reference frame.
+-    csys.pos = ChTransform<>::TransformParentToLocal(m_coord.pos, my_body->GetCoord().pos, my_body->GetA());
++    auto frameREF_to_Abs = my_body->GetFrame_REF_to_abs();
++    csys.pos = ChTransform<>::TransformParentToLocal(m_coord.pos, frameREF_to_Abs.GetCoord().pos, frameREF_to_Abs.GetA());
+     csys.rot = Qcross(Qconjugate(my_body->GetCoord().rot), m_coord.rot);
+     // apply the imposition on local  coordinate and resting coordinate:
+     Impose_Rel_Coord(csys);
+@@ -239,7 +240,7 @@ void ChMarker::UpdateState() {
      if (!GetBody())
          return;
  
