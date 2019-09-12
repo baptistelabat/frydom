@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index eda7bbc..ce769a0 100644
+index eda7bbcb1..ce769a003 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -14,9 +14,9 @@ cmake_minimum_required(VERSION 3.0)
@@ -42,7 +42,7 @@ index eda7bbc..ce769a0 100644
  #------------------------------------------------------------
  # Defer configuration of all Chrono libraries and programs
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index c3e9d5f..b5a049e 100644
+index c3e9d5feb..b5a049e16 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
 @@ -273,7 +273,7 @@ if(CUDA_FOUND)
@@ -54,8 +54,21 @@ index c3e9d5f..b5a049e 100644
    SELECT_NVCC_ARCH_FLAGS(NVCC_FLAGS_EXTRA)
    list(APPEND CUDA_NVCC_FLAGS ${NVCC_FLAGS_EXTRA})
  
+diff --git a/src/chrono/core/ChFrameMoving.h b/src/chrono/core/ChFrameMoving.h
+index 9e211831b..a5645a039 100644
+--- a/src/chrono/core/ChFrameMoving.h
++++ b/src/chrono/core/ChFrameMoving.h
+@@ -341,7 +341,7 @@ class ChFrameMoving : public ChFrame<Real> {
+     /// another ChFrameMoving T. This is equivalent to pre-multiply this frame
+     /// by the other frame T:   this'= T * this;  or this' = this >> T
+     void ConcatenatePreTransformation(const ChFrameMoving<Real>& T) {
+-        ChFrameMoving<Real> res;
++        ChFrameMoving<Real> res = T;
+         T.TransformLocalToParent(*this, res);
+         *this = res;
+     }
 diff --git a/src/chrono/fea/ChMesh.h b/src/chrono/fea/ChMesh.h
-index a1d0f90..8208fd3 100644
+index a1d0f90d0..8208fd3e2 100644
 --- a/src/chrono/fea/ChMesh.h
 +++ b/src/chrono/fea/ChMesh.h
 @@ -268,7 +268,7 @@ class ChApi ChMesh : public ChIndexedNodes {
@@ -67,8 +80,31 @@ index a1d0f90..8208fd3 100644
      /// Initial setup (before analysis).
      /// This function is called from ChSystem::SetupInitial, marking a point where system
      /// construction is completed.
+diff --git a/src/chrono/physics/ChBodyAuxRef.cpp b/src/chrono/physics/ChBodyAuxRef.cpp
+index 9ec946534..cf3c85a0e 100644
+--- a/src/chrono/physics/ChBodyAuxRef.cpp
++++ b/src/chrono/physics/ChBodyAuxRef.cpp
+@@ -45,12 +45,12 @@ void ChBodyAuxRef::SetFrame_COG_to_REF(const ChFrame<>& mloc) {
+     //   *this->auxref_to_abs = this->auxref_to_cog.GetInverse() >> this;
+ 
+     // Restore marker/forces positions, keeping unchanged respect to aux ref.
+-    ChFrameMoving<> cog_oldnew = old_cog_to_abs >> new_cog_to_abs.GetInverse();
+-
+-    for (auto& marker : marklist) {
+-        marker->ConcatenatePreTransformation(cog_oldnew);
+-        marker->Update(ChTime);
+-    }
++//    ChFrameMoving<> cog_oldnew = old_cog_to_abs >> new_cog_to_abs.GetInverse();
++//
++//    for (auto& marker : marklist) {
++//        marker->ConcatenatePreTransformation(cog_oldnew);
++//        marker->Update(ChTime);
++//    }
+ 
+     // Forces: ?? to do...
+     /*
 diff --git a/src/chrono/physics/ChForce.h b/src/chrono/physics/ChForce.h
-index 3ae1ff0..49a9226 100644
+index 3ae1ff0e2..49a9226f6 100644
 --- a/src/chrono/physics/ChForce.h
 +++ b/src/chrono/physics/ChForce.h
 @@ -64,7 +64,7 @@ class ChApi ChForce : public ChObj {
@@ -217,7 +253,7 @@ index 3ae1ff0..49a9226 100644
      //
      // SERIALIZATION
 diff --git a/src/chrono/physics/ChLinkLock.h b/src/chrono/physics/ChLinkLock.h
-index 01527cf..14ea640 100644
+index 01527cf0a..14ea6409a 100644
 --- a/src/chrono/physics/ChLinkLock.h
 +++ b/src/chrono/physics/ChLinkLock.h
 @@ -282,8 +282,8 @@ class ChApi ChLinkLock : public ChLinkMasked {
@@ -232,7 +268,7 @@ index 01527cf..14ea640 100644
  
  CH_CLASS_VERSION(ChLinkLock,0)
 diff --git a/src/chrono/physics/ChLinkMask.h b/src/chrono/physics/ChLinkMask.h
-index 5ae3eb6..e15700a 100644
+index 5ae3eb630..e15700ab8 100644
 --- a/src/chrono/physics/ChLinkMask.h
 +++ b/src/chrono/physics/ChLinkMask.h
 @@ -62,7 +62,7 @@ class ChApi ChLinkMask {
@@ -244,8 +280,21 @@ index 5ae3eb6..e15700a 100644
  
      /// Add a ChConstraintTwoBodies to mask (NOTE: later, the constraint will
      /// be automatically deleted when the mask will be deleted)
+diff --git a/src/chrono/physics/ChMarker.cpp b/src/chrono/physics/ChMarker.cpp
+index 0681da672..05bcdb506 100644
+--- a/src/chrono/physics/ChMarker.cpp
++++ b/src/chrono/physics/ChMarker.cpp
+@@ -239,7 +239,7 @@ void ChMarker::UpdateState() {
+     if (!GetBody())
+         return;
+ 
+-    GetBody()->TransformLocalToParent(*this, abs_frame);
++    GetBody()->GetFrame_REF_to_abs().TransformLocalToParent(*this, abs_frame);
+ }
+ 
+ void ChMarker::Update(double mytime) {
 diff --git a/src/chrono/physics/ChPhysicsItem.h b/src/chrono/physics/ChPhysicsItem.h
-index 4e533bb..344d355 100644
+index 4e533bb49..344d355dc 100644
 --- a/src/chrono/physics/ChPhysicsItem.h
 +++ b/src/chrono/physics/ChPhysicsItem.h
 @@ -43,7 +43,6 @@ class ChApi ChPhysicsItem : public ChObj {
@@ -257,7 +306,7 @@ index 4e533bb..344d355 100644
  
    public:
 diff --git a/src/chrono/physics/ChSystem.h b/src/chrono/physics/ChSystem.h
-index e61891e..2432bd2 100644
+index e61891ed9..2432bd241 100644
 --- a/src/chrono/physics/ChSystem.h
 +++ b/src/chrono/physics/ChSystem.h
 @@ -758,7 +758,7 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
@@ -270,7 +319,7 @@ index e61891e..2432bd2 100644
      /// Solve the position of static equilibrium (and the
      /// reactions). This tries to solve the equilibrium for the nonlinear
 diff --git a/src/chrono/solver/ChVariables.cpp b/src/chrono/solver/ChVariables.cpp
-index a1e71ab..89c9e13 100644
+index a1e71ab59..89c9e1397 100644
 --- a/src/chrono/solver/ChVariables.cpp
 +++ b/src/chrono/solver/ChVariables.cpp
 @@ -22,16 +22,16 @@ namespace chrono {
@@ -319,7 +368,7 @@ index a1e71ab..89c9e13 100644
      }
  
 diff --git a/src/chrono/solver/ChVariables.h b/src/chrono/solver/ChVariables.h
-index 72a152c..14e63f2 100644
+index 72a152ce6..14e63f2d9 100644
 --- a/src/chrono/solver/ChVariables.h
 +++ b/src/chrono/solver/ChVariables.h
 @@ -49,8 +49,8 @@ namespace chrono {
@@ -341,7 +390,7 @@ index 72a152c..14e63f2 100644
 \ No newline at end of file
 +#endif
 diff --git a/src/chrono/solver/ChVariablesBodyOwnMass.h b/src/chrono/solver/ChVariablesBodyOwnMass.h
-index 3a278f3..aa597b1 100644
+index 3a278f344..aa597b12f 100644
 --- a/src/chrono/solver/ChVariablesBodyOwnMass.h
 +++ b/src/chrono/solver/ChVariablesBodyOwnMass.h
 @@ -35,7 +35,9 @@ class ChApi ChVariablesBodyOwnMass : public ChVariablesBody {

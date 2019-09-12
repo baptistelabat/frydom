@@ -6,6 +6,7 @@ set(REFACTORING_TESTS
         test_cylinder_interaction
         test_FrFunction
         test_COG
+        test_ChMarker
         )
 
 #include(Add_matplotlib-cpp)
