@@ -62,17 +62,17 @@ int main() {
     node->SetLogged(true);
 
     std::cout<<"body : \n"<<body->GetCOG(NWU)<<std::endl<<"node :\n" << node->GetNodePositionInBody(NWU)<<std::endl;
-    std::cout<<"node WRT COG"<<node->GetFrameWRT_COG_InBody().GetPosition(NWU)<<std::endl;
+    std::cout<<"node WRT COG\n"<<node->GetFrameWRT_COG_InBody().GetPosition(NWU)<<std::endl;
 
     body->ForceCOG(Position(4.,5.,6.));
 
     std::cout<<"body : \n"<<body->GetCOG(NWU)<<std::endl<<"node :\n" << node->GetNodePositionInBody(NWU)<<std::endl;
-    std::cout<<"node WRT COG"<<node->GetFrameWRT_COG_InBody().GetPosition(NWU)<<std::endl;
+    std::cout<<"node WRT COG\n"<<node->GetFrameWRT_COG_InBody().GetPosition(NWU)<<std::endl;
 
     system.Initialize();
 
     std::cout<<"body : \n"<<body->GetCOG(NWU)<<std::endl<<"node :\n" << node->GetNodePositionInBody(NWU)<<std::endl;
-    std::cout<<"node WRT COG"<<node->GetFrameWRT_COG_InBody().GetPosition(NWU)<<std::endl;
+    std::cout<<"node WRT COG\n"<<node->GetFrameWRT_COG_InBody().GetPosition(NWU)<<std::endl;
 
 //    system.RunInViewer(0,10.);
 
@@ -87,6 +87,7 @@ int main() {
         system.AdvanceTo(time);
 
         std::cout<<"time : "<<time<<std::endl<<"body : \n"<<body->GetCOG(NWU)<<std::endl<<"node :\n" << node->GetNodePositionInBody(NWU)<<std::endl;
+        std::cout<<"node WRT COG\n"<<node->GetFrameWRT_COG_InBody().GetPosition(NWU)<<std::endl;
     }
 
 //    clock_t end = clock();
