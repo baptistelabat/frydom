@@ -148,9 +148,10 @@ bool TestMesh::TestIntegrals(double volume, const Position& COG) {
     EXPECT_NEAR(planeTest.GetDistanceToPoint(origin,fc), 0, 1E-8);
 
     // Test on integrals
+//    std::cout<<"Volume:"<<GetVolume()<<std::endl;
     EXPECT_NEAR(std::abs(GetVolume() - volume)/std::abs(volume), 0, 1E-5);
 
-    std::cout<<"G : ("<<GetCOG().GetX()<<","<<GetCOG().GetY()<<","<<GetCOG().GetZ()<<")"<<std::endl;
+//    std::cout<<"G : ("<<GetCOG().GetX()<<","<<GetCOG().GetY()<<","<<GetCOG().GetZ()<<")"<<std::endl;
 
 //    double h = 5./3.;
 //    Position testCOG = origin + Position(-h,0.,-h) - GetCOG();
@@ -231,6 +232,7 @@ TEST_F(TestMesh,XZtrans){
 
     SetClippingPlane(Position(5.,5.,5.), normal);
     Clip();
+//    Write("XZtrans.obj");
     double h = 5./3.;
     TestIntegrals(500, Position(-h,0.,-h));
 
@@ -243,7 +245,7 @@ TEST_F(TestMesh,Xrot){
     Rotate(MU_PI_4, 0., 0.);
     SetClippingPlane(Position(), Direction(1.,0.,0.));
     Clip();
-    Write("Xrot.obj");
+//    Write("Xrot.obj");
     TestIntegrals(500, Position(-2.5,0.,0.));
 
 }
@@ -255,7 +257,7 @@ TEST_F(TestMesh,XrotTrans){
     Translate({5.,5.,5.});
     SetClippingPlane(Position(5.,5.,5.), Direction(1.,0.,0.));
     Clip();
-    Write("Xrot.obj");
+//    Write("XrotTrans.obj");
     TestIntegrals(500, Position(-2.5,0.,0.));
 
 }
