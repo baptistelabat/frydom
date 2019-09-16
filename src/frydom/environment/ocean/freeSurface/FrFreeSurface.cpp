@@ -70,76 +70,76 @@ namespace frydom {
     }
 
 
-    void FrFreeSurface::NoWaves() {
-        m_waveField = std::make_unique<FrNullWaveField>(this);
-    }
-
-    FrAiryRegularWaveField*
-    FrFreeSurface::SetAiryRegularWaveField() {
-        m_waveField = std::make_unique<FrAiryRegularWaveField>(this);
-        return dynamic_cast<FrAiryRegularWaveField*>(m_waveField.get());
-    }
-
-    FrAiryRegularWaveField*
-    FrFreeSurface::SetAiryRegularWaveField(double waveHeight, double wavePeriod, double waveDirAngle, ANGLE_UNIT unit,
-                                            FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
-        auto waveField = SetAiryRegularWaveField();
-        waveField->SetWaveHeight(waveHeight);
-        waveField->SetWavePeriod(wavePeriod);
-        waveField->SetDirection(waveDirAngle, unit, fc, dc);
-        return dynamic_cast<FrAiryRegularWaveField*>(m_waveField.get());
-    }
-
-
-    FrAiryRegularWaveField*
-    FrFreeSurface::SetAiryRegularWaveField(double waveHeight, double wavePeriod, const Direction& waveDirection,
-                                            FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
-        auto waveField = SetAiryRegularWaveField();
-        waveField->SetWaveHeight(waveHeight);
-        waveField->SetWavePeriod(wavePeriod);
-        waveField->SetDirection(waveDirection, fc, dc);
-        return waveField;
-    }
-
-
-    FrAiryRegularOptimWaveField*
-    FrFreeSurface::SetAiryRegularOptimWaveField() {
-        m_waveField = std::make_unique<FrAiryRegularOptimWaveField>(this);
-        return dynamic_cast<FrAiryRegularOptimWaveField*>(m_waveField.get());
-    }
-
-    FrAiryRegularOptimWaveField*
-    FrFreeSurface::SetAiryRegularOptimWaveField(double waveHeight, double wavePeriod, double waveDirAngle, ANGLE_UNIT unit,
-                                            FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
-        auto waveField = SetAiryRegularOptimWaveField();
-        waveField->SetWaveHeight(waveHeight);
-        waveField->SetWavePeriod(wavePeriod);
-        waveField->SetDirection(waveDirAngle, unit, fc, dc);
-        return waveField;
-    }
-
-    FrAiryRegularOptimWaveField*
-    FrFreeSurface::SetAiryRegularOptimWaveField(double waveHeight, double wavePeriod, const Direction& waveDirection,
-                                            FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
-        auto waveField = SetAiryRegularOptimWaveField();
-        waveField->SetWaveHeight(waveHeight);
-        waveField->SetWavePeriod(wavePeriod);
-        waveField->SetDirection(waveDirection, fc, dc);
-        return waveField;
-    }
-
-
-    FrAiryIrregularWaveField*
-    FrFreeSurface::SetAiryIrregularWaveField() {
-        m_waveField = std::make_unique<FrAiryIrregularWaveField>(this);
-        return dynamic_cast<FrAiryIrregularWaveField*>(m_waveField.get());
-    }
-
-    FrAiryIrregularOptimWaveField*
-    FrFreeSurface::SetAiryIrregularOptimWaveField() {
-        m_waveField = std::make_unique<FrAiryIrregularOptimWaveField>(this);
-        return dynamic_cast<FrAiryIrregularOptimWaveField*>(m_waveField.get());
-    }
+//    void FrFreeSurface::NoWaves() {
+//        m_waveField = std::make_unique<FrNullWaveField>(this);
+//    }
+//
+//    FrAiryRegularWaveField*
+//    FrFreeSurface::SetAiryRegularWaveField() {
+//        m_waveField = std::make_unique<FrAiryRegularWaveField>(this);
+//        return dynamic_cast<FrAiryRegularWaveField*>(m_waveField.get());
+//    }
+//
+//    FrAiryRegularWaveField*
+//    FrFreeSurface::SetAiryRegularWaveField(double waveHeight, double wavePeriod, double waveDirAngle, ANGLE_UNIT unit,
+//                                            FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
+//        auto waveField = SetAiryRegularWaveField();
+//        waveField->SetWaveHeight(waveHeight);
+//        waveField->SetWavePeriod(wavePeriod);
+//        waveField->SetDirection(waveDirAngle, unit, fc, dc);
+//        return dynamic_cast<FrAiryRegularWaveField*>(m_waveField.get());
+//    }
+//
+//
+//    FrAiryRegularWaveField*
+//    FrFreeSurface::SetAiryRegularWaveField(double waveHeight, double wavePeriod, const Direction& waveDirection,
+//                                            FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
+//        auto waveField = SetAiryRegularWaveField();
+//        waveField->SetWaveHeight(waveHeight);
+//        waveField->SetWavePeriod(wavePeriod);
+//        waveField->SetDirection(waveDirection, fc, dc);
+//        return waveField;
+//    }
+//
+//
+//    FrAiryRegularOptimWaveField*
+//    FrFreeSurface::SetAiryRegularOptimWaveField() {
+//        m_waveField = std::make_unique<FrAiryRegularOptimWaveField>(this);
+//        return dynamic_cast<FrAiryRegularOptimWaveField*>(m_waveField.get());
+//    }
+//
+//    FrAiryRegularOptimWaveField*
+//    FrFreeSurface::SetAiryRegularOptimWaveField(double waveHeight, double wavePeriod, double waveDirAngle, ANGLE_UNIT unit,
+//                                            FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
+//        auto waveField = SetAiryRegularOptimWaveField();
+//        waveField->SetWaveHeight(waveHeight);
+//        waveField->SetWavePeriod(wavePeriod);
+//        waveField->SetDirection(waveDirAngle, unit, fc, dc);
+//        return waveField;
+//    }
+//
+//    FrAiryRegularOptimWaveField*
+//    FrFreeSurface::SetAiryRegularOptimWaveField(double waveHeight, double wavePeriod, const Direction& waveDirection,
+//                                            FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
+//        auto waveField = SetAiryRegularOptimWaveField();
+//        waveField->SetWaveHeight(waveHeight);
+//        waveField->SetWavePeriod(wavePeriod);
+//        waveField->SetDirection(waveDirection, fc, dc);
+//        return waveField;
+//    }
+//
+//
+//    FrAiryIrregularWaveField*
+//    FrFreeSurface::SetAiryIrregularWaveField() {
+//        m_waveField = std::make_unique<FrAiryIrregularWaveField>(this);
+//        return dynamic_cast<FrAiryIrregularWaveField*>(m_waveField.get());
+//    }
+//
+//    FrAiryIrregularOptimWaveField*
+//    FrFreeSurface::SetAiryIrregularOptimWaveField() {
+//        m_waveField = std::make_unique<FrAiryIrregularOptimWaveField>(this);
+//        return dynamic_cast<FrAiryIrregularOptimWaveField*>(m_waveField.get());
+//    }
 
     void FrFreeSurface::Initialize() {
         if (m_showFreeSurface) {

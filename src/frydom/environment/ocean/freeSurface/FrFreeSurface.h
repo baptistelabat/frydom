@@ -33,10 +33,16 @@ namespace frydom {
     class FrWaveField;
     class FrTidal;
     class FrBody;
+
     class FrAiryRegularWaveField;
     class FrAiryRegularOptimWaveField;
+
+    template <class WaveSpectrumType>
     class FrAiryIrregularWaveField;
+
+    template <class WaveSpectrumType>
     class FrAiryIrregularOptimWaveField;
+
     class FrFreeSurfaceGridAsset;
 
 
@@ -47,7 +53,7 @@ namespace frydom {
      */
     class FrFreeSurface : public FrObject {
 
-    protected:;  // Disallow the default constructor to be used as a public method // TODO: mettre private???
+    protected:  // Disallow the default constructor to be used as a public method // TODO: mettre private???
 
         FrOcean* m_ocean;                            ///< Pointer to the ocean containing this free surface
         bool m_showFreeSurface = true;                ///< Boolean testing if the free surface is to be shown/exist
@@ -143,66 +149,67 @@ namespace frydom {
 
         //---------------------------- Wave field makers ----------------------------//
 
-        /// Set the wave field model to a null wave field
-        void NoWaves();
-
-        /// Set the wave field model to an Airy regular wave field
-        /// \return Airy regular wave field
-        FrAiryRegularWaveField* SetAiryRegularWaveField();
-
-        /// Set the wave field model to an Airy regular wave field
-        /// \param waveHeight wave height
-        /// \param wavePeriod wave period
-        /// \param waveDirAngle wave direction angle
-        /// \param unit wave direction angle unit
-        /// \param fc frame convention (NED/NWU)
-        /// \param dc direction convention (GOTO/COMEFROM)
-        /// \return Airy regular wave field
-        FrAiryRegularWaveField* SetAiryRegularWaveField(double waveHeight, double wavePeriod, double waveDirAngle,
-                                                        mathutils::ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
-
-        /// Set the wave field model to an Airy regular wave field
-        /// \param waveHeight wave height
-        /// \param wavePeriod wave period
-        /// \param waveDirection wave direction
-        /// \param fc frame convention (NED/NWU)
-        /// \param dc direction convention (GOTO/COMEFROM)
-        /// \return Airy regular wave field
-        FrAiryRegularWaveField* SetAiryRegularWaveField(double waveHeight, double wavePeriod, const Direction& waveDirection,
-                                                        FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
-
-        /// Set the wave field model to an Airy regular wave field optimized
-        /// \return Airy regular wave field
-        FrAiryRegularOptimWaveField* SetAiryRegularOptimWaveField();
-
-        /// Set the wave field model to an Airy regular wave field optimized
-        /// \param waveHeight wave height
-        /// \param wavePeriod wave period
-        /// \param waveDirAngle wave direction angle
-        /// \param unit wave direction angle unit
-        /// \param fc frame convention (NED/NWU)
-        /// \param dc direction convention (GOTO/COMEFROM)
-        /// \return Airy regular wave field
-        FrAiryRegularOptimWaveField* SetAiryRegularOptimWaveField(double waveHeight, double wavePeriod, double waveDirAngle,
-                                                                  mathutils::ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
-
-        /// Set the wave field model to an Airy regular wave field optimized
-        /// \param waveHeight wave height
-        /// \param wavePeriod wave period
-        /// \param waveDirection wave direction
-        /// \param fc frame convention (NED/NWU)
-        /// \param dc direction convention (GOTO/COMEFROM)
-        /// \return Airy regular wave field
-        FrAiryRegularOptimWaveField* SetAiryRegularOptimWaveField(double waveHeight, double wavePeriod, const Direction& waveDirection,
-                                                        FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
-
-        /// Set the wave field model to an Airy irregular wave field
-        /// \return Airy irregular wave field
-        FrAiryIrregularWaveField* SetAiryIrregularWaveField();
-
-        /// Set the wave field model to an Airy irregular wave field optimized
-        /// \return Airy irregular wave field
-        FrAiryIrregularOptimWaveField* SetAiryIrregularOptimWaveField();
+//        /// Set the wave field model to a null wave field
+//        void NoWaves();
+//
+//        /// Set the wave field model to an Airy regular wave field
+//        /// \return Airy regular wave field
+//        FrAiryRegularWaveField* SetAiryRegularWaveField();
+//
+//        /// Set the wave field model to an Airy regular wave field
+//        /// \param waveHeight wave height
+//        /// \param wavePeriod wave period
+//        /// \param waveDirAngle wave direction angle
+//        /// \param unit wave direction angle unit
+//        /// \param fc frame convention (NED/NWU)
+//        /// \param dc direction convention (GOTO/COMEFROM)
+//        /// \return Airy regular wave field
+//        FrAiryRegularWaveField* SetAiryRegularWaveField(double waveHeight, double wavePeriod, double waveDirAngle,
+//                                                        mathutils::ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
+//
+//        /// Set the wave field model to an Airy regular wave field
+//        /// \param waveHeight wave height
+//        /// \param wavePeriod wave period
+//        /// \param waveDirection wave direction
+//        /// \param fc frame convention (NED/NWU)
+//        /// \param dc direction convention (GOTO/COMEFROM)
+//        /// \return Airy regular wave field
+//        FrAiryRegularWaveField* SetAiryRegularWaveField(double waveHeight, double wavePeriod, const Direction& waveDirection,
+//                                                        FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
+//
+//        /// Set the wave field model to an Airy regular wave field optimized
+//        /// \return Airy regular wave field
+//        FrAiryRegularOptimWaveField* SetAiryRegularOptimWaveField();
+//
+//        /// Set the wave field model to an Airy regular wave field optimized
+//        /// \param waveHeight wave height
+//        /// \param wavePeriod wave period
+//        /// \param waveDirAngle wave direction angle
+//        /// \param unit wave direction angle unit
+//        /// \param fc frame convention (NED/NWU)
+//        /// \param dc direction convention (GOTO/COMEFROM)
+//        /// \return Airy regular wave field
+//        FrAiryRegularOptimWaveField* SetAiryRegularOptimWaveField(double waveHeight, double wavePeriod, double waveDirAngle,
+//                                                                  mathutils::ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
+//
+//        /// Set the wave field model to an Airy regular wave field optimized
+//        /// \param waveHeight wave height
+//        /// \param wavePeriod wave period
+//        /// \param waveDirection wave direction
+//        /// \param fc frame convention (NED/NWU)
+//        /// \param dc direction convention (GOTO/COMEFROM)
+//        /// \return Airy regular wave field
+//        FrAiryRegularOptimWaveField* SetAiryRegularOptimWaveField(double waveHeight, double wavePeriod, const Direction& waveDirection,
+//                                                        FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
+//
+//        /// Set the wave field model to an Airy irregular wave field
+//        /// \return Airy irregular wave field
+//        template <class WaveSpectrumType>
+//        FrAiryIrregularWaveField<WaveSpectrumType>* SetAiryIrregularWaveField();
+//
+//        /// Set the wave field model to an Airy irregular wave field optimized
+//        /// \return Airy irregular wave field
+//        FrAiryIrregularOptimWaveField* SetAiryIrregularOptimWaveField();
 
         //---------------------------- Update-Initialize-StepFinalize ----------------------------//
 

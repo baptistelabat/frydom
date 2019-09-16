@@ -34,7 +34,7 @@ namespace frydom {
 
     public:
 
-        enum WAVE_MODEL {
+        enum WAVE_MODEL {  // FIXME : doit disparaitre et on doit avoir une classe NullWaveField...
             NO_WAVES,
             LINEAR_WAVES
         };

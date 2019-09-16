@@ -55,7 +55,7 @@ TEST(FrWaveSpectrum,Jonswap){
     std::vector<double> wVect; wVect.clear();
     wVect = linspace(0.5,2.,21);
 
-    FrJonswapWaveSpectrum JonswapSpectrum(Hs, Tp, Gamma);
+    FrJonswapWaveSpectrum<FrMonoDirectionalModel> JonswapSpectrum(Hs, Tp, Gamma);
 
     auto waveAmp = JonswapSpectrum.GetWaveAmplitudes(wVect);
 
@@ -76,7 +76,7 @@ TEST(FrWaveSpectrum,Jonswap){
 
     EXPECT_NEAR(wminFromPython,wmin,1.E-8);
     EXPECT_NEAR(wmaxFromPython,wmax,1.E-8);
-    
+
 }
 
 
