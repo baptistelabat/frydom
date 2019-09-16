@@ -96,7 +96,7 @@ namespace frydom {
      * \class FrNullSeabed
      * \brief Class for defining a seabed in case of infinite water depth.
      */
-    class FrNullSeabed  : public FrSeabed {
+    class FrNullSeabed  : public FrSeabed { // TODO : renommer en FrInfiniteSeabed
     public:
 
         /// Default constructor

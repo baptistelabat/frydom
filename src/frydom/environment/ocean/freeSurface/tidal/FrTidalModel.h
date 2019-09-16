@@ -75,7 +75,7 @@ namespace frydom {
      * \class FrTidal
      * \brief Class for defining tidals.
      */
-    class FrTidal : public FrObject {
+    class FrTidal : public FrObject { // TODO : Avoir un NullTidal...
 
         enum TIDAL_LEVEL {
             LOW,

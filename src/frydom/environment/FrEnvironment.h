@@ -29,12 +29,20 @@ namespace frydom {
 
     // Forward declarations
     class FrTimeServices;
+
     class FrOffshoreSystem;
+
+    template <class FreeSurfaceType>
     class FrOcean;
+
     class FrAtmosphere;
+
     class FrGeographicServices;
+
     class Velocity;
+
     class FrFrame;
+
     class FrCosRampFunction;
 
 
@@ -42,121 +50,122 @@ namespace frydom {
      * \class FrEnvironment
      * \brief Class for defining the environmental data.
      */
+    template <class OceanType, class AtmosphereType>
     class FrEnvironment : public FrObject {
 
-    private:
+     private:
 
-        FrOffshoreSystem* m_system;    ///< Offshore sytem containing this Environment
+      FrOffshoreSystem *m_system;    ///< Offshore sytem containing this Environment
 
-        //---------------------------- Environment elements ----------------------------//
-        // TODO : faire un service de temps, NEED REFACTO
-        std::unique_ptr<FrTimeServices> m_timeServices;                 ///< Zoned time conversion service, can give time during simulation in a specified time zone.
+      //---------------------------- Environment elements ----------------------------//
+      // TODO : faire un service de temps, NEED REFACTO
+      std::unique_ptr<FrTimeServices> m_timeServices;                 ///< Zoned time conversion service, can give time during simulation in a specified time zone.
 
-        std::unique_ptr<FrCosRampFunction> m_timeRamp;                  ///< Time ramp, can be applied on wave field, current field, wind field, etc.
+      std::unique_ptr<FrCosRampFunction> m_timeRamp;                  ///< Time ramp, can be applied on wave field, current field, wind field, etc.
 
-        std::unique_ptr<FrOcean> m_ocean;                              ///> Ocean element of the simulation, contains free surface and seabed, current model, water properties, etc.
+      std::unique_ptr<FrOcean> m_ocean;                              ///> Ocean element of the simulation, contains free surface and seabed, current model, water properties, etc.
 
-        std::unique_ptr<FrAtmosphere> m_atmosphere;                    ///> Atmosphere element of the simulation, contains wind model, air properties.
+      std::unique_ptr<FrAtmosphere> m_atmosphere;                    ///> Atmosphere element of the simulation, contains wind model, air properties.
 
-        std::unique_ptr<FrGeographicServices> m_geographicServices;    ///> Service converting local coordinates to geographic coordinates, contains the geocoord origins.
+      std::unique_ptr<FrGeographicServices> m_geographicServices;    ///> Service converting local coordinates to geographic coordinates, contains the geocoord origins.
 
-    public:
+     public:
 
-        /// Default constructor
-        /// \param system offshore system containing this environment
-        explicit FrEnvironment(FrOffshoreSystem* system);
+      /// Default constructor
+      /// \param system offshore system containing this environment
+      explicit FrEnvironment(FrOffshoreSystem *system);
 
-        /// Destructor
-        ~FrEnvironment();
+      /// Destructor
+      ~FrEnvironment();
 
-        /// Get the offshore system, containing this environment
-        /// \return offshore system
-        FrOffshoreSystem* GetSystem();
+      /// Get the offshore system, containing this environment
+      /// \return offshore system
+      FrOffshoreSystem *GetSystem();
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "Environment"; }
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "Environment"; }
 
-        //---------------------------- Environment scalars methods ----------------------------//
+      //---------------------------- Environment scalars methods ----------------------------//
 
-        /// Get the simulation time (given by Chrono)
-        /// \return simulation time
-        double GetTime() const;
+      /// Get the simulation time (given by Chrono)
+      /// \return simulation time
+      double GetTime() const;
 
-        /// Get the time ramp attached to the environment
-        /// \return time ramp
-        FrCosRampFunction* GetTimeRamp() const;
+      /// Get the time ramp attached to the environment
+      /// \return time ramp
+      FrCosRampFunction *GetTimeRamp() const;
 
-        /// Get the gravity acceleration on the vertical axis
-        /// \return gravity acceleration on the vertical axis, in m/s²
-        double GetGravityAcceleration() const;
+      /// Get the gravity acceleration on the vertical axis
+      /// \return gravity acceleration on the vertical axis, in m/s²
+      double GetGravityAcceleration() const;
 
-        /// Set the gravity acceleration on the vertical axis
-        /// \param gravityAcceleration gravity acceleration, in m/s²
-        void SetGravityAcceleration(double gravityAcceleration);
+      /// Set the gravity acceleration on the vertical axis
+      /// \param gravityAcceleration gravity acceleration, in m/s²
+      void SetGravityAcceleration(double gravityAcceleration);
 
-        /// Return the flow velocity observed from the local frame
-        /// \param frame Local frame in which the velocity is computed
-        /// \param worldVel Translation velocity of the frame in world frame
-        /// \param ft fluid type (AIR/WATER)
-        /// \param fc Frame convention (NED/NWU)
-        /// \return Velocity in local frame
-        Velocity GetRelativeVelocityInFrame(const FrFrame& frame, const Velocity& worldVel,
-                                            FLUID_TYPE ft, FRAME_CONVENTION fc);
+      /// Return the flow velocity observed from the local frame
+      /// \param frame Local frame in which the velocity is computed
+      /// \param worldVel Translation velocity of the frame in world frame
+      /// \param ft fluid type (AIR/WATER)
+      /// \param fc Frame convention (NED/NWU)
+      /// \return Velocity in local frame
+      Velocity GetRelativeVelocityInFrame(const FrFrame &frame, const Velocity &worldVel,
+                                          FLUID_TYPE ft, FRAME_CONVENTION fc);
 
-        /// Get the fluid density
-        /// \param ft fluid type (AIR/WATER)
-        /// \return fluid density
-        double GetFluidDensity(FLUID_TYPE ft) const;;
+      /// Get the fluid density
+      /// \param ft fluid type (AIR/WATER)
+      /// \return fluid density
+      double GetFluidDensity(FLUID_TYPE ft) const;;
 
-        //---------------------------- Environment elements Getters ----------------------------//
+      //---------------------------- Environment elements Getters ----------------------------//
 
-        /// Get the Ocean element
-        /// \return Ocean element
-        FrOcean* GetOcean() const;
+      /// Get the Ocean element
+      /// \return Ocean element
+      FrOcean *GetOcean() const;
 
-        /// Get the Atmosphere element
-        /// \return Atmosphere element
-        FrAtmosphere* GetAtmosphere() const;
-
-
-        //---------------------------- Geographic coordinates manipulations---------------------------- //
-
-        /// Get the geographic service (convert cartesian to geographic position, compute magnetic declination, etc.)
-        /// \return the geographic service
-        FrGeographicServices* GetGeographicServices() const;
+      /// Get the Atmosphere element
+      /// \return Atmosphere element
+      FrAtmosphere *GetAtmosphere() const;
 
 
-        //---------------------------- Zoned time conversion manipulations---------------------------- //
-        // TODO : ajouter des methodes permettant de recuperer l'heure UTC, de regler le temps origine...
+      //---------------------------- Geographic coordinates manipulations---------------------------- //
 
-        /// Get the zoned time conversion service
-        /// \return zoned time conversion service
-        FrTimeServices* GetTimeServices() const;
-
-        /// Get the year given by the zoned time conversion service
-        /// \return year
-        int GetYear() const;
-
-        //---------------------------- Environment assets hiding helpers ---------------------------- //
-
-        /// (Un)show the free surface
-        void ShowFreeSurface(bool show);
-
-        /// (Un)show the seabed
-        void ShowSeabed(bool show);
+      /// Get the geographic service (convert cartesian to geographic position, compute magnetic declination, etc.)
+      /// \return the geographic service
+      FrGeographicServices *GetGeographicServices() const;
 
 
-        //---------------------------- Update-Initialize-StepFinalize ---------------------------- //
+      //---------------------------- Zoned time conversion manipulations---------------------------- //
+      // TODO : ajouter des methodes permettant de recuperer l'heure UTC, de regler le temps origine...
 
-        /// Update the state of the environment
-        void Update(double time);
+      /// Get the zoned time conversion service
+      /// \return zoned time conversion service
+      FrTimeServices *GetTimeServices() const;
 
-        /// Initialize the state of the environment
-        void Initialize() override;
+      /// Get the year given by the zoned time conversion service
+      /// \return year
+      int GetYear() const;
 
-        /// Method called at the send of a time step. Logging may be used here
-        void StepFinalize() override;
+      //---------------------------- Environment assets hiding helpers ---------------------------- //
+
+      /// (Un)show the free surface
+      void ShowFreeSurface(bool show);
+
+      /// (Un)show the seabed
+      void ShowSeabed(bool show);
+
+
+      //---------------------------- Update-Initialize-StepFinalize ---------------------------- //
+
+      /// Update the state of the environment
+      void Update(double time);
+
+      /// Initialize the state of the environment
+      void Initialize() override;
+
+      /// Method called at the send of a time step. Logging may be used here
+      void StepFinalize() override;
 
     };
 
