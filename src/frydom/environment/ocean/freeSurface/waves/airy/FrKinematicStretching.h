@@ -17,15 +17,15 @@
 
 namespace frydom {
 
-    enum STRETCHING_TYPE {
-        NO_STRETCHING,
-        VERTICAL,
-        EXTRAPOLATE,
-        WHEELER,
-        CHAKRABARTI,
-        DELTA,
-        HDELTA
-    };
+//    enum STRETCHING_TYPE {
+//        NO_STRETCHING,
+//        VERTICAL,
+//        EXTRAPOLATE,
+//        WHEELER,
+//        CHAKRABARTI,
+//        DELTA,
+//        HDELTA
+//    };
 
 
     // Forward declaration
@@ -39,8 +39,7 @@ namespace frydom {
      * \class FrKinematicStretching
      * \brief Class for defining the kinematic stretching model.
      */
-    class FrKinematicStretching
-            {
+    class FrKinematicStretching {
 
     protected:
         bool is_steady = true;                      ///< The expression is not time dependant

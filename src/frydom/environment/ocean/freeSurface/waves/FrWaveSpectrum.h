@@ -137,6 +137,10 @@ namespace frydom {
 
     //TODO: Changer la discrétisation en fréquence, de manière à obtenir une énergie spectrale constante pour toutes les composantes
     // voir OrcaFlex Equal Energy dans Frequency spectrum discretisation.
+<<<<<<< Updated upstream:src/frydom/environment/ocean/freeSurface/waves/FrWaveSpectrum.h
+=======
+    template <class WaveDirectionalModelType>
+>>>>>>> Stashed changes:src/frydom/environment/ocean/freeSurface/waves/wave_spectrum/FrWaveSpectrum.h
     class FrWaveSpectrum : public FrObject {
 
     protected:
@@ -147,7 +151,11 @@ namespace frydom {
 
         WAVE_DIRECTIONAL_MODEL m_dir_model_type = NONE;   ///< wave directional model type (NONE/COS2S/DIRTEST)
 
+<<<<<<< Updated upstream:src/frydom/environment/ocean/freeSurface/waves/FrWaveSpectrum.h
         std::unique_ptr<FrWaveDirectionalModel> m_directional_model = nullptr; ///< wave directional model
+=======
+        std::unique_ptr<WaveDirectionalModelType> m_directional_model; ///< wave directional model
+>>>>>>> Stashed changes:src/frydom/environment/ocean/freeSurface/waves/wave_spectrum/FrWaveSpectrum.h
 
     public:
 
@@ -173,7 +181,11 @@ namespace frydom {
 
         /// Get the wave directional model
         /// \return wave directional model
+<<<<<<< Updated upstream:src/frydom/environment/ocean/freeSurface/waves/FrWaveSpectrum.h
         FrWaveDirectionalModel* GetDirectionalModel() const;
+=======
+        WaveDirectionalModelType* GetDirectionalModel() const;
+>>>>>>> Stashed changes:src/frydom/environment/ocean/freeSurface/waves/wave_spectrum/FrWaveSpectrum.h
 
         /// Set the wave spectrum as multi-directional
         /// \param model wave directional model type

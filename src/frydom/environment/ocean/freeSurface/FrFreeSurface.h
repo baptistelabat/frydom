@@ -28,18 +28,43 @@ namespace frydom {
     // Forward declarations
     template <typename OffshoreSystemType>
     class FrOffshoreSystem;
+<<<<<<< Updated upstream
     class FrEnvironment;
     class FrAtmosphere;
+=======
+
+//    template <class OceanType>
+//    class FrEnvironment;
+
+    class FrAtmosphere;
+
+    template <class FreeSurfaceType>
+>>>>>>> Stashed changes
     class FrOcean;
     class FrWaveField;
 
     template <typename OffshoreSystemType>
     class FrTidal;
     class FrBody;
+<<<<<<< Updated upstream
     class FrAiryRegularWaveField;
     class FrAiryRegularOptimWaveField;
     class FrAiryIrregularWaveField;
     class FrAiryIrregularOptimWaveField;
+=======
+
+//    template <class StretchingType>
+//    class FrAiryRegularWaveField;
+//
+//    template <class StretchingType>
+//    class FrAiryRegularOptimWaveField;
+
+//    template<class StretchingType, class WaveSpectrumType>
+//    class FrAiryIrregularWaveField;
+
+//    template<class WaveSpectrumType>
+//    class FrAiryIrregularOptimWaveField;
+>>>>>>> Stashed changes
 
     template <typename OffshoreSystemType>
     class FrFreeSurfaceGridAsset;
@@ -50,8 +75,50 @@ namespace frydom {
      * \class FrFreeSurface
      * \brief Class for defining the free surface.
      */
+<<<<<<< Updated upstream
      template <typename OffshoreSystemType>
     class FrFreeSurface : public FrObject<OffshoreSystemType> {
+=======
+    template <class WaveFieldType>
+    class FrFreeSurface : public FrObject {
+
+     protected:  // Disallow the default constructor to be used as a public method // TODO: mettre private???
+
+      FrOcean<FreeSurfaceType> *m_ocean;                            ///< Pointer to the ocean containing this free surface
+      bool m_showFreeSurface = true;                ///< Boolean testing if the free surface is to be shown/exist
+
+      // Free surface elements
+      std::unique_ptr<FrTidal> m_tidal;            ///< Tidal model
+      std::unique_ptr<FrWaveField> m_waveField;    ///< Wave field model
+
+      // Visualization asset
+      std::shared_ptr<FrFreeSurfaceGridAsset> m_freeSurfaceGridAsset;    ///> free surface grid asset, containing also the visualization asset
+
+     public:
+
+      /// Default constructor
+      /// \param ocean ocean containing this free surface
+      explicit FrFreeSurface(FrOcean *ocean);
+
+      /// Default destructor
+      ~FrFreeSurface();
+
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "FreeSurface"; }
+
+      //---------------------------- Asset ----------------------------//
+
+      /// Set if the free surface is to be shown/exist
+      /// \param showFreeSurface showfreesurface true means the free surface exists
+      void ShowFreeSurface(bool showFreeSurface);
+
+      /// Get the free surface grid asset
+      /// \return free surface grid asset
+      FrFreeSurfaceGridAsset *GetFreeSurfaceGridAsset() const;
+
+      //---------------------------- Free surface elements Getters ----------------------------//
+>>>>>>> Stashed changes
 
     protected:;  // Disallow the default constructor to be used as a public method // TODO: mettre private???
 

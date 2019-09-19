@@ -11,7 +11,7 @@
 
 
 #include "FrKinematicStretching.h"
-#include "FrWaveField.h"
+#include "FrAiryWaveField.h"
 
 namespace frydom {
 

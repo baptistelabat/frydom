@@ -15,9 +15,15 @@
 
 #include <random>
 
+<<<<<<< Updated upstream
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveSpectrum.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrKinematicStretching.h"
+=======
+//#include "frydom/environment/ocean/freeSurface/waves/FrWaveSpectrum.h"
+#include "FrAiryWaveField.h"
+//#include "FrKinematicStretching.h"
+>>>>>>> Stashed changes
 
 
 namespace frydom {
@@ -25,13 +31,23 @@ namespace frydom {
     //Forward Declaration
     class FrFreeSurface;
     class FrWaveSpectrum;
+<<<<<<< Updated upstream
     class FrKinematicStretching;
+=======
+
+//    class FrKinematicStretching;
+>>>>>>> Stashed changes
 
     /**
      * \class FrAiryIrregularWaveField
      * \brief Class which deals with irregular wave field.
      */
+<<<<<<< Updated upstream
     class FrAiryIrregularWaveField : public FrWaveField {
+=======
+    template <class StretchingType, class WaveSpectrumType>
+    class FrAiryIrregularWaveField : public FrAiryWaveField<StretchingType> {
+>>>>>>> Stashed changes
     protected:
 
 
@@ -52,7 +68,7 @@ namespace frydom {
         std::unique_ptr<std::vector<std::vector<double>>> m_wavePhases;    ///< Table of wave phases,of dimensions (m_nbDir,m_nbFreq)
                                                                            ///< made unique to check at initialize() if wavePhases were given by the users,
                                                                            ///< or if they need to be randomly generated.
-        std::unique_ptr<FrKinematicStretching> m_verticalFactor;    ///< Vertical scale velocity factor with stretching
+
 
     public:
 
@@ -110,9 +126,9 @@ namespace frydom {
         /// \param dirType directional model type (NONE, COS2S, TEST(for tests only))
         void SetDirectionalParameters(unsigned int nbDir, double spreadingFactor, WAVE_DIRECTIONAL_MODEL dirType=COS2S);
 
-        /// Set the stretching type used to compute velocity and acceleration on positions above the free surface elevation
-        /// \param type stretching type (NO_STRETCHING, VERTICAL, EXTRAPOLATE, WHEELER, CHAKRABARTI, DELTA)
-        void SetStretching(STRETCHING_TYPE type);
+//        /// Set the stretching type used to compute velocity and acceleration on positions above the free surface elevation
+//        /// \param type stretching type (NO_STRETCHING, VERTICAL, EXTRAPOLATE, WHEELER, CHAKRABARTI, DELTA)
+//        void SetStretching(STRETCHING_TYPE type);
 
 //        void SetWaveSpectrum(WAVE_SPECTRUM_TYPE type);
 

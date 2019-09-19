@@ -45,8 +45,14 @@ namespace frydom {
      * \class FrEnvironment
      * \brief Class for defining the environmental data.
      */
+<<<<<<< Updated upstream
      template <typename OffshoreSystemType>
     class FrEnvironment : public FrObject<OffshoreSystemType> {
+=======
+//    template <class OceanType, class AtmosphereType>
+    template <class OceanType> // TODO : ajouter atmosphere
+    class FrEnvironment : public FrObject {
+>>>>>>> Stashed changes
 
     private:
 

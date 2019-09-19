@@ -5,8 +5,12 @@ add_subdirectory(airy)
 set(WAVES_FILES_LOCAL
         FrWaveDispersionRelation.cpp
         FrWaveField.cpp
+<<<<<<< Updated upstream
         FrWaveSpectrum.cpp
         FrKinematicStretching.cpp
+=======
+#        FrWaveSpectrum.cpp
+>>>>>>> Stashed changes
         )
 
 set(WAVES_FILES "")

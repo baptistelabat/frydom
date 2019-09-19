@@ -12,8 +12,8 @@
 #ifndef FRYDOM_FRAIRYREGULARWAVEFIELD_H
 #define FRYDOM_FRAIRYREGULARWAVEFIELD_H
 
-#include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
-#include "frydom/environment/ocean/freeSurface/waves/FrKinematicStretching.h"
+#include "FrAiryWaveField.h"
+//#include "FrKinematicStretching.h"
 
 namespace frydom {
 
@@ -24,7 +24,8 @@ namespace frydom {
      * \class FrAiryRegularWaveField
      * \brief Class which deals with regular wave fields without optimization for a better parallelization.
      */
-    class FrAiryRegularWaveField : public FrWaveField {
+    template <class StretchingType>
+    class FrAiryRegularWaveField : public FrAiryWaveField<StretchingType> {
     protected:
 
         double m_height = 0.;   ///< Wave amplitude
@@ -34,7 +35,7 @@ namespace frydom {
         double m_dirAngle = 0.; ///< Wave direction
                                 ///< used internally with the conventions : NWU, GOTO, and unit : RAD; [0,2PI]
 
-        std::unique_ptr<FrKinematicStretching> m_verticalFactor;    /// Vertical scale velocity factor with stretching
+//        std::unique_ptr<FrKinematicStretching> m_verticalFactor;    /// Vertical scale velocity factor with stretching
 
     public:
 
@@ -67,9 +68,9 @@ namespace frydom {
         /// \param dc direction convention (GOTO/COMEFROM)
         void SetDirection(const Direction& direction, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
 
-        /// Set the stretching type, to avoid irregularities for quantities calculated above the free surface
-        /// \param type stretching type (NO_STRETCHING/VERTICAL/EXTRAPOLATE/WHEELER/CHAKRABARTI/DELTA)
-        void SetStretching(STRETCHING_TYPE type);
+//        /// Set the stretching type, to avoid irregularities for quantities calculated above the free surface
+//        /// \param type stretching type (NO_STRETCHING/VERTICAL/EXTRAPOLATE/WHEELER/CHAKRABARTI/DELTA)
+//        void SetStretching(STRETCHING_TYPE type);
 
         /// Get the wave height of the regular Airy wave field
         /// \return wave height, in meters

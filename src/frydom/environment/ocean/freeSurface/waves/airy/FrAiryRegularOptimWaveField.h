@@ -21,7 +21,8 @@ namespace frydom {
      * \class FrAiryRegularOptimWaveField
      * \brief Class which deals with regular wave fields with optimization (cos(theta), etc.), from FrAiryRegularWaveField.
      */
-    class FrAiryRegularOptimWaveField : public FrAiryRegularWaveField {
+    template <class StretchingType>
+    class FrAiryRegularOptimWaveField : public FrAiryRegularWaveField<StretchingType> {
     private:
 
         Complex c_expJwt;    ///< cache attribute for the time dependant coefficient (H.exp(-j.w.t)
