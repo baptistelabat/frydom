@@ -49,6 +49,8 @@ namespace frydom {
                 return m_node->GetFrameInWorld().GetYAxisInParent(fc);
             case ZAXIS:
                 return m_node->GetFrameInWorld().GetZAxisInParent(fc);
+            default:
+                throw FrException("axis not correctly defined");
         }
 
     }
@@ -80,6 +82,8 @@ namespace frydom {
                 return m_node->GetFrameInWorld().GetYAxisInParent(fc);
             case ZAXIS:
                 return m_node->GetFrameInWorld().GetZAxisInParent(fc);
+            default:
+                throw FrException("normal not correctly defined");
         }
 
     }

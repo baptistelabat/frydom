@@ -508,9 +508,8 @@ namespace frydom {
 
     std::string FrCompFunction::GetRepr() const {
         fmt::MemoryWriter mw;
-
-//        mw <<
-        // TODO
+        mw << m_function->GetRepr() << " o(" << m_rightFunction->GetRepr()<<')';
+        return mw.str();
     }
 
     void FrCompFunction::Eval(double x) const {
