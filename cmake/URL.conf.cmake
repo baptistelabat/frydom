@@ -13,7 +13,8 @@ set(fmt_TAG 4.1.0)
 
 
 # GeographicLib
-set(geographiclib_URL https://sourceforge.net/projects/geographiclib/files/distrib/GeographicLib-1.49.tar.gz/download)
+set(geographiclib_URL https://github.com/D-ICE/geographiclib.git)
+set(geographiclib_TAG v1.49)
 set(geographiclib_PATCH GeographicLib.patch)
 
 
@@ -34,12 +35,8 @@ set(mathutils_TAG master)
 
 # TimeZone
 set(timezone_URL https://github.com/HowardHinnant/date.git)
-set(timezone_TAG v2.4.1)
-
-# YAML-CPP
-#-set(yamlcpp_URL https://github.com/jbeder/yaml-cpp.git)
-#-set(yamlcpp_TAG yaml-cpp-0.6.2)
-#-set(yamlcpp_PATCH yaml-cpp.patch)
+#set(timezone_TAG v2.4.1)
+set(timezone_TAG 9454aeda2bd6b23c5dabe997a6b392cef88e321d)
 
 # CPPFS
 set(cppfs_URL https://github.com/cginternals/cppfs.git)

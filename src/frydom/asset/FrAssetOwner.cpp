@@ -65,6 +65,11 @@ namespace frydom{
         GetChronoItem_ptr()->AddAsset(asset->GetChronoAsset());
     }
 
+    void FrAssetOwner::RemoveAssets() {
+        m_assets.clear();
+        GetChronoItem_ptr()->GetAssets().clear();
+    }
+
     FrAssetOwner::BoxShapeConstContainer FrAssetOwner::GetBoxShapes() const {
         FrAssetOwner::BoxShapeConstContainer result;
         for (const auto& shape : m_boxShapes) {

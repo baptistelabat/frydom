@@ -110,7 +110,7 @@ namespace frydom {
         void CalcGeometricProperties();
 
         /// Compute the hydrostatic properties
-        double CalcHydrostaticProperties();
+        void CalcHydrostaticProperties();
 
     };
 

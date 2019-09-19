@@ -1,3 +1,0 @@
-FRyDoM User's guide
-===================
-

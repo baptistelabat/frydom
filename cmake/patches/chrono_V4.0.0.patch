@@ -269,3 +269,89 @@ index e61891e..2432bd2 100644
  
      /// Solve the position of static equilibrium (and the
      /// reactions). This tries to solve the equilibrium for the nonlinear
+diff --git a/src/chrono/solver/ChVariables.cpp b/src/chrono/solver/ChVariables.cpp
+index a1e71ab..89c9e13 100644
+--- a/src/chrono/solver/ChVariables.cpp
++++ b/src/chrono/solver/ChVariables.cpp
+@@ -22,16 +22,16 @@ namespace chrono {
+ 
+ ChVariables::ChVariables(int m_ndof) : disabled(false), ndof(m_ndof), offset(0) {
+     if (Get_ndof() > 0) {
+-        qb = new ChMatrixDynamic<>(Get_ndof(), 1);
+-        fb = new ChMatrixDynamic<>(Get_ndof(), 1);
++        qb = std::make_shared<ChMatrixDynamic<>>(Get_ndof(), 1);
++        fb = std::make_shared<ChMatrixDynamic<>>(Get_ndof(), 1);
+     } else {
+         qb = fb = NULL;
+     }
+ }
+ 
+ ChVariables::~ChVariables() {
+-    delete qb;
+-    delete fb;
++    //delete qb;
++    //delete fb;
+ }
+ 
+ ChVariables& ChVariables::operator=(const ChVariables& other) {
+@@ -42,19 +42,19 @@ ChVariables& ChVariables::operator=(const ChVariables& other) {
+ 
+     if (other.qb) {
+         if (qb == NULL)
+-            qb = new ChMatrixDynamic<>;
++            qb = std::make_shared<ChMatrixDynamic<>>();
+         qb->CopyFromMatrix(*other.qb);
+     } else {
+-        delete qb;
++        //delete qb;
+         qb = NULL;
+     }
+ 
+     if (other.fb) {
+         if (fb == NULL)
+-            fb = new ChMatrixDynamic<>;
++            fb = std::make_shared<ChMatrixDynamic<>>();
+         fb->CopyFromMatrix(*other.fb);
+     } else {
+-        delete fb;
++        //delete fb;
+         fb = NULL;
+     }
+ 
+diff --git a/src/chrono/solver/ChVariables.h b/src/chrono/solver/ChVariables.h
+index 72a152c..14e63f2 100644
+--- a/src/chrono/solver/ChVariables.h
++++ b/src/chrono/solver/ChVariables.h
+@@ -49,8 +49,8 @@ namespace chrono {
+ class ChApi ChVariables {
+ 
+   private:
+-    ChMatrix<>* qb;  ///< variables (accelerations, speeds, etc. depending on the problem)
+-    ChMatrix<>* fb;  ///< known vector (forces, or impulses, etc. depending on the problem)
++    std::shared_ptr<ChMatrix<>> qb;  ///< variables (accelerations, speeds, etc. depending on the problem)
++    std::shared_ptr<ChMatrix<>> fb;  ///< known vector (forces, or impulses, etc. depending on the problem)
+     int ndof;        ///< number of degrees of freedom (number of contained scalar variables)
+     bool disabled;   ///< user activation/deactivation of variables
+ 
+@@ -157,4 +157,4 @@ class ChApi ChVariables {
+ 
+ }  // end namespace chrono
+ 
+-#endif
+\ No newline at end of file
++#endif
+diff --git a/src/chrono/solver/ChVariablesBodyOwnMass.h b/src/chrono/solver/ChVariablesBodyOwnMass.h
+index 3a278f3..aa597b1 100644
+--- a/src/chrono/solver/ChVariablesBodyOwnMass.h
++++ b/src/chrono/solver/ChVariablesBodyOwnMass.h
+@@ -35,7 +35,9 @@ class ChApi ChVariablesBodyOwnMass : public ChVariablesBody {
+ 
+   public:
+     ChVariablesBodyOwnMass();
+-    virtual ~ChVariablesBodyOwnMass() {}
++    virtual ~ChVariablesBodyOwnMass() {
++        std::cout << "Deallocate body own mass of mass " << mass << std::endl;
++    }
+ 
+     /// Assignment operator: copy from other object
+     ChVariablesBodyOwnMass& operator=(const ChVariablesBodyOwnMass& other);

@@ -102,6 +102,8 @@ namespace frydom {
         /// \param asset asset to be added
         void AddAsset(std::shared_ptr<FrAsset> asset);
 
+        void RemoveAssets();
+
         /// Set the asset color in visualization given a color id
         /// \param colorName color of the asset
         void SetColor(NAMED_COLOR colorName);

@@ -69,6 +69,7 @@ namespace frydom {
             // VIRTUAL FUNCTION
             //
 
+
             double GetBodyMass() const override { return m_variablesBodyOwnMass->GetBodyMass(); }
 
             chrono::ChMatrix33<>& GetBodyInertia() override { return m_variablesBodyOwnMass->GetBodyInertia(); }
