@@ -131,6 +131,7 @@ namespace frydom {
 
     template <class T>
     double FrTimeRecorder<T>::GetRecordDuration() const {
+        return 0.;
         // TODO
     }
 
