@@ -167,6 +167,11 @@ namespace frydom {
                             return m_integrals.m_int_y2z;
                         case POLY_Z2X:
                             return m_integrals.m_int_z2x;
+                        case UNDEFINED_INTEGRAND:
+                            std::cerr << "Cannot return value of an UNDEFINED_INTEGRAND" << std::endl;
+                            break;
+                        default:
+                            throw FrException("Cannot return value of an UNDEFINED_INTEGRAND");
                     }
                 }
 
@@ -223,6 +228,8 @@ namespace frydom {
                         case UNDEFINED_INTEGRAND:
                             std::cerr << "Cannot return value of an UNDEFINED_INTEGRAND" << std::endl;
                             break;
+                        default:
+                            throw FrException("Cannot return value of an UNDEFINED_INTEGRAND");
                     }
                 }
 

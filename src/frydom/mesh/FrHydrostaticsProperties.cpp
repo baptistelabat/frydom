@@ -63,7 +63,7 @@ namespace frydom {
 
     }
 
-    double FrHydrostaticsProperties::CalcHydrostaticProperties() {
+    void FrHydrostaticsProperties::CalcHydrostaticProperties() {
 
         // FIXME : attention, appliquer les corrections sur les integrales afin d'exprimer les quantites au centre de gravite
         // ou a un autre point de notre choix !

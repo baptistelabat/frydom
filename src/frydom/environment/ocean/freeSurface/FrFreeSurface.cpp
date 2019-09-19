@@ -40,10 +40,12 @@ namespace frydom {
     FrWaveField * FrFreeSurface::GetWaveField() const { return m_waveField.get(); }
 
     double FrFreeSurface::GetElevation(double x, double y, FRAME_CONVENTION fc) const {
-        m_waveField->GetElevation(x,y, fc);
+        return m_waveField->GetElevation(x,y, fc);
     }
 
-    FrFreeSurfaceGridAsset *FrFreeSurface::GetFreeSurfaceGridAsset() const {return m_freeSurfaceGridAsset.get();}
+    FrFreeSurfaceGridAsset *FrFreeSurface::GetFreeSurfaceGridAsset() const {
+        return m_freeSurfaceGridAsset.get();
+    }
 
     double FrFreeSurface::GetPosition(FRAME_CONVENTION fc) const {
         return GetPosition(0.,0.,fc);
