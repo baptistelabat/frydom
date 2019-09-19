@@ -126,7 +126,8 @@ namespace frydom {
     }
 
     FrUnitQuaternion &FrUnitQuaternion::operator=(const FrUnitQuaternion &other) {
-        m_chronoQuaternion = other.m_chronoQuaternion;
+        this->m_chronoQuaternion = other.m_chronoQuaternion;
+        return *this;
     }
 
     FrUnitQuaternion FrUnitQuaternion::operator*(const FrUnitQuaternion &other) const {
@@ -372,7 +373,8 @@ namespace frydom {
     }
 
     FrRotation& FrRotation::operator=(const FrRotation &other) {
-        m_frQuaternion = other.m_frQuaternion;
+        this->m_frQuaternion = other.m_frQuaternion;
+        return *this;
     }
 
     FrRotation FrRotation::operator*(const FrRotation &other) const {
@@ -380,7 +382,8 @@ namespace frydom {
     }
 
     FrRotation & FrRotation::operator*=(const FrRotation &other) {
-        m_frQuaternion *= other.m_frQuaternion;
+        this->m_frQuaternion *= other.m_frQuaternion;
+        return *this;
     }
 
     bool FrRotation::operator==(const FrRotation& other) const {
@@ -477,6 +480,7 @@ namespace frydom {
         os << "; psi = " << psi;
         os << std::endl;
 
+        return os;
     }
 
     std::ostream& operator<<(std::ostream& os, const FrRotation& rotation) {
