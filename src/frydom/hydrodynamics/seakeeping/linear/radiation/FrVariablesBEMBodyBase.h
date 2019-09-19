@@ -13,19 +13,22 @@
 namespace frydom {
 
     // Forward declaration
+    template <typename OffshoreSystemType>
     class FrBody;
     class FrBEMBody;
 
     namespace internal {
 
         // Forward declaration
+        template <typename OffshoreSystemType>
         class FrRadiationModelBase;
 
+        template <typename OffshoreSystemType>
         class FrVariablesBEMBodyBase : public chrono::ChVariablesBody {
 
         private:
 
-            FrRadiationModelBase* m_radiationModelBase;
+            FrRadiationModelBase<OffshoreSystemType>* m_radiationModelBase;
             FrBEMBody* m_BEMBody;
             chrono::ChVariablesBodyOwnMass* m_variablesBodyOwnMass;
 
@@ -33,7 +36,7 @@ namespace frydom {
 
             FrVariablesBEMBodyBase() : ChVariablesBody() {}
 
-            explicit FrVariablesBEMBodyBase(FrRadiationModelBase* radiationModelBase,
+            explicit FrVariablesBEMBodyBase(FrRadiationModelBase<OffshoreSystemType>* radiationModelBase,
                                             FrBEMBody* BEMBody,
                                             chrono::ChVariablesBodyOwnMass* variables);
 
@@ -41,7 +44,7 @@ namespace frydom {
 
             FrBEMBody* GetBEMBody() const { return m_BEMBody; }
 
-            void SetRadiationModelBase(FrRadiationModelBase* radiationModelBase);
+            void SetRadiationModelBase(FrRadiationModelBase<OffshoreSystemType>* radiationModelBase);
 
             void SetVariablesBodyOwnMass(chrono::ChVariablesBodyOwnMass* variables);
 
@@ -61,9 +64,9 @@ namespace frydom {
 
             void Build_M(chrono::ChSparseMatrix& storage, int insrow, int inscol, const double c_a) override;
 
-            chrono::ChMatrix<double> GetVariablesFb(FrBody* body) const;
+            chrono::ChMatrix<double> GetVariablesFb(FrBody<OffshoreSystemType>* body) const;
 
-            chrono::ChMatrix<double> GetVariablesQb(FrBody* body) const;
+            chrono::ChMatrix<double> GetVariablesQb(FrBody<OffshoreSystemType>* body) const;
 
             //
             // VIRTUAL FUNCTION

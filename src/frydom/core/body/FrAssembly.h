@@ -10,38 +10,43 @@
 namespace frydom {
 
     // Forward declarations
+    template<typename OffshoreSystemType>
     class FrBody;
+
     class FrInertiaTensor;
 
-    class FrAssembly : public FrObject {
 
-    private:
 
-        std::shared_ptr<FrBody> m_masterBody;
+    template<typename OffshoreSystemType>
+    class FrAssembly : public FrObject<OffshoreSystemType> {
 
-        std::vector<std::shared_ptr<FrBody>> m_bodyList;
+     private:
 
-    public:
+      std::shared_ptr<FrBody<OffshoreSystemType>> m_masterBody;
 
-        /// Get the type name of the object
-        /// \return type name of the object
-        std::string GetTypeName() const override { return "Assembly"; };
-        
-        void Initialize() override {};
+      std::vector<std::shared_ptr<FrBody<OffshoreSystemType>>> m_bodyList;
 
-        void Clear() {
-            m_bodyList.clear();
-        }
+     public:
 
-        void SetMasterBody(const std::shared_ptr<FrBody>& body);
+      /// Get the type name of the object
+      /// \return type name of the object
+      std::string GetTypeName() const override { return "Assembly"; };
 
-        void AddToAssembly(const std::shared_ptr<FrBody>& body);
+      void Initialize() override {};
 
-        void RemoveFromAssembly(const std::shared_ptr<FrBody>& body);
+      void Clear() {
+        m_bodyList.clear();
+      }
 
-        FrInertiaTensor GetInertiaTensor() const;
+      void SetMasterBody(const std::shared_ptr<FrBody<OffshoreSystemType>> &body);
 
-        void DoAssembly();
+      void AddToAssembly(const std::shared_ptr<FrBody<OffshoreSystemType>> &body);
+
+      void RemoveFromAssembly(const std::shared_ptr<FrBody<OffshoreSystemType>> &body);
+
+      FrInertiaTensor GetInertiaTensor() const;
+
+      void DoAssembly();
 
     };
 

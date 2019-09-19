@@ -29,7 +29,10 @@ namespace frydom {
 
     // Forward declarations
     class FrTimeServices;
+
+    template <typename OffshoreSystemType>
     class FrOffshoreSystem;
+
     class FrOcean;
     class FrAtmosphere;
     class FrGeographicServices;
@@ -42,11 +45,12 @@ namespace frydom {
      * \class FrEnvironment
      * \brief Class for defining the environmental data.
      */
-    class FrEnvironment : public FrObject {
+     template <typename OffshoreSystemType>
+    class FrEnvironment : public FrObject<OffshoreSystemType> {
 
     private:
 
-        FrOffshoreSystem* m_system;    ///< Offshore sytem containing this Environment
+        FrOffshoreSystem<OffshoreSystemType>* m_system;    ///< Offshore sytem containing this Environment
 
         //---------------------------- Environment elements ----------------------------//
         // TODO : faire un service de temps, NEED REFACTO
@@ -64,14 +68,14 @@ namespace frydom {
 
         /// Default constructor
         /// \param system offshore system containing this environment
-        explicit FrEnvironment(FrOffshoreSystem* system);
+        explicit FrEnvironment(FrOffshoreSystem<OffshoreSystemType>* system);
 
         /// Destructor
         ~FrEnvironment();
 
         /// Get the offshore system, containing this environment
         /// \return offshore system
-        FrOffshoreSystem* GetSystem();
+        FrOffshoreSystem<OffshoreSystemType>* GetSystem();
 
         /// Get the type name of this object
         /// \return type name of this object

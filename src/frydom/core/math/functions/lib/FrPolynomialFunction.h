@@ -26,7 +26,7 @@ namespace frydom {
 
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "PolynomialFunction"; }
+//        std::string GetTypeName() const override { return "PolynomialFunction"; }
 
 
     protected:

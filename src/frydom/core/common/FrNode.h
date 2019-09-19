@@ -24,15 +24,17 @@
 namespace frydom {
 
     // Forward declarations
+    template <typename OffshoreSystemType>
     class FrNode;
 
     namespace internal {
 
+        template <typename OffshoreSystemType>
         struct FrMarker : public chrono::ChMarker {
 
-            FrNode * m_frydomNode;
+            FrNode<OffshoreSystemType> * m_frydomNode;
 
-            explicit FrMarker(FrNode* node);
+            explicit FrMarker(FrNode<OffshoreSystemType>* node);
 
         };
 
@@ -40,29 +42,33 @@ namespace frydom {
 
 
     // Forward declarations
+    template <typename OffshoreSystemType>
     class FrBody;
+
+    template <typename OffshoreSystemType>
     class FrNodeAsset;
 
     /**
      * \class FrNode
      * \brief Class for defining nodes (in order to add links).
      */
-    class FrNode : public FrObject {
+     template <typename OffshoreSystemType>
+    class FrNode : public FrObject<OffshoreSystemType> {
 
     private:
 
-        FrBody* m_body;                                    ///< Pointer to the body containing this node
-        std::shared_ptr<internal::FrMarker> m_chronoMarker;   ///< Chrono class for nodes/marker.
+        FrBody<OffshoreSystemType>* m_body;                                    ///< Pointer to the body containing this node
+        std::shared_ptr<internal::FrMarker<OffshoreSystemType>> m_chronoMarker;   ///< Chrono class for nodes/marker.
 
         // Asset for a node
         bool m_showAsset = false;
-        std::shared_ptr<FrNodeAsset> m_asset;
+        std::shared_ptr<FrNodeAsset<OffshoreSystemType>> m_asset;
 
     public:
 
         /// Default Constructor
         /// \param body body to which the node belongs
-        explicit FrNode(FrBody* body);
+        explicit FrNode(FrBody<OffshoreSystemType>* body);
 
         /// Destructor
 //        ~FrNode() = default;
@@ -75,7 +81,7 @@ namespace frydom {
         /// \param showAsset true if a ForceAsset is to be displayed
         void ShowAsset(bool showAsset);;
 
-        FrNodeAsset* GetAsset();
+        FrNodeAsset<OffshoreSystemType>* GetAsset();
 
         /// Set node position and direction axis, with respect to body reference frame
         /// \param pos relative position of the frame node with respect to body reference frame
@@ -125,7 +131,7 @@ namespace frydom {
 
         /// Get the body pointer
         /// \return the body to which the node belongs
-        FrBody* GetBody();
+        FrBody<OffshoreSystemType>* GetBody();
 
         /// Get the node frame, given in the world reference frame
         /// \return the node frame in the world reference frame
@@ -215,7 +221,7 @@ namespace frydom {
         /// \return the vector projected in the world reference frame
         template <class Vector>
         Vector ProjectVectorInWorld(const Vector& nodeVector, FRAME_CONVENTION fc) const {
-            return GetFrameInWorld().GetQuaternion().Rotate<Vector>(nodeVector, fc);
+            return GetFrameInWorld().GetQuaternion().template Rotate<Vector>(nodeVector, fc);
         }
 
         /// Project a vector from node reference frame to world reference frame
@@ -225,7 +231,7 @@ namespace frydom {
         /// \return the vector projected in the world reference frame
         template <class Vector>
         Vector& ProjectVectorInWorld(Vector& nodeVector, FRAME_CONVENTION fc) const {
-            nodeVector = GetFrameInWorld().GetQuaternion().Rotate<Vector>(nodeVector, fc);
+            nodeVector = GetFrameInWorld().GetQuaternion().template Rotate<Vector>(nodeVector, fc);
             return nodeVector;
         }
 
@@ -236,7 +242,7 @@ namespace frydom {
         /// \return the vector projected in the node reference frame
         template <class Vector>
         Vector ProjectVectorInNode(const Vector &worldVector, FRAME_CONVENTION fc) const {
-            return GetFrameInWorld().GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
+            return GetFrameInWorld().GetQuaternion().GetInverse().template Rotate<Vector>(worldVector, fc);
         }
 
         /// Project a vector from world reference frame to node reference frame
@@ -246,7 +252,7 @@ namespace frydom {
         /// \return the vector projected in the node reference frame
         template <class Vector>
         Vector& ProjectVectorInNode(Vector& worldVector, FRAME_CONVENTION fc) const {
-            worldVector = GetFrameInWorld().GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
+            worldVector = GetFrameInWorld().GetQuaternion().GetInverse().template Rotate<Vector>(worldVector, fc);
             return worldVector;
         }
 
@@ -256,7 +262,7 @@ namespace frydom {
 
     private:
 
-        friend void FrLink::SetNodes(FrNode*, FrNode*);
+        friend void FrLink<OffshoreSystemType>::SetNodes(FrNode<OffshoreSystemType>*, FrNode<OffshoreSystemType>*);
 
     };
 

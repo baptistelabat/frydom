@@ -18,93 +18,110 @@
 
 namespace frydom {
 
-    FrObject::FrObject() : m_UUID(boost::lexical_cast<std::string>(boost::uuids::random_generator()())) {
+    template<typename OffshoreSystemType>
+    FrObject<OffshoreSystemType>::FrObject() : m_UUID(boost::lexical_cast<std::string>(boost::uuids::random_generator()())) {
 
-        m_message = std::make_unique<hermes::Message>();
+      m_message = std::make_unique<hermes::Message>();
     }
 
-    void FrObject::InitializeLog(const std::string& path) {
+    template<typename OffshoreSystemType>
+    void FrObject<OffshoreSystemType>::InitializeLog(const std::string &path) {
 
-        if (IsLogged()) {
+      if (IsLogged()) {
 
-            // Build the log path, create the directory and add a csv serializer to the hermes message
-            auto objPath = BuildPath(path);
+        // Build the log path, create the directory and add a csv serializer to the hermes message
+        auto objPath = BuildPath(path);
 
-            // Add the fields to the hermes message
-            AddFields();
+        // Add the fields to the hermes message
+        AddFields();
 
-            // Initializing message name and description
-            if (m_message->GetName().empty()) {
-                m_message->SetNameAndDescription(
-                        fmt::format("{}_{}", GetTypeName(), GetShortenUUID()),
-                        fmt::format("\"Message of a {}", GetTypeName()));
-            }
-
-            // Init the message
-            m_message->Initialize();
-            m_message->Send();
-
-            // Initialize the logs of the dependencies
-            InitializeLog_Dependencies(objPath);
-
+        // Initializing message name and description
+        if (m_message->GetName().empty()) {
+          m_message->SetNameAndDescription(
+              fmt::format("{}_{}", GetTypeName(), GetShortenUUID()),
+              fmt::format("\"Message of a {}", GetTypeName()));
         }
 
-    }
+        // Init the message
+        m_message->Initialize();
+        m_message->Send();
 
-    void FrObject::SendLog() {
+        // Initialize the logs of the dependencies
+        InitializeLog_Dependencies(objPath);
 
-        if (IsLogged()) {
-            m_message->Serialize();
-            m_message->Send();
-        }
+      }
 
     }
 
-    std::string FrObject::BuildPath(const std::string &rootPath) {
+    template<typename OffshoreSystemType>
+    void FrObject<OffshoreSystemType>::SendLog() {
 
-        auto objPath = fmt::format("{}/{}_{}_{}", rootPath, GetTypeName(), GetName(), GetShortenUUID());
+      if (IsLogged()) {
+        m_message->Serialize();
+        m_message->Send();
+      }
 
-        auto logPath = GetPathManager()->BuildPath(objPath, fmt::format("{}_{}.csv", GetTypeName(), GetShortenUUID()));
-
-        // Add a serializer
-        m_message->AddSerializer(FrSerializerFactory::instance().Create(this, logPath));
-
-        return objPath;
     }
 
-    void FrObject::StepFinalize() {
-            SendLog();
+    template<typename OffshoreSystemType>
+    std::string FrObject<OffshoreSystemType>::BuildPath(const std::string &rootPath) {
+
+      auto objPath = fmt::format("{}/{}_{}_{}", rootPath, GetTypeName(), GetName(), GetShortenUUID());
+
+      auto logPath = GetPathManager()->BuildPath(objPath, fmt::format("{}_{}.csv", GetTypeName(), GetShortenUUID()));
+
+      // Add a serializer
+      m_message->AddSerializer(FrSerializerFactory<OffshoreSystemType>::instance().Create(this, logPath));
+
+      return objPath;
     }
 
-    void FrObject::SetPathManager(const std::shared_ptr<FrPathManager>& manager) {
-            m_pathManager = manager;
-        }
+    template<typename OffshoreSystemType>
+    void FrObject<OffshoreSystemType>::StepFinalize() {
+      SendLog();
+    }
 
-    std::shared_ptr<FrPathManager> FrObject::GetPathManager() const {
-            return m_pathManager;
-        }
+    template<typename OffshoreSystemType>
+    void FrObject<OffshoreSystemType>::SetPathManager(const std::shared_ptr<FrPathManager<OffshoreSystemType>> &manager) {
+      m_pathManager = manager;
+    }
 
-    bool FrObject::IsLogged() { return m_isLogged; }
+    template<typename OffshoreSystemType>
+    std::shared_ptr<FrPathManager<OffshoreSystemType>> FrObject<OffshoreSystemType>::GetPathManager() const {
+      return m_pathManager;
+    }
 
-    FRAME_CONVENTION FrObject::GetLogFrameConvention() const {
-            return m_pathManager->GetLogFrameConvention();
-        }
+    template<typename OffshoreSystemType>
+    bool FrObject<OffshoreSystemType>::IsLogged() { return m_isLogged; }
 
-    void FrObject::SetLogged(bool isLogged) { m_isLogged = isLogged; }
+    template<typename OffshoreSystemType>
+    FRAME_CONVENTION FrObject<OffshoreSystemType>::GetLogFrameConvention() const {
+      return m_pathManager->GetLogFrameConvention();
+    }
 
-    void FrObject::ClearMessage() { m_message = std::make_unique<hermes::Message>(); }
+    template<typename OffshoreSystemType>
+    void FrObject<OffshoreSystemType>::SetLogged(bool isLogged) { m_isLogged = isLogged; }
 
-    std::string FrObject::GetUUID() const { return m_UUID; }
+    template<typename OffshoreSystemType>
+    void FrObject<OffshoreSystemType>::ClearMessage() { m_message = std::make_unique<hermes::Message>(); }
 
-    std::string FrObject::GetShortenUUID() const { return m_UUID.substr(0,5); }
+    template<typename OffshoreSystemType>
+    std::string FrObject<OffshoreSystemType>::GetUUID() const { return m_UUID; }
 
-    const char *FrObject::GetName() const { return m_name.c_str(); }
+    template<typename OffshoreSystemType>
+    std::string FrObject<OffshoreSystemType>::GetShortenUUID() const { return m_UUID.substr(0, 5); }
 
-    void FrObject::SetName(const char *myname) { m_name = myname; }
+    template<typename OffshoreSystemType>
+    const char *FrObject<OffshoreSystemType>::GetName() const { return m_name.c_str(); }
 
-    std::string FrObject::GetNameString() const { return m_name; }
+    template<typename OffshoreSystemType>
+    void FrObject<OffshoreSystemType>::SetName(const char *myname) { m_name = myname; }
 
-    void FrObject::SetNameString(const std::string &myname) { m_name = myname; }
+    template<typename OffshoreSystemType>
+    std::string FrObject<OffshoreSystemType>::GetNameString() const { return m_name; }
+
+    template<typename OffshoreSystemType>
+    void FrObject<OffshoreSystemType>::SetNameString(const std::string &myname) { m_name = myname; }
 
 
 }  // end namespace frydom

@@ -47,11 +47,11 @@ namespace frydom {
 
         void GetByTwoPoints(double& x0, double& y0, double& x1, double& y1 );
 
-        void Initialize() override;
+//        void Initialize() override;
 
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "CosRampFunction"; }
+//        std::string GetTypeName() const override { return "CosRampFunction"; }
 
     protected:
 

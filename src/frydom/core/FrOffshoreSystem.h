@@ -28,6 +28,7 @@
 namespace frydom {
 
     // Forward declaration
+    template <typename OffshoreSystemType>
     class FrOffshoreSystem;
 
     namespace internal {
@@ -35,15 +36,16 @@ namespace frydom {
         /// Base class inheriting from chrono ChSystemSMC for physical system in which contact is modeled using a smooth
         /// (penalty-based) method. This class must not be used by external FRyDoM users.
         /// It is used in composition rule along with the FrOffshoreSystem_ FRyDoM class
+        template <typename OffshoreSystemType>
         class FrSystemBaseSMC : public chrono::ChSystemSMC {
 
          private:
-          FrOffshoreSystem *m_offshoreSystem_;   ///< pointer to the offshore system
+          FrOffshoreSystem<OffshoreSystemType> *m_offshoreSystem_;   ///< pointer to the offshore system
 
          public:
           /// Constructor of the systemBase
           /// \param offshoreSystem pointer to the offshore system
-          explicit FrSystemBaseSMC(FrOffshoreSystem *offshoreSystem);
+          explicit FrSystemBaseSMC(FrOffshoreSystem<OffshoreSystemType> *offshoreSystem);
 
           /// Update the state of the systemBase, called from chrono, call the Update of the offshore system
           /// \param update_assets check if the assets are updated
@@ -75,26 +77,37 @@ namespace frydom {
 
 
     // Forward declarations
+    template <typename OffshoreSystemType>
     class FrBody;
 
+    template <typename OffshoreSystemType>
     class FrLinkBase;
 
+    template <typename OffshoreSystemType>
     class FrPhysicsItem;
 
+    template <typename OffshoreSystemType>
     class FrPrePhysicsItem;
 
+    template <typename OffshoreSystemType>
     class FrMidPhysicsItem;
 
+    template <typename OffshoreSystemType>
     class FrPostPhysicsItem;
 
+    template <typename OffshoreSystemType>
     class FrFEAMesh;
 
+    template <typename OffshoreSystemType>
     class FrEnvironment;
 
+    template <typename OffshoreSystemType>
     class FrCable;
 
+    template <typename OffshoreSystemType>
     class FrDynamicCable;
 
+    template <typename OffshoreSystemType>
     class FrPathManager;
 
     /// Main class for a FRyDoM offshore system. This class is used to represent a multibody physical system,
@@ -105,7 +118,8 @@ namespace frydom {
     /// This object will be responsible of performing the entire physical simulation (dynamics, kinematics, statics, etc.),
     /// so you need at least one FrOffshoreSystem_ object in your program, in order to perform simulations
     /// (you'll insert rigid bodies and links into it..).
-    class FrOffshoreSystem : public FrObject {
+    template <typename OffshoreSystemType>
+    class FrOffshoreSystem : public FrObject<OffshoreSystemType> {
 
      public:
 
@@ -189,9 +203,9 @@ namespace frydom {
 
       std::unique_ptr<chrono::ChSystem> m_chronoSystem;   ///< The real Chrono system (may be SMC or NSC)
 
-      std::shared_ptr<FrBody> m_worldBody;               ///< A fixed body that span the world and where things may be attached
+      std::shared_ptr<FrBody<OffshoreSystemType>> m_worldBody;               ///< A fixed body that span the world and where things may be attached
 
-      std::unique_ptr<FrEnvironment> m_environment;      ///< The offshore environment
+      std::unique_ptr<FrEnvironment<OffshoreSystemType>> m_environment;      ///< The offshore environment
 
       SYSTEM_TYPE m_systemType;                       ///< type of contact method
       TIME_STEPPER m_timeStepper;                      ///< timesteppers, i.e., time integrators that can advance a
@@ -199,37 +213,37 @@ namespace frydom {
       SOLVER m_solverType;                       ///< solver aimed at solving complementarity problems
       ///< arising from QP optimization problems.
 
-      std::unique_ptr<FrStaticAnalysis> m_statics;
+      std::unique_ptr<FrStaticAnalysis<OffshoreSystemType>> m_statics;
 
       // Container: definition.
-      using BodyContainer = std::vector<std::shared_ptr<FrBody>>;
-      using LinkContainer = std::vector<std::shared_ptr<FrLinkBase>>;
+      using BodyContainer = std::vector<std::shared_ptr<FrBody<OffshoreSystemType>>>;
+      using LinkContainer = std::vector<std::shared_ptr<FrLinkBase<OffshoreSystemType>>>;
 
-      using PrePhysicsContainer = std::vector<std::shared_ptr<FrPrePhysicsItem>>;
-      using MidPhysicsContainer = std::vector<std::shared_ptr<FrMidPhysicsItem>>;
-      using PostPhysicsContainer = std::vector<std::shared_ptr<FrPostPhysicsItem>>;
+      using PrePhysicsContainer = std::vector<std::shared_ptr<FrPrePhysicsItem<OffshoreSystemType>>>;
+      using MidPhysicsContainer = std::vector<std::shared_ptr<FrMidPhysicsItem<OffshoreSystemType>>>;
+      using PostPhysicsContainer = std::vector<std::shared_ptr<FrPostPhysicsItem<OffshoreSystemType>>>;
 
-      using FEAMeshContainer = std::vector<std::shared_ptr<FrFEAMesh>>;
+      using FEAMeshContainer = std::vector<std::shared_ptr<FrFEAMesh<OffshoreSystemType>>>;
 
       // Iterators.
       // TODO : bouger les iterateurs proches des methodes d'iteration...
-      using BodyIter          = BodyContainer::iterator;
-      using ConstBodyIter     = BodyContainer::const_iterator;
+      using BodyIter          = typename BodyContainer::iterator;
+      using ConstBodyIter     = typename BodyContainer::const_iterator;
 
-      using LinkIter      = LinkContainer::iterator;
-      using ConstLinkIter = LinkContainer::const_iterator;
+      using LinkIter      = typename LinkContainer::iterator;
+      using ConstLinkIter = typename LinkContainer::const_iterator;
 
-      using PrePhysicsIter = PrePhysicsContainer::iterator;
-      using ConstPrePhysicsIter = PrePhysicsContainer::const_iterator;
+      using PrePhysicsIter = typename PrePhysicsContainer::iterator;
+      using ConstPrePhysicsIter = typename PrePhysicsContainer::const_iterator;
 
-      using MidPhysicsIter = MidPhysicsContainer::iterator;
-      using ConstMidPhysicsIter = MidPhysicsContainer::const_iterator;
+      using MidPhysicsIter = typename MidPhysicsContainer::iterator;
+      using ConstMidPhysicsIter = typename MidPhysicsContainer::const_iterator;
 
-      using PostPhysicsIter = PostPhysicsContainer::iterator;
-      using ConstPostPhysicsIter = PostPhysicsContainer::const_iterator;
+      using PostPhysicsIter = typename PostPhysicsContainer::iterator;
+      using ConstPostPhysicsIter = typename PostPhysicsContainer::const_iterator;
 
-      using FEAMestIter = FEAMeshContainer::iterator;
-      using ConstFEAMestIter = FEAMeshContainer::const_iterator;
+      using FEAMestIter = typename FEAMeshContainer::iterator;
+      using ConstFEAMestIter = typename FEAMeshContainer::const_iterator;
 
       // Container: list of objects.
       BodyContainer m_bodyList;   ///< list of bodies managed by this offshore system
@@ -269,14 +283,14 @@ namespace frydom {
       /// Add an item (body, link, etc.) to the offshore sytem
       /// \param item item to be added to the offshore system
       void
-      Add(std::shared_ptr<FrObject> item); // TODO : faire des dynamic_pointer_cast sur les classes pouvant etre ajoutees...
+      Add(std::shared_ptr<FrObject<OffshoreSystemType>> item); // TODO : faire des dynamic_pointer_cast sur les classes pouvant etre ajoutees...
 
 
       // ***** Body *****
 
       /// Add a body to the offshore system
       /// \param body body to add
-      void AddBody(std::shared_ptr<FrBody> body);
+      void AddBody(std::shared_ptr<FrBody<OffshoreSystemType>> body);
 
       /// Get the list of bodies added to the system
       /// \return List of the bodies added to the system
@@ -284,7 +298,7 @@ namespace frydom {
 
       /// Remove a body from the system
       /// \param body Body removed from the system
-      void RemoveBody(std::shared_ptr<FrBody> body);
+      void RemoveBody(std::shared_ptr<FrBody<OffshoreSystemType>> body);
 
       /// Remove all bodies from the system
       void RemoveAllBodies();
@@ -294,7 +308,7 @@ namespace frydom {
 
       /// Add a link between bodies to the offshore system
       /// \param link link to be added
-      void AddLink(std::shared_ptr<FrLinkBase> link);
+      void AddLink(std::shared_ptr<FrLinkBase<OffshoreSystemType>> link);
 
       /// Get the list of links added to the system
       /// \return List of the links added to the system
@@ -302,7 +316,7 @@ namespace frydom {
 
       /// Remove a link from the system
       /// \param link Link removed from the system
-      void RemoveLink(std::shared_ptr<FrLinkBase> link);
+      void RemoveLink(std::shared_ptr<FrLinkBase<OffshoreSystemType>> link);
 
       /// Remove all bodies from the system
       void RemoveAllLinks();
@@ -312,7 +326,7 @@ namespace frydom {
 
       /// Add other physics item to the offshore system
       /// \param otherPhysics other physic item to be added
-      void AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem> otherPhysics);
+      void AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem<OffshoreSystemType>> otherPhysics);
 
       /// Get the list of pre physics items added to the system
       /// \return List of the pre physics items added to the system
@@ -322,7 +336,7 @@ namespace frydom {
 
       /// Add other physics item to the offshore system
       /// \param otherPhysics other physic item to be added
-      void AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem> otherPhysics);
+      void AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem<OffshoreSystemType>> otherPhysics);
 
       /// Get the list of mid physics items added to the system
       /// \return List of the mid physics items added to the system
@@ -332,7 +346,7 @@ namespace frydom {
 
       /// Add other physics item to the offshore system
       /// \param otherPhysics other physic item to be added
-      void AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem> otherPhysics);
+      void AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem<OffshoreSystemType>> otherPhysics);
 
       /// Get the list of post physics items added to the system
       /// \return List of the post physics items added to the system
@@ -341,7 +355,7 @@ namespace frydom {
 
       /// Remove a Physics items from the system
       /// \param item Physics items removed from the system
-      void RemovePhysicsItem(std::shared_ptr<FrPhysicsItem> item);
+      void RemovePhysicsItem(std::shared_ptr<FrPhysicsItem<OffshoreSystemType>> item);
 
       /// Remove all physics items from the system
       void RemoveAllPhysicsItem();
@@ -351,30 +365,30 @@ namespace frydom {
 
       /// Add a FEA mesh to the offshore system
       /// \param feaMesh FEA mesh to be added
-      void AddFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh);
+      void AddFEAMesh(std::shared_ptr<FrFEAMesh<OffshoreSystemType>> feaMesh);
 
       /// Get the list of fea meshes added to the system
       /// \return List of the fea meshes added to the system
       FEAMeshContainer GetFEAMeshList();
 
-      void RemoveFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh);
+      void RemoveFEAMesh(std::shared_ptr<FrFEAMesh<OffshoreSystemType>> feaMesh);
 
       /// Add a Dynamic Cable to the offshore system
       /// \param cable dynamic cable to be added
-      void Add(std::shared_ptr<FrDynamicCable> cable);
+      void Add(std::shared_ptr<FrDynamicCable<OffshoreSystemType>> cable);
 
-      void Remove(std::shared_ptr<FrDynamicCable> cable);
+      void Remove(std::shared_ptr<FrDynamicCable<OffshoreSystemType>> cable);
 
 
       // ***** Environment *****
 
       /// Get the environment embedded in the offshore system
       /// \return environment embedded in the offshore system
-      FrEnvironment *GetEnvironment() const;
+      FrEnvironment<OffshoreSystemType> *GetEnvironment() const;
 
       /// Get the world body embedded in the offshore system
       /// \return world body embedded in the offshore system
-      std::shared_ptr<FrBody> GetWorldBody() const;
+      std::shared_ptr<FrBody<OffshoreSystemType>> GetWorldBody() const;
 
       // TODO: voir si les 3 methodes ci-dessous doivent etre privees (pas Initialize)
 
@@ -608,7 +622,7 @@ namespace frydom {
 
       // Statics
 
-      FrStaticAnalysis *GetStaticAnalysis() const;
+      FrStaticAnalysis<OffshoreSystemType> *GetStaticAnalysis() const;
 
       /// Solve the static equilibrium using a dynamic simulation with relaxations (velocities and/or accelerations of
       /// bodies set to null) every nSteps steps. The maximum number of relaxation is defined by nIter. The solving
@@ -617,7 +631,7 @@ namespace frydom {
 
       /// Relax the system, depending of the relaxation procedure specified. See RELAXTYPE documentation
       /// \param relax relaxation procedure : (NONE, VELOCITY, ACCELERATION, VELOCITYANDACCELERATION)
-      void Relax(FrStaticAnalysis::RELAXTYPE relax);
+      void Relax(typename FrStaticAnalysis<OffshoreSystemType>::RELAXTYPE relax);
 
      public:
 
@@ -694,7 +708,7 @@ namespace frydom {
       /// Create a new body, managed by the offshore system. The body characteristics can then be setted using the
       /// shared pointer returned by this method.
       /// \return new body
-      std::shared_ptr<FrBody> NewBody();
+      std::shared_ptr<FrBody<OffshoreSystemType>> NewBody();
 
       /// Removes all bodies/marker/forces/links/contacts, also resets timers and events.
       void Clear();
@@ -753,7 +767,7 @@ namespace frydom {
       void CheckCompatibility() const;
 
       /// Check the compatibility between the system contact method and the specified body contact type
-      bool CheckBodyContactMethod(std::shared_ptr<FrBody> body);
+      bool CheckBodyContactMethod(std::shared_ptr<FrBody<OffshoreSystemType>> body);
 
       /// Get the systemBase, embedded in the offshore system
       /// \return systemBase

@@ -10,30 +10,33 @@ namespace frydom {
 
     namespace internal {
 
-        FrLinkMaskBase::FrLinkMaskBase() {
-            ResetNconstr(7);
+        template<typename OffshoreSystemType>
+        FrLinkMaskBase<OffshoreSystemType>::FrLinkMaskBase() {
+          ResetNconstr(7);
         }
 
-        FrLinkMaskBase::FrLinkMaskBase(int mnconstr) {
-            nconstr = mnconstr;
+        template<typename OffshoreSystemType>
+        FrLinkMaskBase<OffshoreSystemType>::FrLinkMaskBase(int mnconstr) {
+          nconstr = mnconstr;
 
-            constraints.resize(nconstr);
-            for (int i = 0; i < nconstr; i++)
-                constraints[i] = new FrConstraintTwoBodiesBase;
+          constraints.resize(nconstr);
+          for (int i = 0; i < nconstr; i++)
+            constraints[i] = new FrConstraintTwoBodiesBase<OffshoreSystemType>;
         }
 
-        void FrLinkMaskBase::ResetNconstr(int newnconstr) {
-                int i;
-                for (i = 0; i < nconstr; i++)
-                    if (constraints[i])
-                        delete constraints[i];
+        template<typename OffshoreSystemType>
+        void FrLinkMaskBase<OffshoreSystemType>::ResetNconstr(int newnconstr) {
+          int i;
+          for (i = 0; i < nconstr; i++)
+            if (constraints[i])
+              delete constraints[i];
 
-                nconstr = newnconstr;
+          nconstr = newnconstr;
 
-                constraints.resize(nconstr);
+          constraints.resize(nconstr);
 
-                for (i = 0; i < nconstr; i++)
-                    constraints[i] = new FrConstraintTwoBodiesBase;
+          for (i = 0; i < nconstr; i++)
+            constraints[i] = new FrConstraintTwoBodiesBase<OffshoreSystemType>;
         }
 
     } // end namespace internal

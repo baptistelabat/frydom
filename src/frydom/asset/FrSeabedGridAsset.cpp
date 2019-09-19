@@ -17,11 +17,13 @@
 
 namespace frydom{
 
-    FrSeabedGridAsset::FrSeabedGridAsset(FrSeabed* seabed): FrGridAsset()  {
+    template <typename OffshoreSystemType>
+    FrSeabedGridAsset<OffshoreSystemType>::FrSeabedGridAsset(FrSeabed<OffshoreSystemType>* seabed): FrGridAsset()  {
         m_seabed = seabed;
         SetGridColor(Chocolate);
     }
 
-    double FrSeabedGridAsset::GetGridHeight() const {return m_seabed->GetBathymetry(NWU);}
+    template <typename OffshoreSystemType>
+    double FrSeabedGridAsset<OffshoreSystemType>::GetGridHeight() const {return m_seabed->GetBathymetry(NWU);}
 
 }  // end namespace frydom

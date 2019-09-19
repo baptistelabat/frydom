@@ -25,6 +25,7 @@
 namespace frydom {
 
     // Forward declaration
+    template <typename OffshoreSystemType>
     class FrForce;
 
 
@@ -32,11 +33,12 @@ namespace frydom {
      * \class FrForceAsset
      * \brief Class to display the loads.
      */
+     template <typename OffshoreSystemType>
     class FrForceAsset : public FrAsset {
 
     private:
 
-        FrForce* m_force;  //< The force that this asset represents
+        FrForce<OffshoreSystemType>* m_force;  //< The force that this asset represents
         double OrderOfMagnitude;
         bool adaptive_OOM;
 
@@ -48,7 +50,7 @@ namespace frydom {
 
     public:
 
-        explicit FrForceAsset(FrForce* force);
+        explicit FrForceAsset(FrForce<OffshoreSystemType>* force);
 
         void SetSize(double size);
 
@@ -56,7 +58,7 @@ namespace frydom {
 
         void StepFinalize() override;
 
-        friend void FrBody::RemoveExternalForce(std::shared_ptr<frydom::FrForce>);
+        friend void FrBody<OffshoreSystemType>::RemoveExternalForce(std::shared_ptr<frydom::FrForce<OffshoreSystemType>>);
 
     };
 

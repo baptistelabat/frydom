@@ -118,12 +118,13 @@ namespace frydom {
      * \class FrDOFMaskLink
      * \brief Class to deal with constraints between bodies and the world, based on FrDOFMask. Derived from FrLink.
      */
-    class FrDOFMaskLink : public FrLink {
+     template <typename OffshoreSystemType>
+    class FrDOFMaskLink : public FrLink<OffshoreSystemType> {
 
     public:
 
         /// Constructor taking the nodes attached to the two bodies implied in the link and the system
-        FrDOFMaskLink(const std::shared_ptr<FrNode>& node1, const std::shared_ptr<FrNode>& node2, FrOffshoreSystem *system);
+        FrDOFMaskLink(const std::shared_ptr<FrNode<OffshoreSystemType>>& node1, const std::shared_ptr<FrNode<OffshoreSystemType>>& node2, FrOffshoreSystem<OffshoreSystemType> *system);
 
         /// Get the type name of this object
         /// \return type name of this object

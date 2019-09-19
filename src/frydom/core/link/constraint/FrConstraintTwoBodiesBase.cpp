@@ -9,7 +9,8 @@ namespace frydom {
 
     namespace internal {
 
-        void FrConstraintTwoBodiesBase::Update_auxiliary() {
+        template <typename OffshoreSystemType>
+        void FrConstraintTwoBodiesBase<OffshoreSystemType>::Update_auxiliary() {
 
             // 1- Assuming jacobians are already computed, now compute
             //   the matrices [Eq_a]=[invM_a]*[Cq_a]' and [Eq_b]
@@ -27,8 +28,8 @@ namespace frydom {
             // Off-diagonal mass-matrix coefficients
             if (variables_a->IsActive() and variables_b->IsActive()) {
 
-                auto varBEM_a = dynamic_cast<FrVariablesBEMBodyBase*>(variables_a);
-                auto varBEM_b = dynamic_cast<FrVariablesBEMBodyBase*>(variables_b);
+                auto varBEM_a = dynamic_cast<FrVariablesBEMBodyBase<OffshoreSystemType>*>(variables_a);
+                auto varBEM_b = dynamic_cast<FrVariablesBEMBodyBase<OffshoreSystemType>*>(variables_b);
 
                 if (varBEM_a and varBEM_b) {
                     chrono::ChMatrixNM<double, 6, 1> mtemp1;

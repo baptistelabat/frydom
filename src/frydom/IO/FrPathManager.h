@@ -25,9 +25,11 @@
 namespace frydom {
 
     //Forward declaration
+    template <typename OffshoreSystemType>
     class FrOffshoreSystem;
 
 
+    template <typename OffshoreSystemType>
     class FrPathManager {
     private:
 
@@ -66,7 +68,7 @@ namespace frydom {
 
 
         ///Initialize the log manager serice
-        void Initialize(FrOffshoreSystem* system);
+        void Initialize(FrOffshoreSystem<OffshoreSystemType>* system);
 
         std::string BuildPath(const std::string& rootPath, const std::string& relPath) const;
 

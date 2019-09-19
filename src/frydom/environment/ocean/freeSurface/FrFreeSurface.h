@@ -26,17 +26,22 @@ namespace frydom {
 
 
     // Forward declarations
+    template <typename OffshoreSystemType>
     class FrOffshoreSystem;
     class FrEnvironment;
     class FrAtmosphere;
     class FrOcean;
     class FrWaveField;
+
+    template <typename OffshoreSystemType>
     class FrTidal;
     class FrBody;
     class FrAiryRegularWaveField;
     class FrAiryRegularOptimWaveField;
     class FrAiryIrregularWaveField;
     class FrAiryIrregularOptimWaveField;
+
+    template <typename OffshoreSystemType>
     class FrFreeSurfaceGridAsset;
 
 
@@ -45,7 +50,8 @@ namespace frydom {
      * \class FrFreeSurface
      * \brief Class for defining the free surface.
      */
-    class FrFreeSurface : public FrObject {
+     template <typename OffshoreSystemType>
+    class FrFreeSurface : public FrObject<OffshoreSystemType> {
 
     protected:;  // Disallow the default constructor to be used as a public method // TODO: mettre private???
 
@@ -53,11 +59,11 @@ namespace frydom {
         bool m_showFreeSurface = true;                ///< Boolean testing if the free surface is to be shown/exist
 
         // Free surface elements
-        std::unique_ptr<FrTidal> m_tidal;            ///< Tidal model
+        std::unique_ptr<FrTidal<OffshoreSystemType>> m_tidal;            ///< Tidal model
         std::unique_ptr<FrWaveField> m_waveField;    ///< Wave field model
 
         // Visualization asset
-        std::shared_ptr<FrFreeSurfaceGridAsset> m_freeSurfaceGridAsset;    ///> free surface grid asset, containing also the visualization asset
+        std::shared_ptr<FrFreeSurfaceGridAsset<OffshoreSystemType>> m_freeSurfaceGridAsset;    ///> free surface grid asset, containing also the visualization asset
 
     public:
 
@@ -80,7 +86,7 @@ namespace frydom {
 
         /// Get the free surface grid asset
         /// \return free surface grid asset
-        FrFreeSurfaceGridAsset* GetFreeSurfaceGridAsset() const;
+        FrFreeSurfaceGridAsset<OffshoreSystemType>* GetFreeSurfaceGridAsset() const;
 
         //---------------------------- Free surface elements Getters ----------------------------//
 
@@ -94,7 +100,7 @@ namespace frydom {
 
         /// Get the tidal model
         /// \return tidal model
-        FrTidal* GetTidal() const;
+        FrTidal<OffshoreSystemType>* GetTidal() const;
 
         /// Get the wave field model
         /// \return wave field model

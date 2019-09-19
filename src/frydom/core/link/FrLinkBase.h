@@ -33,7 +33,10 @@ namespace frydom {
     enum ACTUATOR_CONTROL {POSITION, VELOCITY, FORCE};
 
     // Forward declarations
+    template <typename OffshoreSystemType>
     class FrNode;
+
+    template <typename OffshoreSystemType>
     class FrBody;
 
 
@@ -41,21 +44,22 @@ namespace frydom {
      * \class FrLinkBase
      * \brief Pure abstract class for every FRyDoM constraints (FrLink, FrConstraint_, FrActuator_).
      */
-    class FrLinkBase : public FrObject, public FrAssetOwner {
+     template <typename OffshoreSystemType>
+    class FrLinkBase : public FrObject<OffshoreSystemType>, public FrAssetOwner {
 
     protected:
 
-        FrOffshoreSystem* m_system;     ///< pointer to the system containing this physics item
+        FrOffshoreSystem<OffshoreSystemType>* m_system;     ///< pointer to the system containing this physics item
 
-        std::shared_ptr<FrNode> m_node1;   ///< the node on body 1 of the link
-        std::shared_ptr<FrNode> m_node2;   ///< the node on body 2 of the link
+        std::shared_ptr<FrNode<OffshoreSystemType>> m_node1;   ///< the node on body 1 of the link
+        std::shared_ptr<FrNode<OffshoreSystemType>> m_node2;   ///< the node on body 2 of the link
 
     public:
-        FrLinkBase(const std::shared_ptr<FrNode>& node1, const std::shared_ptr<FrNode>& node2, FrOffshoreSystem* system);
+        FrLinkBase(const std::shared_ptr<FrNode<OffshoreSystemType>>& node1, const std::shared_ptr<FrNode<OffshoreSystemType>>& node2, FrOffshoreSystem<OffshoreSystemType>* system);
 
         /// Get the pointer to the system containing this linkbase item
         /// \return Pointer to the system containing this linkbase item
-        FrOffshoreSystem* GetSystem();
+        FrOffshoreSystem<OffshoreSystemType>* GetSystem();
 
         /// Tells if all constraints of this link are currently turned on or off by the user.
         virtual bool IsDisabled() const = 0;
@@ -80,26 +84,26 @@ namespace frydom {
 
 
         /// Returns the first node of the link
-        std::shared_ptr<FrNode> GetNode1();
-        const std::shared_ptr<FrNode> GetNode1() const;
+        std::shared_ptr<FrNode<OffshoreSystemType>> GetNode1();
+        const std::shared_ptr<FrNode<OffshoreSystemType>> GetNode1() const;
 
         /// Returns the second node of the link
-        std::shared_ptr<FrNode> GetNode2();
-        const std::shared_ptr<FrNode> GetNode2() const;
+        std::shared_ptr<FrNode<OffshoreSystemType>> GetNode2();
+        const std::shared_ptr<FrNode<OffshoreSystemType>> GetNode2() const;
 
         /// Returns the first body of the link
-        FrBody* GetBody1();
+        FrBody<OffshoreSystemType>* GetBody1();
 //        const FrBody* GetBody1() const;
 
         /// Returns the second body of the link
-        FrBody* GetBody2();
+        FrBody<OffshoreSystemType>* GetBody2();
 //        const  FrBody* GetBody2() const;
 
     protected:  // TODO : voir si on rend cela private
 
 
-        friend void FrOffshoreSystem::AddLink(std::shared_ptr<FrLinkBase> link);
-        friend void FrOffshoreSystem::RemoveLink(std::shared_ptr<FrLinkBase> link);
+        friend void FrOffshoreSystem<OffshoreSystemType>::AddLink(std::shared_ptr<FrLinkBase<OffshoreSystemType>> link);
+        friend void FrOffshoreSystem<OffshoreSystemType>::RemoveLink(std::shared_ptr<FrLinkBase<OffshoreSystemType>> link);
         virtual std::shared_ptr<chrono::ChLink> GetChronoLink() = 0;
 
         std::shared_ptr<chrono::ChBody> GetChronoBody1();

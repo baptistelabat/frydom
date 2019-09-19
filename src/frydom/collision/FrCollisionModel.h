@@ -10,27 +10,29 @@
 #include "frydom/core/body/FrBody.h"
 
 namespace frydom {
-    
+
     // Forward declarations
     class Position;
     class FrRotation;
     class FrTriangleMeshConnected;
+
+    template <typename OffshoreSystemType>
     class FrCollisionModel;
-    
+
     namespace internal {
 
-
+    template <typename OffshoreSystemType>
     class FrCollisionModelBase : public chrono::collision::ChModelBullet {
 
     private:
 
-        FrCollisionModel* m_frydomCollisionModel;
+        FrCollisionModel<OffshoreSystemType>* m_frydomCollisionModel;
 
     public:
 
-        explicit FrCollisionModelBase(FrCollisionModel* collisionModel);
+        explicit FrCollisionModelBase(FrCollisionModel<OffshoreSystemType>* collisionModel);
 
-        friend FrCollisionModel *FrBody::GetCollisionModel();
+        friend FrCollisionModel<OffshoreSystemType> *FrBody<OffshoreSystemType>::GetCollisionModel();
 
     };
 
@@ -39,11 +41,12 @@ namespace frydom {
 
 
 
+    template <typename OffshoreSystemType>
     class FrCollisionModel {
 
     protected:
 
-        std::shared_ptr<internal::FrCollisionModelBase> m_chronoCollisionModel;
+        std::shared_ptr<internal::FrCollisionModelBase<OffshoreSystemType>> m_chronoCollisionModel;
 
     public:
 
@@ -124,9 +127,9 @@ namespace frydom {
 
         void Initialize();
 
-        friend void FrBody::SetCollisionModel(std::shared_ptr<FrCollisionModel>);
+        friend void FrBody<OffshoreSystemType>::SetCollisionModel(std::shared_ptr<FrCollisionModel<OffshoreSystemType>>);
     };
-    
+
 } // end namespace frydom
 
 #endif //FRYDOM_FRCOLLISIONMODEL_H

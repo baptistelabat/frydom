@@ -18,22 +18,24 @@
 
 namespace frydom {
 
+    template <typename OffshoreSystemType>
     class FrFreeSurface;
 
     /**
      * \class FrFreeSurfaceGridAsset
      * \brief Class for displaying the free surface grid.
      */
+     template <typename OffshoreSystemType>
     class FrFreeSurfaceGridAsset : public FrGridAsset {
 
     private:
 
-        FrFreeSurface* m_freeSurface;    ///> Pointer to the free surface containing this asset
+        FrFreeSurface<OffshoreSystemType>* m_freeSurface;    ///> Pointer to the free surface containing this asset
 
     public:
         /// Default constructor
         /// \param freeSurface freeSurface containing this asset
-        explicit FrFreeSurfaceGridAsset(FrFreeSurface* freeSurface);
+        explicit FrFreeSurfaceGridAsset(FrFreeSurface<OffshoreSystemType>* freeSurface);
 
         /// Update the state of the asset, at the end of a time step
         void StepFinalize() override;

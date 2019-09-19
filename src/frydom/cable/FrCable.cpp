@@ -81,54 +81,55 @@ namespace frydom {
     //------------------------------------------------------------------------------------------------------------------
     // FrCable
 
-    FrCable::FrCable() = default;
-
-    FrCable::~FrCable() = default;
-
-    FrCable::FrCable(const std::shared_ptr<FrNode>& startingNode, const std::shared_ptr<FrNode>& endingNode)
+    template <typename OffshoreSystemType>
+    FrCable<OffshoreSystemType>::FrCable() = default;
+    template <typename OffshoreSystemType>
+    FrCable<OffshoreSystemType>::~FrCable() = default;
+    template <typename OffshoreSystemType>
+    FrCable<OffshoreSystemType>::FrCable(const std::shared_ptr<FrNode<OffshoreSystemType>>& startingNode, const std::shared_ptr<FrNode<OffshoreSystemType>>& endingNode)
             : m_startingNode(startingNode), m_endingNode(endingNode) {
         m_properties = std::make_shared<FrCableProperties>();
     }
-
-    FrCable::FrCable(const std::shared_ptr<FrNode>& startingNode, const std::shared_ptr<FrNode>& endingNode,
+    template <typename OffshoreSystemType>
+    FrCable<OffshoreSystemType>::FrCable(const std::shared_ptr<FrNode<OffshoreSystemType>>& startingNode, const std::shared_ptr<FrNode<OffshoreSystemType>>& endingNode,
                      const std::shared_ptr<FrCableProperties>& properties, double unstrainedLength)
             : m_startingNode(startingNode), m_endingNode(endingNode),
               m_unstrainedLength(unstrainedLength), m_properties(properties){}
 
 
-
-    void FrCable::SetCableProperties(const std::shared_ptr<FrCableProperties> prop) {
+    template <typename OffshoreSystemType>
+    void FrCable<OffshoreSystemType>::SetCableProperties(const std::shared_ptr<FrCableProperties> prop) {
         m_properties = prop;
     }
-
-    std::shared_ptr<FrCableProperties> FrCable::GetCableProperties() const {
+    template <typename OffshoreSystemType>
+    std::shared_ptr<FrCableProperties> FrCable<OffshoreSystemType>::GetCableProperties() const {
         return m_properties;
     }
-
-    void FrCable::SetUnstrainedLength(double L) {
+    template <typename OffshoreSystemType>
+    void FrCable<OffshoreSystemType>::SetUnstrainedLength(double L) {
         m_unstrainedLength = L;
     }
-
-    double FrCable::GetUnstrainedLength() const {
+    template <typename OffshoreSystemType>
+    double FrCable<OffshoreSystemType>::GetUnstrainedLength() const {
         return m_unstrainedLength;
     }
 
-
-    void FrCable::SetStartingNode(const std::shared_ptr<FrNode> startingNode) {
+    template <typename OffshoreSystemType>
+    void FrCable<OffshoreSystemType>::SetStartingNode(const std::shared_ptr<FrNode<OffshoreSystemType>> startingNode) {
         // TODO: permettre de re-attacher le cable a un autre noeud si elle etait deja attachee a un noeud
         m_startingNode = startingNode;
     }
-
-    std::shared_ptr<FrNode> FrCable::GetStartingNode() const {
+    template <typename OffshoreSystemType>
+    std::shared_ptr<FrNode<OffshoreSystemType>> FrCable<OffshoreSystemType>::GetStartingNode() const {
         return m_startingNode;
     }
-
-    void FrCable::SetEndingNode(const std::shared_ptr<FrNode> endingNode) {
+    template <typename OffshoreSystemType>
+    void FrCable<OffshoreSystemType>::SetEndingNode(const std::shared_ptr<FrNode<OffshoreSystemType>> endingNode) {
         // TODO: permettre de re-attacher le cable a un autre noeud si elle etait deja attachee a un noeud
         m_endingNode = endingNode;
     }
-
-    std::shared_ptr<FrNode> FrCable::GetEndingNode() const {
+    template <typename OffshoreSystemType>
+    std::shared_ptr<FrNode<OffshoreSystemType>> FrCable<OffshoreSystemType>::GetEndingNode() const {
         return m_endingNode;
     }
 
@@ -153,27 +154,27 @@ namespace frydom {
 //        }
 //
 //    }
-
-    void FrCable::SetUnrollingSpeed(double unrollingSpeed) {
+    template <typename OffshoreSystemType>
+    void FrCable<OffshoreSystemType>::SetUnrollingSpeed(double unrollingSpeed) {
         m_unrollingSpeed = unrollingSpeed;
     }
-
-    double FrCable::GetUnrollingSpeed() const {
+    template <typename OffshoreSystemType>
+    double FrCable<OffshoreSystemType>::GetUnrollingSpeed() const {
         return m_unrollingSpeed;
     }
-
-    void FrCable::UpdateTime(double time) {
+    template <typename OffshoreSystemType>
+    void FrCable<OffshoreSystemType>::UpdateTime(double time) {
         m_time_step = time - m_time;
         m_time = time;
     }
-
-    void FrCable::UpdateState() {
+    template <typename OffshoreSystemType>
+    void FrCable<OffshoreSystemType>::UpdateState() {
         if (std::abs(m_unrollingSpeed) > DBL_EPSILON and std::abs(m_time_step) > DBL_EPSILON) {
             m_unstrainedLength += m_unrollingSpeed * m_time_step;
         }
     }
-
-    double FrCable::GetStrainedLength() const {
+    template <typename OffshoreSystemType>
+    double FrCable<OffshoreSystemType>::GetStrainedLength() const {
         double cl = 0.;
         int n = 1000;
 

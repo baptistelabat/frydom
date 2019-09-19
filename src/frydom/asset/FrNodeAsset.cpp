@@ -11,11 +11,12 @@
 
 namespace frydom {
 
-    FrNodeAsset::FrNodeAsset(frydom::FrNode *node) : m_node(node), m_CharacteristicLength(1.),
+    template <typename OffshoreSystemType>
+    FrNodeAsset<OffshoreSystemType>::FrNodeAsset(frydom::FrNode<OffshoreSystemType> *node) : m_node(node), m_CharacteristicLength(1.),
                                                                FrAsset() {
     }
-
-    void FrNodeAsset::Initialize() {
+    template <typename OffshoreSystemType>
+    void FrNodeAsset<OffshoreSystemType>::Initialize() {
 
         auto glyphAsset = std::make_shared<chrono::ChGlyphs>();
         glyphAsset->SetDrawMode(chrono::ChGlyphs::eCh_GlyphType::GLYPH_COORDSYS);
@@ -28,8 +29,8 @@ namespace frydom {
 
         m_chronoAsset->AddAsset(glyphAsset);
     }
-
-    void FrNodeAsset::StepFinalize() {
+    template <typename OffshoreSystemType>
+    void FrNodeAsset<OffshoreSystemType>::StepFinalize() {
 
         // Get the glyph asset form the AssetLevel
         auto GlyphAsset = dynamic_cast<chrono::ChGlyphs*> (m_chronoAsset->GetAssetN(0).get());
@@ -42,8 +43,8 @@ namespace frydom {
         GlyphAsset->SetGlyphCoordsys(0,nodeFrame);
 
     }
-
-    void FrNodeAsset::SetSize(double size) {
+    template <typename OffshoreSystemType>
+    void FrNodeAsset<OffshoreSystemType>::SetSize(double size) {
         m_CharacteristicLength = size;
     }
 

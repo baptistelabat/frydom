@@ -41,7 +41,7 @@ namespace frydom {
 
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "TanhRampFunction"; }
+//        std::string GetTypeName() const override { return "TanhRampFunction"; }
 
     private:
         void ComputeA();

@@ -26,12 +26,14 @@
 namespace frydom {
 
     // Forward declarations
+    template <typename OffshoreSystemType>
     class FrPathManager;
 
     /**
      * \class FrObject
      * \brief Class for defining objects in FRyDoM.
      */
+    template <typename OffshoreSystemType>
     class FrObject {
 
         // TODO : abandonner les uuid boost au profit d'un nameServer qui s'assure de l'unicite des noms donnes par l'utilisateur
@@ -48,7 +50,7 @@ namespace frydom {
 
         std::unique_ptr<hermes::Message> m_message;     ///< Hermes message, containing the fields to be logged
 
-        std::shared_ptr<FrPathManager> m_pathManager;   ///< pointer to the path manager, in charge of building the path
+        std::shared_ptr<FrPathManager<OffshoreSystemType>> m_pathManager;   ///< pointer to the path manager, in charge of building the path
                                                         ///< to the log file of this object
 
     public:
@@ -100,11 +102,11 @@ namespace frydom {
 
         /// Set the pointer to the path manager service, in charge of building the path of every object to be logged
         /// \param manager shared pointer to the path manager service
-        void SetPathManager(const std::shared_ptr<FrPathManager>& manager);
+        void SetPathManager(const std::shared_ptr<FrPathManager<OffshoreSystemType>>& manager);
 
         /// Get the shared pointer to the path manager service
         /// \return shared pointer to the path manager service
-        std::shared_ptr<FrPathManager> GetPathManager() const;
+        std::shared_ptr<FrPathManager<OffshoreSystemType>> GetPathManager() const;
 
         /// Get the frame convention used in the logging
         /// \return Frame convention used in logging (NED/NWU)

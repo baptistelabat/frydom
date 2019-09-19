@@ -24,7 +24,10 @@
 namespace frydom {
 
     // Forward declaration
+    template <typename OffshoreSystemType>
     class FrBody;
+
+    template <typename OffshoreSystemType>
     class FrOffshoreSystem;
 
 

@@ -20,7 +20,9 @@
 
 namespace frydom {
 
+    template <typename OffshoreSystemType>
     class FrFreeSurface;
+
     class FrTriangleMeshConnected;
     class FrBody;
 

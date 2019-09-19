@@ -100,7 +100,7 @@ namespace frydom {
         return c_y_dxdx;
     }
 
-    void FrFunctionBase::Initialize() {}
+//    void FrFunctionBase::Initialize() {}
 
     double FrFunctionBase::operator()(double x) const {
         return Get_y(x);

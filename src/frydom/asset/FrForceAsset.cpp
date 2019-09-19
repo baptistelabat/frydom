@@ -19,12 +19,13 @@
 
 namespace frydom {
 
-
-    FrForceAsset::FrForceAsset(FrForce* force) : m_force(force), m_CharacteristicLength(0.005), FrAsset(){
+    template <typename OffshoreSystemType>
+    FrForceAsset<OffshoreSystemType>::FrForceAsset(FrForce<OffshoreSystemType>* force) : m_force(force), m_CharacteristicLength(0.005), FrAsset(){
         m_symbolscolor = chrono::ChColor(0, 0.5, 0.5, 0);
     }
 
-    void FrForceAsset::Initialize() {
+    template <typename OffshoreSystemType>
+    void FrForceAsset<OffshoreSystemType>::Initialize() {
         auto point = internal::Vector3dToChVector(m_force->GetForceApplicationPointInBody(NWU));
         auto forcevect = internal::Vector3dToChVector(m_force->GetForceInBody(NWU)) * m_CharacteristicLength;
 
@@ -37,7 +38,8 @@ namespace frydom {
         m_chronoAsset->AddAsset(glyphAsset);
     }
 
-    void FrForceAsset::StepFinalize() {
+    template <typename OffshoreSystemType>
+    void FrForceAsset<OffshoreSystemType>::StepFinalize() {
 
         // Get the glyph asset form the AssetLevel
         auto GlyphAsset = dynamic_cast<chrono::ChGlyphs*> (m_chronoAsset->GetAssetN(0).get());
@@ -50,7 +52,8 @@ namespace frydom {
 
     }
 
-    void FrForceAsset::SetSize(double size) {
+    template <typename OffshoreSystemType>
+    void FrForceAsset<OffshoreSystemType>::SetSize(double size) {
         m_CharacteristicLength = size;
     }
 

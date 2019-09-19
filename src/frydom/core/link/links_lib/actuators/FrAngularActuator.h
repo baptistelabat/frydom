@@ -13,14 +13,17 @@
 namespace frydom {
 
     // Forward declaration
+    template <typename OffshoreSystemType>
     class FrLink;
 
-    class FrAngularActuator : public FrActuator {
+
+    template <typename OffshoreSystemType>
+    class FrAngularActuator : public FrActuator<OffshoreSystemType> {
     private:
         std::shared_ptr<chrono::ChLinkMotorRotation> m_chronoActuator;
 
     public:
-        explicit FrAngularActuator(FrLink *actuatedLink, ACTUATOR_CONTROL control);
+        explicit FrAngularActuator(FrLink<OffshoreSystemType> *actuatedLink, ACTUATOR_CONTROL control);
 
         void SetMotorFunction(const FrFunctionBase& function) override;
 

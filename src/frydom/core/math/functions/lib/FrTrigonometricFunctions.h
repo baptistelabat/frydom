@@ -12,66 +12,71 @@ namespace frydom {
 
     class FrCosFunction : public FrFunctionBase {
 
-    public:
-        explicit FrCosFunction(double alpha);
-        FrCosFunction(const FrFunctionBase& function);
-        FrCosFunction(const FrCosFunction& other);
-        FrCosFunction* Clone() const override;
+     public:
+      explicit FrCosFunction(double alpha);
 
-        std::string GetRepr() const override;
+      FrCosFunction(const FrFunctionBase &function);
 
-        std::string GetTypeName() const override { return "CosFunction"; }
+      FrCosFunction(const FrCosFunction &other);
 
-    protected:
-        void Eval(double x) const override;
+      FrCosFunction *Clone() const override;
+
+      std::string GetRepr() const override;
+
+//        std::string GetTypeName() const override { return "CosFunction"; }
+
+     protected:
+      void Eval(double x) const override;
 
     };
 
-    FrCosFunction cos(const FrFunctionBase& function);
-
-
+    FrCosFunction cos(const FrFunctionBase &function);
 
 
     class FrSinFunction : public FrFunctionBase {
 
-    public:
-        explicit FrSinFunction(double alpha);
-        FrSinFunction(const FrFunctionBase& function);
-        FrSinFunction(const FrSinFunction& other);
-        FrSinFunction* Clone() const override;
+     public:
+      explicit FrSinFunction(double alpha);
 
-        std::string GetRepr() const override;
+      FrSinFunction(const FrFunctionBase &function);
 
-        std::string GetTypeName() const override { return "SinFunction"; }
+      FrSinFunction(const FrSinFunction &other);
 
-    protected:
-        void Eval(double x) const override;
+      FrSinFunction *Clone() const override;
+
+      std::string GetRepr() const override;
+
+//        std::string GetTypeName() const override { return "SinFunction"; }
+
+     protected:
+      void Eval(double x) const override;
 
     };
 
-    FrSinFunction sin(const FrFunctionBase& function);
-
-
+    FrSinFunction sin(const FrFunctionBase &function);
 
 
     class FrTanFunction : public FrFunctionBase {
 
-    public:
-        explicit FrTanFunction(double alpha);
-        FrTanFunction(const FrFunctionBase& function);
-        FrTanFunction(const FrTanFunction& other);
-        FrTanFunction* Clone() const override;
+     public:
+      explicit FrTanFunction(double alpha);
 
-        std::string GetRepr() const override;
+      FrTanFunction(const FrFunctionBase &function);
 
-        std::string GetTypeName() const override { return "TanFunction"; }
+      FrTanFunction(const FrTanFunction &other);
 
-    protected:
-        void Eval(double x) const override;
+      FrTanFunction *Clone() const override;
+
+      std::string GetRepr() const override;
+
+//        std::string GetTypeName() const override { return "TanFunction"; }
+
+     protected:
+      void Eval(double x) const override;
 
     };
 
-    FrTanFunction tan(const FrFunctionBase& function);
+    FrTanFunction tan(const FrFunctionBase &function);
 
 
     /*
@@ -80,72 +85,71 @@ namespace frydom {
 
     class FrACosFunction : public FrFunctionBase {
 
-    public:
-        explicit FrACosFunction(double alpha);
-        FrACosFunction(const FrFunctionBase& function);
-        FrACosFunction(const FrACosFunction& other);
-        FrACosFunction* Clone() const override;
+     public:
+      explicit FrACosFunction(double alpha);
 
-        std::string GetRepr() const override;
+      FrACosFunction(const FrFunctionBase &function);
 
-        std::string GetTypeName() const override { return "ACosFunction"; }
+      FrACosFunction(const FrACosFunction &other);
 
-    protected:
-        void Eval(double x) const override;
+      FrACosFunction *Clone() const override;
+
+      std::string GetRepr() const override;
+
+//        std::string GetTypeName() const override { return "ACosFunction"; }
+
+     protected:
+      void Eval(double x) const override;
 
     };
 
-    FrACosFunction acos(const FrFunctionBase& function);
-
-
+    FrACosFunction acos(const FrFunctionBase &function);
 
 
     class FrASinFunction : public FrFunctionBase {
 
-    public:
-        explicit FrASinFunction(double alpha);
-        FrASinFunction(const FrFunctionBase& function);
-        FrASinFunction(const FrASinFunction& other);
-        FrASinFunction* Clone() const override;
+     public:
+      explicit FrASinFunction(double alpha);
 
-        std::string GetRepr() const override;
+      FrASinFunction(const FrFunctionBase &function);
 
-        std::string GetTypeName() const override { return "ASinFunction"; }
+      FrASinFunction(const FrASinFunction &other);
 
-    protected:
-        void Eval(double x) const override;
+      FrASinFunction *Clone() const override;
+
+      std::string GetRepr() const override;
+
+//        std::string GetTypeName() const override { return "ASinFunction"; }
+
+     protected:
+      void Eval(double x) const override;
 
     };
 
-    FrASinFunction asin(const FrFunctionBase& function);
-
-
+    FrASinFunction asin(const FrFunctionBase &function);
 
 
     class FrATanFunction : public FrFunctionBase {
 
-    public:
-        explicit FrATanFunction(double alpha);
-        FrATanFunction(const FrFunctionBase& function);
-        FrATanFunction(const FrATanFunction& other);
-        FrATanFunction* Clone() const override;
+     public:
+      explicit FrATanFunction(double alpha);
 
-        std::string GetRepr() const override;
+      FrATanFunction(const FrFunctionBase &function);
 
-        std::string GetTypeName() const override { return "ATanFunction"; }
+      FrATanFunction(const FrATanFunction &other);
 
-    protected:
-        void Eval(double x) const override;
+      FrATanFunction *Clone() const override;
+
+      std::string GetRepr() const override;
+
+//        std::string GetTypeName() const override { return "ATanFunction"; }
+
+     protected:
+      void Eval(double x) const override;
 
     };
 
-    FrATanFunction atan(const FrFunctionBase& function);
-
-
-
-
-
-
+    FrATanFunction atan(const FrFunctionBase &function);
 
 
 }  // end namespace frydom

@@ -26,17 +26,19 @@ namespace frydom {
      * \class FrForce
      * \brief Base class for every external forces on bodies
      */
+     template <typename OffshoreSystemType>
     class FrForce;
 
     namespace internal {
 
+        template <typename OffshoreSystemType>
         struct FrForceBase : public chrono::ChForce {
 
-            FrForce *m_frydomForce;
+            FrForce<OffshoreSystemType> *m_frydomForce;
             chrono::ChVector<double> m_torque; // Expressed in body coordinates at COG
 
 
-            explicit FrForceBase(FrForce *force);
+            explicit FrForceBase(FrForce<OffshoreSystemType> *force);
 
             void UpdateState() override;
 
@@ -58,28 +60,36 @@ namespace frydom {
     }  // end namespace frydom::internal
 
     // Forward declaration;
+    template <typename OffshoreSystemType>
     class FrOffshoreSystem;
+
+    template <typename OffshoreSystemType>
     class FrBody;
+
+    template <typename OffshoreSystemType>
     class FrNode;
+
+    template <typename OffshoreSystemType>
     class FrForceAsset;
 
     /**
      * \class FrForce
      * \brief  Class defining an effort with force and torque vector
      */
-    class FrForce : public FrObject {
+    template <typename OffshoreSystemType>
+    class FrForce : public FrObject<OffshoreSystemType> {
 
     protected:
 
-        FrBody* m_body;                ///< Pointer to the body to which the force is applied
+        FrBody<OffshoreSystemType>* m_body;                ///< Pointer to the body to which the force is applied
 
-        std::shared_ptr<internal::FrForceBase> m_chronoForce;     ///< Pointer to the force chrono object
+        std::shared_ptr<internal::FrForceBase<OffshoreSystemType>> m_chronoForce;     ///< Pointer to the force chrono object
 
         bool m_isActive = true;         ///< boolean to check if the force is active
 
         // Force Asset
         bool m_showAsset = false;                         ///< A ForceAsset (vector) is displayed if true
-        std::shared_ptr<FrForceAsset> m_asset = nullptr;  ///< pointer to the ForceAsset object.
+        std::shared_ptr<FrForceAsset<OffshoreSystemType>> m_asset = nullptr;  ///< pointer to the ForceAsset object.
 
         // Limits on forces to stabilize simulation
         bool m_limitForce = false;              ///< Flag equals to true if the maximum force and torque limit are used, false otherwise
@@ -100,9 +110,9 @@ namespace frydom {
 
         /// Return the system to which the force is linked
         /// \return Offshore system object pointer
-        FrOffshoreSystem* GetSystem();
+        FrOffshoreSystem<OffshoreSystemType>* GetSystem();
 
-        FrBody* GetBody() const;
+        FrBody<OffshoreSystemType>* GetBody() const;
 
         /// Get the type name of this object
         /// \return type name of this object
@@ -133,7 +143,7 @@ namespace frydom {
 
         /// Get the asset related to the force
         /// \return force asset
-        FrForceAsset* GetAsset();
+        FrForceAsset<OffshoreSystemType>* GetAsset();
 
         // Force Limits
 
@@ -414,7 +424,7 @@ namespace frydom {
         std::string BuildPath(const std::string &rootPath) override;
 
 
-        friend class FrBody;
+        friend class FrBody<OffshoreSystemType>;
 
     };
 

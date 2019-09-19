@@ -17,26 +17,27 @@
 
 namespace frydom {
 
-    void FrCatenaryForce::Compute(double time) {
+    template <typename OffshoreSystemType>
+    void FrCatenaryForce<OffshoreSystemType>::Compute(double time) {
 
         Position relpos;
         Force ForceInWorld;
 
         // Get the line tension from the corresponding node
         switch (m_line_side) {
-            case FrCatenaryLine::LINE_START:
+            case FrCatenaryLine<OffshoreSystemType>::LINE_START:
                 ForceInWorld = m_line->GetStartingNodeTension(NWU);
                 relpos = m_line->GetStartingNode()->GetNodePositionInBody(NWU);
                 break;
 
-            case FrCatenaryLine::LINE_END:
+            case FrCatenaryLine<OffshoreSystemType>::LINE_END:
                 ForceInWorld = m_line->GetEndingNodeTension(NWU);
                 relpos = m_line->GetEndingNode()->GetNodePositionInBody(NWU);
                 break;
         }
 
         // Set the tension in the world reference frame and NWU frame convention
-        SetForceTorqueInWorldAtPointInBody(ForceInWorld, Torque(), relpos, NWU);
+        this->SetForceTorqueInWorldAtPointInBody(ForceInWorld, Torque(), relpos, NWU);
 
     }
 

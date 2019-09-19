@@ -62,14 +62,14 @@ namespace frydom {
 //        void SetXWindow(double x0, double x1);
 //
         void SetByTwoPoints(double x0, double y0, double x1, double y1);
-        
+
         void GetByTwoPoints(double& x0, double& y0, double& x1, double& y1 );
 
-        void Initialize() override;
+//        void Initialize() override;
 
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "LinearRampFunction"; }
+//        std::string GetTypeName() const override { return "LinearRampFunction"; }
 
     protected:
         void Eval(double x) const override;

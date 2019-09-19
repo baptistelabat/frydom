@@ -13,64 +13,73 @@
 
 namespace frydom {
 
+    template<typename OffshoreSystemType>
+    FrLinearActuator<OffshoreSystemType>::FrLinearActuator(FrLink<OffshoreSystemType> *actuatedLink,
+                                                           ACTUATOR_CONTROL control) : FrActuator<OffshoreSystemType>(
+        actuatedLink) {
 
-    FrLinearActuator::FrLinearActuator(FrLink *actuatedLink, ACTUATOR_CONTROL control) : FrActuator(actuatedLink) {
-
-        switch (control) {
-            case POSITION :
-                m_chronoActuator = std::make_shared<chrono::ChLinkMotorLinearPosition>();
-                break;
-            case VELOCITY :
-                m_chronoActuator = std::make_shared<chrono::ChLinkMotorLinearSpeed>();
-                break;
-            case FORCE :
-                m_chronoActuator = std::make_shared<chrono::ChLinkMotorLinearForce>();
-                break;
-        }
-        m_chronoActuator->SetGuideConstraint(chrono::ChLinkMotorLinear::GuideConstraint::FREE);
-
-    }
-
-    void FrLinearActuator::SetMotorFunction(const FrFunctionBase &function) {
-
-        auto chronoFunctionInterface = internal::FrFunctionChronoInterface(function);
-
-        m_chronoActuator->SetMotorFunction(chronoFunctionInterface.GetChronoFunction());
+      switch (control) {
+        case POSITION :
+          m_chronoActuator = std::make_shared<chrono::ChLinkMotorLinearPosition>();
+          break;
+        case VELOCITY :
+          m_chronoActuator = std::make_shared<chrono::ChLinkMotorLinearSpeed>();
+          break;
+        case FORCE :
+          m_chronoActuator = std::make_shared<chrono::ChLinkMotorLinearForce>();
+          break;
+      }
+      m_chronoActuator->SetGuideConstraint(chrono::ChLinkMotorLinear::GuideConstraint::FREE);
 
     }
 
-    std::shared_ptr<chrono::ChLink> FrLinearActuator::GetChronoLink() {
-        return m_chronoActuator;
-    }
+    template<typename OffshoreSystemType>
+    void FrLinearActuator<OffshoreSystemType>::SetMotorFunction(const FrFunctionBase &function) {
 
-    chrono::ChLinkMotorLinear *FrLinearActuator::GetChronoItem_ptr() const {
-        return m_chronoActuator.get();
-    }
+      auto chronoFunctionInterface = internal::FrFunctionChronoInterface<OffshoreSystemType>(function);
 
-    void FrLinearActuator::Initialize() {
-
-        // IMPORTANT : in FRyDoM the first node is the master and the second one the slave, as opposed to Chrono !!!
-        // ChLinkMotorLinear motorized along the x axis, while ChLinkLock::Prismatic is along z axis...
-        auto frame1 = GetNode1()->GetFrameWRT_COG_InBody();
-        frame1.RotY_RADIANS(MU_PI_2,NWU,true);
-        auto frame2 = GetNode2()->GetFrameWRT_COG_InBody();
-        frame2.RotY_RADIANS(MU_PI_2,NWU,true);
-
-        m_chronoActuator->Initialize(GetChronoBody2(), GetChronoBody1(), true,
-                   internal::FrFrame2ChFrame(frame2), internal::FrFrame2ChFrame(frame1));
+      m_chronoActuator->SetMotorFunction(chronoFunctionInterface.GetChronoFunction());
 
     }
 
-    double FrLinearActuator::GetMotorPower() const {
-        return m_chronoActuator->GetMotorForce() * m_chronoActuator->GetMotorPos_dt();
+    template<typename OffshoreSystemType>
+    std::shared_ptr<chrono::ChLink> FrLinearActuator<OffshoreSystemType>::GetChronoLink() {
+      return m_chronoActuator;
     }
 
-    Force FrLinearActuator::GetMotorForceInNode(FRAME_CONVENTION fc) const {
-        return {0.,0.,m_chronoActuator->GetMotorForce()};
+    template<typename OffshoreSystemType>
+    chrono::ChLinkMotorLinear *FrLinearActuator<OffshoreSystemType>::GetChronoItem_ptr() const {
+      return m_chronoActuator.get();
     }
 
-    Torque FrLinearActuator::GetMotorTorqueInNode(FRAME_CONVENTION fc) const {
-        return {};
+    template<typename OffshoreSystemType>
+    void FrLinearActuator<OffshoreSystemType>::Initialize() {
+
+      // IMPORTANT : in FRyDoM the first node is the master and the second one the slave, as opposed to Chrono !!!
+      // ChLinkMotorLinear motorized along the x axis, while ChLinkLock::Prismatic is along z axis...
+      auto frame1 = this->GetNode1()->GetFrameWRT_COG_InBody();
+      frame1.RotY_RADIANS(MU_PI_2, NWU, true);
+      auto frame2 = this->GetNode2()->GetFrameWRT_COG_InBody();
+      frame2.RotY_RADIANS(MU_PI_2, NWU, true);
+
+      m_chronoActuator->Initialize(this->GetChronoBody2(), this->GetChronoBody1(), true,
+                                   internal::FrFrame2ChFrame(frame2), internal::FrFrame2ChFrame(frame1));
+
+    }
+
+    template<typename OffshoreSystemType>
+    double FrLinearActuator<OffshoreSystemType>::GetMotorPower() const {
+      return m_chronoActuator->GetMotorForce() * m_chronoActuator->GetMotorPos_dt();
+    }
+
+    template<typename OffshoreSystemType>
+    Force FrLinearActuator<OffshoreSystemType>::GetMotorForceInNode(FRAME_CONVENTION fc) const {
+      return {0., 0., m_chronoActuator->GetMotorForce()};
+    }
+
+    template<typename OffshoreSystemType>
+    Torque FrLinearActuator<OffshoreSystemType>::GetMotorTorqueInNode(FRAME_CONVENTION fc) const {
+      return {};
     }
 
 

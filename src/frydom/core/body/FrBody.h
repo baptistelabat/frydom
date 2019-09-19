@@ -39,6 +39,8 @@ namespace frydom {
 
     // Forward declarations
     class FrUnitQuaternion;
+
+    template <typename OffshoreSystemType>
     class FrBody;
 
 
@@ -48,15 +50,16 @@ namespace frydom {
 
         /// Base class inheriting from chrono ChBodyAuxRef
         /// This class must not be used by external FRyDoM users. It is used in composition rule along with the FrBody_ FRyDoM class
+        template <typename OffshoreSystemType>
         struct FrBodyBase : public chrono::ChBodyAuxRef {
 
-            FrBody *m_frydomBody;                      ///< pointer to the FrBody containing this bodyBase
+            FrBody<OffshoreSystemType> *m_frydomBody;                      ///< pointer to the FrBody containing this bodyBase
 
             std::shared_ptr<chrono::ChVariables> m_variables_ptr;
 
             /// Constructor of the bodyBase
             /// \param body body containing this bodyBase
-            explicit FrBodyBase(FrBody *body);
+            explicit FrBodyBase(FrBody<OffshoreSystemType> *body);
 
             FrBodyBase(const FrBodyBase& other);
 
@@ -124,12 +127,16 @@ namespace frydom {
 
 
     // Forward declarations
+    template <typename OffshoreSystemType>
     class FrForce;
+
     class FrFrame;
     class FrRotation;
     class FrGeographicCoord;
     class FrAsset;
     class FrTriangleMeshConnected;
+
+    template <typename OffshoreSystemType>
     class FrCollisionModel;
 
     /// Main class for a FRyDoM rigid body
@@ -137,21 +144,22 @@ namespace frydom {
      * \class FrBody
      * \brief Class for defining a body.
      */
-    class FrBody : public FrObject, public FrAssetOwner {
+    template <typename OffshoreSystemType>
+    class FrBody : public FrObject<OffshoreSystemType>, public FrAssetOwner {
 
     protected:
 
-        std::shared_ptr<internal::FrBodyBase> m_chronoBody;  ///< Embedded Chrono body Object
+        std::shared_ptr<internal::FrBodyBase<OffshoreSystemType>> m_chronoBody;  ///< Embedded Chrono body Object
 
-        FrOffshoreSystem* m_system;                ///< Pointer to the FrOffshoreSystem where the body has been registered
+        FrOffshoreSystem<OffshoreSystemType>* m_system;                ///< Pointer to the FrOffshoreSystem where the body has been registered
 
-        using ForceContainer = std::vector<std::shared_ptr<FrForce>>;
+        using ForceContainer = std::vector<std::shared_ptr<FrForce<OffshoreSystemType>>>;
         ForceContainer m_externalForces;            ///< Container of the external forces acting on body
 
-        using NodeContainer = std::vector<std::shared_ptr<FrNode>>;
+        using NodeContainer = std::vector<std::shared_ptr<FrNode<OffshoreSystemType>>>;
         NodeContainer m_nodes;                    ///< Container of the nodes belonging to the body
 
-        using CONTACT_TYPE = FrOffshoreSystem::SYSTEM_TYPE;
+        using CONTACT_TYPE = typename FrOffshoreSystem<OffshoreSystemType>::SYSTEM_TYPE;
         CONTACT_TYPE m_contactType = CONTACT_TYPE::SMOOTH_CONTACT; ///< The contact method that has to be consistent with that of the FrOffshoreSystem
 
 
@@ -164,7 +172,7 @@ namespace frydom {
         FrBody();
 
         /// Get the FrOffshoreSystem where the body has been registered
-        FrOffshoreSystem* GetSystem() const;
+        FrOffshoreSystem<OffshoreSystemType>* GetSystem() const;
 
         /// Make the body fixed
         /// \param state true if body is fixed, false otherwise
@@ -256,11 +264,11 @@ namespace frydom {
 
         /// Get the collision model, containing the collision box
         /// \return collision model
-        FrCollisionModel* GetCollisionModel();
+        FrCollisionModel<OffshoreSystemType>* GetCollisionModel();
 
         /// Set the collision model, containing the collision box
         /// \param collisionModel collision model, containing the collision box
-        void SetCollisionModel(std::shared_ptr<FrCollisionModel> collisionModel);
+        void SetCollisionModel(std::shared_ptr<FrCollisionModel<OffshoreSystemType>> collisionModel);
 
         void SetMaterialSurface(const std::shared_ptr<chrono::ChMaterialSurfaceSMC>& materialSurface) {m_chronoBody->SetMaterialSurface(materialSurface);}
 
@@ -303,11 +311,11 @@ namespace frydom {
 
         /// Add an external force to the body
         /// \param force force to be added to the body
-        void AddExternalForce(std::shared_ptr<FrForce> force);
+        void AddExternalForce(std::shared_ptr<FrForce<OffshoreSystemType>> force);
 
         /// Remove an external force to the body
         /// \param force force to be removed to the body
-        void RemoveExternalForce(std::shared_ptr<FrForce> force);
+        void RemoveExternalForce(std::shared_ptr<FrForce<OffshoreSystemType>> force);
 
         /// Remove all forces from the body
         void RemoveAllForces();
@@ -331,7 +339,7 @@ namespace frydom {
         /// Generates a new node attached to the body which position and orientation are coincident with the body
         /// reference frame
         /// \return node created
-        std::shared_ptr<FrNode> NewNode();
+        std::shared_ptr<FrNode<OffshoreSystemType>> NewNode();
 
         /// Get the list of all nodes added to the body
         /// \return List of all nodes added to the body
@@ -802,7 +810,7 @@ namespace frydom {
         /// \return vector in world reference frame
         template <class Vector>
         Vector ProjectVectorInWorld(const Vector& bodyVector, FRAME_CONVENTION fc) const {
-            return GetQuaternion().Rotate<Vector>(bodyVector, fc);
+            return GetQuaternion().template Rotate<Vector>(bodyVector, fc);
         }
 
         /// Project in place a vector given in body reference frame, to the world reference frame
@@ -812,7 +820,7 @@ namespace frydom {
         /// \return vector in world reference frame
         template <class Vector>
         Vector& ProjectVectorInWorld(Vector& bodyVector, FRAME_CONVENTION fc) const {
-            bodyVector = GetQuaternion().Rotate<Vector>(bodyVector, fc);
+            bodyVector = GetQuaternion().template Rotate<Vector>(bodyVector, fc);
             return bodyVector;
         }
 
@@ -823,7 +831,7 @@ namespace frydom {
         /// \return vector in body reference frame
         template <class Vector>
         Vector ProjectVectorInBody(const Vector& worldVector, FRAME_CONVENTION fc) const {
-            return GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
+            return GetQuaternion().GetInverse().template Rotate<Vector>(worldVector, fc);
         }
 
         /// Project in place a vector given in world reference frame, to the body reference frame
@@ -833,7 +841,7 @@ namespace frydom {
         /// \return vector in body reference frame
         template <class Vector>
         Vector& ProjectVectorInBody(Vector& worldVector, FRAME_CONVENTION fc) const {
-            worldVector = GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
+            worldVector = GetQuaternion().GetInverse().template Rotate<Vector>(worldVector, fc);
             return worldVector;
         }
 
@@ -848,7 +856,7 @@ namespace frydom {
         /// \return vector in world reference frame
         template <class Vector>
         Vector ProjectGenerallizedVectorInWorld(const Vector& bodyVector, FRAME_CONVENTION fc) const {
-            return GetQuaternion().Rotate<Vector>(bodyVector, fc);
+            return GetQuaternion().template Rotate<Vector>(bodyVector, fc);
         }
 
         /// Project in place a generalized vector given in body reference frame, to the world reference frame
@@ -858,7 +866,7 @@ namespace frydom {
         /// \return vector in world reference frame
         template <class Vector>
         Vector& ProjectGenerallizedVectorInWorld(Vector& bodyVector, FRAME_CONVENTION fc) const {
-            bodyVector = GetQuaternion().Rotate<Vector>(bodyVector, fc);
+            bodyVector = GetQuaternion().template Rotate<Vector>(bodyVector, fc);
             return bodyVector;
         }
 
@@ -869,7 +877,7 @@ namespace frydom {
         /// \return vector in body reference frame
         template <class Vector>
         Vector ProjectGenerallizedVectorInBody(const Vector& worldVector, FRAME_CONVENTION fc) const {
-            return GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
+            return GetQuaternion().GetInverse().template Rotate<Vector>(worldVector, fc);
         }
 
         /// Project in place a generalized vector given in world reference frame, to the body reference frame
@@ -879,7 +887,7 @@ namespace frydom {
         /// \return vector in body reference frame
         template <class Vector>
         Vector& ProjectGeneralizedVectorInBody(Vector &worldVector, FRAME_CONVENTION fc) const {
-            worldVector = GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
+            worldVector = GetQuaternion().GetInverse().template Rotate<Vector>(worldVector, fc);
             return worldVector;
         }
 
@@ -954,24 +962,29 @@ namespace frydom {
     public:
         /// Get the shared pointer to the chronoBody attribute
         /// \return shared pointer to the chronoBody attribute
-        std::shared_ptr<internal::FrBodyBase> GetChronoBody();
+        std::shared_ptr<internal::FrBodyBase<OffshoreSystemType>> GetChronoBody();
 
     protected:
 
         /// Get the chronoBody attribute pointer
         /// \return Pointer to the chronoBody attribute
-        internal::FrBodyBase* GetChronoItem_ptr() const override;
+        internal::FrBodyBase<OffshoreSystemType>* GetChronoItem_ptr() const override;
 
         void InitializeLockedDOF();
 
         // Friends of FrBody : they can have access to chrono internals
-        friend void makeItBox(std::shared_ptr<FrBody>, double, double, double, double);
-        friend void makeItCylinder(std::shared_ptr<FrBody>, double, double, double);
-        friend void makeItSphere(std::shared_ptr<FrBody>, double, double);
+        template <typename T>
+        friend void makeItBox(std::shared_ptr<FrBody<T>>, double, double, double, double);
+
+        template <typename T>
+        friend void makeItCylinder(std::shared_ptr<FrBody<T>>, double, double, double);
+
+        template <typename T>
+        friend void makeItSphere(std::shared_ptr<FrBody<T>>, double, double);
 
 
-        friend FrNode::FrNode(FrBody*);
-        friend class FrLinkBase;
+        friend FrNode<OffshoreSystemType>::FrNode(FrBody<OffshoreSystemType>*);
+        friend class FrLinkBase<OffshoreSystemType>;
 
 
     public:
@@ -989,8 +1002,8 @@ namespace frydom {
         virtual void Update();
 
         // Linear iterators on external forces
-        using ForceIter = ForceContainer::iterator;
-        using ConstForceIter = ForceContainer::const_iterator;
+        using ForceIter = typename ForceContainer::iterator;
+        using ConstForceIter = typename ForceContainer::const_iterator;
 
         ForceIter       force_begin();
         ConstForceIter  force_begin() const;
@@ -999,8 +1012,8 @@ namespace frydom {
         ConstForceIter  force_end() const;
 
         // Linear iterators on nodes
-        using NodeIter = NodeContainer::iterator;
-        using ConstNodeIter = NodeContainer::const_iterator;
+        using NodeIter = typename NodeContainer::iterator;
+        using ConstNodeIter = typename NodeContainer::const_iterator;
 
         NodeIter       node_begin();
         ConstNodeIter  node_begin() const;
@@ -1012,17 +1025,17 @@ namespace frydom {
         // friend declarations
         // This one is made for the FrOffshoreSystem to be able to add the embedded chrono object into the embedded
         // chrono system (ChSystem)
-        friend void FrOffshoreSystem::AddBody(std::shared_ptr<frydom::FrBody>);
+        friend void FrOffshoreSystem<OffshoreSystemType>::AddBody(std::shared_ptr<frydom::FrBody<OffshoreSystemType>>);
 
-        friend void internal::FrDynamicCableBase::InitializeLinks();
+        friend void internal::FrDynamicCableBase<OffshoreSystemType>::InitializeLinks();
 
-        friend void FrOffshoreSystem::RemoveBody(std::shared_ptr<frydom::FrBody>);
+        friend void FrOffshoreSystem<OffshoreSystemType>::RemoveBody(std::shared_ptr<frydom::FrBody<OffshoreSystemType>>);
 
-        friend int internal::FrRadiationModelBase::GetBodyOffset(FrBody* body) const;
+        friend int internal::FrRadiationModelBase<OffshoreSystemType>::GetBodyOffset(FrBody<OffshoreSystemType>* body) const;
 
-        friend void internal::FrRadiationModelBase::InjectVariablesToBody();
+        friend void internal::FrRadiationModelBase<OffshoreSystemType>::InjectVariablesToBody();
 
-        friend chrono::ChMatrix<double> internal::FrVariablesBEMBodyBase::GetVariablesFb(FrBody* body) const;
+        friend chrono::ChMatrix<double> internal::FrVariablesBEMBodyBase<OffshoreSystemType>::GetVariablesFb(FrBody<OffshoreSystemType>* body) const;
 
      };
 

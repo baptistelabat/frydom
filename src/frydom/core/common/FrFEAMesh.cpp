@@ -10,7 +10,8 @@
 //    GetChronoMesh()->SetupInitial();
 //}
 
-void frydom::FrFEAMesh::Initialize() {
+template <typename OffshoreSystemType>
+void frydom::FrFEAMesh<OffshoreSystemType>::Initialize() {
     // FIXME
 //    GetChronoMesh()->SetupInitial();
 }
