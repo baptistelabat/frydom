@@ -44,8 +44,9 @@ namespace frydom {
             m_valid = true;
         }
 
-        FrCache<T>& operator =(const T& data) {
+        FrCache<T>& operator=(const T& data) {
             Set(data);
+            return *this;
         }
 
         operator T&() { return m_data; }
