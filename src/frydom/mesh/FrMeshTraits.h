@@ -171,7 +171,7 @@ namespace frydom {
                             std::cerr << "Cannot return value of an UNDEFINED_INTEGRAND" << std::endl;
                             break;
                         default:
-                            throw FrException("Cannot return value of an UNDEFINED_INTEGRAND");
+                            throw std::runtime_error("Cannot return value of an UNDEFINED_INTEGRAND");
                     }
                 }
 
@@ -229,7 +229,7 @@ namespace frydom {
                             std::cerr << "Cannot return value of an UNDEFINED_INTEGRAND" << std::endl;
                             break;
                         default:
-                            throw FrException("Cannot return value of an UNDEFINED_INTEGRAND");
+                            throw std::runtime_error("Cannot return value of an UNDEFINED_INTEGRAND");
                     }
                 }
 
