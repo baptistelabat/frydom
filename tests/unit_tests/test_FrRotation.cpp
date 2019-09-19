@@ -111,9 +111,9 @@ TEST(FrQuaternion,Quaternion) {
 
     testDirection = Quat.GetXAxis(fc) - Direction(1,0,0);
     EXPECT_TRUE(testDirection.isZero());
-    testDirection = Quat.GetYAxis(NWU) - Direction(0,0,1);
+    testDirection = Quat.GetYAxis(fc) - Direction(0,0,1);
     EXPECT_TRUE(testDirection.isZero());
-    testDirection = Quat.GetZAxis(NWU) - Direction(0,-1,0);
+    testDirection = Quat.GetZAxis(fc) - Direction(0,-1,0);
     EXPECT_TRUE(testDirection.isZero());
 
     // Test of the Copy Constructor
@@ -172,11 +172,11 @@ TEST(FrQuaternion,Quaternion) {
               0., 0., 1.;
     Quat.Set(matrix,fc);
 
-    testDirection = Quat.GetXAxis(NWU) - Direction(0,1,0);
+    testDirection = Quat.GetXAxis(fc) - Direction(0,1,0);
     EXPECT_TRUE(testDirection.isZero());
-    testDirection = Quat.GetYAxis(NWU) - Direction(-1,0,0);
+    testDirection = Quat.GetYAxis(fc) - Direction(-1,0,0);
     EXPECT_TRUE(testDirection.isZero());
-    testDirection = Quat.GetZAxis(NWU) - Direction(0,0,1);
+    testDirection = Quat.GetZAxis(fc) - Direction(0,0,1);
     EXPECT_TRUE(testDirection.isZero());
 
 }
@@ -233,11 +233,11 @@ TEST(FrRotation,Rotation){
     EXPECT_TRUE(xRotQuat == xQuat);
 
     // Test on GetXAxis, GetYAxis, GetZAxis
-    testDirection = xRotQuat.GetXAxis(NWU) - Direction(1,0,0);
+    testDirection = xRotQuat.GetXAxis(fc) - Direction(1,0,0);
     EXPECT_TRUE(testDirection.isZero());
-    testDirection = xRotQuat.GetYAxis(NWU) - Direction(0,0,1);
+    testDirection = xRotQuat.GetYAxis(fc) - Direction(0,0,1);
     EXPECT_TRUE(testDirection.isZero());
-    testDirection = xRotQuat.GetZAxis(NWU) - Direction(0,-1,0);
+    testDirection = xRotQuat.GetZAxis(fc) - Direction(0,-1,0);
     EXPECT_TRUE(testDirection.isZero());
 
     // Test Rotate
@@ -281,10 +281,10 @@ TEST(FrRotation,Rotation){
     testRotation.SetNullRotation();
     testRotation.Set(Direction(0, 1, 0), Direction(-1, 0, 0.), Direction(0., 0., 1.),fc);
 
-    testDirection = testRotation.GetXAxis(NWU) - Direction(0,1,0);
+    testDirection = testRotation.GetXAxis(fc) - Direction(0,1,0);
     EXPECT_TRUE(testDirection.isZero());
-    testDirection = testRotation.GetYAxis(NWU) - Direction(-1,0,0);
+    testDirection = testRotation.GetYAxis(fc) - Direction(-1,0,0);
     EXPECT_TRUE(testDirection.isZero());
-    testDirection = testRotation.GetZAxis(NWU) - Direction(0,0,1);
+    testDirection = testRotation.GetZAxis(fc) - Direction(0,0,1);
     EXPECT_TRUE(testDirection.isZero());
 }
