@@ -293,7 +293,7 @@ Let us condsider a floating sphere of radius :math:`1` \\(m\\) with a draft of :
 ========================= ==================================
 Parameters                Values
 ========================= ==================================
-Radius                    :math:`5` \\(m\\)
+Radius                    :math:`1` \\(m\\)
 Initial sphere location   (:math:`0`, :math:`0`, :math:`0`)
 Center of gravity         (:math:`0`, :math:`0`, :math:`0`)
 Mass	                  :math:`2094.39` \\(kg\\)
