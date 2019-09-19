@@ -25,20 +25,13 @@
 namespace frydom {
 
     //Forward declaration
-    class FrObject;
-    class FrBody;
     class FrOffshoreSystem;
-    class FrForce;
-    class FrNode;
-    class FrPhysicsItem;
-    class FrLinkBase;
-    class FrStaticAnalysis;
-    class FrFEAMesh;
+
 
     class FrPathManager {
     private:
 
-        FRAME_CONVENTION m_logFrameConvention;
+        FRAME_CONVENTION m_logFrameConvention; // FIXME : not used at that moment !!
 
         cppfs::FilePath m_outputPath;
         cppfs::FilePath m_projectPath;
