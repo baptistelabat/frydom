@@ -21,61 +21,71 @@ namespace frydom {
     // -----------------------------------------------------------
     // FLOW BASE
     // -----------------------------------------------------------
-
-    FrFlowBase::FrFlowBase() {
-        m_field = std::make_unique<FrUniformField>();
+    template<typename OffshoreSystemType>
+    FrFlowBase<OffshoreSystemType>::FrFlowBase() {
+      m_field = std::make_unique<FrUniformField<OffshoreSystemType>>();
     };
 
-    Velocity FrFlowBase::GetFluxVelocityInWorld(const Position &worldPos, FRAME_CONVENTION fc) const {
-        return m_field->GetFluxVelocityInWorld(worldPos, fc) * c_ramp;
+    template<typename OffshoreSystemType>
+    Velocity FrFlowBase<OffshoreSystemType>::GetFluxVelocityInWorld(const Position &worldPos, FRAME_CONVENTION fc) const {
+      return m_field->GetFluxVelocityInWorld(worldPos, fc) * c_ramp;
     }
 
-    Velocity FrFlowBase::GetRelativeVelocityInFrame(const FrFrame &frame, const Velocity &worldVel,
+    template<typename OffshoreSystemType>
+    Velocity FrFlowBase<OffshoreSystemType>::GetRelativeVelocityInFrame(const FrFrame &frame, const Velocity &worldVel,
                                                     FRAME_CONVENTION fc) const {
-        Velocity fluxVelocityInWorld = GetFluxVelocityInWorld(frame.GetPosition(fc), fc) - worldVel;
-        if (IsNED(fc)) { internal::SwapFrameConvention(fluxVelocityInWorld); }
-        return frame.GetQuaternion().GetInverse().Rotate(fluxVelocityInWorld, NWU);
+      Velocity fluxVelocityInWorld = GetFluxVelocityInWorld(frame.GetPosition(fc), fc) - worldVel;
+      if (IsNED(fc)) { internal::SwapFrameConvention(fluxVelocityInWorld); }
+      return frame.GetQuaternion().GetInverse().Rotate(fluxVelocityInWorld, NWU);
     }
 
-    template <class T>
-    void FrFlowBase::NewField() {
-        m_field = std::make_unique<T>();
+    template <class OffshoreSystemType>
+    template<class T>
+    void FrFlowBase<OffshoreSystemType>::NewField() {
+      m_field = std::make_unique<T>();
     }
 
-    void FrFlowBase::MakeFieldUniform() {
-        m_field = std::make_unique<FrUniformField>();
+
+    template<typename OffshoreSystemType>
+    void FrFlowBase<OffshoreSystemType>::MakeFieldUniform() {
+      m_field = std::make_unique<FrUniformField<OffshoreSystemType>>();
     }
 
-    template <class T>
-    T* FrFlowBase::GetField() const {
-        return dynamic_cast<T*>(m_field.get());
+    template <class OffshoreSystemType>
+    template<class T>
+    T *FrFlowBase<OffshoreSystemType>::GetField() const {
+      return dynamic_cast<T *>(m_field.get());
     }
 
-    FrUniformField* FrFlowBase::GetFieldUniform() const {
-        return dynamic_cast<FrUniformField*>(m_field.get());
+    template<typename OffshoreSystemType>
+    FrUniformField<OffshoreSystemType> *FrFlowBase<OffshoreSystemType>::GetFieldUniform() const {
+      return dynamic_cast<FrUniformField<OffshoreSystemType> *>(m_field.get());
     }
 
-    void FrFlowBase::Initialize() {
-        m_field->Initialize();
-        if (GetEnvironment()->GetTimeRamp()->IsActive()) {
-            c_ramp = GetEnvironment()->GetTimeRamp()->Get_y(m_time);
-        } else {
-            c_ramp = 1.;
-        }
+    template<typename OffshoreSystemType>
+    void FrFlowBase<OffshoreSystemType>::Initialize() {
+      m_field->Initialize();
+      if (GetEnvironment()->GetTimeRamp()->IsActive()) {
+        c_ramp = GetEnvironment()->GetTimeRamp()->Get_y(m_time);
+      } else {
+        c_ramp = 1.;
+      }
     }
 
-    void FrFlowBase::Update(double time) {
-        m_field->Update(time);
-        m_time = time;
+    template<typename OffshoreSystemType>
+    void FrFlowBase<OffshoreSystemType>::Update(double time) {
+      m_field->Update(time);
+      m_time = time;
     }
 
-    void FrFlowBase::StepFinalize() {
-        m_field->StepFinalize();
-        if (GetEnvironment()->GetTimeRamp()->IsActive()) {
-            c_ramp = GetEnvironment()->GetTimeRamp()->Get_y(m_time);
-        } else {
-            c_ramp = 1.;
-        }
+    template<typename OffshoreSystemType>
+    void FrFlowBase<OffshoreSystemType>::StepFinalize() {
+      m_field->StepFinalize();
+      if (GetEnvironment()->GetTimeRamp()->IsActive()) {
+        c_ramp = GetEnvironment()->GetTimeRamp()->Get_y(m_time);
+      } else {
+        c_ramp = 1.;
+      }
     }
 
 }  // end namespace frydom

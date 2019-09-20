@@ -24,91 +24,123 @@ namespace frydom {
 
     // FrSeabed descriptions
 
-    FrSeabed::FrSeabed(FrOcean *ocean) :m_ocean(ocean){
+    template<typename OffshoreSystemType>
+    FrSeabed<OffshoreSystemType>::FrSeabed(FrOcean<OffshoreSystemType> *ocean) :m_ocean(ocean) {
     }
 
-    FrOcean *FrSeabed::GetOcean() const {return m_ocean;}
+    template<typename OffshoreSystemType>
+    FrOcean<OffshoreSystemType> *FrSeabed<OffshoreSystemType>::GetOcean() const { return m_ocean; }
 
-    bool FrSeabed::GetInfiniteDepth() { return m_infiniteDepth;}
+    template<typename OffshoreSystemType>
+    bool FrSeabed<OffshoreSystemType>::GetInfiniteDepth() { return m_infiniteDepth; }
 
     //------------------------------------------------------------------------------------------------------------------
     // FrNullSeabed descriptions
-
-    FrSeabedGridAsset *FrNullSeabed::GetSeabedGridAsset() {
-        try {throw FrException("a null seabed cannot return a seabed asset.");}
-        catch(FrException& e) {std::cout<<e.what()<<std::endl; exit(EXIT_FAILURE);}
+    template<typename OffshoreSystemType>
+    FrSeabedGridAsset<OffshoreSystemType> *FrNullSeabed<OffshoreSystemType>::GetSeabedGridAsset() {
+      try { throw FrException("a null seabed cannot return a seabed asset."); }
+      catch (FrException &e) {
+        std::cout << e.what() << std::endl;
+        exit(EXIT_FAILURE);
+      }
     }
 
-    FrNullSeabed::FrNullSeabed(FrOcean *ocean) :FrSeabed(ocean) {m_infiniteDepth = true;}
+    template<typename OffshoreSystemType>
+    FrNullSeabed<OffshoreSystemType>::FrNullSeabed(FrOcean<OffshoreSystemType> *ocean) : FrSeabed<OffshoreSystemType>(
+        ocean) { this->m_infiniteDepth = true; }
 
-    void FrNullSeabed::SetBathymetry(double bathymetry, FRAME_CONVENTION fc) {
-        try {throw FrException("a null seabed cannot return a bathymetry.");}
-        catch(FrException& e) {std::cout<<e.what()<<std::endl; exit(EXIT_FAILURE);}
+    template<typename OffshoreSystemType>
+    void FrNullSeabed<OffshoreSystemType>::SetBathymetry(double bathymetry, FRAME_CONVENTION fc) {
+      try { throw FrException("a null seabed cannot return a bathymetry."); }
+      catch (FrException &e) {
+        std::cout << e.what() << std::endl;
+        exit(EXIT_FAILURE);
+      }
     }
 
-    const double FrNullSeabed::GetBathymetry(FRAME_CONVENTION fc) const {
-        try {throw FrException("a null seabed cannot return a bathymetry.");}
-        catch(FrException& e) {std::cout<<e.what()<<std::endl; exit(EXIT_FAILURE);}
+    template<typename OffshoreSystemType>
+    const double FrNullSeabed<OffshoreSystemType>::GetBathymetry(FRAME_CONVENTION fc) const {
+      try { throw FrException("a null seabed cannot return a bathymetry."); }
+      catch (FrException &e) {
+        std::cout << e.what() << std::endl;
+        exit(EXIT_FAILURE);
+      }
     }
 
-    const double FrNullSeabed::GetBathymetry(double x, double y, FRAME_CONVENTION fc) const {
-        try {throw FrException("a null seabed cannot return a bathymetry.");}
-        catch(FrException& e) {std::cout<<e.what()<<std::endl; exit(EXIT_FAILURE);}
+    template<typename OffshoreSystemType>
+    const double FrNullSeabed<OffshoreSystemType>::GetBathymetry(double x, double y, FRAME_CONVENTION fc) const {
+      try { throw FrException("a null seabed cannot return a bathymetry."); }
+      catch (FrException &e) {
+        std::cout << e.what() << std::endl;
+        exit(EXIT_FAILURE);
+      }
     }
 
-    void FrNullSeabed::Update(double time) {
+    template<typename OffshoreSystemType>
+    void FrNullSeabed<OffshoreSystemType>::Update(double time) {
 
     }
 
-    void FrNullSeabed::Initialize() {
+    template<typename OffshoreSystemType>
+    void FrNullSeabed<OffshoreSystemType>::Initialize() {
 
     }
 
-    void FrNullSeabed::StepFinalize() {
+    template<typename OffshoreSystemType>
+    void FrNullSeabed<OffshoreSystemType>::StepFinalize() {
 
     }
 
     //------------------------------------------------------------------------------------------------------------------
     // FrMeanSeabed descriptions
-
-    FrMeanSeabed::FrMeanSeabed(FrOcean *ocean) :FrSeabed(ocean){
-        m_SeabedGridAsset = std::make_shared<FrSeabedGridAsset>(this);
+    template<typename OffshoreSystemType>
+    FrMeanSeabed<OffshoreSystemType>::FrMeanSeabed(FrOcean<OffshoreSystemType> *ocean) : FrSeabed<OffshoreSystemType>(
+        ocean) {
+      m_SeabedGridAsset = std::make_shared<FrSeabedGridAsset>(this);
     }
 
-    void FrMeanSeabed::SetBathymetry(double bathymetry, FRAME_CONVENTION fc) {
-        assert(m_showSeabed);
-        if (IsNED(fc)) {bathymetry = -bathymetry;};
-        m_bathymetry = bathymetry;
+    template<typename OffshoreSystemType>
+    void FrMeanSeabed<OffshoreSystemType>::SetBathymetry(double bathymetry, FRAME_CONVENTION fc) {
+      assert(m_showSeabed);
+      if (IsNED(fc)) { bathymetry = -bathymetry; };
+      m_bathymetry = bathymetry;
     }
 
-    const double FrMeanSeabed::GetBathymetry(FRAME_CONVENTION fc) const {
-        assert(m_showSeabed);
-        double bathy = m_bathymetry;
-        if (IsNED(fc)) {bathy = -bathy;}
-        return bathy;
+    template<typename OffshoreSystemType>
+    const double FrMeanSeabed<OffshoreSystemType>::GetBathymetry(FRAME_CONVENTION fc) const {
+      assert(m_showSeabed);
+      double bathy = m_bathymetry;
+      if (IsNED(fc)) { bathy = -bathy; }
+      return bathy;
     }
 
-    const double FrMeanSeabed::GetBathymetry(double x, double y, FRAME_CONVENTION fc) const {
-        assert(m_showSeabed);
-        double bathy = m_bathymetry;
-        if (IsNED(fc)) {bathy = -bathy;}
-        return bathy;
+    template<typename OffshoreSystemType>
+    const double FrMeanSeabed<OffshoreSystemType>::GetBathymetry(double x, double y, FRAME_CONVENTION fc) const {
+      assert(m_showSeabed);
+      double bathy = m_bathymetry;
+      if (IsNED(fc)) { bathy = -bathy; }
+      return bathy;
     }
 
-    void FrMeanSeabed::Update(double time) {}
+    template<typename OffshoreSystemType>
+    void FrMeanSeabed<OffshoreSystemType>::Update(double time) {}
 
-    void FrMeanSeabed::Initialize() {
-        if (m_showSeabed) {
-            m_SeabedGridAsset->Initialize();
-            m_ocean->GetEnvironment()->GetSystem()->GetWorldBody()->AddAsset(m_SeabedGridAsset);
-        }
+    template<typename OffshoreSystemType>
+    void FrMeanSeabed<OffshoreSystemType>::Initialize() {
+      if (m_showSeabed) {
+        m_SeabedGridAsset->Initialize();
+        this->m_ocean->GetEnvironment()->GetSystem()->GetWorldBody()->AddAsset(m_SeabedGridAsset);
+      }
     }
 
-    void FrMeanSeabed::StepFinalize() {
+    template<typename OffshoreSystemType>
+    void FrMeanSeabed<OffshoreSystemType>::StepFinalize() {
 
     }
 
-    FrSeabedGridAsset *FrMeanSeabed::GetSeabedGridAsset() {return m_SeabedGridAsset.get();}
+    template<typename OffshoreSystemType>
+    FrSeabedGridAsset<OffshoreSystemType> *
+    FrMeanSeabed<OffshoreSystemType>::GetSeabedGridAsset() { return m_SeabedGridAsset.get(); }
 
 
 }  // end namespace frydom

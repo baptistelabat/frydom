@@ -19,13 +19,15 @@
 namespace frydom {
 
     // Forward Declaration
+    template <typename OffshoreSystemType>
     class FrEnvironment;
 
     /**
      * \class FrITTCResistance
      * \brief Class for computing the wave resistance.
      */
-    class FrITTCResistance : public FrForce {
+    template <typename OffshoreSystemType>
+    class FrITTCResistance : public FrForce<OffshoreSystemType> {
 
       private:
 
@@ -37,7 +39,7 @@ namespace frydom {
         double m_caa;  ///< air resistance coefficient
         double m_capp; ///< appendage resistance coefficient
 
-        FrEnvironment* m_environment;
+        FrEnvironment<OffshoreSystemType>* m_environment;
 
       public:
 

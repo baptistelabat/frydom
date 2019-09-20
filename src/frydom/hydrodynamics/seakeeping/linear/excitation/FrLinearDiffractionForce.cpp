@@ -19,49 +19,54 @@
 
 namespace frydom {
 
-    void FrLinearDiffractionForce::Initialize() {
+    template<typename OffshoreSystemType>
+    void FrLinearDiffractionForce<OffshoreSystemType>::Initialize() {
 
-        // Initialization of the parent class.
-        FrLinearExcitationForceBase::Initialize();
-
-    }
-
-    Eigen::MatrixXcd FrLinearDiffractionForce::GetHDBData(unsigned int iangle) const {
-
-        auto BEMBody = m_HDB->GetBody(m_body);
-
-        return BEMBody->GetDiffraction(iangle);
+      // Initialization of the parent class.
+      FrLinearExcitationForceBase<OffshoreSystemType>::Initialize();
 
     }
 
-    Eigen::VectorXcd FrLinearDiffractionForce::GetHDBData(unsigned int iangle, unsigned int iforce) const {
+    template<typename OffshoreSystemType>
+    Eigen::MatrixXcd FrLinearDiffractionForce<OffshoreSystemType>::GetHDBData(unsigned int iangle) const {
 
-        auto BEMBody = m_HDB->GetBody(m_body);
+      auto BEMBody = this->m_HDB->GetBody(this->m_body);
 
-        return BEMBody->GetDiffraction(iangle,iforce);
-
-    }
-
-    void FrLinearDiffractionForce::Compute(double time) {
-
-        // This function computes the linear diffraction forces from Nemoh results.
-
-        Compute_F_HDB();
+      return BEMBody->GetDiffraction(iangle);
 
     }
 
-    std::shared_ptr<FrLinearDiffractionForce>
-    make_linear_diffraction_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body){
+    template<typename OffshoreSystemType>
+    Eigen::VectorXcd FrLinearDiffractionForce<OffshoreSystemType>::GetHDBData(unsigned int iangle, unsigned int iforce) const {
 
-        // This function creates the linear excitation force object.
+      auto BEMBody = this->m_HDB->GetBody(this->m_body);
 
-        // Construction of the excitation force object from the HDB.
-        auto diffractionForce = std::make_shared<FrLinearDiffractionForce>(HDB);
+      return BEMBody->GetDiffraction(iangle, iforce);
 
-        // Add the excitation force object as an external force to the body.
-        body->AddExternalForce(diffractionForce); // Initialization of m_body.
+    }
 
-        return diffractionForce;
+    template<typename OffshoreSystemType>
+    void FrLinearDiffractionForce<OffshoreSystemType>::Compute(double time) {
+
+      // This function computes the linear diffraction forces from Nemoh results.
+
+      this->Compute_F_HDB();
+
+    }
+
+    template<typename OffshoreSystemType>
+    std::shared_ptr<FrLinearDiffractionForce<OffshoreSystemType>>
+    make_linear_diffraction_force(std::shared_ptr<FrHydroDB<OffshoreSystemType>> HDB, std::shared_ptr<FrBody<OffshoreSystemType>> body) {
+
+      // This function creates the linear excitation force object.
+
+      // Construction of the excitation force object from the HDB.
+      auto diffractionForce = std::make_shared<FrLinearDiffractionForce>(HDB);
+
+      // Add the excitation force object as an external force to the body.
+      body->AddExternalForce(diffractionForce); // Initialization of m_body.
+
+      return diffractionForce;
 
     }
 

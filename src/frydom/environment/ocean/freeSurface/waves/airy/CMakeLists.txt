@@ -4,7 +4,8 @@ set(AIRY_FILES_LOCAL
         FrAiryRegularWaveField.cpp
         FrAiryRegularOptimWaveField.cpp
         FrAiryIrregularWaveField.cpp
-#        FrAiryIrregularOptimWaveField.cpp
+        FrAiryIrregularOptimWaveField.cpp
+        FrKinematicStretching.cpp
         )
 
 set(AIRY_FILES "")

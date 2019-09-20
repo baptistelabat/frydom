@@ -17,63 +17,85 @@
 #include "frydom/environment/FrFluidType.h"
 
 
-namespace frydom{
+namespace frydom {
 
-    FrAtmosphere::FrAtmosphere(FrEnvironment* environment) {
+    template<typename OffshoreSystemType>
+    FrAtmosphere<OffshoreSystemType>::FrAtmosphere(FrEnvironment<OffshoreSystemType> *environment) {
 
-        m_environment = environment;
+      m_environment = environment;
 
-        m_wind       = std::make_unique<FrWind>(this);
-        m_airProp     = std::make_unique<FrFluidProperties>(20., 1.204, 0., 0., 0., 0. );
+      m_wind = std::make_unique<FrWind>(this);
+      m_airProp = std::make_unique<FrFluidProperties>(20., 1.204, 0., 0., 0., 0.);
 
     }
 
-    FrEnvironment *FrAtmosphere::GetEnvironment() const { return m_environment; }
+    template<typename OffshoreSystemType>
+    FrEnvironment<OffshoreSystemType> *FrAtmosphere<OffshoreSystemType>::GetEnvironment() const { return m_environment; }
 
-    void FrAtmosphere::SetTemperature(double Temperature) {m_airProp->m_temperature = Temperature;}
+    template<typename OffshoreSystemType>
+    void FrAtmosphere<OffshoreSystemType>::SetTemperature(double Temperature) { m_airProp->m_temperature = Temperature; }
 
-    double FrAtmosphere::GetTemperature() const {return m_airProp->m_temperature;}
+    template<typename OffshoreSystemType>
+    double FrAtmosphere<OffshoreSystemType>::GetTemperature() const { return m_airProp->m_temperature; }
 
-    void FrAtmosphere::SetDensity(double Density) {m_airProp->m_density = Density;}
+    template<typename OffshoreSystemType>
+    void FrAtmosphere<OffshoreSystemType>::SetDensity(double Density) { m_airProp->m_density = Density; }
 
-    double FrAtmosphere::GetDensity() const {return m_airProp->m_density;}
+    template<typename OffshoreSystemType>
+    double FrAtmosphere<OffshoreSystemType>::GetDensity() const { return m_airProp->m_density; }
 
-    void FrAtmosphere::SetDynamicViscosity(double DynamicViscosity) {m_airProp->m_dynamicViscosity = DynamicViscosity;}
+    template<typename OffshoreSystemType>
+    void
+    FrAtmosphere<OffshoreSystemType>::SetDynamicViscosity(double DynamicViscosity) { m_airProp->m_dynamicViscosity = DynamicViscosity; }
 
-    double FrAtmosphere::GetDynamicViscosity() const {return m_airProp->m_dynamicViscosity;}
+    template<typename OffshoreSystemType>
+    double FrAtmosphere<OffshoreSystemType>::GetDynamicViscosity() const { return m_airProp->m_dynamicViscosity; }
 
-    void FrAtmosphere::SetKinematicViscosity(double KinematicViscosity) {m_airProp->m_kinematicViscosity = KinematicViscosity;}
+    template<typename OffshoreSystemType>
+    void FrAtmosphere<OffshoreSystemType>::SetKinematicViscosity(
+        double KinematicViscosity) { m_airProp->m_kinematicViscosity = KinematicViscosity; }
 
-    double FrAtmosphere::GetKinematicViscosity() const {return m_airProp->m_kinematicViscosity;}
+    template<typename OffshoreSystemType>
+    double FrAtmosphere<OffshoreSystemType>::GetKinematicViscosity() const { return m_airProp->m_kinematicViscosity; }
 
-    void FrAtmosphere::SetSalinity(double Salinity) {m_airProp->m_salinity = Salinity;}
+    template<typename OffshoreSystemType>
+    void FrAtmosphere<OffshoreSystemType>::SetSalinity(double Salinity) { m_airProp->m_salinity = Salinity; }
 
-    double FrAtmosphere::GetSalinity() const {return m_airProp->m_salinity;}
+    template<typename OffshoreSystemType>
+    double FrAtmosphere<OffshoreSystemType>::GetSalinity() const { return m_airProp->m_salinity; }
 
-    void FrAtmosphere::SetPressure(double Pressure) {m_airProp->m_pressure = Pressure;}
+    template<typename OffshoreSystemType>
+    void FrAtmosphere<OffshoreSystemType>::SetPressure(double Pressure) { m_airProp->m_pressure = Pressure; }
 
-    double FrAtmosphere::GetPressure() const {return m_airProp->m_pressure;}
+    template<typename OffshoreSystemType>
+    double FrAtmosphere<OffshoreSystemType>::GetPressure() const { return m_airProp->m_pressure; }
 
-    double FrAtmosphere::GetReynoldsNumberInAir(double characteristicLength, double velocity) const {
-        return fabs(velocity) * characteristicLength / GetKinematicViscosity();
+    template<typename OffshoreSystemType>
+    double FrAtmosphere<OffshoreSystemType>::GetReynoldsNumberInAir(double characteristicLength, double velocity) const {
+      return fabs(velocity) * characteristicLength / GetKinematicViscosity();
     }
 
-    double FrAtmosphere::GetFroudeNumberInAir(double characteristicLength, double velocity) const {
-        return fabs(velocity) / std::sqrt(m_environment->GetGravityAcceleration() * characteristicLength);
+    template<typename OffshoreSystemType>
+    double FrAtmosphere<OffshoreSystemType>::GetFroudeNumberInAir(double characteristicLength, double velocity) const {
+      return fabs(velocity) / std::sqrt(m_environment->GetGravityAcceleration() * characteristicLength);
     }
 
-    FrWind *FrAtmosphere::GetWind() const { return m_wind.get();}
+    template<typename OffshoreSystemType>
+    FrWind<OffshoreSystemType> *FrAtmosphere<OffshoreSystemType>::GetWind() const { return m_wind.get(); }
 
-    void FrAtmosphere::Update(double time) {
-        m_wind->Update(time);
+    template<typename OffshoreSystemType>
+    void FrAtmosphere<OffshoreSystemType>::Update(double time) {
+      m_wind->Update(time);
     }
 
-    void FrAtmosphere::Initialize() {
-        m_wind->Initialize();
+    template<typename OffshoreSystemType>
+    void FrAtmosphere<OffshoreSystemType>::Initialize() {
+      m_wind->Initialize();
     }
 
-    void FrAtmosphere::StepFinalize() {
-        m_wind->StepFinalize();
+    template<typename OffshoreSystemType>
+    void FrAtmosphere<OffshoreSystemType>::StepFinalize() {
+      m_wind->StepFinalize();
     }
 
 

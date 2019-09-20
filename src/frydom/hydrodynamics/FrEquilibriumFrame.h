@@ -18,10 +18,10 @@
 #include "frydom/core/common/FrPhysicsItem.h"
 
 
-
 namespace frydom {
 
     // Forward declaration
+    template<typename OffshoreSystemType>
     class FrBody;
 
 
@@ -37,150 +37,156 @@ namespace frydom {
      * during the initialization stage.
      *
      */
+    template<typename OffshoreSystemType>
     class FrEquilibriumFrame : public FrFrame,
-                                public FrPrePhysicsItem {
+                               public FrPrePhysicsItem<OffshoreSystemType> {
 
-    protected:
-        double m_prevTime;
-        FrBody* m_body = nullptr;               ///< Link to the body to which the equilibrium frame if applied
-        Velocity m_velocity;                     ///< translational velocity of the frame in world coordinates
-        double m_angularVelocity;                ///< angular velocity of the frame around Z-direction
-        bool m_initSpeedFromBody = false;        ///< Initialize the frame position, orientation and velocity according
-        bool m_initPositionFromBody = false;     ///< to the body during the initialization stage
+     protected:
+      double m_prevTime;
+      FrBody<OffshoreSystemType> *m_body = nullptr;               ///< Link to the body to which the equilibrium frame if applied
+      Velocity m_velocity;                     ///< translational velocity of the frame in world coordinates
+      double m_angularVelocity;                ///< angular velocity of the frame around Z-direction
+      bool m_initSpeedFromBody = false;        ///< Initialize the frame position, orientation and velocity according
+      bool m_initPositionFromBody = false;     ///< to the body during the initialization stage
 
-    public:
+     public:
 
-        /// Constructor of a new equilibrium frame with default position and no velocity
-        /// User will must define the body to linked with with the corresponding method
-        /// before execution of the simulation
-        FrEquilibriumFrame() : FrFrame(), FrPrePhysicsItem(), m_angularVelocity(0.) { };
+      /// Constructor of a new equilibrium frame with default position and no velocity
+      /// User will must define the body to linked with with the corresponding method
+      /// before execution of the simulation
+      FrEquilibriumFrame() : FrFrame(), FrPrePhysicsItem<OffshoreSystemType>(), m_angularVelocity(0.) {};
 
-        /// Constructor of a new equilibrium frame with body linked
-        /// \param body Body to which the equilibrium frame is linked
-        /// \param initPos Boolean, if true the position of the equilibrium is set to the position of
-        /// the body during initialization
-        FrEquilibriumFrame(FrBody* body, bool initPos = true) : FrFrame(), FrPrePhysicsItem(), m_body(body),
-                                                                  m_initPositionFromBody(initPos), m_angularVelocity(0.) { };
+      /// Constructor of a new equilibrium frame with body linked
+      /// \param body Body to which the equilibrium frame is linked
+      /// \param initPos Boolean, if true the position of the equilibrium is set to the position of
+      /// the body during initialization
+      FrEquilibriumFrame(FrBody<OffshoreSystemType> *body, bool initPos = true)
+          : FrFrame(), FrPrePhysicsItem<OffshoreSystemType>(), m_body(body),
+            m_initPositionFromBody(initPos), m_angularVelocity(0.) {};
 
-        /// Constructor of a new equilibrium frame with defined position, rotation and body linked
-        /// \param pos Initial position of the equilibrium frame in world coordinates
-        /// \param rotation Initial orientation of the equilibrium frame in world coordinates
-        /// \param fc Frame convention
-        /// \param body Body link
-        FrEquilibriumFrame(const Position& pos, const FrRotation& rotation, FRAME_CONVENTION fc, FrBody* body)
-                : FrFrame(pos, rotation, fc), FrPrePhysicsItem(), m_body(body), m_initPositionFromBody(false) { }
+      /// Constructor of a new equilibrium frame with defined position, rotation and body linked
+      /// \param pos Initial position of the equilibrium frame in world coordinates
+      /// \param rotation Initial orientation of the equilibrium frame in world coordinates
+      /// \param fc Frame convention
+      /// \param body Body link
+      FrEquilibriumFrame(const Position &pos, const FrRotation &rotation, FRAME_CONVENTION fc,
+                         FrBody<OffshoreSystemType> *body)
+          : FrFrame(pos, rotation, fc), FrPrePhysicsItem<OffshoreSystemType>(), m_body(body),
+            m_initPositionFromBody(false) {}
 
-        /// Constructor of a new equilibrium frame with defined position, rotation and body linked
-        /// \param pos Initial position of the equilibrium frame in world coordinates
-        /// \param quaternion Initial orientation of the quilibrium frame in world coordinates with quaternion
-        /// \param fc Frame convention
-        /// \param body Body link
-        FrEquilibriumFrame(const Position& pos, const FrUnitQuaternion& quaternion, FRAME_CONVENTION fc, FrBody* body)
-                : FrFrame(pos, quaternion, fc), FrPrePhysicsItem(), m_body(body), m_initPositionFromBody(false) { }
+      /// Constructor of a new equilibrium frame with defined position, rotation and body linked
+      /// \param pos Initial position of the equilibrium frame in world coordinates
+      /// \param quaternion Initial orientation of the quilibrium frame in world coordinates with quaternion
+      /// \param fc Frame convention
+      /// \param body Body link
+      FrEquilibriumFrame(const Position &pos, const FrUnitQuaternion &quaternion, FRAME_CONVENTION fc,
+                         FrBody<OffshoreSystemType> *body)
+          : FrFrame(pos, quaternion, fc), FrPrePhysicsItem<OffshoreSystemType>(), m_body(body),
+            m_initPositionFromBody(false) {}
 
-        /// Constructor of a new equilibrium frame from an other frame and body link
-        /// \param otherFrame Initial frame definition
-        /// \param body Body link
-        FrEquilibriumFrame(const FrFrame& otherFrame, FrBody* body)
-                : FrFrame(otherFrame), FrPrePhysicsItem(), m_body(body), m_initPositionFromBody(false) { }
+      /// Constructor of a new equilibrium frame from an other frame and body link
+      /// \param otherFrame Initial frame definition
+      /// \param body Body link
+      FrEquilibriumFrame(const FrFrame &otherFrame, FrBody<OffshoreSystemType> *body)
+          : FrFrame(otherFrame), FrPrePhysicsItem<OffshoreSystemType>(), m_body(body), m_initPositionFromBody(false) {}
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "EquilibriumFrame"; }
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "EquilibriumFrame"; }
 
-        /// Define the body to which the equilibrium frame is linked
-        /// \param body Body link
-        /// \param initPos Boolean, if true the position of the frame is equal to the position of the body during initialization
-        void SetBody(FrBody* body, bool initPos = true);
+      /// Define the body to which the equilibrium frame is linked
+      /// \param body Body link
+      /// \param initPos Boolean, if true the position of the frame is equal to the position of the body during initialization
+      void SetBody(FrBody<OffshoreSystemType> *body, bool initPos = true);
 
-        /// Set the position of the equilibrium frame equal to the position of the body at COG
-        void SetPositionToBodyPosition();
+      /// Set the position of the equilibrium frame equal to the position of the body at COG
+      void SetPositionToBodyPosition();
 
-        FrFrame GetPerturbationFrame();
+      FrFrame GetPerturbationFrame();
 
 
-        /// Set the velocity of the equilibrium frame equal to the velocity of the body at COG
-        void SetVelocityToBodyVelocity();
+      /// Set the velocity of the equilibrium frame equal to the velocity of the body at COG
+      void SetVelocityToBodyVelocity();
 
-        /// Set velocity of the equilibrium frame in world coordinates
-        /// \param velocity Velocity vector in world coordinates
-        /// \param fc Frame convention
-        void SetVelocityInWorld(const Velocity& velocity, FRAME_CONVENTION fc);
+      /// Set velocity of the equilibrium frame in world coordinates
+      /// \param velocity Velocity vector in world coordinates
+      /// \param fc Frame convention
+      void SetVelocityInWorld(const Velocity &velocity, FRAME_CONVENTION fc);
 
-        /// Set velocity of the equilibrium frame in world coordinates
-        /// \param velocity Velocity vector in frame coordinates
-        void SetVelocityInFrame(const Velocity& velocity);
+      /// Set velocity of the equilibrium frame in world coordinates
+      /// \param velocity Velocity vector in frame coordinates
+      void SetVelocityInFrame(const Velocity &velocity);
 
-        /// Set angular velocity around Z-direction
-        /// \param angularVelocity Angular velocity, in rad/s
-        /// \param fc Frame convention
-        void SetAngularVelocityAroundZ(const double& angularVelocity, FRAME_CONVENTION fc);
+      /// Set angular velocity around Z-direction
+      /// \param angularVelocity Angular velocity, in rad/s
+      /// \param fc Frame convention
+      void SetAngularVelocityAroundZ(const double &angularVelocity, FRAME_CONVENTION fc);
 
-        /// Get the linear velocity of the equilibrium frame in world coordinates
-        /// \param fc Frame convention
-        /// \return Velocity vector
-        Velocity GetVelocityInWorld(FRAME_CONVENTION fc) const;
+      /// Get the linear velocity of the equilibrium frame in world coordinates
+      /// \param fc Frame convention
+      /// \return Velocity vector
+      Velocity GetVelocityInWorld(FRAME_CONVENTION fc) const;
 
-        /// Get the linear velocity of the equilibrium frame in frame coordinates
-        /// \return Velocity vector
-        Velocity GetVelocityInFrame() const;
+      /// Get the linear velocity of the equilibrium frame in frame coordinates
+      /// \return Velocity vector
+      Velocity GetVelocityInFrame() const;
 
-        /// Get the perturbation linear velocity of the body around the equilibrium frame
-        /// \param fc Frame convention
-        /// \return Perturbation velocity in world reference frame
-        Velocity GetPerturbationVelocityInWorld(FRAME_CONVENTION fc) const;
+      /// Get the perturbation linear velocity of the body around the equilibrium frame
+      /// \param fc Frame convention
+      /// \return Perturbation velocity in world reference frame
+      Velocity GetPerturbationVelocityInWorld(FRAME_CONVENTION fc) const;
 
-        /// Get the perturbation linear velocity of the body around the equilibrium frame
-        /// \return Perturbation velocity in local frame
-        Velocity GetPerturbationVelocityInFrame() const;
+      /// Get the perturbation linear velocity of the body around the equilibrium frame
+      /// \return Perturbation velocity in local frame
+      Velocity GetPerturbationVelocityInFrame() const;
 
-        /// Return the perturbation generalized velocity of the body around the equilibrium frame
-        /// \param fc Frame convention
-        /// \return Perturbation generalized velocity in world
-        GeneralizedVelocity GetPerturbationGeneralizedVelocityInWorld(FRAME_CONVENTION fc) const;
+      /// Return the perturbation generalized velocity of the body around the equilibrium frame
+      /// \param fc Frame convention
+      /// \return Perturbation generalized velocity in world
+      GeneralizedVelocity GetPerturbationGeneralizedVelocityInWorld(FRAME_CONVENTION fc) const;
 
-        /// Return the perturbation generalized velocity of the body around the equilibrium frame
-        /// \return Perturbation generalized velocity in local frame
-        GeneralizedVelocity GetPerturbationGeneralizedVelocityInFrame() const;
+      /// Return the perturbation generalized velocity of the body around the equilibrium frame
+      /// \return Perturbation generalized velocity in local frame
+      GeneralizedVelocity GetPerturbationGeneralizedVelocityInFrame() const;
 
-        /// Get the angular velocity of the equilibrium frame around the Z-axis
-        /// \param fc Frame convention
-        /// \return Angular velocity around Z (vertical)
-        double GetAngularVelocityAroundZ(FRAME_CONVENTION fc) const;
+      /// Get the angular velocity of the equilibrium frame around the Z-axis
+      /// \param fc Frame convention
+      /// \return Angular velocity around Z (vertical)
+      double GetAngularVelocityAroundZ(FRAME_CONVENTION fc) const;
 
-        /// Get the angular velocity of the equilibrium frame
-        /// \param fc Frame convention
-        /// \return Angular velocity vector
-        AngularVelocity GetAngularVelocity(FRAME_CONVENTION fc) const;
+      /// Get the angular velocity of the equilibrium frame
+      /// \param fc Frame convention
+      /// \return Angular velocity vector
+      AngularVelocity GetAngularVelocity(FRAME_CONVENTION fc) const;
 
-        AngularVelocity GetAngularPerturbationVelocity(FRAME_CONVENTION fc) const;
+      AngularVelocity GetAngularPerturbationVelocity(FRAME_CONVENTION fc) const;
 
-        AngularVelocity GetAngularPerturbationVelocityInFrame() const;
+      AngularVelocity GetAngularPerturbationVelocityInFrame() const;
 
-        /// The velocity of the frame is initialized from the body velocity
-        /// \param is_init Boolean True/Flase
-        void InitSpeedFromBody(bool is_init) { m_initSpeedFromBody = is_init; }
+      /// The velocity of the frame is initialized from the body velocity
+      /// \param is_init Boolean True/Flase
+      void InitSpeedFromBody(bool is_init) { m_initSpeedFromBody = is_init; }
 
-        /// The position of the frame is initialized from the body position
-        /// \param is_init Boolean True/False
-        void InitPositionFromBody(bool is_init) { m_initPositionFromBody = is_init; }
+      /// The position of the frame is initialized from the body position
+      /// \param is_init Boolean True/False
+      void InitPositionFromBody(bool is_init) { m_initPositionFromBody = is_init; }
 
-        /// Initialization of the position and velocity of the equilibrium frame
-        void Initialize() override;
+      /// Initialization of the position and velocity of the equilibrium frame
+      void Initialize() override;
 
-        /// Method to be applied after each time steps
-        void StepFinalize() override;
+      /// Method to be applied after each time steps
+      void StepFinalize() override;
 
-        // Logging
+      // Logging
 
-        // Initialize the log
-        void AddFields() override;
+      // Initialize the log
+      void AddFields() override;
 
-    private:
+     private:
 
-        /// Update the velocity and position of the frame
-        /// \param time Current time of the simulation from the beginning
-        void Compute(double time) override;
+      /// Update the velocity and position of the frame
+      /// \param time Current time of the simulation from the beginning
+      void Compute(double time) override;
 
     };
 
@@ -195,88 +201,89 @@ namespace frydom {
      * psi the damping rate coefficient.
      *
      */
-    class FrEqFrameSpringDamping : public FrEquilibriumFrame {
+    template<typename OffshoreSystemType>
+    class FrEqFrameSpringDamping : public FrEquilibriumFrame<OffshoreSystemType> {
 
-    private:
-        double m_w0 = 0;                    ///< cutoff frequency
-        double m_psi = 0;                   ///< damping parameter
-        double m_damping = 0;               ///< damping coefficient of the system
-        double m_stiffness = 0;             ///< stiffness coefficient of the system
-        double m_prevTime = 0;              ///< previous time step
+     private:
+      double m_w0 = 0;                    ///< cutoff frequency
+      double m_psi = 0;                   ///< damping parameter
+      double m_damping = 0;               ///< damping coefficient of the system
+      double m_stiffness = 0;             ///< stiffness coefficient of the system
+      double m_prevTime = 0;              ///< previous time step
 
-    public:
+     public:
 
-        /// Constructor of a new equilibrium frame with body link and spring-damping parameters
-        /// \param body Body link
-        /// \param T0 Cutoff time period
-        /// \param psi Damping ratio
-        /// \param initPos If true the frame is initialized with the position of the body
-        FrEqFrameSpringDamping(FrBody* body, double T0, double psi, bool initPos = true);
+      /// Constructor of a new equilibrium frame with body link and spring-damping parameters
+      /// \param body Body link
+      /// \param T0 Cutoff time period
+      /// \param psi Damping ratio
+      /// \param initPos If true the frame is initialized with the position of the body
+      FrEqFrameSpringDamping(FrBody<OffshoreSystemType> *body, double T0, double psi, bool initPos = true);
 
-        /// Constructor of a new equilibrium frame with body link, position, orientation and spring-dampign parameters
-        /// \param pos Position of the frame in world coordinates
-        /// \param rotation Rotation of the frame in world coordinates
-        /// \param fc Frame convention
-        /// \param body Body link
-        /// \param T0 Cutoff time period
-        /// \param psi Damping ratio
-        FrEqFrameSpringDamping(const Position &pos, const FrRotation &rotation,
-                                FRAME_CONVENTION fc, FrBody* body, double T0, double psi);
+      /// Constructor of a new equilibrium frame with body link, position, orientation and spring-dampign parameters
+      /// \param pos Position of the frame in world coordinates
+      /// \param rotation Rotation of the frame in world coordinates
+      /// \param fc Frame convention
+      /// \param body Body link
+      /// \param T0 Cutoff time period
+      /// \param psi Damping ratio
+      FrEqFrameSpringDamping(const Position &pos, const FrRotation &rotation,
+                             FRAME_CONVENTION fc, FrBody<OffshoreSystemType> *body, double T0, double psi);
 
-        /// Constructor of a new equilibrium frame with body link, position, rotation and spring-damping parameters
-        /// \param pos Position of the frame in world coordinates
-        /// \param quaternion Rotation of the frame in world coordinates with quaternion
-        /// \param fc Frame convention
-        /// \param body Body link
-        /// \param T0 Cutoff time
-        /// \param psi Damping ratio
-        FrEqFrameSpringDamping(const Position& pos, const FrUnitQuaternion& quaternion, FRAME_CONVENTION fc,
-                               FrBody* body, double T0, double psi);
+      /// Constructor of a new equilibrium frame with body link, position, rotation and spring-damping parameters
+      /// \param pos Position of the frame in world coordinates
+      /// \param quaternion Rotation of the frame in world coordinates with quaternion
+      /// \param fc Frame convention
+      /// \param body Body link
+      /// \param T0 Cutoff time
+      /// \param psi Damping ratio
+      FrEqFrameSpringDamping(const Position &pos, const FrUnitQuaternion &quaternion, FRAME_CONVENTION fc,
+                             FrBody<OffshoreSystemType> *body, double T0, double psi);
 
-        /// Constructor of a new equilibrium frame from a given frame with body link and spring-damping parameters
-        /// \param otherFrame Other frame definition
-        /// \param body Body link
-        /// \param T0 Cutoff time period
-        /// \param psi Damping ratio
-        FrEqFrameSpringDamping(const FrFrame& otherFrame, FrBody* body,
-                                double T0, double psi);
+      /// Constructor of a new equilibrium frame from a given frame with body link and spring-damping parameters
+      /// \param otherFrame Other frame definition
+      /// \param body Body link
+      /// \param T0 Cutoff time period
+      /// \param psi Damping ratio
+      FrEqFrameSpringDamping(const FrFrame &otherFrame, FrBody<OffshoreSystemType> *body,
+                             double T0, double psi);
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "EqFrameSpringDamping"; }
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "EqFrameSpringDamping"; }
 
-        /// Set the spring-damping parameters
-        /// \param T0 Cutoff time period
-        /// \param psi Damping ratio
-        void SetSpringDamping(const double T0 = 60., const double psi = 0.5);
+      /// Set the spring-damping parameters
+      /// \param T0 Cutoff time period
+      /// \param psi Damping ratio
+      void SetSpringDamping(const double T0 = 60., const double psi = 0.5);
 
-        /// Get the damping coefficient of the spring-damping system
-        /// \return Damping coefficient
-        double GetDamping() const { return m_damping; };
+      /// Get the damping coefficient of the spring-damping system
+      /// \return Damping coefficient
+      double GetDamping() const { return m_damping; };
 
-        /// Set damping coefficient to the spring-damping system
-        /// \param damping Damping coefficient
-        void SetDamping(const double damping) { m_damping = damping; }
+      /// Set damping coefficient to the spring-damping system
+      /// \param damping Damping coefficient
+      void SetDamping(const double damping) { m_damping = damping; }
 
-        /// Get stiffness coefficient of the spring-damping system
-        double GetStiffness() const { return m_stiffness; }
+      /// Get stiffness coefficient of the spring-damping system
+      double GetStiffness() const { return m_stiffness; }
 
-        /// Set the stiffness coefficient of the spring-damping system
-        /// \param stiffness Stiffness coefficient
-        void SetStiffness(const double stiffness) { m_stiffness = stiffness; }
+      /// Set the stiffness coefficient of the spring-damping system
+      /// \param stiffness Stiffness coefficient
+      void SetStiffness(const double stiffness) { m_stiffness = stiffness; }
 
-    private:
+     private:
 
-        /// Update velocity and position of the equilibrium frame
-        /// \param time Current time of the simulation from beginning
-        void Compute(double time) override;
+      /// Update velocity and position of the equilibrium frame
+      /// \param time Current time of the simulation from beginning
+      void Compute(double time) override;
 
     };
 
     // TODO : il faudrait pouvoir retrancher une difference de position moyenne
 
     // Forward declaration
-    template <typename T>
+    template<typename T>
     class FrTimeRecorder;
 
     /**
@@ -287,70 +294,73 @@ namespace frydom {
      * during a period of time specified by the user. Past velocities are recorded
      * in a buffer with a specific time stepper.
      */
-    class FrEqFrameMeanMotion : public FrEquilibriumFrame {
+    template<typename OffshoreSystemType>
+    class FrEqFrameMeanMotion : public FrEquilibriumFrame<OffshoreSystemType> {
 
-    private:
+     private:
 
-        std::unique_ptr<FrTimeRecorder<Velocity>> m_TrSpeedRec;        ///< Recorder of the translational speed of the body
-        std::unique_ptr<FrTimeRecorder<double>> m_AglSpeedRec;         ///< Recorder of the angular speed of the body around the vertical axis Z
-        std::unique_ptr<FrTimeRecorder<Position>> m_ErrPositionRec;    ///< Recorder of the position error
-        std::unique_ptr<FrTimeRecorder<double>> m_ErrAngleRec;
-        double m_prevTime;              ///< Previous time recorded in the buffer
-        double m_errPosCoeff;           ///< Damping coefficient for position correction
-        double m_errAngleCoeff;
+      std::unique_ptr<FrTimeRecorder<Velocity>> m_TrSpeedRec;        ///< Recorder of the translational speed of the body
+      std::unique_ptr<FrTimeRecorder<double>> m_AglSpeedRec;         ///< Recorder of the angular speed of the body around the vertical axis Z
+      std::unique_ptr<FrTimeRecorder<Position>> m_ErrPositionRec;    ///< Recorder of the position error
+      std::unique_ptr<FrTimeRecorder<double>> m_ErrAngleRec;
+      double m_prevTime;              ///< Previous time recorded in the buffer
+      double m_errPosCoeff;           ///< Damping coefficient for position correction
+      double m_errAngleCoeff;
 
-    public:
+     public:
 
-        /// Constructor of a new equilibrium frame with body link and mean function parameters
-        /// \param body Body link
-        /// \param timePersistence Time windows for the mean velocity computation
-        /// \param timeStep Time step of the recorder
-        /// \param initPos If true the frame is initialized with the position of the body
-        FrEqFrameMeanMotion(FrBody* body, double timePersistence, double timeStep, bool initPos = true) ;
+      /// Constructor of a new equilibrium frame with body link and mean function parameters
+      /// \param body Body link
+      /// \param timePersistence Time windows for the mean velocity computation
+      /// \param timeStep Time step of the recorder
+      /// \param initPos If true the frame is initialized with the position of the body
+      FrEqFrameMeanMotion(FrBody<OffshoreSystemType> *body, double timePersistence, double timeStep,
+                          bool initPos = true);
 
-        /// Constructor of a new equilibrium frame with body link, position, rotation and mean function parameters
-        /// \param pos Position of the frame in world coordinates
-        /// \param rotation Rotation of the frame in world coordinates
-        /// \param fc Frame convention
-        /// \param body Body link
-        /// \param timePersistence Time windows for mean velocity computation
-        /// \param timeStep Time step for the recorder
-        FrEqFrameMeanMotion(const Position &pos, const FrRotation &rotation, FRAME_CONVENTION fc,
-                             FrBody* body, double timePersistence, double timeStep);
+      /// Constructor of a new equilibrium frame with body link, position, rotation and mean function parameters
+      /// \param pos Position of the frame in world coordinates
+      /// \param rotation Rotation of the frame in world coordinates
+      /// \param fc Frame convention
+      /// \param body Body link
+      /// \param timePersistence Time windows for mean velocity computation
+      /// \param timeStep Time step for the recorder
+      FrEqFrameMeanMotion(const Position &pos, const FrRotation &rotation, FRAME_CONVENTION fc,
+                          FrBody<OffshoreSystemType> *body, double timePersistence, double timeStep);
 
-        /// Constructor of a new equilibrium frame with body link, position , rotation and mean function parameters
-        /// \param pos Position of the frame in world coordinates
-        /// \param quaternion Rotation of the frame in world coordinates with quaternion
-        /// \param fc Frame convention
-        /// \param body Body link
-        /// \param timePersistence Time windows for mean velocity computation
-        /// \param timeStep Time step for the recorder
-        FrEqFrameMeanMotion(const Position &pos, const FrUnitQuaternion& quaternion, FRAME_CONVENTION fc,
-                             FrBody* body, double timePersistence, double timeStep);
+      /// Constructor of a new equilibrium frame with body link, position , rotation and mean function parameters
+      /// \param pos Position of the frame in world coordinates
+      /// \param quaternion Rotation of the frame in world coordinates with quaternion
+      /// \param fc Frame convention
+      /// \param body Body link
+      /// \param timePersistence Time windows for mean velocity computation
+      /// \param timeStep Time step for the recorder
+      FrEqFrameMeanMotion(const Position &pos, const FrUnitQuaternion &quaternion, FRAME_CONVENTION fc,
+                          FrBody<OffshoreSystemType> *body, double timePersistence, double timeStep);
 
-        /// Constructor of a new equilibrium frame with body link, frame definition and mean function parameters
-        /// \param otherFrame Frame definition
-        /// \param body Body link
-        /// \param timePersistence Time windows for the mean velocity computation
-        /// \param timeStep Time step for the recorder
-        FrEqFrameMeanMotion(const FrFrame &otherFrame, FrBody* body, double timePersistence, double timeStep);
+      /// Constructor of a new equilibrium frame with body link, frame definition and mean function parameters
+      /// \param otherFrame Frame definition
+      /// \param body Body link
+      /// \param timePersistence Time windows for the mean velocity computation
+      /// \param timeStep Time step for the recorder
+      FrEqFrameMeanMotion(const FrFrame &otherFrame, FrBody<OffshoreSystemType> *body, double timePersistence,
+                          double timeStep);
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "EqFrameMeanMotion"; }
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "EqFrameMeanMotion"; }
 
-        void SetPositionCorrection(double timePersistence, double timeStep, double posCoeff, double angleCoeff);
+      void SetPositionCorrection(double timePersistence, double timeStep, double posCoeff, double angleCoeff);
 
-    private:
+     private:
 
-        /// Update position and velocity of the equilibrium frame
-        /// \param time Current time of the simulation from beginning
-        void Compute(double time) override;
+      /// Update position and velocity of the equilibrium frame
+      /// \param time Current time of the simulation from beginning
+      void Compute(double time) override;
 
-        /// Set the recorder of the body velocity
-        /// \param timePersistence Time windows of the recorder
-        /// \param timeStep Time step of the recorder
-        void SetRecorders(double timePersistence, double timeStep);
+      /// Set the recorder of the body velocity
+      /// \param timePersistence Time windows of the recorder
+      /// \param timeStep Time step of the recorder
+      void SetRecorders(double timePersistence, double timeStep);
 
     };
 

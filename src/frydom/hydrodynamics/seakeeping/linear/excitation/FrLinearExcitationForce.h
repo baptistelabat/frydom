@@ -23,43 +23,51 @@
 namespace frydom {
 
     // Forward declaration
+    template<typename OffshoreSystemType>
     class FrHydroDB;
+
+    template<typename OffshoreSystemType>
     class FrBody;
+
+    template<typename OffshoreSystemType>
     class FrEquilibriumFrame;
 
     /**
      * \class FrLinearExcitationForce
      * \brief Class for computing the linear excitation loads.
      */
+    template<typename OffshoreSystemType>
+    class FrLinearExcitationForce : public FrLinearExcitationForceBase<OffshoreSystemType> {
 
-    class FrLinearExcitationForce : public FrLinearExcitationForceBase {
+     public:
 
-    public:
+      /// Constructor.
+      explicit FrLinearExcitationForce(std::shared_ptr<FrHydroDB<OffshoreSystemType>> HDB)
+          : FrLinearExcitationForceBase<OffshoreSystemType>(HDB) {};
 
-        /// Constructor.
-        explicit FrLinearExcitationForce(std::shared_ptr<FrHydroDB> HDB) : FrLinearExcitationForceBase(HDB) {};
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "LinearExcitationForce"; }
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "LinearExcitationForce"; }
+      /// Method to initialize the linear excitation force
+      void Initialize() override;
 
-        /// Method to initialize the linear excitation force
-        void Initialize() override;
+      Eigen::MatrixXcd GetHDBData(unsigned int iangle) const override;
 
-        Eigen::MatrixXcd GetHDBData(unsigned int iangle) const override;
+      Eigen::VectorXcd GetHDBData(unsigned int iangle, unsigned int iforce) const override;
 
-        Eigen::VectorXcd GetHDBData(unsigned int iangle, unsigned int iforce) const override;
+     private:
 
-    private:
-
-        /// Compute the linear excitation force
-        /// \param time Current time of the simulation from beginning, in seconds
-        void Compute(double time) override;
+      /// Compute the linear excitation force
+      /// \param time Current time of the simulation from beginning, in seconds
+      void Compute(double time) override;
 
     };
 
-    std::shared_ptr<FrLinearExcitationForce>
-    make_linear_excitation_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body);
+    template<typename OffshoreSystemType>
+    std::shared_ptr<FrLinearExcitationForce<OffshoreSystemType>>
+    make_linear_excitation_force(std::shared_ptr<FrHydroDB<OffshoreSystemType>> HDB,
+                                 std::shared_ptr<FrBody<OffshoreSystemType>> body);
 
 
 }  // end namespace frydom

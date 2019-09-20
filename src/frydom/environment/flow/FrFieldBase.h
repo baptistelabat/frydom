@@ -23,7 +23,9 @@ namespace frydom {
      * \class FrFieldBase
      * \brief Class for defining in general the type of flow field used (uniform field, current or wind).
      */
-    class FrFieldBase : public FrObject {
+
+    template <typename OffshoreSystemType>
+    class FrFieldBase : public FrObject<OffshoreSystemType> {
 
     public:
         /// Default constructor

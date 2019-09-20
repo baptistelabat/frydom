@@ -15,98 +15,99 @@
 
 #include <random>
 
-//#include "frydom/environment/ocean/freeSurface/waves/FrWaveSpectrum.h"
-#include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
-#include "frydom/environment/ocean/freeSurface/waves/FrKinematicStretching.h"
+#include "FrAiryWaveField.h"
+#include "frydom/environment/ocean/freeSurface/waves/airy/FrKinematicStretching.h"
 
 
 namespace frydom {
 
     //Forward Declaration
+    template<typename OffshoreSystemType>
     class FrFreeSurface;
 
-    template <class DirectionalModel>
+    template<class OffshoreSystemType, class DirectionalModel>
     class FrWaveSpectrum;
 
+    template <typename OffshoreSystemtype>
     class FrKinematicStretching;
 
     /**
      * \class FrAiryIrregularWaveField
      * \brief Class which deals with irregular wave field.
      */
-    template <class WaveSpectrumType>
-    class FrAiryIrregularWaveField : public FrWaveField {
-    protected:
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
+    class FrAiryIrregularWaveField : public FrAiryWaveField<OffshoreSystemType, StretchingType> {
+     protected:
 
 
-        double m_minFreq = 0.;        ///< Minimum frequency
-        double m_maxFreq = 0.;          ///< Maximum frequency
-        unsigned int m_nbFreq = 40;     ///< Number of frequency to discretize
+      double m_minFreq = 0.;        ///< Minimum frequency
+      double m_maxFreq = 0.;          ///< Maximum frequency
+      unsigned int m_nbFreq = 40;     ///< Number of frequency to discretize
 
-        double m_meanDir = 0;           ///< Mean wave direction
-        unsigned int m_nbDir = 1;       ///< Number of directions to discretize
+      double m_meanDir = 0;           ///< Mean wave direction
+      unsigned int m_nbDir = 1;       ///< Number of directions to discretize
 
-        std::unique_ptr<WaveSpectrumType> m_waveSpectrum;    ///< Wave spectrum, by default JONSWAP (Hs=3m,Tp=9s,Gamma=3.3)
+      std::unique_ptr<WaveSpectrumType> m_waveSpectrum;    ///< Wave spectrum, by default JONSWAP (Hs=3m,Tp=9s,Gamma=3.3)
 
-        std::vector<double> m_waveDirections;    ///< Wave directions vector
-        std::vector<double> m_waveFrequencies;   ///< Wave frequencies vector
-        std::vector<double> m_waveNumbers;       ///< Wave numbers vector
+      std::vector<double> m_waveDirections;    ///< Wave directions vector
+      std::vector<double> m_waveFrequencies;   ///< Wave frequencies vector
+      std::vector<double> m_waveNumbers;       ///< Wave numbers vector
 
-        std::vector<std::vector<double>> c_amplitude;    ///< cache value of the amplitude given by the wave spectrum
-        std::unique_ptr<std::vector<std::vector<double>>> m_wavePhases;    ///< Table of wave phases,of dimensions (m_nbDir,m_nbFreq)
-                                                                           ///< made unique to check at initialize() if wavePhases were given by the users,
-                                                                           ///< or if they need to be randomly generated.
-        std::unique_ptr<FrKinematicStretching> m_verticalFactor;    ///< Vertical scale velocity factor with stretching
+      std::vector<std::vector<double>> c_amplitude;    ///< cache value of the amplitude given by the wave spectrum
+      std::unique_ptr<std::vector<std::vector<double>>> m_wavePhases;    ///< Table of wave phases,of dimensions (m_nbDir,m_nbFreq)
+      ///< made unique to check at initialize() if wavePhases were given by the users,
+      ///< or if they need to be randomly generated.
+      std::unique_ptr<FrKinematicStretching<OffshoreSystemType>> m_verticalFactor;    ///< Vertical scale velocity factor with stretching
 
-    public:
+     public:
 
-        /// Default constructor
-        /// \param freeSurface pointer to the free surface, to which the wave field belongs
-        explicit FrAiryIrregularWaveField(FrFreeSurface* freeSurface);
+      /// Default constructor
+      /// \param freeSurface pointer to the free surface, to which the wave field belongs
+      explicit FrAiryIrregularWaveField(FrFreeSurface<OffshoreSystemType> *freeSurface);
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "AiryIrregularWaveField"; }
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "AiryIrregularWaveField"; }
 
-        /// Set the wave frequencies, ie frequency discretization
-        /// \param minFreq minimum frequency
-        /// \param maxFreq maximum frequency
-        /// \param nbFreq number of frequencies to discretize
-        void SetWaveFrequencies(double minFreq, double maxFreq, unsigned int nbFreq);
+      /// Set the wave frequencies, ie frequency discretization
+      /// \param minFreq minimum frequency
+      /// \param maxFreq maximum frequency
+      /// \param nbFreq number of frequencies to discretize
+      void SetWaveFrequencies(double minFreq, double maxFreq, unsigned int nbFreq);
 
-        /// Set the mean wave direction angle
-        /// \param dirAngle mean wave direction angle
-        /// \param unit unit of the angle
-        /// \param fc frame convention (NED/NWU)
-        /// \param dc direction convention (COMEFROM/GOTO)
-        void SetMeanWaveDirectionAngle(double dirAngle, ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
+      /// Set the mean wave direction angle
+      /// \param dirAngle mean wave direction angle
+      /// \param unit unit of the angle
+      /// \param fc frame convention (NED/NWU)
+      /// \param dc direction convention (COMEFROM/GOTO)
+      void SetMeanWaveDirectionAngle(double dirAngle, ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
 
-        /// Set the mean wave direction
-        /// \param direction mean wave direction
-        /// \param fc frame convention (NED/NWU)
-        /// \param dc direction convention (COMEFROM/GOTO)
-        void SetMeanWaveDirection(Direction direction, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
+      /// Set the mean wave direction
+      /// \param direction mean wave direction
+      /// \param fc frame convention (NED/NWU)
+      /// \param dc direction convention (COMEFROM/GOTO)
+      void SetMeanWaveDirection(Direction direction, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
 
-        /// Get the wave direction angle, from North direction, of the irregular Airy wave field
-        /// \param unit angle unit
-        /// \param fc frame convention (NED/NWU)
-        /// \param dc direction convention (GOTO/COMEFROM)
-        /// \return wave direction angle
-        double GetMeanWaveDirectionAngle(ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const;;
+      /// Get the wave direction angle, from North direction, of the irregular Airy wave field
+      /// \param unit angle unit
+      /// \param fc frame convention (NED/NWU)
+      /// \param dc direction convention (GOTO/COMEFROM)
+      /// \return wave direction angle
+      double GetMeanWaveDirectionAngle(ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const;;
 
-        /// Get the wave direction of the irregular Airy wave field
-        /// \param fc frame convention (NED/NWU)
-        /// \param dc direction convention (GOTO/COMEFROM)
-        /// \return wave direction
-        Direction GetMeanWaveDirection(FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const;;
+      /// Get the wave direction of the irregular Airy wave field
+      /// \param fc frame convention (NED/NWU)
+      /// \param dc direction convention (GOTO/COMEFROM)
+      /// \return wave direction
+      Direction GetMeanWaveDirection(FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const;;
 
-        /// Get the wave phases for each couple of frequencies and directions
-        /// \return wave phases
-        std::vector<std::vector<double>>* GetWavePhases() const {return m_wavePhases.get();}
+      /// Get the wave phases for each couple of frequencies and directions
+      /// \return wave phases
+      std::vector<std::vector<double>> *GetWavePhases() const { return m_wavePhases.get(); }
 
-        /// Set the wave phases for each couple of frequencies and directions
-        /// \param wavePhases wave phases
-        void SetWavePhases(std::vector<std::vector<double>>& wavePhases);
+      /// Set the wave phases for each couple of frequencies and directions
+      /// \param wavePhases wave phases
+      void SetWavePhases(std::vector<std::vector<double>> &wavePhases);
 
 //        /// Set the parameters of the directional model
 //        /// \param nbDir direction discretization
@@ -114,9 +115,9 @@ namespace frydom {
 //        /// \param dirType directional model type (NONE, COS2S, TEST(for tests only))
 //        void SetDirectionalParameters(unsigned int nbDir, double spreadingFactor, WAVE_DIRECTIONAL_MODEL dirType=COS2S);
 
-        /// Set the stretching type used to compute velocity and acceleration on positions above the free surface elevation
-        /// \param type stretching type (NO_STRETCHING, VERTICAL, EXTRAPOLATE, WHEELER, CHAKRABARTI, DELTA)
-        void SetStretching(STRETCHING_TYPE type);
+      /// Set the stretching type used to compute velocity and acceleration on positions above the free surface elevation
+      /// \param type stretching type (NO_STRETCHING, VERTICAL, EXTRAPOLATE, WHEELER, CHAKRABARTI, DELTA)
+//      void SetStretching(STRETCHING_TYPE type);
 
 //        void SetWaveSpectrum(WAVE_SPECTRUM_TYPE type);
 //
@@ -137,86 +138,88 @@ namespace frydom {
 //        /// \return the TEST wave spectrum
 //        FrTestWaveSpectrum* SetTestWaveSpectrum();
 
-        /// Get the wave spectrum
-        /// \return wave spectrum
-        WaveSpectrumType* GetWaveSpectrum() const;
+      /// Get the wave spectrum
+      /// \return wave spectrum
+      WaveSpectrumType *GetWaveSpectrum() const;
 
-        ///Generate random wave phases
-        void GenerateRandomWavePhases();
+      ///Generate random wave phases
+      void GenerateRandomWavePhases();
 
-        ///Generate random wave phases
-        void GenerateRandomWavePhases(int seed);
+      ///Generate random wave phases
+      void GenerateRandomWavePhases(int seed);
 
-    private:
+     private:
 
-        ///Generate random wave phases
-        void GenerateRandomWavePhases(std::mt19937& seed);
+      ///Generate random wave phases
+      void GenerateRandomWavePhases(std::mt19937 &seed);
 
-    public:
+     public:
 
-        std::vector<double> GetWaveFrequencies(FREQUENCY_UNIT unit) const override;
+      std::vector<double> GetWaveFrequencies(FREQUENCY_UNIT unit) const override;
 
-        std::vector<double> GetWaveNumbers() const override { return m_waveNumbers; }
+      std::vector<double> GetWaveNumbers() const override { return m_waveNumbers; }
 
-        std::vector<std::vector<double>> GetWaveAmplitudes() const override { return c_amplitude; }
+      std::vector<std::vector<double>> GetWaveAmplitudes() const override { return c_amplitude; }
 
-        std::vector<double> GetWaveDirections(ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const override;
+      std::vector<double>
+      GetWaveDirections(ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const override;
 
-        //------------------------------------MAIN GETTERS----------------------------------//
+      //------------------------------------MAIN GETTERS----------------------------------//
 
-        /// Get the complex wave elevation at the position (x,y,0), of the irregular Airy wave field
-        /// \param x x position
-        /// \param y y position
-        /// \param fc frame convention (NED/NWU)
-        /// \return complex wave elevation, in meters
-        std::vector<std::vector<Complex>> GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const override;
+      /// Get the complex wave elevation at the position (x,y,0), of the irregular Airy wave field
+      /// \param x x position
+      /// \param y y position
+      /// \param fc frame convention (NED/NWU)
+      /// \return complex wave elevation, in meters
+      std::vector<std::vector<Complex>> GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const override;
 
-        /// Return the complex eulerian fluid particule velocity in global reference frame (implemented in child)
-        /// \param x x position
-        /// \param y y position
-        /// \param z z position
-        /// \param fc frame convention (NED/NWU)
-        /// \return complex eulerian fluid particule velocity, in m/s
-        virtual std::vector<mathutils::Vector3d<Complex>> GetComplexVelocity(double x, double y, double z, FRAME_CONVENTION fc) const;
+      /// Return the complex eulerian fluid particule velocity in global reference frame (implemented in child)
+      /// \param x x position
+      /// \param y y position
+      /// \param z z position
+      /// \param fc frame convention (NED/NWU)
+      /// \return complex eulerian fluid particule velocity, in m/s
+      virtual std::vector<mathutils::Vector3d<Complex>>
+      GetComplexVelocity(double x, double y, double z, FRAME_CONVENTION fc) const;
 
-        /// Get the wave elevation on the horizontal position (x,y)
-        /// \param x x position
-        /// \param y y position
-        /// \param fc frame convention (NED/NWU)
-        /// \return wave elevation, in meters
-        double GetElevation(double x, double y, FRAME_CONVENTION fc) const override;
+      /// Get the wave elevation on the horizontal position (x,y)
+      /// \param x x position
+      /// \param y y position
+      /// \param fc frame convention (NED/NWU)
+      /// \return wave elevation, in meters
+      double GetElevation(double x, double y, FRAME_CONVENTION fc) const override;
 
-        /// Return the eulerian fluid particule velocity in global reference frame (implemented in child)
-        /// \param x x position
-        /// \param y y position
-        /// \param z z position
-        /// \param fc frame convention (NED/NWU)
-        /// \return eulerian fluid particule velocity, in m/s
-        Velocity GetVelocity(double x, double y, double z, FRAME_CONVENTION fc) const override;
+      /// Return the eulerian fluid particule velocity in global reference frame (implemented in child)
+      /// \param x x position
+      /// \param y y position
+      /// \param z z position
+      /// \param fc frame convention (NED/NWU)
+      /// \return eulerian fluid particule velocity, in m/s
+      Velocity GetVelocity(double x, double y, double z, FRAME_CONVENTION fc) const override;
 
-        /// Return the eulerian fluid particule acceleration in global reference frame (implemented in child)
-        /// \param x x position
-        /// \param y y position
-        /// \param z z position
-        /// \param fc frame convention (NED/NWU)
-        /// \return eulerian fluid particule acceleration, in m/s²
-        Acceleration GetAcceleration(double x, double y, double z, FRAME_CONVENTION fc) const override;
+      /// Return the eulerian fluid particule acceleration in global reference frame (implemented in child)
+      /// \param x x position
+      /// \param y y position
+      /// \param z z position
+      /// \param fc frame convention (NED/NWU)
+      /// \return eulerian fluid particule acceleration, in m/s²
+      Acceleration GetAcceleration(double x, double y, double z, FRAME_CONVENTION fc) const override;
 
-        /// Get the pressure at the position (x,y,z) for an irregular Airy wave field.
-        /// \param x x position
-        /// \param y y position
-        /// \param z z position
-        /// \param fc frame convention (NED/NWU)
-        /// \return Pressure.
-        double GetPressure(double x, double y, double z, FRAME_CONVENTION fc) const final;
+      /// Get the pressure at the position (x,y,z) for an irregular Airy wave field.
+      /// \param x x position
+      /// \param y y position
+      /// \param z z position
+      /// \param fc frame convention (NED/NWU)
+      /// \return Pressure.
+      double GetPressure(double x, double y, double z, FRAME_CONVENTION fc) const final;
 
-        /// Initialize the state of the wave field
-        void Initialize() override;
+      /// Initialize the state of the wave field
+      void Initialize() override;
 
-    protected:
+     protected:
 
-        /// Compute the wave directions vector
-        void ComputeWaveDirections();
+      /// Compute the wave directions vector
+      void ComputeWaveDirections();
 
     };
 

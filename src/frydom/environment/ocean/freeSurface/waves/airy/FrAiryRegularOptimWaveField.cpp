@@ -14,28 +14,28 @@
 
 namespace frydom {
 
-    template<class StretchingType>
-    void FrAiryRegularOptimWaveField<StretchingType>::InternalUpdate() {
+    template<class OffshoreSystemType, class StretchingType>
+    void FrAiryRegularOptimWaveField<OffshoreSystemType, StretchingType>::InternalUpdate() {
       c_expJwt = this->m_height * std::exp(-JJ * this->m_omega * this->c_time); // m_height = Amplitude.
       c_cosTheta = std::cos(this->m_dirAngle);
       c_sinTheta = std::sin(this->m_dirAngle);
     }
 
-    template<class StretchingType>
-    void FrAiryRegularOptimWaveField<StretchingType>::Initialize() {
-      FrWaveField::Initialize();
+    template<class OffshoreSystemType, class StretchingType>
+    void FrAiryRegularOptimWaveField<OffshoreSystemType, StretchingType>::Initialize() {
+      FrWaveField<OffshoreSystemType>::Initialize();
       InternalUpdate();
     }
 
-    template<class StretchingType>
-    void FrAiryRegularOptimWaveField<StretchingType>::StepFinalize() {
-      FrWaveField::StepFinalize();
+    template<class OffshoreSystemType, class StretchingType>
+    void FrAiryRegularOptimWaveField<OffshoreSystemType, StretchingType>::StepFinalize() {
+      FrWaveField<OffshoreSystemType>::StepFinalize();
       InternalUpdate();
     }
 
-    template<class StretchingType>
+    template<class OffshoreSystemType, class StretchingType>
     std::vector<std::vector<Complex>>
-    frydom::FrAiryRegularOptimWaveField<StretchingType>::GetComplexElevation(double x, double y,
+    frydom::FrAiryRegularOptimWaveField<OffshoreSystemType, StretchingType>::GetComplexElevation(double x, double y,
                                                                              FRAME_CONVENTION fc) const {
       double NWUsign = 1;
       if (IsNED(fc)) {
@@ -48,9 +48,9 @@ namespace frydom {
       return std::vector<std::vector<Complex>>(1, std::vector<Complex>(1, cmplxElevation));
     }
 
-    template<class StretchingType>
+    template<class OffshoreSystemType, class StretchingType>
     mathutils::Vector3d<frydom::Complex>
-    FrAiryRegularOptimWaveField<StretchingType>::GetComplexVelocity(double x, double y, double z,
+    FrAiryRegularOptimWaveField<OffshoreSystemType, StretchingType>::GetComplexVelocity(double x, double y, double z,
                                                                     FRAME_CONVENTION fc) const {
       double NWUsign = 1;
       if (IsNED(fc)) {
@@ -71,8 +71,8 @@ namespace frydom {
       return {Vx, Vy, Vz};
     }
 
-    template<class StretchingType>
-    FrAiryRegularOptimWaveField<StretchingType>::FrAiryRegularOptimWaveField(frydom::FrFreeSurface *freeSurface)
-        : FrAiryRegularWaveField<StretchingType>(freeSurface) {}
+    template<class OffshoreSystemType, class StretchingType>
+    FrAiryRegularOptimWaveField<OffshoreSystemType, StretchingType>::FrAiryRegularOptimWaveField(frydom::FrFreeSurface<OffshoreSystemType> *freeSurface)
+        : FrAiryRegularWaveField<OffshoreSystemType, StretchingType>(freeSurface) {}
 
 }  // end namespace frydom

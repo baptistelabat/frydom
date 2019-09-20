@@ -24,7 +24,8 @@ namespace frydom {
         * \class FrUniformField
         * \brief Class for defining a uniform field (current or wind).
         */
-        class FrUniformField : public FrFieldBase {
+        template <typename OffshoreSystemType>
+        class FrUniformField : public FrFieldBase<OffshoreSystemType> {
 
             // TODO: Avoir un current asset sur le meme modele que FrForceAsset qui place un vecteur
             // courant devant le bateau avec la fleche sur un cercle entourant le bateau et pointant

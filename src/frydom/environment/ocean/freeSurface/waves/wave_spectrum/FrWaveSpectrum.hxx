@@ -19,11 +19,11 @@ namespace frydom {
     // =================================================================================================================
     // FrWaveSpectrum descriptions
 
-    template<class DirectionalModel>
-    FrWaveSpectrum<DirectionalModel>::FrWaveSpectrum(double hs, double tp) :
+    template<class OffshoreSystemType, class DirectionalModel>
+    FrWaveSpectrum<OffshoreSystemType, DirectionalModel>::FrWaveSpectrum(double hs, double tp) :
         m_significant_height(hs),
         m_peak_frequency(convert_frequency(tp, mathutils::S, mathutils::RADS)) {
-      m_directional_model = std::make_unique<DirectionalModel>();
+      m_directional_model = std::make_unique<OffshoreSystemType, DirectionalModel>();
     }
 
 //    void FrWaveSpectrum::SetCos2sDirectionalModel(double spreadingFactor) {
@@ -52,8 +52,8 @@ namespace frydom {
 //    }
 
 
-    template<class DirectionalModel>
-    DirectionalModel *FrWaveSpectrum<DirectionalModel>::GetDirectionalModel() const {
+    template<class OffshoreSystemType, class DirectionalModel>
+    DirectionalModel *FrWaveSpectrum<OffshoreSystemType, DirectionalModel>::GetDirectionalModel() const {
       return m_directional_model.get();
     }
 
@@ -67,30 +67,31 @@ namespace frydom {
 //    }
 
 
-    template<class DirectionalModel>
-    double FrWaveSpectrum<DirectionalModel>::GetHs() const { return m_significant_height; }
+    template<class OffshoreSystemType, class DirectionalModel>
+    double FrWaveSpectrum<OffshoreSystemType, DirectionalModel>::GetHs() const { return m_significant_height; }
 
-    template<class DirectionalModel>
-    void FrWaveSpectrum<DirectionalModel>::SetHs(double Hs) { m_significant_height = Hs; }
+    template<class OffshoreSystemType, class DirectionalModel>
+    void FrWaveSpectrum<OffshoreSystemType, DirectionalModel>::SetHs(double Hs) { m_significant_height = Hs; }
 
-    template<class DirectionalModel>
-    double FrWaveSpectrum<DirectionalModel>::GetPeakFreq(FREQUENCY_UNIT unit) const {
+    template<class OffshoreSystemType, class DirectionalModel>
+    double FrWaveSpectrum<OffshoreSystemType, DirectionalModel>::GetPeakFreq(FREQUENCY_UNIT unit) const {
       return convert_frequency(m_peak_frequency, mathutils::RADS, unit);
     }
 
-    template<class DirectionalModel>
-    void FrWaveSpectrum<DirectionalModel>::SetPeakFreq(double Fp, FREQUENCY_UNIT unit) {
+    template<class OffshoreSystemType, class DirectionalModel>
+    void FrWaveSpectrum<OffshoreSystemType, DirectionalModel>::SetPeakFreq(double Fp, FREQUENCY_UNIT unit) {
       m_peak_frequency = convert_frequency(Fp, unit, mathutils::RADS);
     }
 
-    template<class DirectionalModel>
-    void FrWaveSpectrum<DirectionalModel>::SetHsTp(double Hs, double Tp, FREQUENCY_UNIT unit) {
+    template<class OffshoreSystemType, class DirectionalModel>
+    void FrWaveSpectrum<OffshoreSystemType, DirectionalModel>::SetHsTp(double Hs, double Tp, FREQUENCY_UNIT unit) {
       SetHs(Hs);
       SetPeakFreq(Tp, unit);
     }
 
-    template<class DirectionalModel>
-    std::vector<double> FrWaveSpectrum<DirectionalModel>::Eval(const std::vector<double> &wVect) const {
+    template<class OffshoreSystemType, class DirectionalModel>
+    std::vector<double>
+    FrWaveSpectrum<OffshoreSystemType, DirectionalModel>::Eval(const std::vector<double> &wVect) const {
       std::vector<double> S_w;
       auto nw = wVect.size();
       S_w.reserve(nw);
@@ -101,8 +102,9 @@ namespace frydom {
       return S_w;
     }
 
-    template<class DirectionalModel>
-    std::vector<double> FrWaveSpectrum<DirectionalModel>::vectorDiscretization(std::vector<double> vect) {
+    template<class OffshoreSystemType, class DirectionalModel>
+    std::vector<double>
+    FrWaveSpectrum<OffshoreSystemType, DirectionalModel>::vectorDiscretization(std::vector<double> vect) {
       assert(!vect.empty());
       std::vector<double> discretization;
       unsigned long Nv = vect.size() - 1;
@@ -127,8 +129,9 @@ namespace frydom {
       return discretization;
     }
 
-    template<class DirectionalModel>
-    std::vector<double> FrWaveSpectrum<DirectionalModel>::GetWaveAmplitudes(std::vector<double> waveFrequencies) {
+    template<class OffshoreSystemType, class DirectionalModel>
+    std::vector<double>
+    FrWaveSpectrum<OffshoreSystemType, DirectionalModel>::GetWaveAmplitudes(std::vector<double> waveFrequencies) {
       std::vector<double> wave_ampl;
       auto nbFreq = waveFrequencies.size();
       wave_ampl.reserve(nbFreq);
@@ -141,10 +144,10 @@ namespace frydom {
       return wave_ampl;
     }
 
-    template<class DirectionalModel>
+    template<class OffshoreSystemType, class DirectionalModel>
     std::vector<std::vector<double>>
-    FrWaveSpectrum<DirectionalModel>::GetWaveAmplitudes(std::vector<double> waveFrequencies,
-                                                        std::vector<double> waveDirections) {
+    FrWaveSpectrum<OffshoreSystemType, DirectionalModel>::GetWaveAmplitudes(std::vector<double> waveFrequencies,
+                                                                            std::vector<double> waveDirections) {
       auto nbDir = waveDirections.size();
       auto nbFreq = waveFrequencies.size();
 
@@ -171,16 +174,18 @@ namespace frydom {
       for (unsigned int idir = 0; idir < nbDir; ++idir) {
         wave_ampl_temp.clear();
         for (unsigned int ifreq = 0; ifreq < nbFreq; ++ifreq) {
-          wave_ampl_temp.push_back(std::sqrt(2. * Eval(waveFrequencies[ifreq]) * dir_func[idir] * dtheta[idir] * dw[ifreq]));
+          wave_ampl_temp.push_back(
+              std::sqrt(2. * Eval(waveFrequencies[ifreq]) * dir_func[idir] * dtheta[idir] * dw[ifreq]));
         }
         wave_ampl.push_back(wave_ampl_temp);
       }
       return wave_ampl;
     }
 
-    template<class DirectionalModel>
+    template<class OffshoreSystemType, class DirectionalModel>
     std::vector<double>
-    FrWaveSpectrum<DirectionalModel>::GetWaveAmplitudes(unsigned int nb_waves, double wmin, double wmax) {
+    FrWaveSpectrum<OffshoreSystemType, DirectionalModel>::GetWaveAmplitudes(unsigned int nb_waves, double wmin,
+                                                                            double wmax) {
 
       auto wVect = mathutils::linspace(wmin, wmax, nb_waves);
       double dw = wVect[1] - wVect[0];
@@ -193,11 +198,13 @@ namespace frydom {
       return wave_ampl;
     }
 
-    template<class DirectionalModel>
+    template<class OffshoreSystemType, class DirectionalModel>
     std::vector<std::vector<double>>
-    FrWaveSpectrum<DirectionalModel>::GetWaveAmplitudes(unsigned int nb_waves, double wmin, double wmax,
-                                                        unsigned int nb_dir, double theta_min, double theta_max,
-                                                        double theta_mean) {
+    FrWaveSpectrum<OffshoreSystemType, DirectionalModel>::GetWaveAmplitudes(unsigned int nb_waves, double wmin,
+                                                                            double wmax,
+                                                                            unsigned int nb_dir, double theta_min,
+                                                                            double theta_max,
+                                                                            double theta_mean) {
 
       auto wVect = mathutils::linspace(wmin, wmax, nb_waves);
       auto thetaVect = mathutils::linspace(theta_min, theta_max, nb_dir);
@@ -214,8 +221,8 @@ namespace frydom {
 //    Prevosto M., Effect of Directional Spreading and Spectral Bandwidth on the Nonlinearity of the Irregular Waves,
 //    Proceedings of the Eighth (1998) International Offshore and Polar Engineering Conference, Montreal, Canada
 
-    template<class DirectionalModel>
-    void FrWaveSpectrum<DirectionalModel>::GetFrequencyBandwidth(double &wmin, double &wmax) const {
+    template<class OffshoreSystemType, class DirectionalModel>
+    void FrWaveSpectrum<OffshoreSystemType, DirectionalModel>::GetFrequencyBandwidth(double &wmin, double &wmax) const {
       double m0 = std::pow(m_significant_height, 2) / 16.;
       double threshold = m0 * 0.01;
 
@@ -223,8 +230,9 @@ namespace frydom {
       wmax = dichotomySearch(GetPeakFreq(mathutils::RADS), 10., threshold);
     }
 
-    template<class DirectionalModel>
-    double FrWaveSpectrum<DirectionalModel>::dichotomySearch(double wmin, double wmax, double threshold) const {
+    template<class OffshoreSystemType, class DirectionalModel>
+    double FrWaveSpectrum<OffshoreSystemType, DirectionalModel>::dichotomySearch(double wmin, double wmax,
+                                                                                 double threshold) const {
 
       double wresult, epsilon = 1.E-10;
 
@@ -244,15 +252,16 @@ namespace frydom {
     // =================================================================================================================
     // FrJonswapWaveSpectrum descriptions
 
-    template<class DirectionalModel>
-    FrJonswapWaveSpectrum<DirectionalModel>::FrJonswapWaveSpectrum(double hs, double tp, double gamma) :
-        FrWaveSpectrum<DirectionalModel>(hs, tp),
+    template<class OffshoreSystemType, class DirectionalModel>
+    FrJonswapWaveSpectrum<OffshoreSystemType, DirectionalModel>::FrJonswapWaveSpectrum(double hs, double tp,
+                                                                                       double gamma) :
+        FrWaveSpectrum<OffshoreSystemType, DirectionalModel>(hs, tp),
         m_gamma(gamma) {
       CheckGamma();
     }
 
-    template<class DirectionalModel>
-    void FrJonswapWaveSpectrum<DirectionalModel>::CheckGamma() {
+    template<class OffshoreSystemType, class DirectionalModel>
+    void FrJonswapWaveSpectrum<OffshoreSystemType, DirectionalModel>::CheckGamma() {
       if (m_gamma < 1. || m_gamma > 10.) {
         // TODO: utiliser un vrai warning sur stderr
         std::cout << "WARNING: Valid values of gamma parameter in JONSWAP wave spectrum are between 1 and 10. "
@@ -260,17 +269,17 @@ namespace frydom {
       }
     }
 
-    template<class DirectionalModel>
-    double FrJonswapWaveSpectrum<DirectionalModel>::GetGamma() const { return m_gamma; }
+    template<class OffshoreSystemType, class DirectionalModel>
+    double FrJonswapWaveSpectrum<OffshoreSystemType, DirectionalModel>::GetGamma() const { return m_gamma; }
 
-    template<class DirectionalModel>
-    void FrJonswapWaveSpectrum<DirectionalModel>::SetGamma(double gamma) {
+    template<class OffshoreSystemType, class DirectionalModel>
+    void FrJonswapWaveSpectrum<OffshoreSystemType, DirectionalModel>::SetGamma(double gamma) {
       m_gamma = gamma;
       CheckGamma();
     }
 
-    template<class DirectionalModel>
-    double FrJonswapWaveSpectrum<DirectionalModel>::Eval(double w) const {
+    template<class OffshoreSystemType, class DirectionalModel>
+    double FrJonswapWaveSpectrum<OffshoreSystemType, DirectionalModel>::Eval(double w) const {
 
       double wp2 = this->m_peak_frequency * this->m_peak_frequency;
       double wp4 = wp2 * wp2;
@@ -299,12 +308,13 @@ namespace frydom {
 
     // =================================================================================================================
     // FrPiersonMoskowitzWaveSpectrum descriptions
-    template<class DirectionalModel>
-    FrPiersonMoskowitzWaveSpectrum<DirectionalModel>::FrPiersonMoskowitzWaveSpectrum(double hs, double tp) :
-        FrWaveSpectrum<DirectionalModel>(hs, tp) {}
+    template<class OffshoreSystemType, class DirectionalModel>
+    FrPiersonMoskowitzWaveSpectrum<OffshoreSystemType, DirectionalModel>::FrPiersonMoskowitzWaveSpectrum(double hs,
+                                                                                                         double tp) :
+        FrWaveSpectrum<OffshoreSystemType, DirectionalModel>(hs, tp) {}
 
-    template<class DirectionalModel>
-    double FrPiersonMoskowitzWaveSpectrum<DirectionalModel>::Eval(double w) const {
+    template<class OffshoreSystemType, class DirectionalModel>
+    double FrPiersonMoskowitzWaveSpectrum<OffshoreSystemType, DirectionalModel>::Eval(double w) const {
 
       double Tz = mathutils::RADS2S(this->m_peak_frequency) / 1.408;  // Up-crossing period
 
@@ -316,8 +326,8 @@ namespace frydom {
 
     }
 
-    template<class DirectionalModel>
-    double FrTestWaveSpectrum<DirectionalModel>::Eval(double w) const {
+    template<class OffshoreSystemType, class DirectionalModel>
+    double FrTestWaveSpectrum<OffshoreSystemType, DirectionalModel>::Eval(double w) const {
       return 1.;
     }
 

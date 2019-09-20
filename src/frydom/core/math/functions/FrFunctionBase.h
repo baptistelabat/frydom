@@ -202,19 +202,15 @@ namespace frydom {
      */
 
     /// Add a scalar to the function to the left
-    template <typename OffshoreSystemType>
     FrAddFunction operator+(double alpha, const FrFunctionBase& function);
 
     /// Add a scalar to the function to the left
-    template <typename OffshoreSystemType>
     FrSubFunction operator-(double alpha, const FrFunctionBase& function);
 
     /// Left multiply a function by a scalar
-    template <typename OffshoreSystemType>
     FrMulFunction operator*(double alpha, const FrFunctionBase& function);
 
     /// Inverse a function and multiply by a scalar
-    template <typename OffshoreSystemType>
     FrDivFunction operator/(double alpha, const FrFunctionBase& function);
 
 
@@ -222,7 +218,6 @@ namespace frydom {
 
         /// This class is used internally to add a chrono function object to be added into chrono objects that accept
         /// a ChFunction
-        template <typename OffshoreSystemType>
         class FrFunctionChronoInterface { // : public FrFunctionBase { // TODOD : doit-on heriter de FrFunctionBase ? -> oui !
 
         private:

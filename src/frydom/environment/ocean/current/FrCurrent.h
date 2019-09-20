@@ -24,6 +24,7 @@
 namespace frydom {
 
     // Forward declaration
+    template<typename OffshoreSystemType>
     class FrOcean;
 
 
@@ -31,25 +32,26 @@ namespace frydom {
     * \class FrCurrent
     * \brief Class defining a current field.
     */
-    class FrCurrent : public FrFlowBase {
-    private:
+    template<typename OffshoreSystemType>
+    class FrCurrent : public FrFlowBase<OffshoreSystemType> {
+     private:
 
-        FrOcean* m_ocean;  ///> Pointer to the ocean containing this current model
+      FrOcean<OffshoreSystemType> *m_ocean;  ///> Pointer to the ocean containing this current model
 
-    public:
-        /// Default constructor
-        /// \param ocean ocean containing this current model
-        explicit FrCurrent(FrOcean* ocean) : FrFlowBase() { m_ocean = ocean;}
+     public:
+      /// Default constructor
+      /// \param ocean ocean containing this current model
+      explicit FrCurrent(FrOcean<OffshoreSystemType> *ocean) : FrFlowBase<OffshoreSystemType>() { m_ocean = ocean; }
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "Current"; }
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "Current"; }
 
-        /// Get the ocean containing this current model
-        /// \return ocean containing this current model
-        FrOcean* GetOcean() const {return m_ocean;}
+      /// Get the ocean containing this current model
+      /// \return ocean containing this current model
+      FrOcean<OffshoreSystemType> *GetOcean() const { return m_ocean; }
 
-        FrEnvironment* GetEnvironment() const override;
+      FrEnvironment<OffshoreSystemType> *GetEnvironment() const override;
 
     };
 

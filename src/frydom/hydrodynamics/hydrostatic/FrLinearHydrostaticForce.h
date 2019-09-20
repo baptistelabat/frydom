@@ -24,6 +24,7 @@
 namespace frydom {
 
     // Forward declarations
+    template<typename OffshoreSystemType>
     class FrEquilibriumFrame;
 //    class FrHydroDB;
 
@@ -37,63 +38,74 @@ namespace frydom {
      * \class FrLinearHydrostaticForce
      * \brief Class for computing linear hydrostatic loads.
      */
-    class FrLinearHydrostaticForce : public FrForce {
+    template<typename OffshoreSystemType>
+    class FrLinearHydrostaticForce : public FrForce<OffshoreSystemType> {
 
-    private:
+     private:
 //        std::shared_ptr<FrHydroDB> m_HDB;
-        FrLinearHydrostaticStiffnessMatrix m_stiffnessMatrix;      ///< Hydrostatic stiffness matrix
-        //TODO: passed the raw to shared ptr, need some modif in the mapper.
-        FrEquilibriumFrame* m_equilibriumFrame;    ///< Equilibrium frame of the body to which the force is applied
+      FrLinearHydrostaticStiffnessMatrix m_stiffnessMatrix;      ///< Hydrostatic stiffness matrix
+      //TODO: passed the raw to shared ptr, need some modif in the mapper.
+      FrEquilibriumFrame<OffshoreSystemType> *m_equilibriumFrame;    ///< Equilibrium frame of the body to which the force is applied
 
-        /// Boolean to know if the hydrostatic matrix is obtained from the HDB5 file (true) or not (false).
-        bool HydrostaticsMatrixHDB5 = true;
+      /// Boolean to know if the hydrostatic matrix is obtained from the HDB5 file (true) or not (false).
+      bool HydrostaticsMatrixHDB5 = true;
 
-    public:
+     public:
 
-        /// Constructor.
-        explicit FrLinearHydrostaticForce(const std::shared_ptr<FrEquilibriumFrame>& eqFrame);
-        explicit FrLinearHydrostaticForce(FrEquilibriumFrame* eqFrame);
+      /// Constructor.
+      explicit FrLinearHydrostaticForce(const std::shared_ptr<FrEquilibriumFrame<OffshoreSystemType>> &eqFrame);
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "LinearHydrostaticForce"; }
+      explicit FrLinearHydrostaticForce(FrEquilibriumFrame<OffshoreSystemType> *eqFrame);
 
-        /// Return true if the force is included in the static analysis
-        bool IncludedInStaticAnalysis() const override {return true;}
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "LinearHydrostaticForce"; }
 
-        /// Get the hydrostatic stiffness matrix of the hydrostatic force
-        /// \return Hydrostatic stiffness matrix
-        FrLinearHydrostaticStiffnessMatrix GetStiffnessMatrix() const;
+      /// Return true if the force is included in the static analysis
+      bool IncludedInStaticAnalysis() const override { return true; }
 
-        /// This function sets the hydrostatic stiffness matrix.
-        void SetStiffnessMatrix(FrLinearHydrostaticStiffnessMatrix HydrostaticMatrix);
+      /// Get the hydrostatic stiffness matrix of the hydrostatic force
+      /// \return Hydrostatic stiffness matrix
+      FrLinearHydrostaticStiffnessMatrix GetStiffnessMatrix() const;
 
-        /// This function sets the hydrostatic stiffness matrix.
-        void SetStiffnessMatrix(mathutils::MatrixMN<double> HydrostaticMatrix);
+      /// This function sets the hydrostatic stiffness matrix.
+      void SetStiffnessMatrix(FrLinearHydrostaticStiffnessMatrix HydrostaticMatrix);
 
-        /// Intialize the linear hydrostatic force model
-        void Initialize() override;
+      /// This function sets the hydrostatic stiffness matrix.
+      void SetStiffnessMatrix(mathutils::MatrixMN<double> HydrostaticMatrix);
 
-    private:
+      /// Intialize the linear hydrostatic force model
+      void Initialize() override;
 
-        /// Compute the linear hydrostatic force
-        /// \param time Current time of the simulation from beginning
-        void Compute(double time) override;
+     private:
+
+      /// Compute the linear hydrostatic force
+      /// \param time Current time of the simulation from beginning
+      void Compute(double time) override;
 
     };
 
-    /// This function creates the linear hydrostatic force object for computing the linear hydrostatic loads with a hydrostatic sitffness matrix computed by FrMesh.
-    std::shared_ptr<FrLinearHydrostaticForce>
-    make_linear_hydrostatic_force(const std::shared_ptr<FrEquilibriumFrame>& eqFrame,  const std::shared_ptr<FrBody>& body);
+    /// This function creates the linear hydrostatic force object for computing the linear hydrostatic loads with a
+    /// hydrostatic sitffness matrix computed by FrMesh.
+    template<typename OffshoreSystemType>
+    std::shared_ptr<FrLinearHydrostaticForce<OffshoreSystemType>>
+    make_linear_hydrostatic_force(const std::shared_ptr<FrEquilibriumFrame<OffshoreSystemType>> &eqFrame,
+                                  const std::shared_ptr<FrBody<OffshoreSystemType>> &body);
 
-    /// This function creates the linear hydrostatic force object for computing the linear hydrostatic loads with a hydrostatic stiffness matrix given by the hdb.
-    std::shared_ptr<FrLinearHydrostaticForce>
-    make_linear_hydrostatic_force(const std::shared_ptr<FrHydroDB>& HDB, const std::shared_ptr<FrBody>& body);
+    /// This function creates the linear hydrostatic force object for computing the linear hydrostatic loads with a
+    /// hydrostatic stiffness matrix given by the hdb.
+    template<typename OffshoreSystemType>
+    std::shared_ptr<FrLinearHydrostaticForce<OffshoreSystemType>>
+    make_linear_hydrostatic_force(const std::shared_ptr<FrHydroDB<OffshoreSystemType>> &HDB,
+                                  const std::shared_ptr<FrBody<OffshoreSystemType>> &body);
 
-    /// This function creates the linear hydrostatic force object for computing the linear hydrostatic loads with a hydrostatic sitffness matrix computed by FrMesh.
-    std::shared_ptr<FrLinearHydrostaticForce>
-    make_linear_hydrostatic_force(const std::shared_ptr<FrEquilibriumFrame>& eqFrame,  const std::shared_ptr<FrBody>& body,
-                                  const std::string& meshFile, FrFrame meshOffset);
+    /// This function creates the linear hydrostatic force object for computing the linear hydrostatic loads with a
+    /// hydrostatic sitffness matrix computed by FrMesh.
+    template<typename OffshoreSystemType>
+    std::shared_ptr<FrLinearHydrostaticForce<OffshoreSystemType>>
+    make_linear_hydrostatic_force(const std::shared_ptr<FrEquilibriumFrame<OffshoreSystemType>> &eqFrame,
+                                  const std::shared_ptr<FrBody<OffshoreSystemType>> &body,
+                                  const std::string &meshFile, FrFrame meshOffset);
 
 }  // end namespace frydom
 

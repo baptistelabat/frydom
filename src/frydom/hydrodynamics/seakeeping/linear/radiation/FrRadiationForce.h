@@ -20,93 +20,97 @@
 namespace frydom {
 
     // Forward declaration
+    template <typename OffshoreSystemType>
     class FrRadiationModel;
 
     /**
      * \class FrRadiationForce
      * \brief Class for computing the radiation loads.
      */
-    class FrRadiationForce : public FrForce {
+    template<typename OffshoreSystemType>
+    class FrRadiationForce : public FrForce<OffshoreSystemType> {
 
-    protected:
+     protected:
 
-        FrRadiationModel* m_radiationModel;     ///< radiation model
+      FrRadiationModel<OffshoreSystemType> *m_radiationModel;     ///< radiation model
 
-    public:
+     public:
 
-        /// Default constructor
-        FrRadiationForce() = default;
+      /// Default constructor
+      FrRadiationForce() = default;
 
-        /// Constructor with the radiation model
-        /// \param radiationModel Radiation model where the radiation force is applied
-        explicit FrRadiationForce(FrRadiationModel* radiationModel);
+      /// Constructor with the radiation model
+      /// \param radiationModel Radiation model where the radiation force is applied
+      explicit FrRadiationForce(FrRadiationModel<OffshoreSystemType> *radiationModel);
 
-        /// Define the radiation model where the radiation force is applied
-        /// \param radiationModel Radiation model where the radiation force is applied
-        void SetRadiationModel(FrRadiationModel* radiationModel);
+      /// Define the radiation model where the radiation force is applied
+      /// \param radiationModel Radiation model where the radiation force is applied
+      void SetRadiationModel(FrRadiationModel<OffshoreSystemType> *radiationModel);
 
-        /// Method to be applied at the end of steps
-        //void StepFinalize() override;
+      /// Method to be applied at the end of steps
+      //void StepFinalize() override;
 
     };
 
 
     // Forward declaration
+    template<typename OffshoreSystemType>
     class FrRadiationConvolutionModel;
 
     /**
      * \class FrRadiationConvolutionForce
      * \brief Class for computing the hydrodynamic damping loads.
      */
-    class FrRadiationConvolutionForce: public FrRadiationForce {
+    template<typename OffshoreSystemType>
+    class FrRadiationConvolutionForce : public FrRadiationForce<OffshoreSystemType> {
 
-    private:
+     private:
 
-        Force c_forceInertiaPart;
-        Torque c_torqueInertiaPart;
+      Force c_forceInertiaPart;
+      Torque c_torqueInertiaPart;
 
-    public:
+     public:
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "RadiationConvolutionForce"; }
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "RadiationConvolutionForce"; }
 
-        /// Constructor with the radiation model
-        /// \param radiationModel Radiation model where the radiation force is applied
-        explicit FrRadiationConvolutionForce(FrRadiationConvolutionModel* radiationModel);
+      /// Constructor with the radiation model
+      /// \param radiationModel Radiation model where the radiation force is applied
+      explicit FrRadiationConvolutionForce(FrRadiationConvolutionModel<OffshoreSystemType> *radiationModel);
 
-        void AddFields() override;
+      void AddFields() override;
 
-        /// Method to initialize the radiation convolution force
-        void Initialize() override;
+      /// Method to initialize the radiation convolution force
+      void Initialize() override;
 
-        /// Methods to be applied at the end of each time step
-        void StepFinalize() override;
+      /// Methods to be applied at the end of each time step
+      void StepFinalize() override;
 
-    private:
+     private:
 
-        /// Compute the radiation force via convolution
-        /// \param time Current time of the simulation from beginning, in seconds
-        void Compute(double time) override;
+      /// Compute the radiation force via convolution
+      /// \param time Current time of the simulation from beginning, in seconds
+      void Compute(double time) override;
 
-        /// Update the part of the radiation force linked with body acceleration (for logging)
-        void UpdateForceInertiaPart();
+      /// Update the part of the radiation force linked with body acceleration (for logging)
+      void UpdateForceInertiaPart();
 
-        /// Return the force component of the inertia part of the radiation force in body reference frame
-        /// \param fc Frame convention
-        Force GetForceInertiaPartInBody(FRAME_CONVENTION fc) const;
+      /// Return the force component of the inertia part of the radiation force in body reference frame
+      /// \param fc Frame convention
+      Force GetForceInertiaPartInBody(FRAME_CONVENTION fc) const;
 
-        /// Return the torque component of the inertia part of the radiation force in body reference frame
-        /// \param fc Frame convention
-        Torque GetTorqueInertiaPartInBody(FRAME_CONVENTION fc) const;
+      /// Return the torque component of the inertia part of the radiation force in body reference frame
+      /// \param fc Frame convention
+      Torque GetTorqueInertiaPartInBody(FRAME_CONVENTION fc) const;
 
-        /// Return the force component of the inertia part of the radiation force in  world reference frame
-        /// \param fc Frame convention
-        Force GetForceInertiaPartInWorld(FRAME_CONVENTION fc) const;
+      /// Return the force component of the inertia part of the radiation force in  world reference frame
+      /// \param fc Frame convention
+      Force GetForceInertiaPartInWorld(FRAME_CONVENTION fc) const;
 
-        /// Return the torque component of the inertia part of the radiation force in world reference frame
-        /// \param fc Frame convention
-        Torque GetTorqueInertiaPartInWorld(FRAME_CONVENTION fc) const;
+      /// Return the torque component of the inertia part of the radiation force in world reference frame
+      /// \param fc Frame convention
+      Torque GetTorqueInertiaPartInWorld(FRAME_CONVENTION fc) const;
 
     };
 

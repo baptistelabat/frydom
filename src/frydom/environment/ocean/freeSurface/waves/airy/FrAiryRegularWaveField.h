@@ -18,14 +18,15 @@
 namespace frydom {
 
     //Forward Declaration
+    template <typename OffshoreSystemType>
     class FrFreeSurface;
 
     /**
      * \class FrAiryRegularWaveField
      * \brief Class which deals with regular wave fields without optimization for a better parallelization.
      */
-    template <class StretchingType>
-    class FrAiryRegularWaveField : public FrAiryWaveField<StretchingType> {
+    template <class OffshoreSystemType, class StretchingType>
+    class FrAiryRegularWaveField : public FrAiryWaveField<OffshoreSystemType, StretchingType> {
     protected:
 
         double m_height = 0.;   ///< Wave amplitude
@@ -41,7 +42,7 @@ namespace frydom {
 
         /// Default constructor
         /// \param freeSurface pointer to the free surface, to which the wave field belongs
-        explicit FrAiryRegularWaveField(FrFreeSurface* freeSurface);
+        explicit FrAiryRegularWaveField(FrFreeSurface<OffshoreSystemType>* freeSurface);
 
         /// Get the type name of this object
         /// \return type name of this object

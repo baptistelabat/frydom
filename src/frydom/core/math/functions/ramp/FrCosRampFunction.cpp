@@ -55,9 +55,9 @@ namespace frydom{
 
     }
 
-    void FrCosRampFunction::Initialize() {
-
-    }
+//    void FrCosRampFunction::Initialize() {
+//
+//    }
 
     std::string FrCosRampFunction::GetRepr() const {
         fmt::MemoryWriter mw;

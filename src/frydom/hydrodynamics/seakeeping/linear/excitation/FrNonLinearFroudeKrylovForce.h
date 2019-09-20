@@ -30,37 +30,45 @@
 namespace frydom {
 
     // Forward declarations.
+    template<typename OffshoreSystemType>
     class FrHydroDB;
+
+    template<typename OffshoreSystemType>
     class FrBody;
+
+    template<typename OffshoreSystemType>
     class FrEquilibriumFrame;
 
     /**
      * \class FrNonLinearExcitationForce
      * \brief Class for computing the nonlinear excitation loads (nonlinear FK, linear diffraction).
      */
-    class FrNonLinearFroudeKrylovForce : public FrForce {
+    template<typename OffshoreSystemType>
+    class FrNonLinearFroudeKrylovForce : public FrForce<OffshoreSystemType> {
 
-    private:
+     private:
 
-        std::shared_ptr<FrHydroMesh> m_hydroMesh;   ///< clipped mesh container
+      std::shared_ptr<FrHydroMesh<OffshoreSystemType>> m_hydroMesh;   ///< clipped mesh container
 
-    public:
+     public:
 
-        explicit FrNonLinearFroudeKrylovForce(const std::shared_ptr<FrHydroMesh>& HydroMesh);
+      explicit FrNonLinearFroudeKrylovForce(const std::shared_ptr<FrHydroMesh<OffshoreSystemType>> &HydroMesh);
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "NonLinearFroudeKrylovForce"; }
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "NonLinearFroudeKrylovForce"; }
 
-    private:
+     private:
 
-        void Compute(double time) override;
+      void Compute(double time) override;
 
     };
 
     /// This function creates a (fully or weakly) nonlinear Froude-Krylov force object.
-    std::shared_ptr<FrNonLinearFroudeKrylovForce>
-    make_nonlinear_froude_krylov_force(std::shared_ptr<FrBody> body, std::shared_ptr<FrHydroMesh> HydroMesh);
+    template<typename OffshoreSystemType>
+    std::shared_ptr<FrNonLinearFroudeKrylovForce<OffshoreSystemType>>
+    make_nonlinear_froude_krylov_force(std::shared_ptr<FrBody<OffshoreSystemType>> body,
+                                       std::shared_ptr<FrHydroMesh<OffshoreSystemType>> HydroMesh);
 
 }  // end namespace frydom
 

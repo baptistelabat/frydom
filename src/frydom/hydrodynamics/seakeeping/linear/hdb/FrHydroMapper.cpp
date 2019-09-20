@@ -16,36 +16,49 @@
 
 namespace frydom {
 
-    void FrHydroMapper::Map(FrBEMBody* BEMBody, FrBody* body, std::shared_ptr<FrEquilibriumFrame> eqFrame) {
-        m_mapBEMToBody[BEMBody] = body;
-        m_mapBodyToBEM[body] = BEMBody;
-        m_mapEqFrame[BEMBody] = eqFrame;
+    template<typename OffshoreSystemType>
+    void
+    FrHydroMapper<OffshoreSystemType>::Map(FrBEMBody<OffshoreSystemType> *BEMBody, FrBody<OffshoreSystemType> *body,
+                                           std::shared_ptr<FrEquilibriumFrame<OffshoreSystemType>> eqFrame) {
+      m_mapBEMToBody[BEMBody] = body;
+      m_mapBodyToBEM[body] = BEMBody;
+      m_mapEqFrame[BEMBody] = eqFrame;
     }
 
-    unsigned long FrHydroMapper::GetNbMappings() const {
-        return m_mapBEMToBody.size();
+    template<typename OffshoreSystemType>
+    unsigned long FrHydroMapper<OffshoreSystemType>::GetNbMappings() const {
+      return m_mapBEMToBody.size();
     }
 
-    FrBody* FrHydroMapper::GetBody(FrBEMBody* BEMBody) const {
-        return m_mapBEMToBody.at(BEMBody);
+    template<typename OffshoreSystemType>
+    FrBody<OffshoreSystemType> *
+    FrHydroMapper<OffshoreSystemType>::GetBody(FrBEMBody<OffshoreSystemType> *BEMBody) const {
+      return m_mapBEMToBody.at(BEMBody);
     }
 
-    FrBEMBody* FrHydroMapper::GetBEMBody(FrBody* body) const {
-        return m_mapBodyToBEM.at(body);
+    template<typename OffshoreSystemType>
+    FrBEMBody<OffshoreSystemType> *
+    FrHydroMapper<OffshoreSystemType>::GetBEMBody(FrBody<OffshoreSystemType> *body) const {
+      return m_mapBodyToBEM.at(body);
     }
 
-    unsigned int FrHydroMapper::GetBEMBodyIndex(FrBody* body) const {
-        auto BEMBody = m_mapBodyToBEM.at(body);
-        return BEMBody->GetID();
+    template<typename OffshoreSystemType>
+    unsigned int FrHydroMapper<OffshoreSystemType>::GetBEMBodyIndex(FrBody<OffshoreSystemType> *body) const {
+      auto BEMBody = m_mapBodyToBEM.at(body);
+      return BEMBody->GetID();
     }
 
-    FrEquilibriumFrame* FrHydroMapper::GetEquilibriumFrame(FrBEMBody* BEMBody) const {
-        return m_mapEqFrame.at(BEMBody).get();
+    template<typename OffshoreSystemType>
+    FrEquilibriumFrame<OffshoreSystemType> *
+    FrHydroMapper<OffshoreSystemType>::GetEquilibriumFrame(FrBEMBody<OffshoreSystemType> *BEMBody) const {
+      return m_mapEqFrame.at(BEMBody).get();
     }
 
-    FrEquilibriumFrame* FrHydroMapper::GetEquilibriumFrame(FrBody* body) const {
-        auto BEMBody = this->GetBEMBody(body);
-        return m_mapEqFrame.at(BEMBody).get();
+    template<typename OffshoreSystemType>
+    FrEquilibriumFrame<OffshoreSystemType> *
+    FrHydroMapper<OffshoreSystemType>::GetEquilibriumFrame(FrBody<OffshoreSystemType> *body) const {
+      auto BEMBody = this->GetBEMBody(body);
+      return m_mapEqFrame.at(BEMBody).get();
     }
 
 }  // end namespace frydom

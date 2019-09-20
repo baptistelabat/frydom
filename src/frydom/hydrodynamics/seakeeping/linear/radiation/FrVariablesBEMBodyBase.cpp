@@ -13,185 +13,199 @@ namespace frydom {
 
     namespace internal {
 
-        FrVariablesBEMBodyBase::FrVariablesBEMBodyBase(FrRadiationModelBase* radiationModelBase,
-                                                       FrBEMBody* BEMBody,
-                                                       chrono::ChVariablesBodyOwnMass* variables)
+        template<typename OffshoreSystemType>
+        FrVariablesBEMBodyBase<OffshoreSystemType>::FrVariablesBEMBodyBase(FrRadiationModelBase<OffshoreSystemType> *radiationModelBase,
+                                                       FrBEMBody<OffshoreSystemType> *BEMBody,
+                                                       chrono::ChVariablesBodyOwnMass *variables)
             : chrono::ChVariablesBody(*variables), m_radiationModelBase(radiationModelBase), m_BEMBody(BEMBody) {
-            m_variablesBodyOwnMass = variables;
+          m_variablesBodyOwnMass = variables;
         }
 
-        void FrVariablesBEMBodyBase::SetBEMBody(FrBEMBody* BEMBody) {
-            m_BEMBody = BEMBody;
+        template<typename OffshoreSystemType>
+        void FrVariablesBEMBodyBase<OffshoreSystemType>::SetBEMBody(FrBEMBody<OffshoreSystemType> *BEMBody) {
+          m_BEMBody = BEMBody;
         }
 
-        void FrVariablesBEMBodyBase::SetRadiationModelBase(FrRadiationModelBase* radiationModelBase) {
-            m_radiationModelBase = radiationModelBase;
+        template<typename OffshoreSystemType>
+        void FrVariablesBEMBodyBase<OffshoreSystemType>::SetRadiationModelBase(FrRadiationModelBase<OffshoreSystemType> *radiationModelBase) {
+          m_radiationModelBase = radiationModelBase;
         }
 
-        void FrVariablesBEMBodyBase::SetVariablesBodyOwnMass(chrono::ChVariablesBodyOwnMass* variables) {
-            m_variablesBodyOwnMass = variables;
+        template<typename OffshoreSystemType>
+        void FrVariablesBEMBodyBase<OffshoreSystemType>::SetVariablesBodyOwnMass(chrono::ChVariablesBodyOwnMass *variables) {
+          m_variablesBodyOwnMass = variables;
         }
 
-        void FrVariablesBEMBodyBase::Compute_invMb_v(chrono::ChMatrix<double>& result,
-                                                     const chrono::ChMatrix<double>& vect) const {
+        template<typename OffshoreSystemType>
+        void FrVariablesBEMBodyBase<OffshoreSystemType>::Compute_invMb_v(chrono::ChMatrix<double> &result,
+                                                     const chrono::ChMatrix<double> &vect) const {
 
-            result.Reset();
+          result.Reset();
 
-            auto HDB = m_radiationModelBase->GetRadiationModel()->GetHydroDB();
+          auto HDB = m_radiationModelBase->GetRadiationModel()->GetHydroDB();
 
-            if (vect.Equals(GetVariablesFb(HDB->GetBody(m_BEMBody)))) {
+          if (vect.Equals(GetVariablesFb(HDB->GetBody(m_BEMBody)))) {
 
-                for (auto bodyMotion = HDB->begin(); bodyMotion != HDB->end(); bodyMotion++) {
+            for (auto bodyMotion = HDB->begin(); bodyMotion != HDB->end(); bodyMotion++) {
 
-                    if (bodyMotion->second->IsActive()) {
+              if (bodyMotion->second->IsActive()) {
 
-                        auto fb = GetVariablesFb(bodyMotion->second);
-                        auto invGeneralizedMass = m_radiationModelBase->GetInverseGeneralizedMass(m_BEMBody, bodyMotion->first);
-
-                        for (int i = 0; i < 6; i++) {
-                            for (int j = 0; j < 6; j++) {
-                                result(i) += invGeneralizedMass(i, j) * fb(j);
-                            }
-                        }
-                    }
-                }
-
-            } else {
-
-                auto invGeneralizedMass = m_radiationModelBase->GetInverseGeneralizedMass(m_BEMBody, m_BEMBody);
-                for (int i=0; i<6; i++) {
-                    for (int j=0; j<6; j++) {
-                        result(i) += invGeneralizedMass(i, j) * vect(j);
-                    }
-                }
-
-            }
-
-        }
-
-        void FrVariablesBEMBodyBase::Compute_inc_invMb_v(chrono::ChMatrix<double>& result,
-                                                         const chrono::ChMatrix<double>& vect) const {
-
-            auto HDB = m_radiationModelBase->GetRadiationModel()->GetHydroDB();
-
-            if (vect.Equals(GetVariablesFb(HDB->GetBody(m_BEMBody)))) {
-
-                for (auto bodyMotion = HDB->begin(); bodyMotion != HDB->end(); bodyMotion++) {
-
-                    if (bodyMotion->second->IsActive()) {
-
-                        auto fb = GetVariablesFb(bodyMotion->second);
-                        auto invGeneralizedMass = m_radiationModelBase->GetInverseGeneralizedMass(m_BEMBody, bodyMotion->first);
-
-                        for (int i = 0; i < 6; i++) {
-                            for (int j = 0; j < 6; j++) {
-                                result(i) += invGeneralizedMass(i, j) * fb(j);
-                            }
-                        }
-                    }
-                }
-
-            } else {
-
-                auto invGeneralizedMass = m_radiationModelBase->GetInverseGeneralizedMass(m_BEMBody, m_BEMBody);
-
-                for (int i=0; i<6; i++) {
-                    for (int j=0; j<6; j++) {
-                        result(i) += invGeneralizedMass(i, j) * vect(j);
-                    }
-                }
-            }
-        }
-
-        void FrVariablesBEMBodyBase::Compute_inc_invMb_v(chrono::ChMatrix<double> &result,
-                                                         const chrono::ChMatrix<double> &vect,
-                                                         chrono::ChVariables* variable) const {
-
-            auto BEMBody2 = dynamic_cast<FrVariablesBEMBodyBase*>(variable)->m_BEMBody;
-            auto invGeneralizedMass = m_radiationModelBase->GetInverseGeneralizedMass(m_BEMBody, BEMBody2);
-
-            for (int i=0; i<6; i++) {
-                for (int j=0; j<6; j++) {
-                    result(i) += invGeneralizedMass(i, j) * vect(j);
-                }
-            }
-        }
-
-        void FrVariablesBEMBodyBase::Compute_inc_Mb_v(chrono::ChMatrix<double>& result,
-                                                      const chrono::ChMatrix<double>& vect) const {
-
-            auto HDB = m_radiationModelBase->GetRadiationModel()->GetHydroDB();
-
-            if (vect.Equals(GetVariablesQb(HDB->GetBody(m_BEMBody)))) {
-
-                for (auto bodyMotion = HDB->begin(); bodyMotion != HDB->end(); bodyMotion++) {
-                    if (bodyMotion->second->IsActive()) {
-                        auto qb = GetVariablesQb(bodyMotion->second);
-                        auto generalizedMass = m_radiationModelBase->GetGeneralizedMass(m_BEMBody, bodyMotion->first);
-
-                        for (int i = 0; i < 6; i++) {
-                            for (int j = 0; j < 6; j++) {
-                                result(i) += generalizedMass(i, j) * qb(j);
-                            }
-                        }
-                    }
-                }
-
-            } else {
-
-                auto generalizedMass = m_radiationModelBase->GetGeneralizedMass(m_BEMBody, m_BEMBody);
+                auto fb = GetVariablesFb(bodyMotion->second);
+                auto invGeneralizedMass = m_radiationModelBase->GetInverseGeneralizedMass(m_BEMBody, bodyMotion->first);
 
                 for (int i = 0; i < 6; i++) {
-                    for (int j = 0; j < 6; j++) {
-                        result(i) += generalizedMass(i, j) * vect(j);
-                    }
+                  for (int j = 0; j < 6; j++) {
+                    result(i) += invGeneralizedMass(i, j) * fb(j);
+                  }
                 }
+              }
             }
+
+          } else {
+
+            auto invGeneralizedMass = m_radiationModelBase->GetInverseGeneralizedMass(m_BEMBody, m_BEMBody);
+            for (int i = 0; i < 6; i++) {
+              for (int j = 0; j < 6; j++) {
+                result(i) += invGeneralizedMass(i, j) * vect(j);
+              }
+            }
+
+          }
+
         }
 
-        void FrVariablesBEMBodyBase::MultiplyAndAdd(chrono::ChMatrix<double> &result,
+        template<typename OffshoreSystemType>
+        void FrVariablesBEMBodyBase<OffshoreSystemType>::Compute_inc_invMb_v(chrono::ChMatrix<double> &result,
+                                                         const chrono::ChMatrix<double> &vect) const {
+
+          auto HDB = m_radiationModelBase->GetRadiationModel()->GetHydroDB();
+
+          if (vect.Equals(GetVariablesFb(HDB->GetBody(m_BEMBody)))) {
+
+            for (auto bodyMotion = HDB->begin(); bodyMotion != HDB->end(); bodyMotion++) {
+
+              if (bodyMotion->second->IsActive()) {
+
+                auto fb = GetVariablesFb(bodyMotion->second);
+                auto invGeneralizedMass = m_radiationModelBase->GetInverseGeneralizedMass(m_BEMBody, bodyMotion->first);
+
+                for (int i = 0; i < 6; i++) {
+                  for (int j = 0; j < 6; j++) {
+                    result(i) += invGeneralizedMass(i, j) * fb(j);
+                  }
+                }
+              }
+            }
+
+          } else {
+
+            auto invGeneralizedMass = m_radiationModelBase->GetInverseGeneralizedMass(m_BEMBody, m_BEMBody);
+
+            for (int i = 0; i < 6; i++) {
+              for (int j = 0; j < 6; j++) {
+                result(i) += invGeneralizedMass(i, j) * vect(j);
+              }
+            }
+          }
+        }
+
+        template<typename OffshoreSystemType>
+        void FrVariablesBEMBodyBase<OffshoreSystemType>::Compute_inc_invMb_v(chrono::ChMatrix<double> &result,
+                                                         const chrono::ChMatrix<double> &vect,
+                                                         chrono::ChVariables *variable) const {
+
+          auto BEMBody2 = dynamic_cast<FrVariablesBEMBodyBase *>(variable)->m_BEMBody;
+          auto invGeneralizedMass = m_radiationModelBase->GetInverseGeneralizedMass(m_BEMBody, BEMBody2);
+
+          for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
+              result(i) += invGeneralizedMass(i, j) * vect(j);
+            }
+          }
+        }
+
+        template<typename OffshoreSystemType>
+        void FrVariablesBEMBodyBase<OffshoreSystemType>::Compute_inc_Mb_v(chrono::ChMatrix<double> &result,
+                                                      const chrono::ChMatrix<double> &vect) const {
+
+          auto HDB = m_radiationModelBase->GetRadiationModel()->GetHydroDB();
+
+          if (vect.Equals(GetVariablesQb(HDB->GetBody(m_BEMBody)))) {
+
+            for (auto bodyMotion = HDB->begin(); bodyMotion != HDB->end(); bodyMotion++) {
+              if (bodyMotion->second->IsActive()) {
+                auto qb = GetVariablesQb(bodyMotion->second);
+                auto generalizedMass = m_radiationModelBase->GetGeneralizedMass(m_BEMBody, bodyMotion->first);
+
+                for (int i = 0; i < 6; i++) {
+                  for (int j = 0; j < 6; j++) {
+                    result(i) += generalizedMass(i, j) * qb(j);
+                  }
+                }
+              }
+            }
+
+          } else {
+
+            auto generalizedMass = m_radiationModelBase->GetGeneralizedMass(m_BEMBody, m_BEMBody);
+
+            for (int i = 0; i < 6; i++) {
+              for (int j = 0; j < 6; j++) {
+                result(i) += generalizedMass(i, j) * vect(j);
+              }
+            }
+          }
+        }
+
+        template<typename OffshoreSystemType>
+        void FrVariablesBEMBodyBase<OffshoreSystemType>::MultiplyAndAdd(chrono::ChMatrix<double> &result,
                                                     const chrono::ChMatrix<double> &vect, const double c_a) const {
 
-            auto HDB = m_radiationModelBase->GetRadiationModel()->GetHydroDB();
+          auto HDB = m_radiationModelBase->GetRadiationModel()->GetHydroDB();
 
-            auto generalizedMass = m_radiationModelBase->GetGeneralizedMass(m_BEMBody, m_BEMBody);
+          auto generalizedMass = m_radiationModelBase->GetGeneralizedMass(m_BEMBody, m_BEMBody);
 
-            for (int i=0; i<6; i++) {
-                for (int j=0; j<6; j++) {
-                    result(this->offset + i) += c_a * generalizedMass(i, j) * vect(j);
-                }
+          for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
+              result(this->offset + i) += c_a * generalizedMass(i, j) * vect(j);
             }
+          }
         }
 
-        void FrVariablesBEMBodyBase::DiagonalAdd(chrono::ChMatrix<double>& result, const double c_a) const {
+        template<typename OffshoreSystemType>
+        void FrVariablesBEMBodyBase<OffshoreSystemType>::DiagonalAdd(chrono::ChMatrix<double> &result, const double c_a) const {
 
-            auto generalizedMass = m_radiationModelBase->GetGeneralizedMass(m_BEMBody, m_BEMBody);
+          auto generalizedMass = m_radiationModelBase->GetGeneralizedMass(m_BEMBody, m_BEMBody);
 
-            for (int i=0; i<6; i++) {
-                result(this->offset + i) += c_a * generalizedMass(i, i);
+          for (int i = 0; i < 6; i++) {
+            result(this->offset + i) += c_a * generalizedMass(i, i);
+          }
+
+        }
+
+        template<typename OffshoreSystemType>
+        void
+        FrVariablesBEMBodyBase<OffshoreSystemType>::Build_M(chrono::ChSparseMatrix &storage, int insrow, int inscol, const double c_a) {
+
+          auto generalizedMass = m_radiationModelBase->GetGeneralizedMass(m_BEMBody, m_BEMBody);
+
+          for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
+              storage.SetElement(insrow + i, inscol + j, c_a * generalizedMass(i, j));
             }
-
+          }
         }
 
-        void FrVariablesBEMBodyBase::Build_M(chrono::ChSparseMatrix& storage, int insrow, int inscol, const double c_a) {
-
-            auto generalizedMass = m_radiationModelBase->GetGeneralizedMass(m_BEMBody, m_BEMBody);
-
-            for (int i=0; i<6; i++) {
-                for (int j=0; j<6; j++) {
-                    storage.SetElement(insrow + i, inscol + j, c_a * generalizedMass(i, j));
-                }
-            }
+        template<typename OffshoreSystemType>
+        chrono::ChMatrix<double> FrVariablesBEMBodyBase<OffshoreSystemType>::GetVariablesFb(frydom::FrBody<OffshoreSystemType> *body) const {
+          auto chronoBody = body->GetChronoBody();
+          return chronoBody->Variables().Get_fb();
         }
 
-        chrono::ChMatrix<double> FrVariablesBEMBodyBase::GetVariablesFb(frydom::FrBody *body) const {
-            auto chronoBody = body->GetChronoBody();
-            return chronoBody->Variables().Get_fb();
-        }
-
-        chrono::ChMatrix<double> FrVariablesBEMBodyBase::GetVariablesQb(frydom::FrBody *body) const {
-            auto chronoBody = body->GetChronoBody();
-            return chronoBody->Variables().Get_qb();
+        template<typename OffshoreSystemType>
+        chrono::ChMatrix<double> FrVariablesBEMBodyBase<OffshoreSystemType>::GetVariablesQb(frydom::FrBody<OffshoreSystemType> *body) const {
+          auto chronoBody = body->GetChronoBody();
+          return chronoBody->Variables().Get_qb();
         }
 
     } // end namespace internal

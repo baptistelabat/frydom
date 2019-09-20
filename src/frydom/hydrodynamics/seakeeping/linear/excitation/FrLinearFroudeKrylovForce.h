@@ -23,41 +23,50 @@
 namespace frydom {
 
     // Forward declaration
+    template<typename OffshoreSystemType>
     class FrHydroDB;
+
+    template<typename OffshoreSystemType>
     class FrBody;
+
+    template<typename OffshoreSystemType>
     class FrEquilibriumFrame;
 
     /**
      * \class FrLinearFroudeKrylovForce
      * \brief Class for computing the linear Froude-Krylov loads.
      */
-    class FrLinearFroudeKrylovForce : public FrLinearExcitationForceBase {
+    template<typename OffshoreSystemType>
+    class FrLinearFroudeKrylovForce : public FrLinearExcitationForceBase<OffshoreSystemType> {
 
-    public:
+     public:
 
-        /// Constructor.
-        explicit FrLinearFroudeKrylovForce(std::shared_ptr<FrHydroDB> HDB) : FrLinearExcitationForceBase(HDB) {};
+      /// Constructor.
+      explicit FrLinearFroudeKrylovForce(std::shared_ptr<FrHydroDB<OffshoreSystemType>> HDB)
+          : FrLinearExcitationForceBase<OffshoreSystemType>(HDB) {};
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "LinearFroudeKrylovForce"; }
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "LinearFroudeKrylovForce"; }
 
-        void Initialize() override;
+      void Initialize() override;
 
-        Eigen::MatrixXcd GetHDBData(unsigned int iangle) const override;
+      Eigen::MatrixXcd GetHDBData(unsigned int iangle) const override;
 
-        Eigen::VectorXcd GetHDBData(unsigned int iangle, unsigned int iforce) const override;
+      Eigen::VectorXcd GetHDBData(unsigned int iangle, unsigned int iforce) const override;
 
-    private:
+     private:
 
-        /// Compute the linear Froude-Krylov force
-        /// \param time Current time of the simulation from beginning, in seconds
-        void Compute(double time) override;
+      /// Compute the linear Froude-Krylov force
+      /// \param time Current time of the simulation from beginning, in seconds
+      void Compute(double time) override;
 
     };
 
-    std::shared_ptr<FrLinearFroudeKrylovForce>
-    make_linear_froude_krylov_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body);
+    template<typename OffshoreSystemType>
+    std::shared_ptr<FrLinearFroudeKrylovForce<OffshoreSystemType>>
+    make_linear_froude_krylov_force(std::shared_ptr<FrHydroDB<OffshoreSystemType>> HDB,
+                                    std::shared_ptr<FrBody<OffshoreSystemType>> body);
 
 
 }  // end namespace frydom

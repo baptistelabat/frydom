@@ -36,7 +36,7 @@ namespace frydom {
     template<typename OffshoreSystemType>
     void FrLinearActuator<OffshoreSystemType>::SetMotorFunction(const FrFunctionBase &function) {
 
-      auto chronoFunctionInterface = internal::FrFunctionChronoInterface<OffshoreSystemType>(function);
+      auto chronoFunctionInterface = internal::FrFunctionChronoInterface(function);
 
       m_chronoActuator->SetMotorFunction(chronoFunctionInterface.GetChronoFunction());
 

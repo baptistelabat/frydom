@@ -13,75 +13,80 @@
 namespace frydom {
 
     // Forward declaration
-    template <typename OffshoreSystemType>
+    template<typename OffshoreSystemType>
     class FrBody;
+
+    template<typename OffshoreSystemType>
     class FrBEMBody;
 
     namespace internal {
 
         // Forward declaration
-        template <typename OffshoreSystemType>
+        template<typename OffshoreSystemType>
         class FrRadiationModelBase;
 
-        template <typename OffshoreSystemType>
+        template<typename OffshoreSystemType>
         class FrVariablesBEMBodyBase : public chrono::ChVariablesBody {
 
-        private:
+         private:
 
-            FrRadiationModelBase<OffshoreSystemType>* m_radiationModelBase;
-            FrBEMBody* m_BEMBody;
-            chrono::ChVariablesBodyOwnMass* m_variablesBodyOwnMass;
+          FrRadiationModelBase<OffshoreSystemType> *m_radiationModelBase;
+          FrBEMBody<OffshoreSystemType> *m_BEMBody;
+          chrono::ChVariablesBodyOwnMass *m_variablesBodyOwnMass;
 
-        public:
+         public:
 
-            FrVariablesBEMBodyBase() : ChVariablesBody() {}
+          FrVariablesBEMBodyBase() : ChVariablesBody() {}
 
-            explicit FrVariablesBEMBodyBase(FrRadiationModelBase<OffshoreSystemType>* radiationModelBase,
-                                            FrBEMBody* BEMBody,
-                                            chrono::ChVariablesBodyOwnMass* variables);
+          explicit FrVariablesBEMBodyBase(FrRadiationModelBase<OffshoreSystemType> *radiationModelBase,
+                                          FrBEMBody<OffshoreSystemType> *BEMBody,
+                                          chrono::ChVariablesBodyOwnMass *variables);
 
-            void SetBEMBody(FrBEMBody* BEMBody);
+          void SetBEMBody(FrBEMBody<OffshoreSystemType> *BEMBody);
 
-            FrBEMBody* GetBEMBody() const { return m_BEMBody; }
+          FrBEMBody<OffshoreSystemType> *GetBEMBody() const { return m_BEMBody; }
 
-            void SetRadiationModelBase(FrRadiationModelBase<OffshoreSystemType>* radiationModelBase);
+          void SetRadiationModelBase(FrRadiationModelBase<OffshoreSystemType> *radiationModelBase);
 
-            void SetVariablesBodyOwnMass(chrono::ChVariablesBodyOwnMass* variables);
+          void SetVariablesBodyOwnMass(chrono::ChVariablesBodyOwnMass *variables);
 
-            void Compute_invMb_v(chrono::ChMatrix<double>& result, const chrono::ChMatrix<double>& vect) const override;
+          void Compute_invMb_v(chrono::ChMatrix<double> &result, const chrono::ChMatrix<double> &vect) const override;
 
-            void Compute_inc_invMb_v(chrono::ChMatrix<double>& result, const chrono::ChMatrix<double>& vect) const override;
+          void
+          Compute_inc_invMb_v(chrono::ChMatrix<double> &result, const chrono::ChMatrix<double> &vect) const override;
 
-            void Compute_inc_invMb_v(chrono::ChMatrix<double>& result, const chrono::ChMatrix<double>& vect,
-                    chrono::ChVariables* variable) const;
+          void Compute_inc_invMb_v(chrono::ChMatrix<double> &result, const chrono::ChMatrix<double> &vect,
+                                   chrono::ChVariables *variable) const;
 
-            void Compute_inc_Mb_v(chrono::ChMatrix<double>& result, const chrono::ChMatrix<double>& vect) const override;
+          void Compute_inc_Mb_v(chrono::ChMatrix<double> &result, const chrono::ChMatrix<double> &vect) const override;
 
-            void MultiplyAndAdd(chrono::ChMatrix<double>& result, const chrono::ChMatrix<double>& vect,
-                    const double c_a) const override;
+          void MultiplyAndAdd(chrono::ChMatrix<double> &result, const chrono::ChMatrix<double> &vect,
+                              const double c_a) const override;
 
-            void DiagonalAdd(chrono::ChMatrix<double>& result, const double c_a) const override;
+          void DiagonalAdd(chrono::ChMatrix<double> &result, const double c_a) const override;
 
-            void Build_M(chrono::ChSparseMatrix& storage, int insrow, int inscol, const double c_a) override;
+          void Build_M(chrono::ChSparseMatrix &storage, int insrow, int inscol, const double c_a) override;
 
-            chrono::ChMatrix<double> GetVariablesFb(FrBody<OffshoreSystemType>* body) const;
+          chrono::ChMatrix<double> GetVariablesFb(FrBody<OffshoreSystemType> *body) const;
 
-            chrono::ChMatrix<double> GetVariablesQb(FrBody<OffshoreSystemType>* body) const;
+          chrono::ChMatrix<double> GetVariablesQb(FrBody<OffshoreSystemType> *body) const;
 
-            //
-            // VIRTUAL FUNCTION
-            //
+          //
+          // VIRTUAL FUNCTION
+          //
 
 
-            double GetBodyMass() const override { return m_variablesBodyOwnMass->GetBodyMass(); }
+          double GetBodyMass() const override { return m_variablesBodyOwnMass->GetBodyMass(); }
 
-            chrono::ChMatrix33<>& GetBodyInertia() override { return m_variablesBodyOwnMass->GetBodyInertia(); }
+          chrono::ChMatrix33<> &GetBodyInertia() override { return m_variablesBodyOwnMass->GetBodyInertia(); }
 
-            const chrono::ChMatrix33<>& GetBodyInertia() const override { return m_variablesBodyOwnMass->GetBodyInertia(); }
+          const chrono::ChMatrix33<> &
+          GetBodyInertia() const override { return m_variablesBodyOwnMass->GetBodyInertia(); }
 
-            chrono::ChMatrix33<>& GetBodyInvInertia() override { return m_variablesBodyOwnMass->GetBodyInvInertia(); }
+          chrono::ChMatrix33<> &GetBodyInvInertia() override { return m_variablesBodyOwnMass->GetBodyInvInertia(); }
 
-            const chrono::ChMatrix33<>& GetBodyInvInertia() const override { return m_variablesBodyOwnMass->GetBodyInvInertia(); }
+          const chrono::ChMatrix33<> &
+          GetBodyInvInertia() const override { return m_variablesBodyOwnMass->GetBodyInvInertia(); }
 
         };
 

@@ -17,7 +17,8 @@
 
 namespace frydom {
 
-    FrEnvironment* FrWind::GetEnvironment() const {
+    template <typename OffshoreSystemType>
+    FrEnvironment<OffshoreSystemType>* FrWind<OffshoreSystemType>::GetEnvironment() const {
         return m_atmosphere->GetEnvironment();
     }
 

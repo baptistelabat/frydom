@@ -25,147 +25,147 @@
 namespace frydom {
 
 
-  // Forward declarations
-  template<typename OffshoreSystemType>
-  class FrOffshoreSystem;
+    // Forward declarations
+    template<typename OffshoreSystemType>
+    class FrOffshoreSystem;
 
-  template<typename OffshoreSystemType>
-  class FrEnvironment;
+    template<typename OffshoreSystemType>
+    class FrEnvironment;
 
-  template<typename OffshoreSystemType>
-  class FrAtmosphere;
+    template<typename OffshoreSystemType>
+    class FrAtmosphere;
 
-  template<typename OffshoreSystemType>
-  class FrOcean;
+    template<typename OffshoreSystemType>
+    class FrOcean;
 
-  template<typename OffshoreSystemType>
-  class FrWaveField;
+    template<typename OffshoreSystemType>
+    class FrWaveField;
 
-  template<typename OffshoreSystemType>
-  class FrTidal;
+    template<typename OffshoreSystemType>
+    class FrTidal;
 
-  template<typename OffshoreSystemType>
-  class FrBody;
+    template<typename OffshoreSystemType>
+    class FrBody;
 
-  template<typename OffshoreSystemType>
-  class FrAiryRegularWaveField;
+    template<typename OffshoreSystemType, typename StretchingType>
+    class FrAiryRegularWaveField;
 
-  template<typename OffshoreSystemType>
-  class FrAiryRegularOptimWaveField;
+    template<class OffshoreSystemType, class StretchingType>
+    class FrAiryRegularOptimWaveField;
 
-  template<class WaveSpectrumType>
-  class FrAiryIrregularWaveField;
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
+    class FrAiryIrregularWaveField;
 
-  template<class WaveSpectrumType>
-  class FrAiryIrregularOptimWaveField;
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
+    class FrAiryIrregularOptimWaveField;
 
-  template<typename OffshoreSystemType>
-  class FrFreeSurfaceGridAsset;
-
-
-  /// Class for a free surface system.
-  /**
-   * \class FrFreeSurface
-   * \brief Class for defining the free surface.
-   */
-  template<typename OffshoreSystemType>
-  class FrFreeSurface : public FrObject<OffshoreSystemType> {
-
-   protected:  // Disallow the default constructor to be used as a public method // TODO: mettre private???
-
-    FrOcean<OffshoreSystemType> *m_ocean;                            ///< Pointer to the ocean containing this free surface
-    bool m_showFreeSurface = true;                ///< Boolean testing if the free surface is to be shown/exist
-
-    // Free surface elements
-    std::unique_ptr<FrTidal<OffshoreSystemType>> m_tidal;            ///< Tidal model
-    std::unique_ptr<FrWaveField<OffshoreSystemType>> m_waveField;    ///< Wave field model
-
-    // Visualization asset
-    std::shared_ptr<FrFreeSurfaceGridAsset<OffshoreSystemType>> m_freeSurfaceGridAsset;    ///> free surface grid asset, containing also the visualization asset
-
-   public:
-
-    /// Default constructor
-    /// \param ocean ocean containing this free surface
-    explicit FrFreeSurface(FrOcean<OffshoreSystemType> *ocean);
-
-    /// Default destructor
-    ~FrFreeSurface();
-
-    /// Get the type name of this object
-    /// \return type name of this object
-    std::string GetTypeName() const override { return "FreeSurface"; }
-
-    //---------------------------- Asset ----------------------------//
-
-    /// Set if the free surface is to be shown/exist
-    /// \param showFreeSurface showfreesurface true means the free surface exists
-    void ShowFreeSurface(bool showFreeSurface);
-
-    /// Get the free surface grid asset
-    /// \return free surface grid asset
-    FrFreeSurfaceGridAsset<OffshoreSystemType> *GetFreeSurfaceGridAsset() const;
-
-    //---------------------------- Free surface elements Getters ----------------------------//
-
-    /// Get the ocean containing this free surface
-    /// \return ocean containing this free surface
-    FrOcean<OffshoreSystemType> *GetOcean() const;
-
-    /// Get the atmosphere above the ocean
-    /// \return atmosphere above the ocean
-    FrAtmosphere<OffshoreSystemType> *GetAtmosphere() const;;
-
-    /// Get the tidal model
-    /// \return tidal model
-    FrTidal<OffshoreSystemType> *GetTidal() const;
-
-    /// Get the wave field model
-    /// \return wave field model
-    FrWaveField<OffshoreSystemType> *GetWaveField() const;
-
-    /// Get the wave elevation at the position (x,y,0), given by the wave field model
-    /// \param x x position
-    /// \param y y position
-    /// \param fc frame convention (NED/NWU)
-    /// \return wave elevation, in meters
-    double GetElevation(double x, double y, FRAME_CONVENTION fc) const;
-
-    /// Get the vertical position of the free surface at the position (0,0) (tidal height + elevation)
-    /// \param fc frame convention (NED/NWU)
-    /// \return vertical position of the free surface at the position (0,0) in frame convention
-    double GetPosition(FRAME_CONVENTION fc) const;
-
-    /// Get the vertical position of the free surface at the position (x,y) (tidal height + elevation)
-    /// \param x x position
-    /// \param y y position
-    /// \param fc frame convention (NED/NWU)
-    /// \return vertical position of the free surface at the position (x,y) in frame convention
-    double GetPosition(double x, double y, FRAME_CONVENTION fc) const;
-
-    /// Get the vertical position of the free surface at the worldPos position (tidal height + elevation)
-    /// \param worldPos position in world reference frame
-    /// \param fc frame convention (NED/NWU)
-    /// \return vertical position of the free surface at the position (x,y) in frame convention
-    double GetPosition(const Position worldPos, FRAME_CONVENTION fc) const;
-
-    /// Get the vertical position of the free surface at the worldPos position (tidal height + elevation)
-    /// \param worldPos position in world reference frame, (x,y) are used as input and result is returned in z
-    /// \param fc frame convention (NED/NWU)
-    void GetPosition(Position &worldPos, FRAME_CONVENTION fc) const;
-
-    //---------------------------- Pressure ----------------------------//
+    template<typename OffshoreSystemType>
+    class FrFreeSurfaceGridAsset;
 
 
-    /// This function gives the pressure.
-    /// \param x x position.
-    /// \param y y position.
-    /// \param z z position.
-    /// \param fc frame convention (NED/NWU).
-    /// \return Pressure at the position (x,y,z) in frame convention.
-    double GetPressure(double x, double y, double z, FRAME_CONVENTION fc) const;
+    /// Class for a free surface system.
+    /**
+     * \class FrFreeSurface
+     * \brief Class for defining the free surface.
+     */
+    template<typename OffshoreSystemType>
+    class FrFreeSurface : public FrObject<OffshoreSystemType> {
 
-    //---------------------------- Wave field makers ----------------------------//
+     protected:  // Disallow the default constructor to be used as a public method // TODO: mettre private???
+
+      FrOcean<OffshoreSystemType> *m_ocean;                            ///< Pointer to the ocean containing this free surface
+      bool m_showFreeSurface = true;                ///< Boolean testing if the free surface is to be shown/exist
+
+      // Free surface elements
+      std::unique_ptr<FrTidal<OffshoreSystemType>> m_tidal;            ///< Tidal model
+      std::unique_ptr<FrWaveField<OffshoreSystemType>> m_waveField;    ///< Wave field model
+
+      // Visualization asset
+      std::shared_ptr<FrFreeSurfaceGridAsset<OffshoreSystemType>> m_freeSurfaceGridAsset;    ///> free surface grid asset, containing also the visualization asset
+
+     public:
+
+      /// Default constructor
+      /// \param ocean ocean containing this free surface
+      explicit FrFreeSurface(FrOcean<OffshoreSystemType> *ocean);
+
+      /// Default destructor
+      ~FrFreeSurface();
+
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "FreeSurface"; }
+
+      //---------------------------- Asset ----------------------------//
+
+      /// Set if the free surface is to be shown/exist
+      /// \param showFreeSurface showfreesurface true means the free surface exists
+      void ShowFreeSurface(bool showFreeSurface);
+
+      /// Get the free surface grid asset
+      /// \return free surface grid asset
+      FrFreeSurfaceGridAsset<OffshoreSystemType> *GetFreeSurfaceGridAsset() const;
+
+      //---------------------------- Free surface elements Getters ----------------------------//
+
+      /// Get the ocean containing this free surface
+      /// \return ocean containing this free surface
+      FrOcean<OffshoreSystemType> *GetOcean() const;
+
+      /// Get the atmosphere above the ocean
+      /// \return atmosphere above the ocean
+      FrAtmosphere<OffshoreSystemType> *GetAtmosphere() const;;
+
+      /// Get the tidal model
+      /// \return tidal model
+      FrTidal<OffshoreSystemType> *GetTidal() const;
+
+      /// Get the wave field model
+      /// \return wave field model
+      FrWaveField<OffshoreSystemType> *GetWaveField() const;
+
+      /// Get the wave elevation at the position (x,y,0), given by the wave field model
+      /// \param x x position
+      /// \param y y position
+      /// \param fc frame convention (NED/NWU)
+      /// \return wave elevation, in meters
+      double GetElevation(double x, double y, FRAME_CONVENTION fc) const;
+
+      /// Get the vertical position of the free surface at the position (0,0) (tidal height + elevation)
+      /// \param fc frame convention (NED/NWU)
+      /// \return vertical position of the free surface at the position (0,0) in frame convention
+      double GetPosition(FRAME_CONVENTION fc) const;
+
+      /// Get the vertical position of the free surface at the position (x,y) (tidal height + elevation)
+      /// \param x x position
+      /// \param y y position
+      /// \param fc frame convention (NED/NWU)
+      /// \return vertical position of the free surface at the position (x,y) in frame convention
+      double GetPosition(double x, double y, FRAME_CONVENTION fc) const;
+
+      /// Get the vertical position of the free surface at the worldPos position (tidal height + elevation)
+      /// \param worldPos position in world reference frame
+      /// \param fc frame convention (NED/NWU)
+      /// \return vertical position of the free surface at the position (x,y) in frame convention
+      double GetPosition(const Position worldPos, FRAME_CONVENTION fc) const;
+
+      /// Get the vertical position of the free surface at the worldPos position (tidal height + elevation)
+      /// \param worldPos position in world reference frame, (x,y) are used as input and result is returned in z
+      /// \param fc frame convention (NED/NWU)
+      void GetPosition(Position &worldPos, FRAME_CONVENTION fc) const;
+
+      //---------------------------- Pressure ----------------------------//
+
+
+      /// This function gives the pressure.
+      /// \param x x position.
+      /// \param y y position.
+      /// \param z z position.
+      /// \param fc frame convention (NED/NWU).
+      /// \return Pressure at the position (x,y,z) in frame convention.
+      double GetPressure(double x, double y, double z, FRAME_CONVENTION fc) const;
+
+      //---------------------------- Wave field makers ----------------------------//
 
 //        /// Set the wave field model to a null wave field
 //        void NoWaves();
@@ -229,18 +229,18 @@ namespace frydom {
 //        /// \return Airy irregular wave field
 //        FrAiryIrregularOptimWaveField* SetAiryIrregularOptimWaveField();
 
-    //---------------------------- Update-Initialize-StepFinalize ----------------------------//
+      //---------------------------- Update-Initialize-StepFinalize ----------------------------//
 
-    /// Initialize the state of the free surface
-    void Initialize() override;
+      /// Initialize the state of the free surface
+      void Initialize() override;
 
-    /// Update the state of the free surface
-    virtual void Update(double time);
+      /// Update the state of the free surface
+      virtual void Update(double time);
 
-    /// Method called at the send of a time step. Logging may be used here
-    void StepFinalize() override;
+      /// Method called at the send of a time step. Logging may be used here
+      void StepFinalize() override;
 
-  };
+    };
 
 }  // end namespace frydom
 

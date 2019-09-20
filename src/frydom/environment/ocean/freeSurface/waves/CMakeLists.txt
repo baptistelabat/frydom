@@ -6,8 +6,6 @@ add_subdirectory(wave_spectrum)
 set(WAVES_FILES_LOCAL
         FrWaveDispersionRelation.cpp
         FrWaveField.cpp
-#        FrWaveSpectrum.cpp
-        FrKinematicStretching.cpp
         )
 
 set(WAVES_FILES "")

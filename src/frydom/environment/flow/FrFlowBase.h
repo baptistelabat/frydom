@@ -24,73 +24,78 @@
 namespace frydom {
 
     // Forward declarations
+    template<typename OffshoreSystemType>
     class FrEnvironment;
+
     class FrFrame;
+
+    template<typename OffshoreSystemType>
     class FrFieldBase;
 
     /**
      * \class FrFlowBase
      * \brief Class for defining in general the type of flow used (current or wind).
      */
-    class FrFlowBase : public FrObject {
+    template <typename OffshoreSystemType>
+    class FrFlowBase : public FrObject<OffshoreSystemType> {
 
-    private:
-        std::unique_ptr<FrFieldBase> m_field;        ///< Flow field model
+     private:
+      std::unique_ptr<FrFieldBase<OffshoreSystemType>> m_field;        ///< Flow field model
 
-    protected:
-        double m_time = 0.;
-        double c_ramp = 1.;   ///> cache value of the time ramp applied on the flow field // TODO : ne pas passer par cette valeur de cache... utiliser directement la fonction !
+     protected:
+      double m_time = 0.;
+      double c_ramp = 1.;   ///> cache value of the time ramp applied on the flow field // TODO : ne pas passer par cette valeur de cache... utiliser directement la fonction !
 
-    public:
+     public:
 
-        /// Default constructor
-        explicit FrFlowBase();
+      /// Default constructor
+      explicit FrFlowBase();
 
-        /// Destructor of the flow base object
-        ~FrFlowBase() = default;
+      /// Destructor of the flow base object
+      ~FrFlowBase() = default;
 
-        /// Return the flow velocity at a given point in world frame
-        /// \param worldPos Position of the Point in world frame
-        /// \param fc Frame convention (NED/NWU)
-        /// \return Velocity in world frame
-        Velocity GetFluxVelocityInWorld(const Position &worldPos, FRAME_CONVENTION fc) const;
+      /// Return the flow velocity at a given point in world frame
+      /// \param worldPos Position of the Point in world frame
+      /// \param fc Frame convention (NED/NWU)
+      /// \return Velocity in world frame
+      Velocity GetFluxVelocityInWorld(const Position &worldPos, FRAME_CONVENTION fc) const;
 
-        /// Return the flow velocity observed from the local frame
-        /// \param frame Local frame in which the velocity is computed
-        /// \param worldVel Translation velocity of the frame in world frame
-        /// \param fc Frame convention (NED/NWU)
-        /// \return Velocity in local frame
-        Velocity GetRelativeVelocityInFrame(const FrFrame &frame, const Velocity &worldVel, FRAME_CONVENTION fc) const;
+      /// Return the flow velocity observed from the local frame
+      /// \param frame Local frame in which the velocity is computed
+      /// \param worldVel Translation velocity of the frame in world frame
+      /// \param fc Frame convention (NED/NWU)
+      /// \return Velocity in local frame
+      Velocity GetRelativeVelocityInFrame(const FrFrame &frame, const Velocity &worldVel, FRAME_CONVENTION fc) const;
 
-        /// Create a new templated field
-        /// \tparam Field templated field
-        template <class T>
-        void NewField();
+      /// Create a new templated field
+      /// \tparam Field templated field
+      template<class T>
+      void NewField();
 
-        /// Create a uniform field
-        void MakeFieldUniform();
+      /// Create a uniform field
+      void MakeFieldUniform();
 
-        /// Return the field model of the flow
-        /// \tparam Field Field model
-        /// \return Field model pointer
-        template <class T=FrUniformField>
-        T* GetField() const;
+      /// Return the field model of the flow
+      /// \tparam Field Field model
+      /// \return Field model pointer
+      template<class T=FrUniformField<OffshoreSystemType>>
+      T *GetField() const;
 
-        /// Get the field as a uniform field
-        /// \return uniform field
-        FrUniformField* GetFieldUniform() const;
+      /// Get the field as a uniform field
+      /// \return uniform field
+      FrUniformField<OffshoreSystemType> *GetFieldUniform() const;
 
-        /// Method of initialization of the flow base model
-        void Initialize() override;
+      /// Method of initialization of the flow base model
+      void Initialize() override;
 
-        /// Update the state of the flow base object
-        /// \param time Current time of the simulation
-        virtual void Update(double time);
+      /// Update the state of the flow base object
+      /// \param time Current time of the simulation
+      virtual void Update(double time);
 
-        //// Method to be applied at the end of each time step
-        void StepFinalize() override;
+      //// Method to be applied at the end of each time step
+      void StepFinalize() override;
 
-        virtual FrEnvironment* GetEnvironment() const = 0;
+      virtual FrEnvironment<OffshoreSystemType> *GetEnvironment() const = 0;
 
     };
 

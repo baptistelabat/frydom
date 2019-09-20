@@ -21,8 +21,8 @@ namespace frydom {
      * \class FrAiryIrregularOptimWaveField
      * \brief Class which deals with irregular wave field, from FrAiryIrregularWaveField.
      */
-    template <class WaveSpectrumType>
-    class FrAiryIrregularOptimWaveField : public FrAiryIrregularWaveField<WaveSpectrumType> {
+    template <class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
+    class FrAiryIrregularOptimWaveField : public FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType> {
     private:
 
         std::vector<Complex> c_expJwt;    ///< Cache value of exp(-j.w_m.t) for the different w_m frequencies
@@ -34,7 +34,7 @@ namespace frydom {
 
         /// Default constructor
         /// \param freeSurface free surface containing this wave field
-        explicit FrAiryIrregularOptimWaveField(FrFreeSurface* freeSurface);
+        explicit FrAiryIrregularOptimWaveField(FrFreeSurface<OffshoreSystemType>* freeSurface);
 
         /// Get the type name of this object
         /// \return type name of this object
@@ -69,7 +69,7 @@ namespace frydom {
 } //end namespace frydom
 
 
-#include "FrAiryIrregularOptimWaveField.cpp"
+//#include "FrAiryIrregularOptimWaveField.cpp"
 
 
 #endif //FRYDOM_FRAIRYIRREGULAROPTIMWAVEFIELD_H

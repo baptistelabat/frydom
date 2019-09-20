@@ -18,49 +18,54 @@
 
 namespace frydom {
 
-    void FrLinearExcitationForce::Initialize() {
+    template<typename OffshoreSystemType>
+    void FrLinearExcitationForce<OffshoreSystemType>::Initialize() {
 
-        // Initialization of the parent class.
-        FrLinearExcitationForceBase::Initialize();
-
-    }
-
-    Eigen::MatrixXcd FrLinearExcitationForce::GetHDBData(unsigned int iangle) const {
-
-        auto BEMBody = m_HDB->GetBody(m_body);
-
-        return BEMBody->GetExcitation(iangle);
+      // Initialization of the parent class.
+      FrLinearExcitationForceBase<OffshoreSystemType>::Initialize();
 
     }
 
-    Eigen::VectorXcd FrLinearExcitationForce::GetHDBData(unsigned int iangle, unsigned int iforce) const {
+    template<typename OffshoreSystemType>
+    Eigen::MatrixXcd FrLinearExcitationForce<OffshoreSystemType>::GetHDBData(unsigned int iangle) const {
 
-        auto BEMBody = m_HDB->GetBody(m_body);
+      auto BEMBody = this->m_HDB->GetBody(this->m_body);
 
-        return BEMBody->GetExcitation(iangle,iforce);
-
-    }
-
-    void FrLinearExcitationForce::Compute(double time) {
-
-        // This function computes the linear excitation forces from Nemoh results.
-
-        Compute_F_HDB();
+      return BEMBody->GetExcitation(iangle);
 
     }
 
-    std::shared_ptr<FrLinearExcitationForce>
-    make_linear_excitation_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body){
+    template<typename OffshoreSystemType>
+    Eigen::VectorXcd FrLinearExcitationForce<OffshoreSystemType>::GetHDBData(unsigned int iangle, unsigned int iforce) const {
 
-        // This function creates the linear excitation force object.
+      auto BEMBody = this->m_HDB->GetBody(this->m_body);
 
-        // Construction of the excitation force object from the HDB.
-        auto excitationForce = std::make_shared<FrLinearExcitationForce>(HDB);
+      return BEMBody->GetExcitation(iangle, iforce);
 
-        // Add the excitation force object as an external force to the body.
-        body->AddExternalForce(excitationForce); // Initialization of m_body.
+    }
 
-        return excitationForce;
+    template<typename OffshoreSystemType>
+    void FrLinearExcitationForce<OffshoreSystemType>::Compute(double time) {
+
+      // This function computes the linear excitation forces from Nemoh results.
+
+      Compute_F_HDB();
+
+    }
+
+    template<typename OffshoreSystemType>
+    std::shared_ptr<FrLinearExcitationForce<OffshoreSystemType>>
+    make_linear_excitation_force(std::shared_ptr<FrHydroDB<OffshoreSystemType>> HDB, std::shared_ptr<FrBody<OffshoreSystemType>> body) {
+
+      // This function creates the linear excitation force object.
+
+      // Construction of the excitation force object from the HDB.
+      auto excitationForce = std::make_shared<FrLinearExcitationForce>(HDB);
+
+      // Add the excitation force object as an external force to the body.
+      body->AddExternalForce(excitationForce); // Initialization of m_body.
+
+      return excitationForce;
 
     }
 

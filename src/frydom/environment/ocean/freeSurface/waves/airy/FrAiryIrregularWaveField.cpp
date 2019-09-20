@@ -17,7 +17,6 @@
 #include "frydom/environment/ocean/FrOcean.h"
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveDispersionRelation.h"
-//#include "frydom/environment/ocean/freeSurface/waves/FrWaveSpectrum.h"
 
 
 #include "MathUtils/VectorGeneration.h"
@@ -25,18 +24,21 @@
 
 namespace frydom {
 
-    template<class WaveSpectrumType>
-    FrAiryIrregularWaveField<WaveSpectrumType>::FrAiryIrregularWaveField(FrFreeSurface *freeSurface) : FrWaveField(
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
+    FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::FrAiryIrregularWaveField(
+        FrFreeSurface<OffshoreSystemType> *freeSurface) : FrWaveField<OffshoreSystemType>(
         freeSurface) {
-      m_waveModel = LINEAR_WAVES;
-      m_verticalFactor = std::make_unique<FrKinematicStretching>();
+//      this->m_waveModel = LINEAR_WAVES;
+      m_verticalFactor = std::make_unique<StretchingType>();
 
       m_waveSpectrum = std::make_unique<WaveSpectrumType>();
     }
 
-    template<class WaveSpectrumType>
-    void FrAiryIrregularWaveField<WaveSpectrumType>::SetWaveFrequencies(double minFreq, double maxFreq,
-                                                                        unsigned int nbFreq) {
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
+    void
+    FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::SetWaveFrequencies(double minFreq,
+                                                                                                       double maxFreq,
+                                                                                                       unsigned int nbFreq) {
       assert(minFreq > 0);
       assert(minFreq <= maxFreq);
       assert(nbFreq != 0);
@@ -56,17 +58,17 @@ namespace frydom {
       m_waveNumbers.clear();
 
       // Set the wave numbers, using the wave dispersion relation
-      auto gravityAcceleration = m_freeSurface->GetOcean()->GetEnvironment()->GetGravityAcceleration();
+      auto gravityAcceleration = this->m_freeSurface->GetOcean()->GetEnvironment()->GetGravityAcceleration();
 
       double k;
-      if (m_infinite_depth) {
+      if (this->m_infinite_depth) {
         m_waveNumbers.reserve(m_nbFreq);
         for (auto freq:m_waveFrequencies) {
           k = pow(freq, 2) / gravityAcceleration;
           m_waveNumbers.push_back(k);
         }
       } else {
-        m_waveNumbers = SolveWaveDispersionRelation(m_freeSurface->GetOcean()->GetDepth(NWU), m_waveFrequencies,
+        m_waveNumbers = SolveWaveDispersionRelation(this->m_freeSurface->GetOcean()->GetDepth(NWU), m_waveFrequencies,
                                                     gravityAcceleration);
       }
       if (!m_waveDirections.empty()) {
@@ -75,10 +77,11 @@ namespace frydom {
 
     }
 
-    template<class WaveSpectrumType>
-    void FrAiryIrregularWaveField<WaveSpectrumType>::SetMeanWaveDirectionAngle(double dirAngle, ANGLE_UNIT unit,
-                                                                               FRAME_CONVENTION fc,
-                                                                               DIRECTION_CONVENTION dc) {
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
+    void FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::SetMeanWaveDirectionAngle(
+        double dirAngle, ANGLE_UNIT unit,
+        FRAME_CONVENTION fc,
+        DIRECTION_CONVENTION dc) {
       // The wave direction angle is used internally with the convention NWU, GOTO, and RAD unit.
       m_meanDir = dirAngle;
       if (unit == mathutils::DEG) m_meanDir *= DEG2RAD;
@@ -89,10 +92,11 @@ namespace frydom {
       if (m_waveSpectrum->GetDirectionalModel() != nullptr) { ComputeWaveDirections(); }
     }
 
-    template<class WaveSpectrumType>
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
     void
-    FrAiryIrregularWaveField<WaveSpectrumType>::SetMeanWaveDirection(Direction direction, FRAME_CONVENTION fc,
-                                                                     DIRECTION_CONVENTION dc) {
+    FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::SetMeanWaveDirection(
+        Direction direction, FRAME_CONVENTION fc,
+        DIRECTION_CONVENTION dc) {
       assert(mathutils::IsClose(direction.Getuz(), 0.));
       double dirAngle = atan2(direction.Getuy(), direction.Getux());
       SetMeanWaveDirectionAngle(dirAngle, mathutils::RAD, fc, dc);
@@ -100,7 +104,7 @@ namespace frydom {
 
     // TODO : mettre le modele directionnel en template de FrWaveSpectrum
 //    template <class WaveSpectrumType>
-//    void FrAiryIrregularWaveField<WaveSpectrumType>::SetDirectionalParameters(unsigned int nbDir, double spreadingFactor, WAVE_DIRECTIONAL_MODEL dirType) {
+//    void FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::SetDirectionalParameters(unsigned int nbDir, double spreadingFactor, WAVE_DIRECTIONAL_MODEL dirType) {
 //        m_nbDir = nbDir;
 //        m_waveDirections.clear();
 //        switch (dirType) {
@@ -118,8 +122,8 @@ namespace frydom {
 //        ComputeWaveDirections();
 //    }
 
-    template<class WaveSpectrumType>
-    void FrAiryIrregularWaveField<WaveSpectrumType>::ComputeWaveDirections() {
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
+    void FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::ComputeWaveDirections() {
 
       assert(m_waveSpectrum != nullptr);
 
@@ -152,8 +156,9 @@ namespace frydom {
       }
     }
 
-    template<class WaveSpectrumType>
-    void FrAiryIrregularWaveField<WaveSpectrumType>::SetWavePhases(std::vector<std::vector<double>> &wavePhases) {
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
+    void FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::SetWavePhases(
+        std::vector<std::vector<double>> &wavePhases) {
       assert(wavePhases.size() == m_nbDir);
       for (auto &w: wavePhases) {
         assert(w.size() == m_nbFreq);
@@ -162,57 +167,58 @@ namespace frydom {
     }
 
 //    template <class WaveSpectrumType>
-//    FrJonswapWaveSpectrum *FrAiryIrregularWaveField<WaveSpectrumType>::SetJonswapWaveSpectrum(double Hs, double Tp, double gamma) {
+//    FrJonswapWaveSpectrum *FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::SetJonswapWaveSpectrum(double Hs, double Tp, double gamma) {
 //        m_waveSpectrum = std::make_unique<FrJonswapWaveSpectrum>(Hs, Tp, gamma);
 //        return dynamic_cast<FrJonswapWaveSpectrum*>(m_waveSpectrum.get());
 //    }
 //
 //    template <class WaveSpectrumType>
-//    FrPiersonMoskowitzWaveSpectrum *FrAiryIrregularWaveField<WaveSpectrumType>::SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp) {
+//    FrPiersonMoskowitzWaveSpectrum *FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp) {
 //        m_waveSpectrum = std::make_unique<FrPiersonMoskowitzWaveSpectrum>(Hs,Tp);
 //        return dynamic_cast<FrPiersonMoskowitzWaveSpectrum*>(m_waveSpectrum.get());
 //    }
 //
 //    template <class WaveSpectrumType>
-//    FrTestWaveSpectrum *FrAiryIrregularWaveField<WaveSpectrumType>::SetTestWaveSpectrum() {
+//    FrTestWaveSpectrum *FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::SetTestWaveSpectrum() {
 //        m_waveSpectrum = std::make_unique<FrTestWaveSpectrum>();
 //        return dynamic_cast<FrTestWaveSpectrum*>(m_waveSpectrum.get());
 //    }
 
-    template<class WaveSpectrumType>
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
     WaveSpectrumType *
-    FrAiryIrregularWaveField<WaveSpectrumType>::GetWaveSpectrum() const { return m_waveSpectrum.get(); }
+    FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::GetWaveSpectrum() const { return m_waveSpectrum.get(); }
 
-    template<class WaveSpectrumType>
-    void FrAiryIrregularWaveField<WaveSpectrumType>::SetStretching(STRETCHING_TYPE type) {
-      switch (type) {
-        case NO_STRETCHING:
-          m_verticalFactor = std::make_unique<FrKinematicStretching>();
-          break;
-        case VERTICAL:
-          m_verticalFactor = std::make_unique<FrKinStretchingVertical>();
-          break;
-        case EXTRAPOLATE:
-          m_verticalFactor = std::make_unique<FrKinStretchingExtrapol>();
-          break;
-        case WHEELER:
-          m_verticalFactor = std::make_unique<FrKinStretchingWheeler>(this);
-          break;
-        case CHAKRABARTI:
-          m_verticalFactor = std::make_unique<FrKinStretchingChakrabarti>(this);
-        case DELTA:
-          m_verticalFactor = std::make_unique<FrKinStretchingDelta>(this);
-        case HDELTA:
-          m_verticalFactor = std::make_unique<FrKinStretchingHDelta>(this);
-        default:
-          m_verticalFactor = std::make_unique<FrKinematicStretching>();
-          break;
-      }
-      m_verticalFactor->SetInfDepth(m_infinite_depth);
-    }
+//    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
+//    void FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::SetStretching(
+//        STRETCHING_TYPE type) {
+//      switch (type) {
+//        case NO_STRETCHING:
+//          m_verticalFactor = std::make_unique<FrKinematicStretching>();
+//          break;
+//        case VERTICAL:
+//          m_verticalFactor = std::make_unique<FrKinStretchingVertical>();
+//          break;
+//        case EXTRAPOLATE:
+//          m_verticalFactor = std::make_unique<FrKinStretchingExtrapol>();
+//          break;
+//        case WHEELER:
+//          m_verticalFactor = std::make_unique<FrKinStretchingWheeler>(this);
+//          break;
+//        case CHAKRABARTI:
+//          m_verticalFactor = std::make_unique<FrKinStretchingChakrabarti>(this);
+//        case DELTA:
+//          m_verticalFactor = std::make_unique<FrKinStretchingDelta>(this);
+//        case HDELTA:
+//          m_verticalFactor = std::make_unique<FrKinStretchingHDelta>(this);
+//        default:
+//          m_verticalFactor = std::make_unique<FrKinematicStretching>();
+//          break;
+//      }
+//      m_verticalFactor->SetInfDepth(m_infinite_depth);
+//    }
 
-    template<class WaveSpectrumType>
-    void FrAiryIrregularWaveField<WaveSpectrumType>::GenerateRandomWavePhases() {
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
+    void FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::GenerateRandomWavePhases() {
 
       std::random_device rd;
       std::mt19937 gen(rd());
@@ -220,16 +226,18 @@ namespace frydom {
 
     }
 
-    template<class WaveSpectrumType>
-    void FrAiryIrregularWaveField<WaveSpectrumType>::GenerateRandomWavePhases(int seed) {
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
+    void
+    FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::GenerateRandomWavePhases(int seed) {
 
       std::mt19937 gen(seed);
       GenerateRandomWavePhases(gen);
 
     }
 
-    template<class WaveSpectrumType>
-    void FrAiryIrregularWaveField<WaveSpectrumType>::GenerateRandomWavePhases(std::mt19937 &seed) {
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
+    void FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::GenerateRandomWavePhases(
+        std::mt19937 &seed) {
 
       m_wavePhases = std::make_unique<std::vector<std::vector<double>>>();
       m_wavePhases->clear();
@@ -250,8 +258,10 @@ namespace frydom {
 
     }
 
-    template<class WaveSpectrumType>
-    std::vector<double> FrAiryIrregularWaveField<WaveSpectrumType>::GetWaveFrequencies(FREQUENCY_UNIT unit) const {
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
+    std::vector<double>
+    FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::GetWaveFrequencies(
+        FREQUENCY_UNIT unit) const {
       std::vector<double> freqs = m_waveFrequencies;
       if (unit != mathutils::RADS) {
         for (auto &freq: freqs) {
@@ -261,10 +271,11 @@ namespace frydom {
       return freqs;
     }
 
-    template<class WaveSpectrumType>
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
     std::vector<double>
-    FrAiryIrregularWaveField<WaveSpectrumType>::GetWaveDirections(ANGLE_UNIT unit, FRAME_CONVENTION fc,
-                                                                  DIRECTION_CONVENTION dc) const {
+    FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::GetWaveDirections(ANGLE_UNIT unit,
+                                                                                                      FRAME_CONVENTION fc,
+                                                                                                      DIRECTION_CONVENTION dc) const {
       auto directions = m_waveDirections;
 
       if (IsNED(fc)) for (auto &dir: directions) { dir = -dir; }
@@ -276,10 +287,10 @@ namespace frydom {
 
     }
 
-    template<class WaveSpectrumType>
-    void FrAiryIrregularWaveField<WaveSpectrumType>::Initialize() {
-      FrWaveField::Initialize();
-      m_verticalFactor->SetInfDepth(m_infinite_depth);
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
+    void FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::Initialize() {
+      FrWaveField<OffshoreSystemType>::Initialize();
+      m_verticalFactor->SetInfDepth(this->m_infinite_depth);
 
       if (m_waveDirections.empty()) { m_waveDirections.push_back(m_meanDir); }
 
@@ -295,7 +306,7 @@ namespace frydom {
       if (m_wavePhases != nullptr) {
         testSize = m_wavePhases->size() == m_nbDir;
         for (unsigned int idir = 0; idir < m_nbDir; ++idir) {
-          testSize = testSize & m_wavePhases->at(idir).size() == m_nbFreq;
+          testSize = testSize && m_wavePhases->at(idir).size() == m_nbFreq;
         }
       }
 
@@ -303,12 +314,14 @@ namespace frydom {
         GenerateRandomWavePhases();
       }
 
-      Update(0.);
+      this->Update(0.);
     }
 
-    template<class WaveSpectrumType>
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
     std::vector<std::vector<Complex>>
-    FrAiryIrregularWaveField<WaveSpectrumType>::GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const {
+    FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::GetComplexElevation(double x,
+                                                                                                        double y,
+                                                                                                        FRAME_CONVENTION fc) const {
 
       // This function gets the complex wave elevation at the position (x,y,0), of the irregular Airy wave field.
 
@@ -346,7 +359,7 @@ namespace frydom {
           ki = m_waveNumbers[ifreq];
           aik = amplitudeTemp[ifreq];
           phi_ik = m_wavePhases->at(idir)[ifreq];
-          elevation = aik * exp(JJ * (ki * kdir - m_waveFrequencies[ifreq] * c_time + phi_ik)) * NWUsign * c_ramp;
+          elevation = aik * exp(JJ * (ki * kdir - m_waveFrequencies[ifreq] * this->c_time + phi_ik)) * NWUsign * this->c_ramp;
           ComplexElevation_temp.push_back(elevation);
         }
 
@@ -356,10 +369,12 @@ namespace frydom {
       return ComplexElevation;
     }
 
-    template<class WaveSpectrumType>
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
     std::vector<mathutils::Vector3d<Complex>>
-    FrAiryIrregularWaveField<WaveSpectrumType>::GetComplexVelocity(double x, double y, double z,
-                                                                   FRAME_CONVENTION fc) const {
+    FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::GetComplexVelocity(double x,
+                                                                                                       double y,
+                                                                                                       double z,
+                                                                                                       FRAME_CONVENTION fc) const {
       double NWUsign = 1;
       if (IsNED(fc)) {
         y = -y;
@@ -381,8 +396,8 @@ namespace frydom {
         ki = m_waveNumbers[ifreq];
         wi = m_waveFrequencies[ifreq];
         Vx = 0, Vy = 0, Vz = 0;
-        Stretching = m_verticalFactor->Eval(x, y, z, ki, c_depth);
-        StretchingDZ = m_verticalFactor->EvalDZ(x, y, z, ki, c_depth);
+        Stretching = m_verticalFactor->Eval(x, y, z, ki, this->c_depth);
+        StretchingDZ = m_verticalFactor->EvalDZ(x, y, z, ki, this->c_depth);
         for (unsigned int idir = 0; idir < m_nbDir; ++idir) {
           thetaj = m_waveDirections[idir];
           Vx += cos(thetaj) * wi * ComplexElevation[idir][ifreq] * Stretching * NWUsign;
@@ -395,8 +410,10 @@ namespace frydom {
       return ComplexVel;
     }
 
-    template<class WaveSpectrumType>
-    double FrAiryIrregularWaveField<WaveSpectrumType>::GetElevation(double x, double y, FRAME_CONVENTION fc) const {
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
+    double
+    FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::GetElevation(double x, double y,
+                                                                                                 FRAME_CONVENTION fc) const {
       double elevation = 0.;
 
       auto ComplexElevation = GetComplexElevation(x, y, fc);
@@ -409,9 +426,11 @@ namespace frydom {
       return elevation;
     }
 
-    template<class WaveSpectrumType>
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
     Velocity
-    FrAiryIrregularWaveField<WaveSpectrumType>::GetVelocity(double x, double y, double z, FRAME_CONVENTION fc) const {
+    FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::GetVelocity(double x, double y,
+                                                                                                double z,
+                                                                                                FRAME_CONVENTION fc) const {
       Velocity Vel = {0., 0., 0.};
       auto cplxVel = GetComplexVelocity(x, y, z, fc);
       for (unsigned int ifreq = 0; ifreq < m_nbFreq; ++ifreq) {
@@ -422,9 +441,11 @@ namespace frydom {
       return Vel;
     }
 
-    template<class WaveSpectrumType>
-    Acceleration FrAiryIrregularWaveField<WaveSpectrumType>::GetAcceleration(double x, double y, double z,
-                                                                             FRAME_CONVENTION fc) const {
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
+    Acceleration
+    FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::GetAcceleration(double x, double y,
+                                                                                                    double z,
+                                                                                                    FRAME_CONVENTION fc) const {
       Acceleration Acc = {0., 0., 0.};
       auto cplxVel = GetComplexVelocity(x, y, z, fc);
       double wi;
@@ -437,9 +458,10 @@ namespace frydom {
       return Acc;
     }
 
-    template<class WaveSpectrumType>
-    double FrAiryIrregularWaveField<WaveSpectrumType>::GetMeanWaveDirectionAngle(ANGLE_UNIT unit, FRAME_CONVENTION fc,
-                                                                                 DIRECTION_CONVENTION dc) const {
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
+    double FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::GetMeanWaveDirectionAngle(
+        ANGLE_UNIT unit, FRAME_CONVENTION fc,
+        DIRECTION_CONVENTION dc) const {
       double dirAngle = m_meanDir;
       if (IsNED(fc)) dirAngle = -dirAngle;
       if (IsCOMEFROM(dc)) dirAngle -= MU_PI;
@@ -448,18 +470,21 @@ namespace frydom {
       return mathutils::Normalize_0_360(dirAngle);
     }
 
-    template<class WaveSpectrumType>
-    Direction FrAiryIrregularWaveField<WaveSpectrumType>::GetMeanWaveDirection(FRAME_CONVENTION fc,
-                                                                               DIRECTION_CONVENTION dc) const {
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
+    Direction FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::GetMeanWaveDirection(
+        FRAME_CONVENTION fc,
+        DIRECTION_CONVENTION dc) const {
       auto dirAngle = GetMeanWaveDirectionAngle(mathutils::RAD, fc, dc);
       return {cos(dirAngle), sin(dirAngle), 0.};
     }
 
     // ------------------------------------- Pressure ----------------------------
 
-    template<class WaveSpectrumType>
+    template<class OffshoreSystemType, class StretchingType, class WaveSpectrumType>
     double
-    FrAiryIrregularWaveField<WaveSpectrumType>::GetPressure(double x, double y, double z, FRAME_CONVENTION fc) const {
+    FrAiryIrregularWaveField<OffshoreSystemType, StretchingType, WaveSpectrumType>::GetPressure(double x, double y,
+                                                                                                double z,
+                                                                                                FRAME_CONVENTION fc) const {
 
       // This function gets the pressure at the position (x,y,z) for a irregular Airy wave field.
 
@@ -479,24 +504,24 @@ namespace frydom {
       // Loop over the frequencies.
       for (unsigned int ifreq = 0; ifreq < m_nbFreq; ++ifreq) { // n.
         ki = m_waveNumbers[ifreq];
-        if (m_infinite_depth) { // Infinite water depth.
+        if (this->m_infinite_depth) { // Infinite water depth.
           th = 1;
         } else { // Finite water depth.
-          th = tanh(ki * c_depth);
+          th = tanh(ki * this->c_depth);
         }
-        Ez = m_verticalFactor->Eval(x, y, z, ki, c_depth);
+        Ez = m_verticalFactor->Eval(x, y, z, ki, this->c_depth);
         // Loop over the wave directions.
         for (unsigned int idir = 0; idir < m_nbDir; ++idir) { // m.
           kdir = x * cos(m_waveDirections[idir]) + y * sin(m_waveDirections[idir]);
           aik = c_amplitude[idir][ifreq];
           phi_ik = m_wavePhases->at(idir)[ifreq];
           Pressure = Pressure + Ez * th * std::imag(
-              aik * exp(JJ * (ki * kdir - m_waveFrequencies[ifreq] * c_time + phi_ik)) * NWUsign * c_ramp);
+              aik * exp(JJ * (ki * kdir - m_waveFrequencies[ifreq] * this->c_time + phi_ik)) * NWUsign * this->c_ramp);
         }
       }
 
       // Rho*gravity term.
-      Pressure = Pressure * c_density * c_gravity;
+      Pressure = Pressure * this->c_density * this->c_gravity;
 
       return Pressure;
 

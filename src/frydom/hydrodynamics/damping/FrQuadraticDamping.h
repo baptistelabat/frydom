@@ -26,7 +26,8 @@ namespace frydom {
       * but can be taken relatively or not to the current velocity (using m_relativeVelocity).
       * The resulting damping force (calculated in local frame) is then transformed in global frame.
      * */
-    class FrQuadraticDamping : public FrForce {
+     template <typename OffshoreSystemType>
+    class FrQuadraticDamping : public FrForce<OffshoreSystemType> {
 
     private:
         /// Damping coefficients in translation.
@@ -81,8 +82,9 @@ namespace frydom {
     };
 
     /// This function creates a quadratic damping force.
-    std::shared_ptr<FrQuadraticDamping>
-    make_quadratic_damping_force(std::shared_ptr<FrBody> body, FLUID_TYPE ft, bool relativeToFluid);
+    template <typename OffshoreSystemType>
+    std::shared_ptr<FrQuadraticDamping<OffshoreSystemType>>
+    make_quadratic_damping_force(std::shared_ptr<FrBody<OffshoreSystemType>> body, FLUID_TYPE ft, bool relativeToFluid);
 
 }  // end namespace frydom
 

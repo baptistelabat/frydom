@@ -1,10 +1,6 @@
 message(STATUS "                    ...wave_spectrum")
 
 set(WAVE_SPECTRUM_FILES_LOCAL
-#        FrAiryRegularWaveField.cpp
-#        FrAiryRegularOptimWaveField.cpp
-#        FrAiryIrregularWaveField.cpp
-        #        FrAiryIrregularOptimWaveField.cpp
 #        FrWaveSpectrum.cpp
         FrDirectionalModel.cpp
         )

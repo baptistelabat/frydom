@@ -16,37 +16,41 @@
 #include "frydom/environment/flow/FrFlowBase.h"
 
 
-
 namespace frydom {
 
     // Forward declarations
+    template<typename OffshoreSystemType>
     class FrEnvironment;
+
+    template<typename OffshoreSystemType>
     class FrAtmosphere;
 
     /**
     * \class FrWind
     * \brief Class for defining a wind.
     */
-    class FrWind : public FrFlowBase {
-    private:
+    template<typename OffshoreSystemType>
+    class FrWind : public FrFlowBase<OffshoreSystemType> {
+     private:
 
-        FrAtmosphere* m_atmosphere;  ///> Pointer to the atmosphere containing this wind model
+      FrAtmosphere<OffshoreSystemType> *m_atmosphere;  ///> Pointer to the atmosphere containing this wind model
 
-    public:
+     public:
 
-        /// Default constructor
-        /// \param atmosphere containing this wind model
-        explicit FrWind(FrAtmosphere* atmosphere) : FrFlowBase() { m_atmosphere = atmosphere;}
+      /// Default constructor
+      /// \param atmosphere containing this wind model
+      explicit FrWind(FrAtmosphere<OffshoreSystemType> *atmosphere)
+          : FrFlowBase<OffshoreSystemType>() { m_atmosphere = atmosphere; }
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "Wind"; }
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "Wind"; }
 
-        /// Get the atmosphere containing this wind model
-        /// \return atmosphere containing this wind model
-        FrAtmosphere* GetAtmosphere() const {return m_atmosphere;}
+      /// Get the atmosphere containing this wind model
+      /// \return atmosphere containing this wind model
+      FrAtmosphere<OffshoreSystemType> *GetAtmosphere() const { return m_atmosphere; }
 
-        FrEnvironment* GetEnvironment() const override;
+      FrEnvironment<OffshoreSystemType> *GetEnvironment() const override;
 
     };
 

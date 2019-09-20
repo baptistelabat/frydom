@@ -20,57 +20,61 @@
 namespace frydom {
 
     // Forward declarations.
+    template <typename OffshoreSystemType>
     class FrHydroDB;
+
+    template <typename OffshoreSystemType>
     class FrEquilibriumFrame;
 
     /**
      * \class FrLinearExcitationForce
      * \brief Class for defining a linear excitation force (linear or nonlinear).
      */
-    class FrLinearExcitationForceBase : public FrForce {
+    template<typename OffshoreSystemType>
+    class FrLinearExcitationForceBase : public FrForce<OffshoreSystemType> {
 
-    protected:
+     protected:
 
-        /// Interpolator in waves frequencies and directions.
-        std::vector<std::vector<mathutils::Interp1dLinear<double, std::complex<double>>>> m_waveDirInterpolators;
+      /// Interpolator in waves frequencies and directions.
+      std::vector<std::vector<mathutils::Interp1dLinear<double, std::complex<double>>>> m_waveDirInterpolators;
 
-        /// Hydrodynamic database.
-        std::shared_ptr<FrHydroDB> m_HDB;
+      /// Hydrodynamic database.
+      std::shared_ptr<FrHydroDB<OffshoreSystemType>> m_HDB;
 
-        /// Excitation loads (linear excitation) or diffraction loads (nonlinear excitation).
-        std::vector<Eigen::MatrixXcd> m_Fhdb;
+      /// Excitation loads (linear excitation) or diffraction loads (nonlinear excitation).
+      std::vector<Eigen::MatrixXcd> m_Fhdb;
 
-        //TODO: passed the raw to shared ptr, need some modif in the mapper.
-        FrEquilibriumFrame* m_equilibriumFrame;
+      //TODO: passed the raw to shared ptr, need some modif in the mapper.
+      FrEquilibriumFrame<OffshoreSystemType> *m_equilibriumFrame;
 
-        /// Excitation or diffraction force.
-        Force m_WorldForce = Force();
+      /// Excitation or diffraction force.
+      Force m_WorldForce = Force();
 
-        /// Excitation or diffraction torque.
-        Torque m_WorldTorque = Torque();
+      /// Excitation or diffraction torque.
+      Torque m_WorldTorque = Torque();
 
 
-    public:
+     public:
 
-        /// Constructor.
-        explicit FrLinearExcitationForceBase(std::shared_ptr<FrHydroDB> HDB) : m_HDB(HDB) {};
+      /// Constructor.
+      explicit FrLinearExcitationForceBase(std::shared_ptr<FrHydroDB<OffshoreSystemType>> HDB) : m_HDB(HDB) {};
 
-        virtual Eigen::MatrixXcd GetHDBData(const unsigned int iangle) const = 0;
+      virtual Eigen::MatrixXcd GetHDBData(const unsigned int iangle) const = 0;
 
-        virtual Eigen::VectorXcd GetHDBData(const unsigned int iangle, const unsigned iforce) const = 0;
+      virtual Eigen::VectorXcd GetHDBData(const unsigned int iangle, const unsigned iforce) const = 0;
 
-        /// This function interpolates the excitation loads (linear excitation) or the diffraction loads (nonlinear excitation) with respect to the wave frequencies and directions.
-        virtual void BuildHDBInterpolators();
+      /// This function interpolates the excitation loads (linear excitation) or the diffraction loads (nonlinear excitation) with respect to the wave frequencies and directions.
+      virtual void BuildHDBInterpolators();
 
-        /// This function return the excitation force (linear excitation) or the diffraction force (nonlinear excitation) form the interpolator.
-        std::vector<Eigen::MatrixXcd> GetHDBInterp(std::vector<double> waveFrequencies,
-                                                          std::vector<double> waveDirections,
-                                                          mathutils::ANGLE_UNIT angleUnit);
+      /// This function return the excitation force (linear excitation) or the diffraction force (nonlinear excitation) form the interpolator.
+      std::vector<Eigen::MatrixXcd> GetHDBInterp(std::vector<double> waveFrequencies,
+                                                 std::vector<double> waveDirections,
+                                                 mathutils::ANGLE_UNIT angleUnit);
 
-        void Initialize() override;
+      void Initialize() override;
 
-        /// This function computes the excitation loads (linear excitation) or the diffraction loads (nonlinear excitation).
-        void Compute_F_HDB();
+      /// This function computes the excitation loads (linear excitation) or the diffraction loads (nonlinear excitation).
+      void Compute_F_HDB();
 
     };
 

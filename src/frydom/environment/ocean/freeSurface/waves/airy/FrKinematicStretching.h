@@ -29,6 +29,7 @@ namespace frydom {
 
 
     // Forward declaration
+    template <typename OffshoreSystemType>
     class FrWaveField;
 
     // --------------------------------------------------------
@@ -39,13 +40,18 @@ namespace frydom {
      * \class FrKinematicStretching
      * \brief Class for defining the kinematic stretching model.
      */
+     template <typename OffshoreSystemType>
     class FrKinematicStretching {
 
     protected:
+        FrWaveField<OffshoreSystemType>* m_waveField;           ///< Wave field definition
         bool is_steady = true;                      ///< The expression is not time dependant
         bool c_infinite_depth = false;              ///< cache value of infinite_depth of FrWaveField
 
     public:
+
+        explicit FrKinematicStretching(FrWaveField<OffshoreSystemType>* wave_field);
+
         /// Set the infinite depth value
         void SetInfDepth(bool infinite_depth);
 
@@ -103,7 +109,8 @@ namespace frydom {
      * \class FrKinStretchingVertical
      * \brief Class for using the vertical stretching model.
      */
-    class FrKinStretchingVertical : public FrKinematicStretching {
+    template <typename OffshoreSystemType>
+    class FrKinStretchingVertical : public FrKinematicStretching<OffshoreSystemType> {
 
     public:
         /// Return the vertical scaling coefficient with vertical stretching
@@ -121,7 +128,8 @@ namespace frydom {
      * \class FrKinStretchingExtrapol
      * \brief Class for using the extrapolation stretching model.
      */
-    class FrKinStretchingExtrapol : public FrKinematicStretching {
+    template <typename OffshoreSystemType>
+    class FrKinStretchingExtrapol : public FrKinematicStretching<OffshoreSystemType> {
 
     public:
         /// Return the vertical scaling coefficient with extrapolation stretching
@@ -144,14 +152,12 @@ namespace frydom {
      * \class FrKinStretchingWheeler
      * \brief Class for using the Wheeler stretching model.
      */
-    class FrKinStretchingWheeler : public FrKinematicStretching {
-
-    private:
-        FrWaveField* m_waveField;           ///< Wave field definition
+    template <typename OffshoreSystemType>
+    class FrKinStretchingWheeler : public FrKinematicStretching<OffshoreSystemType> {
 
     public:
         /// Default constructor
-        explicit FrKinStretchingWheeler(FrWaveField* waveField);
+        explicit FrKinStretchingWheeler(FrWaveField<OffshoreSystemType>* waveField);
 
 //        /// Define the linear wave field to which the stretching is applied
 //        void SetWaveField(FrWaveField* waveField);
@@ -181,14 +187,13 @@ namespace frydom {
      * \class FrKinStretchingChakrabarti
      * \brief Class for using the Chakrabarti stretching model.
      */
-    class FrKinStretchingChakrabarti : public FrKinematicStretching {
+    template <typename OffshoreSystemType>
+    class FrKinStretchingChakrabarti : public FrKinematicStretching<OffshoreSystemType> {
 
-    private:
-        FrWaveField* m_waveField;           ///< Wave field definition
 
     public:
         /// Default constructor
-        explicit FrKinStretchingChakrabarti(FrWaveField* waveField);
+        explicit FrKinStretchingChakrabarti(FrWaveField<OffshoreSystemType>* waveField);
 
 //        /// Define the linear wave field to which the stretching is applied
 //        void SetWaveField(FrWaveField* waveField);
@@ -218,16 +223,16 @@ namespace frydom {
      * \class FrKinStretchingDelta
      * \brief Class for using the delta-stretching model.
      */
-    class FrKinStretchingDelta : public FrKinematicStretching {
+    template <typename OffshoreSystemType>
+    class FrKinStretchingDelta : public FrKinematicStretching<OffshoreSystemType> {
 
     private:
-        FrWaveField* m_waveField;           ///< Wave field definition
         double m_delta;                     ///< Delta parameter in [0 , 1]
         double m_hd;                        ///< water depth to which the delta-stretching is applied
 
     public:
         /// Default constructor
-        explicit FrKinStretchingDelta(FrWaveField* waveField);
+        explicit FrKinStretchingDelta(FrWaveField<OffshoreSystemType>* waveField);
 
 //        /// Define the linear wave field to which the stretching is applied
 //        void SetWaveField(FrWaveField* waveField);
@@ -259,15 +264,15 @@ namespace frydom {
      * \class FrKinStretchingDelta
      * \brief Class for using the Hdelta-stretching model.
      */
-    class FrKinStretchingHDelta : public FrKinematicStretching {
+    template <typename OffshoreSystemType>
+    class FrKinStretchingHDelta : public FrKinematicStretching<OffshoreSystemType> {
 
     private:
-        FrWaveField* m_waveField;           ///< Wave field definition
         double m_delta = 0.3;                     ///< Delta parameter in [0 , 1]
 
     public:
         /// Default constructor
-        explicit FrKinStretchingHDelta(FrWaveField* waveField);
+        explicit FrKinStretchingHDelta(FrWaveField<OffshoreSystemType>* waveField);
 
 //        /// Define the linear wave field to which the stretching is applied
 //        void SetWaveField(FrWaveField* waveField);

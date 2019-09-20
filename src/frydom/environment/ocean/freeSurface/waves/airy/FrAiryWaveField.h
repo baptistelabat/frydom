@@ -10,11 +10,12 @@
 
 namespace frydom {
 
+    template<typename OffshoreSystemType>
     class FrFreeSurface;
 
 
-    template <class StretchingType>
-    class FrAiryWaveField : public FrWaveField {
+    template<class OffshoreSystemType, class StretchingType>
+    class FrAiryWaveField : public FrWaveField<OffshoreSystemType> {
 
      protected:
 
@@ -22,7 +23,8 @@ namespace frydom {
 
      public:
 
-      explicit FrAiryWaveField(FrFreeSurface* freeSurface) : FrWaveField(freeSurface) {};
+      explicit FrAiryWaveField(FrFreeSurface<OffshoreSystemType> *freeSurface) : FrWaveField<OffshoreSystemType>(
+          freeSurface) {};
 
 
     };

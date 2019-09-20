@@ -21,22 +21,22 @@
 
 namespace frydom {
 
-    template<class StretchingType>
-    FrAiryRegularWaveField<StretchingType>::FrAiryRegularWaveField(FrFreeSurface *freeSurface) :
-        FrAiryWaveField<StretchingType>(freeSurface) {
+    template<class OffshoreSystemType, class StretchingType>
+    FrAiryRegularWaveField<OffshoreSystemType, StretchingType>::FrAiryRegularWaveField(FrFreeSurface<OffshoreSystemType> *freeSurface) :
+        FrAiryWaveField<OffshoreSystemType, StretchingType>(freeSurface) {
 //        m_waveModel = LINEAR_WAVES;
-      this->m_verticalFactor = std::make_unique<FrKinematicStretching>();
+      this->m_verticalFactor = std::make_unique<FrKinematicStretching<OffshoreSystemType>>();
       this->m_verticalFactor->SetInfDepth(this->m_infinite_depth);
     }
 
-    template<class StretchingType>
-    void FrAiryRegularWaveField<StretchingType>::SetWaveHeight(double height) { m_height = height; }
+    template<class OffshoreSystemType, class StretchingType>
+    void FrAiryRegularWaveField<OffshoreSystemType, StretchingType>::SetWaveHeight(double height) { m_height = height; }
 
-    template<class StretchingType>
-    double FrAiryRegularWaveField<StretchingType>::GetWaveHeight() const { return m_height; }
+    template<class OffshoreSystemType, class StretchingType>
+    double FrAiryRegularWaveField<OffshoreSystemType, StretchingType>::GetWaveHeight() const { return m_height; }
 
-    template<class StretchingType>
-    void FrAiryRegularWaveField<StretchingType>::SetWavePeriod(double period) {
+    template<class OffshoreSystemType, class StretchingType>
+    void FrAiryRegularWaveField<OffshoreSystemType, StretchingType>::SetWavePeriod(double period) {
 
       // Set the wave period in seconds
       m_period = period;
@@ -57,14 +57,14 @@ namespace frydom {
 
     }
 
-    template<class StretchingType>
-    double FrAiryRegularWaveField<StretchingType>::GetWavePeriod(FREQUENCY_UNIT unit) const {
+    template<class OffshoreSystemType, class StretchingType>
+    double FrAiryRegularWaveField<OffshoreSystemType, StretchingType>::GetWavePeriod(FREQUENCY_UNIT unit) const {
       return convert_frequency(m_period, mathutils::S, unit);
     }
 
 
-    template<class StretchingType>
-    void FrAiryRegularWaveField<StretchingType>::SetDirection(double dirAngle, ANGLE_UNIT unit, FRAME_CONVENTION fc,
+    template<class OffshoreSystemType, class StretchingType>
+    void FrAiryRegularWaveField<OffshoreSystemType, StretchingType>::SetDirection(double dirAngle, ANGLE_UNIT unit, FRAME_CONVENTION fc,
                                                               DIRECTION_CONVENTION dc) {
       // The wave direction angle is used internally with the convention NWU, GOTO, and RAD unit.
       m_dirAngle = dirAngle;
@@ -76,17 +76,17 @@ namespace frydom {
 
     }
 
-    template<class StretchingType>
-    void FrAiryRegularWaveField<StretchingType>::SetDirection(const Direction &direction, FRAME_CONVENTION fc,
+    template<class OffshoreSystemType, class StretchingType>
+    void FrAiryRegularWaveField<OffshoreSystemType, StretchingType>::SetDirection(const Direction &direction, FRAME_CONVENTION fc,
                                                               DIRECTION_CONVENTION dc) {
       assert(mathutils::IsClose(direction.Getuz(), 0.));
       double dirAngle = atan2(direction.Getuy(), direction.Getux());
       SetDirection(dirAngle, mathutils::RAD, fc, dc);
     }
 
-    template<class StretchingType>
+    template<class OffshoreSystemType, class StretchingType>
     double
-    FrAiryRegularWaveField<StretchingType>::GetDirectionAngle(ANGLE_UNIT unit, FRAME_CONVENTION fc,
+    FrAiryRegularWaveField<OffshoreSystemType, StretchingType>::GetDirectionAngle(ANGLE_UNIT unit, FRAME_CONVENTION fc,
                                                               DIRECTION_CONVENTION dc) const {
       double dirAngle = m_dirAngle;
       if (IsNED(fc)) dirAngle = -dirAngle;
@@ -96,16 +96,16 @@ namespace frydom {
       return mathutils::Normalize_0_360(dirAngle);
     }
 
-    template<class StretchingType>
-    Direction FrAiryRegularWaveField<StretchingType>::GetDirection(FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const {
+    template<class OffshoreSystemType, class StretchingType>
+    Direction FrAiryRegularWaveField<OffshoreSystemType, StretchingType>::GetDirection(FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const {
       auto dirAngle = GetDirectionAngle(mathutils::RAD, fc, dc);
       return {cos(dirAngle), sin(dirAngle), 0.};
     }
 
-    template<class StretchingType>
-    double FrAiryRegularWaveField<StretchingType>::GetWaveLength() const { return 2. * M_PI / m_k; }
+    template<class OffshoreSystemType, class StretchingType>
+    double FrAiryRegularWaveField<OffshoreSystemType, StretchingType>::GetWaveLength() const { return 2. * M_PI / m_k; }
 
-//    void FrAiryRegularWaveField<StretchingType>::SetStretching(STRETCHING_TYPE type) {
+//    void FrAiryRegularWaveField<OffshoreSystemType, StretchingType>::SetStretching(STRETCHING_TYPE type) {
 //        switch (type) {
 //            case NO_STRETCHING:
 //                m_verticalFactor = std::make_unique<FrKinematicStretching>();
@@ -132,9 +132,9 @@ namespace frydom {
 
     // ------------------------------------- Wave elevation, velocity and acceleration ----------------------------
 
-    template<class StretchingType>
+    template<class OffshoreSystemType, class StretchingType>
     std::vector<std::vector<Complex>>
-    FrAiryRegularWaveField<StretchingType>::GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const {
+    FrAiryRegularWaveField<OffshoreSystemType, StretchingType>::GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const {
       double NWUsign = 1;
       if (IsNED(fc)) {
         y = -y;
@@ -145,9 +145,9 @@ namespace frydom {
       return std::vector<std::vector<Complex>>(1, std::vector<Complex>(1, cmplxElevation));
     }
 
-    template<class StretchingType>
+    template<class OffshoreSystemType, class StretchingType>
     mathutils::Vector3d<Complex>
-    FrAiryRegularWaveField<StretchingType>::GetComplexVelocity(double x, double y, double z,
+    FrAiryRegularWaveField<OffshoreSystemType, StretchingType>::GetComplexVelocity(double x, double y, double z,
                                                                FRAME_CONVENTION fc) const {
       double NWUsign = 1;
       if (IsNED(fc)) {
@@ -167,21 +167,21 @@ namespace frydom {
       return {Vx, Vy, Vz};
     }
 
-    template<class StretchingType>
-    double FrAiryRegularWaveField<StretchingType>::GetElevation(double x, double y, FRAME_CONVENTION fc) const {
+    template<class OffshoreSystemType, class StretchingType>
+    double FrAiryRegularWaveField<OffshoreSystemType, StretchingType>::GetElevation(double x, double y, FRAME_CONVENTION fc) const {
       return std::imag(GetComplexElevation(x, y, fc)[0][0]);
     }
 
-    template<class StretchingType>
+    template<class OffshoreSystemType, class StretchingType>
     Velocity
-    FrAiryRegularWaveField<StretchingType>::GetVelocity(double x, double y, double z, FRAME_CONVENTION fc) const {
+    FrAiryRegularWaveField<OffshoreSystemType, StretchingType>::GetVelocity(double x, double y, double z, FRAME_CONVENTION fc) const {
       auto cplxVel = GetComplexVelocity(x, y, z, fc);
       return {std::imag(cplxVel.x()), std::imag(cplxVel.y()), std::imag(cplxVel.z())};
     }
 
-    template<class StretchingType>
+    template<class OffshoreSystemType, class StretchingType>
     Acceleration
-    FrAiryRegularWaveField<StretchingType>::GetAcceleration(double x, double y, double z, FRAME_CONVENTION fc) const {
+    FrAiryRegularWaveField<OffshoreSystemType, StretchingType>::GetAcceleration(double x, double y, double z, FRAME_CONVENTION fc) const {
       auto cplxVel = GetComplexVelocity(x, y, z, fc);
       auto cplxAcc = -JJ * m_omega * cplxVel;
       return {std::imag(cplxAcc.x()), std::imag(cplxAcc.y()), std::imag(cplxAcc.z())};
@@ -190,9 +190,9 @@ namespace frydom {
 
     // ------------------------------------- Pressure ----------------------------
 
-    template<class StretchingType>
+    template<class OffshoreSystemType, class StretchingType>
     double
-    FrAiryRegularWaveField<StretchingType>::GetPressure(double x, double y, double z, FRAME_CONVENTION fc) const {
+    FrAiryRegularWaveField<OffshoreSystemType, StretchingType>::GetPressure(double x, double y, double z, FRAME_CONVENTION fc) const {
 
       // Get the pressure at the position (x,y,z) for a regular Airy wave field.
 
@@ -213,24 +213,24 @@ namespace frydom {
 
     // ------------------------------------- Wave characteristics ----------------------------
 
-    template<class StretchingType>
-    std::vector<double> FrAiryRegularWaveField<StretchingType>::GetWaveFrequencies(FREQUENCY_UNIT unit) const {
+    template<class OffshoreSystemType, class StretchingType>
+    std::vector<double> FrAiryRegularWaveField<OffshoreSystemType, StretchingType>::GetWaveFrequencies(FREQUENCY_UNIT unit) const {
       auto omega = convert_frequency(m_omega, mathutils::RADS, unit);
       return std::vector<double>(1, omega);
     }
 
-    template<class StretchingType>
-    std::vector<double> FrAiryRegularWaveField<StretchingType>::GetWaveNumbers() const {
+    template<class OffshoreSystemType, class StretchingType>
+    std::vector<double> FrAiryRegularWaveField<OffshoreSystemType, StretchingType>::GetWaveNumbers() const {
       return std::vector<double>(1, m_k);
     }
 
-    template<class StretchingType>
-    std::vector<std::vector<double>> FrAiryRegularWaveField<StretchingType>::GetWaveAmplitudes() const {
+    template<class OffshoreSystemType, class StretchingType>
+    std::vector<std::vector<double>> FrAiryRegularWaveField<OffshoreSystemType, StretchingType>::GetWaveAmplitudes() const {
       return std::vector<std::vector<double>>(1, std::vector<double>(1, m_height));
     }
 
-    template<class StretchingType>
-    std::vector<double> FrAiryRegularWaveField<StretchingType>::GetWaveDirections(ANGLE_UNIT unit, FRAME_CONVENTION fc,
+    template<class OffshoreSystemType, class StretchingType>
+    std::vector<double> FrAiryRegularWaveField<OffshoreSystemType, StretchingType>::GetWaveDirections(ANGLE_UNIT unit, FRAME_CONVENTION fc,
                                                                                   DIRECTION_CONVENTION dc) const {
       auto direction = m_dirAngle;
 
