@@ -34,31 +34,24 @@ namespace frydom {
 
     public:
 
-<<<<<<< Updated upstream
-        enum WAVE_MODEL {
+        enum WAVE_MODEL {  // FIXME : doit disparaitre et on doit avoir une classe NullWaveField...
             NO_WAVES,
             LINEAR_WAVES
         };
-=======
-//        enum WAVE_MODEL {  // FIXME : doit disparaitre et on doit avoir une classe NullWaveField...
-//            NO_WAVES,
-//            LINEAR_WAVES
-//        };
->>>>>>> Stashed changes
 
 
     protected:
 
         FrFreeSurface* m_freeSurface;        ///< Pointer to the free surface containing this wave field
-//        WAVE_MODEL m_waveModel = NO_WAVES;    ///< wave model (NO_WAVES, LINEAR_WAVES)
+        WAVE_MODEL m_waveModel = NO_WAVES;    ///< wave model (NO_WAVES, LINEAR_WAVES)
 
         // Cache attributes
         double c_ramp = 1.;                   ///< cache value of the time ramp applied on the wave field
         double c_time;                        ///< cache value of the time of the simulation
-        double c_depth;                       ///< cache value of the depth. (depth = bathymetry + tidal)                     // FIXME : C'est une info de FreeSurface !!!
-        bool m_infinite_depth = false;        ///< Infinite depth boolean (if true, water depth is considered as infinite)    //FIXME : c'est une info du seabed !!!
-        double c_density;                     /// Water density (useful for the computation of the nonlinear FK loads).       // FIXME : c'est une info d'Ocean !!!
-        double c_gravity;                     /// Gravity (useful for the computation of the nonlinear FK loads).             // FIXME : c'est une info d'offshoreSystem !!!
+        double c_depth;                       ///< cache value of the depth. (depth = bathymetry + tidal)
+        bool m_infinite_depth = false;        ///< Infinite depth boolean (if true, water depth is considered as infinite)
+        double c_density;                     /// Water density (useful for the computation of the nonlinear FK loads).
+        double c_gravity;                     /// Gravity (useful for the computation of the nonlinear FK loads).
 
     public:
 
@@ -69,9 +62,9 @@ namespace frydom {
         /// Default destructor
         ~FrWaveField() = default;
 
-//        /// Get the wave model
-//        /// \return wave model (NO_WAVES, LINEAR_WAVES)
-//        WAVE_MODEL GetWaveModel() const;
+        /// Get the wave model
+        /// \return wave model (NO_WAVES, LINEAR_WAVES)
+        WAVE_MODEL GetWaveModel() const;
 
         //
         // Elevation, velocity & acceleration

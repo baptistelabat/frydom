@@ -15,39 +15,27 @@
 
 #include <random>
 
-<<<<<<< Updated upstream
-#include "frydom/environment/ocean/freeSurface/waves/FrWaveSpectrum.h"
+//#include "frydom/environment/ocean/freeSurface/waves/FrWaveSpectrum.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrKinematicStretching.h"
-=======
-//#include "frydom/environment/ocean/freeSurface/waves/FrWaveSpectrum.h"
-#include "FrAiryWaveField.h"
-//#include "FrKinematicStretching.h"
->>>>>>> Stashed changes
 
 
 namespace frydom {
 
     //Forward Declaration
     class FrFreeSurface;
-    class FrWaveSpectrum;
-<<<<<<< Updated upstream
-    class FrKinematicStretching;
-=======
 
-//    class FrKinematicStretching;
->>>>>>> Stashed changes
+    template <class DirectionalModel>
+    class FrWaveSpectrum;
+
+    class FrKinematicStretching;
 
     /**
      * \class FrAiryIrregularWaveField
      * \brief Class which deals with irregular wave field.
      */
-<<<<<<< Updated upstream
+    template <class WaveSpectrumType>
     class FrAiryIrregularWaveField : public FrWaveField {
-=======
-    template <class StretchingType, class WaveSpectrumType>
-    class FrAiryIrregularWaveField : public FrAiryWaveField<StretchingType> {
->>>>>>> Stashed changes
     protected:
 
 
@@ -58,7 +46,7 @@ namespace frydom {
         double m_meanDir = 0;           ///< Mean wave direction
         unsigned int m_nbDir = 1;       ///< Number of directions to discretize
 
-        std::unique_ptr<FrWaveSpectrum> m_waveSpectrum;    ///< Wave spectrum, by default JONSWAP (Hs=3m,Tp=9s,Gamma=3.3)
+        std::unique_ptr<WaveSpectrumType> m_waveSpectrum;    ///< Wave spectrum, by default JONSWAP (Hs=3m,Tp=9s,Gamma=3.3)
 
         std::vector<double> m_waveDirections;    ///< Wave directions vector
         std::vector<double> m_waveFrequencies;   ///< Wave frequencies vector
@@ -68,7 +56,7 @@ namespace frydom {
         std::unique_ptr<std::vector<std::vector<double>>> m_wavePhases;    ///< Table of wave phases,of dimensions (m_nbDir,m_nbFreq)
                                                                            ///< made unique to check at initialize() if wavePhases were given by the users,
                                                                            ///< or if they need to be randomly generated.
-
+        std::unique_ptr<FrKinematicStretching> m_verticalFactor;    ///< Vertical scale velocity factor with stretching
 
     public:
 
@@ -120,38 +108,38 @@ namespace frydom {
         /// \param wavePhases wave phases
         void SetWavePhases(std::vector<std::vector<double>>& wavePhases);
 
-        /// Set the parameters of the directional model
-        /// \param nbDir direction discretization
-        /// \param spreadingFactor spreading factor
-        /// \param dirType directional model type (NONE, COS2S, TEST(for tests only))
-        void SetDirectionalParameters(unsigned int nbDir, double spreadingFactor, WAVE_DIRECTIONAL_MODEL dirType=COS2S);
+//        /// Set the parameters of the directional model
+//        /// \param nbDir direction discretization
+//        /// \param spreadingFactor spreading factor
+//        /// \param dirType directional model type (NONE, COS2S, TEST(for tests only))
+//        void SetDirectionalParameters(unsigned int nbDir, double spreadingFactor, WAVE_DIRECTIONAL_MODEL dirType=COS2S);
 
-//        /// Set the stretching type used to compute velocity and acceleration on positions above the free surface elevation
-//        /// \param type stretching type (NO_STRETCHING, VERTICAL, EXTRAPOLATE, WHEELER, CHAKRABARTI, DELTA)
-//        void SetStretching(STRETCHING_TYPE type);
+        /// Set the stretching type used to compute velocity and acceleration on positions above the free surface elevation
+        /// \param type stretching type (NO_STRETCHING, VERTICAL, EXTRAPOLATE, WHEELER, CHAKRABARTI, DELTA)
+        void SetStretching(STRETCHING_TYPE type);
 
 //        void SetWaveSpectrum(WAVE_SPECTRUM_TYPE type);
-
-        /// Set a Jonswap wave spectrum
-        /// \param Hs significant height (meters)
-        /// \param Tp peak period (seconds)
-        /// \param gamma gamma factor of the Jonswap wave spectrum
-        /// \return wave spectrum
-        FrJonswapWaveSpectrum* SetJonswapWaveSpectrum(double Hs, double Tp, double gamma=3.3);
-
-        /// Set a Pierson Moskowitz wave spectrum
-        /// \param Hs significant height (meters)
-        /// \param Tp peak period (seconds)
-        /// \return wave spectrum
-        FrPiersonMoskowitzWaveSpectrum* SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp);
-
-        /// Set a wave spectrum, based on the TEST wave spectrum type
-        /// \return the TEST wave spectrum
-        FrTestWaveSpectrum* SetTestWaveSpectrum();
+//
+//        /// Set a Jonswap wave spectrum
+//        /// \param Hs significant height (meters)
+//        /// \param Tp peak period (seconds)
+//        /// \param gamma gamma factor of the Jonswap wave spectrum
+//        /// \return wave spectrum
+//        FrJonswapWaveSpectrum* SetJonswapWaveSpectrum(double Hs, double Tp, double gamma=3.3);
+//
+//        /// Set a Pierson Moskowitz wave spectrum
+//        /// \param Hs significant height (meters)
+//        /// \param Tp peak period (seconds)
+//        /// \return wave spectrum
+//        FrPiersonMoskowitzWaveSpectrum* SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp);
+//
+//        /// Set a wave spectrum, based on the TEST wave spectrum type
+//        /// \return the TEST wave spectrum
+//        FrTestWaveSpectrum* SetTestWaveSpectrum();
 
         /// Get the wave spectrum
         /// \return wave spectrum
-        FrWaveSpectrum* GetWaveSpectrum() const;
+        WaveSpectrumType* GetWaveSpectrum() const;
 
         ///Generate random wave phases
         void GenerateRandomWavePhases();

@@ -18,118 +18,11 @@
 #include "frydom/core/common/FrObject.h"
 #include "frydom/core/common/FrUnits.h"
 
+#include "MathUtils/VectorGeneration.h"
+
 namespace frydom {
 
-    enum WAVE_DIRECTIONAL_MODEL {  // TODO : passer dans la classe...
-        NONE,
-        COS2S,
-        DIRTEST
-    };
 
-    //TODO: Changer la discrétisation en direction, de manière à obtenir une énergie spectrale constante pour toutes les composantes
-    // voir OrcaFlex Equal Energy dans Frequency spectrum discretisation.
-    /**
-     * \class FrWaveDirectionalModel
-     * \brief Class for setting the wave directional model.
-     */
-    class FrWaveDirectionalModel {
-    public:
-
-        /// Get the type of the directional model
-        /// \return type of directional model (COS2S/NONE/DIRTEST)
-        virtual WAVE_DIRECTIONAL_MODEL GetType() const  = 0;
-
-        /// Get the spreading function for a vector of wave directions thetaVect
-        /// \param thetaVect vector of wave directions
-        /// \param theta_mean mean wave direction
-        /// \return spreading function
-        virtual std::vector<double> GetSpreadingFunction(const std::vector<double>& thetaVect, double theta_mean);
-
-        /// Evaluate the spreading function for a wave direction
-        /// \param theta wave direction
-        /// \param theta_mean mean wave direction
-        /// \return evaluation of the spreading function
-        virtual double Eval(double theta, double theta_mean) const = 0;
-
-        /// Get the extremal frequency values where the power spectral density is equal to 1% of the total variance m0 = hs**2/16
-        /// \return extremal frequency values
-        void GetDirectionBandwidth(double& theta_min, double& theta_max, double theta_mean) const;
-
-    protected:
-
-        /// Search by dichotomy method.
-        /// \param theta_mean mean wave direction
-        /// \param threshold threshold
-        /// \return
-        double dichotomySearch(double theta_mean, double threshold) const;
-
-    };
-
-    // =================================================================================================================
-    /// -------------------------------------------------------------------
-    /// FrCos2sDirectionalModel
-    /// -------------------------------------------------------------------
-    /// This directional model, proposed by Longuet-Higgins[1963] is an extension of the cosine-squared model.
-    /// the spreading function is given by
-    /// spreading_fcn = c_s * cos^2s[(theta-theta0)/2]
-    /// where c_s = [ 2^(2s-1)]/Pi . [Gamma²(s+1)]/[Gamma(2s+1)]
-    class FrCos2sDirectionalModel : public FrWaveDirectionalModel {
-
-    private:
-
-        double m_spreading_factor = 10.;    ///< Spreading factor, must be defined between 1. and 100.
-
-        double c_s;                    ///< cached value of [(2^(2s-1))/Pi]*[Gamma²(s+1)]/[Gamma(2s+1)]
-
-        /// Check that the spreading factor is correctly defined between 1. and 100.
-        void CheckSpreadingFactor();
-
-        /// Compute the directional spectrum coefficient
-        void EvalCs();
-
-    public:
-
-        /// Constructor for the FrCos2sDirectionalModel_
-        /// \param spreading_factor spreading factor s
-        explicit FrCos2sDirectionalModel(double spreading_factor=10.);
-
-        /// Get the type of the directional model
-        /// \return type of directional model, here COS2S
-        WAVE_DIRECTIONAL_MODEL GetType() const override;
-
-        /// Get the spreading factor s of the cos2s directional model
-        /// \return spreading factor s of the cos2s directional model
-        double GetSpreadingFactor() const;
-
-        /// Set the spreading factor s of the cos2s directional model
-        /// \param spreading_factor spreading factor s of the cos2s directional model
-        void SetSpreadingFactor(double spreading_factor);
-
-        /// Evaluate the spreading function for a wave direction
-        /// \param theta wave direction
-        /// \param theta_mean mean wave direction
-        /// \return evaluation of the spreading function
-        double Eval(double theta, double theta_mean) const override;
-
-    };
-
-    // =================================================================================================================
-    /// For test use only
-    class FrTestDirectionalModel : public FrWaveDirectionalModel {
-    public:
-
-        /// Get the type of the directional model
-        /// \return type of directional model, here DIRTEST
-        WAVE_DIRECTIONAL_MODEL GetType() const override;
-
-        /// Evaluate the spreading function for a wave direction
-        /// \param theta wave direction
-        /// \param theta_mean mean wave direction
-        /// \return evaluation of the spreading function
-        double Eval(double theta, double theta_mean) const override;
-    };
-
-    // =================================================================================================================
     /// -------------------------------------------------------------------
     /// FrWaveSpectrum
     /// -------------------------------------------------------------------
@@ -137,10 +30,7 @@ namespace frydom {
 
     //TODO: Changer la discrétisation en fréquence, de manière à obtenir une énergie spectrale constante pour toutes les composantes
     // voir OrcaFlex Equal Energy dans Frequency spectrum discretisation.
-<<<<<<< Updated upstream:src/frydom/environment/ocean/freeSurface/waves/FrWaveSpectrum.h
-=======
-    template <class WaveDirectionalModelType>
->>>>>>> Stashed changes:src/frydom/environment/ocean/freeSurface/waves/wave_spectrum/FrWaveSpectrum.h
+    template <class DirectionalModel>
     class FrWaveSpectrum : public FrObject {
 
     protected:
@@ -149,50 +39,42 @@ namespace frydom {
         double m_peak_frequency = mathutils::S2RADS(9.);   ///< Peak circular frequency (in radians/s),
                                                 ///< is the wave frequency with the highest energy
 
-        WAVE_DIRECTIONAL_MODEL m_dir_model_type = NONE;   ///< wave directional model type (NONE/COS2S/DIRTEST)
+//        WAVE_DIRECTIONAL_MODEL m_dir_model_type = NONE;   ///< wave directional model type (NONE/COS2S/DIRTEST)
 
-<<<<<<< Updated upstream:src/frydom/environment/ocean/freeSurface/waves/FrWaveSpectrum.h
-        std::unique_ptr<FrWaveDirectionalModel> m_directional_model = nullptr; ///< wave directional model
-=======
-        std::unique_ptr<WaveDirectionalModelType> m_directional_model; ///< wave directional model
->>>>>>> Stashed changes:src/frydom/environment/ocean/freeSurface/waves/wave_spectrum/FrWaveSpectrum.h
+        std::unique_ptr<DirectionalModel> m_directional_model; ///< wave directional model
 
     public:
 
-        /// Default constructor of the wave spectrum
-        FrWaveSpectrum() = default;
+//        /// Default constructor of the wave spectrum
+//        FrWaveSpectrum() = default;
 
         /// Constructor of the wave spectrum, based on a significant height and peak period, with its associated unit.
         /// \param hs significant height
         /// \param tp peak period
         FrWaveSpectrum(double hs, double tp);
 
-        /// Set the wave directional model to a cos2s, with a spreading factor
-        /// \param spreadingFactor spreading factor of the cos2s model
-        void SetCos2sDirectionalModel(double spreadingFactor);
-
-        /// Set the wave directional model to use from type
-        /// \param model wave directional model type
-        void SetDirectionalModel(WAVE_DIRECTIONAL_MODEL model);
-
-        /// Set the wave directional model to use from object
-        /// \param dir_model wave directional model
-        void SetDirectionalModel(FrWaveDirectionalModel* dir_model);
+//        /// Set the wave directional model to a cos2s, with a spreading factor
+//        /// \param spreadingFactor spreading factor of the cos2s model
+//        void SetCos2sDirectionalModel(double spreadingFactor);
+//
+//        /// Set the wave directional model to use from type
+//        /// \param model wave directional model type
+//        void SetDirectionalModel(WAVE_DIRECTIONAL_MODEL model);
+//
+//        /// Set the wave directional model to use from object
+//        /// \param dir_model wave directional model
+//        void SetDirectionalModel(FrWaveDirectionalModel* dir_model);
 
         /// Get the wave directional model
         /// \return wave directional model
-<<<<<<< Updated upstream:src/frydom/environment/ocean/freeSurface/waves/FrWaveSpectrum.h
-        FrWaveDirectionalModel* GetDirectionalModel() const;
-=======
-        WaveDirectionalModelType* GetDirectionalModel() const;
->>>>>>> Stashed changes:src/frydom/environment/ocean/freeSurface/waves/wave_spectrum/FrWaveSpectrum.h
+        DirectionalModel* GetDirectionalModel() const;
 
-        /// Set the wave spectrum as multi-directional
-        /// \param model wave directional model type
-        void DirectionalON(WAVE_DIRECTIONAL_MODEL model=COS2S);
-
-        /// Set the wave spectrum as unidirectional
-        void DirectionalOFF();
+//        /// Set the wave spectrum as multi-directional
+//        /// \param model wave directional model type
+//        void DirectionalON(WAVE_DIRECTIONAL_MODEL model=COS2S);
+//
+//        /// Set the wave spectrum as unidirectional
+//        void DirectionalOFF();
 
         /// Get the significant height
         /// \return significant height
@@ -309,7 +191,8 @@ namespace frydom {
      * \class FrJonswapWaveSpectrum
      * \brief Class for defining a Jonswap wave spectrum.
      */
-    class FrJonswapWaveSpectrum : public FrWaveSpectrum {
+    template <class DirectionalModel>
+    class FrJonswapWaveSpectrum : public FrWaveSpectrum<DirectionalModel> {
 
     private:
         double m_gamma = 3.3;   ///< Peakedness factor of the Jonswap wave spectrum,
@@ -360,7 +243,8 @@ namespace frydom {
      * \class FrPiersonMoskowitzWaveSpectrum
      * \brief Class for defining a Pierson-Moskowitz wave spectrum.
      */
-    class FrPiersonMoskowitzWaveSpectrum : public FrWaveSpectrum {
+    template <class DirectionalModel>
+    class FrPiersonMoskowitzWaveSpectrum : public FrWaveSpectrum<DirectionalModel> {
 
     public:
 
@@ -386,8 +270,9 @@ namespace frydom {
 
 
     // =================================================================================================================
-    /// For test use only
-    class FrTestWaveSpectrum : public FrWaveSpectrum {
+    /// For test use only // TODO : a retirer ?
+    template <class DirectionalModel>
+    class FrTestWaveSpectrum : public FrWaveSpectrum<DirectionalModel> {
     public:
         FrTestWaveSpectrum() = default;
 
@@ -399,6 +284,9 @@ namespace frydom {
     };
 
 }  // end namespace frydom
+
+
+#include "FrWaveSpectrum.hxx"
 
 
 #endif //FRYDOM_FRWAVESPECTRUM_H

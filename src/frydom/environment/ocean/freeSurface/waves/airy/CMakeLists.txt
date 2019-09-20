@@ -4,12 +4,7 @@ set(AIRY_FILES_LOCAL
         FrAiryRegularWaveField.cpp
         FrAiryRegularOptimWaveField.cpp
         FrAiryIrregularWaveField.cpp
-<<<<<<< Updated upstream
-        FrAiryIrregularOptimWaveField.cpp
-=======
 #        FrAiryIrregularOptimWaveField.cpp
-        FrKinematicStretching.cpp
->>>>>>> Stashed changes
         )
 
 set(AIRY_FILES "")

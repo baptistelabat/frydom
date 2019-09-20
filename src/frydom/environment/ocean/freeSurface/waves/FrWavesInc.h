@@ -16,8 +16,9 @@
 //#include "FrKinematicStretching.h"
 #include "FrWaveDispersionRelation.h"
 #include "FrWaveField.h"
-#include "FrWaveSpectrum.h"
 
+#include "wave_spectrum/FrWaveSpectrumInc.h"
 #include "airy/FrAiryInc.h"
+
 
 #endif //FRYDOM_FRWAVESINC_H

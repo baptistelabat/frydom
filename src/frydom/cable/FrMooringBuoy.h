@@ -18,6 +18,7 @@
 namespace frydom {
 
     // Forward declaration
+    template <typename OffshoreSystemType>
     class FrLinearDamping;
 
 
@@ -47,7 +48,7 @@ namespace frydom {
         double m_radius = 1.;
         double c_volume;
         std::shared_ptr<FrSphereNonLinearHydrostaticForce> m_hydrostaticForce;
-        std::shared_ptr<FrLinearDamping> m_dampingForce;
+        std::shared_ptr<FrLinearDamping<OffshoreSystemType>> m_dampingForce;
 
     public:
 

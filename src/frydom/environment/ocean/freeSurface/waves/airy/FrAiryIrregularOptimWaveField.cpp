@@ -10,88 +10,52 @@
 // ==========================================================================
 
 
-#include "FrAiryIrregularOptimWaveField.h"
+//#include "FrAiryIrregularOptimWaveField.h"
 
 namespace frydom {
 
-<<<<<<< Updated upstream
-    FrAiryIrregularOptimWaveField::FrAiryIrregularOptimWaveField(frydom::FrFreeSurface *freeSurface)
-            : FrAiryIrregularWaveField(freeSurface) {}
+    template <class WaveSpectrumType>
+    FrAiryIrregularOptimWaveField<WaveSpectrumType>::FrAiryIrregularOptimWaveField(frydom::FrFreeSurface *freeSurface)
+            : FrAiryIrregularWaveField<WaveSpectrumType>(freeSurface) {}
 
+    template <class WaveSpectrumType>
     std::vector<std::vector<Complex>>
-    FrAiryIrregularOptimWaveField::GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const {
+    FrAiryIrregularOptimWaveField<WaveSpectrumType>::GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const {
         double NWUsign = 1;
         if (IsNED(fc)) {y=-y; NWUsign = -NWUsign;}
 
         std::vector<std::vector<Complex>> ComplexElevation;
-        ComplexElevation.reserve(m_nbDir);
+        ComplexElevation.reserve(this->m_nbDir);
         ComplexElevation.clear();
 
         std::vector<Complex> ComplexElevation_temp;
-        ComplexElevation_temp.reserve(m_nbFreq);
+        ComplexElevation_temp.reserve(this->m_nbFreq);
         ComplexElevation_temp.clear();
 
         double ki;
         Complex elevation;
 
-        for (unsigned int idir=0; idir<m_nbDir; ++idir) {
+        for (unsigned int idir=0; idir<this->m_nbDir; ++idir) {
             double kdir = x*c_cosTheta[idir] + y*c_sinTheta[idir];
             ComplexElevation_temp.clear();
-            for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
-                ki = m_waveNumbers[ifreq];
-                elevation = exp(JJ * ki * kdir ) * c_expJwt[ifreq] * c_AExpJphi[idir][ifreq] * NWUsign * c_ramp;
+            for (unsigned int ifreq=0; ifreq<this->m_nbFreq; ++ifreq) {
+                ki = this->m_waveNumbers[ifreq];
+                elevation = exp(JJ * ki * kdir ) * c_expJwt[ifreq] * c_AExpJphi[idir][ifreq] * NWUsign * this->c_ramp;
                 ComplexElevation_temp.push_back(elevation);
             }
             ComplexElevation.push_back(ComplexElevation_temp);
-=======
-    template<class StretchingType, class WaveSpectrumType>
-    FrAiryIrregularOptimWaveField<StretchingType, WaveSpectrumType>::FrAiryIrregularOptimWaveField(
-        frydom::FrFreeSurface *freeSurface)
-        : FrAiryIrregularWaveField<StretchingType, WaveSpectrumType>(freeSurface) {}
-
-    template<class StretchingType, class WaveSpectrumType>
-    std::vector<std::vector<Complex>>
-    FrAiryIrregularOptimWaveField<StretchingType, WaveSpectrumType>::GetComplexElevation(double x, double y,
-                                                                                         FRAME_CONVENTION fc) const {
-      double NWUsign = 1;
-      if (IsNED(fc)) {
-        y = -y;
-        NWUsign = -NWUsign;
-      }
-
-      std::vector<std::vector<Complex>> ComplexElevation;
-      ComplexElevation.reserve(this->m_nbDir);
-      ComplexElevation.clear();
-
-      std::vector<Complex> ComplexElevation_temp;
-      ComplexElevation_temp.reserve(this->m_nbFreq);
-      ComplexElevation_temp.clear();
-
-      double ki;
-      Complex elevation;
-
-      for (unsigned int idir = 0; idir < this->m_nbDir; ++idir) {
-        double kdir = x * c_cosTheta[idir] + y * c_sinTheta[idir];
-        ComplexElevation_temp.clear();
-        for (unsigned int ifreq = 0; ifreq < this->m_nbFreq; ++ifreq) {
-          ki = this->m_waveNumbers[ifreq];
-          elevation = exp(JJ * ki * kdir) * c_expJwt[ifreq] * c_AExpJphi[idir][ifreq] * NWUsign * this->c_ramp;
-          ComplexElevation_temp.push_back(elevation);
->>>>>>> Stashed changes
         }
-        ComplexElevation.push_back(ComplexElevation_temp);
-      }
 
-      return ComplexElevation;
+        return ComplexElevation;
     }
 
-<<<<<<< Updated upstream
+    template <class WaveSpectrumType>
     std::vector<mathutils::Vector3d<Complex>>
-    FrAiryIrregularOptimWaveField::GetComplexVelocity(double x, double y, double z, FRAME_CONVENTION fc) const {
+    FrAiryIrregularOptimWaveField<WaveSpectrumType>::GetComplexVelocity(double x, double y, double z, FRAME_CONVENTION fc) const {
         double NWUsign = 1;
         if (IsNED(fc)) {y=-y; z=-z; NWUsign = -NWUsign;}
         std::vector<mathutils::Vector3d<Complex>> ComplexVel;
-        ComplexVel.reserve(m_nbFreq);
+        ComplexVel.reserve(this->m_nbFreq);
         ComplexVel.clear();
 
         Complex Vx = 0, Vy = 0, Vz = 0;
@@ -100,159 +64,74 @@ namespace frydom {
 
         auto ComplexElevation = GetComplexElevation(x,y,fc);
 
-        for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
-            ki = m_waveNumbers[ifreq];
-            wi = m_waveFrequencies[ifreq];
+        for (unsigned int ifreq=0; ifreq<this->m_nbFreq; ++ifreq) {
+            ki = this->m_waveNumbers[ifreq];
+            wi = this->m_waveFrequencies[ifreq];
             Vx = 0, Vy = 0, Vz = 0;
-            Stretching = m_verticalFactor->Eval(x,y,z,ki,c_depth);
-            StretchingDZ = m_verticalFactor->EvalDZ(x,y,z,ki,c_depth);
-            for (unsigned int idir=0; idir<m_nbDir; ++idir) {
+            Stretching = this->m_verticalFactor->Eval(x,y,z,ki,this->c_depth);
+            StretchingDZ = this->m_verticalFactor->EvalDZ(x,y,z,ki,this->c_depth);
+            for (unsigned int idir=0; idir<this->m_nbDir; ++idir) {
                 Vx += c_cosTheta[idir] * wi * ComplexElevation[idir][ifreq] * Stretching * NWUsign;
                 Vy += c_sinTheta[idir] * wi * ComplexElevation[idir][ifreq] * Stretching;
                 Vz +=   - JJ / ki * wi * ComplexElevation[idir][ifreq] * StretchingDZ;
             }
             ComplexVel.emplace_back(Vx,Vy,Vz);
-=======
-    template<class StretchingType, class WaveSpectrumType>
-    std::vector<mathutils::Vector3d<Complex>>
-    FrAiryIrregularOptimWaveField<StretchingType, WaveSpectrumType>::GetComplexVelocity(double x, double y, double z,
-                                                                                        FRAME_CONVENTION fc) const {
-      double NWUsign = 1;
-      if (IsNED(fc)) {
-        y = -y;
-        z = -z;
-        NWUsign = -NWUsign;
-      }
-      std::vector<mathutils::Vector3d<Complex>> ComplexVel;
-      ComplexVel.reserve(this->m_nbFreq);
-      ComplexVel.clear();
-
-      Complex Vx = 0, Vy = 0, Vz = 0;
-      double ki, wi;
-      double Stretching, StretchingDZ;
-
-      auto ComplexElevation = GetComplexElevation(x, y, fc);
-
-      for (unsigned int ifreq = 0; ifreq < this->m_nbFreq; ++ifreq) {
-        ki = this->m_waveNumbers[ifreq];
-        wi = this->m_waveFrequencies[ifreq];
-        Vx = 0, Vy = 0, Vz = 0;
-        Stretching = this->m_verticalFactor->Eval(x, y, z, ki, this->c_depth);
-        StretchingDZ = this->m_verticalFactor->EvalDZ(x, y, z, ki, this->c_depth);
-        for (unsigned int idir = 0; idir < this->m_nbDir; ++idir) {
-          Vx += c_cosTheta[idir] * wi * ComplexElevation[idir][ifreq] * Stretching * NWUsign;
-          Vy += c_sinTheta[idir] * wi * ComplexElevation[idir][ifreq] * Stretching;
-          Vz += -JJ / ki * wi * ComplexElevation[idir][ifreq] * StretchingDZ;
->>>>>>> Stashed changes
         }
-        ComplexVel.emplace_back(Vx, Vy, Vz);
-      }
 
-      return ComplexVel;
+        return ComplexVel;
     }
 
-<<<<<<< Updated upstream
-    void FrAiryIrregularOptimWaveField::Initialize() {
-        FrAiryIrregularWaveField::Initialize();
+    template <class WaveSpectrumType>
+    void FrAiryIrregularOptimWaveField<WaveSpectrumType>::Initialize() {
+        FrAiryIrregularWaveField<WaveSpectrumType>::Initialize();
 
-        c_cosTheta.reserve(m_nbDir); c_cosTheta.clear();
-        c_sinTheta.reserve(m_nbDir); c_sinTheta.clear();
-        c_AExpJphi.reserve(m_nbDir); c_AExpJphi.clear();
-=======
-    template<class StretchingType, class WaveSpectrumType>
-    void FrAiryIrregularOptimWaveField<StretchingType, WaveSpectrumType>::Initialize() {
-      FrAiryIrregularWaveField<StretchingType, WaveSpectrumType>::Initialize();
+        c_cosTheta.reserve(this->m_nbDir); c_cosTheta.clear();
+        c_sinTheta.reserve(this->m_nbDir); c_sinTheta.clear();
+        c_AExpJphi.reserve(this->m_nbDir); c_AExpJphi.clear();
 
-      c_cosTheta.reserve(this->m_nbDir);
-      c_cosTheta.clear();
-      c_sinTheta.reserve(this->m_nbDir);
-      c_sinTheta.clear();
-      c_AExpJphi.reserve(this->m_nbDir);
-      c_AExpJphi.clear();
->>>>>>> Stashed changes
+        Complex expTemp;
+        double dirTemp;
 
-      Complex expTemp;
-      double dirTemp;
-
-<<<<<<< Updated upstream
         std::vector<Complex> Aphi_temp;
-        Aphi_temp.reserve(m_nbFreq);
+        Aphi_temp.reserve(this->m_nbFreq);
         Aphi_temp.clear();
 
-        auto Amplitudes = m_waveSpectrum->GetWaveAmplitudes(m_waveFrequencies, m_waveDirections);
+        auto Amplitudes = this->m_waveSpectrum->GetWaveAmplitudes(this->m_waveFrequencies, this->m_waveDirections);
 
-        for (unsigned int idir=0; idir<m_nbDir; ++idir) {
-            dirTemp = cos(m_waveDirections[idir]);
+        for (unsigned int idir=0; idir<this->m_nbDir; ++idir) {
+            dirTemp = cos(this->m_waveDirections[idir]);
             c_cosTheta.push_back(dirTemp);
-            dirTemp = sin(m_waveDirections[idir]);
+            dirTemp = sin(this->m_waveDirections[idir]);
             c_sinTheta.push_back(dirTemp);
             Aphi_temp.clear();
-            for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
-                expTemp = Amplitudes[idir][ifreq] * exp(JJ*m_wavePhases->at(idir)[ifreq]);
+            for (unsigned int ifreq=0; ifreq<this->m_nbFreq; ++ifreq) {
+                expTemp = Amplitudes[idir][ifreq] * exp(JJ*this->m_wavePhases->at(idir)[ifreq]);
                 Aphi_temp.push_back(expTemp);
             }
             c_AExpJphi.push_back(Aphi_temp);
-=======
-      std::vector<Complex> Aphi_temp;
-      Aphi_temp.reserve(this->m_nbFreq);
-      Aphi_temp.clear();
-
-      auto Amplitudes = this->m_waveSpectrum->GetWaveAmplitudes(this->m_waveFrequencies, this->m_waveDirections);
-
-      for (unsigned int idir = 0; idir < this->m_nbDir; ++idir) {
-        dirTemp = cos(this->m_waveDirections[idir]);
-        c_cosTheta.push_back(dirTemp);
-        dirTemp = sin(this->m_waveDirections[idir]);
-        c_sinTheta.push_back(dirTemp);
-        Aphi_temp.clear();
-        for (unsigned int ifreq = 0; ifreq < this->m_nbFreq; ++ifreq) {
-          expTemp = Amplitudes[idir][ifreq] * exp(JJ * this->m_wavePhases->at(idir)[ifreq]);
-          Aphi_temp.push_back(expTemp);
->>>>>>> Stashed changes
         }
-        c_AExpJphi.push_back(Aphi_temp);
-      }
 
-      InternalUpdate();
+        InternalUpdate();
     }
 
-<<<<<<< Updated upstream
-    void FrAiryIrregularOptimWaveField::StepFinalize() {
+    template <class WaveSpectrumType>
+    void FrAiryIrregularOptimWaveField<WaveSpectrumType>::StepFinalize() {
         FrWaveField::StepFinalize();
         InternalUpdate();
     }
 
-    void FrAiryIrregularOptimWaveField::InternalUpdate() {
+    template <class WaveSpectrumType>
+    void FrAiryIrregularOptimWaveField<WaveSpectrumType>::InternalUpdate() {
         c_expJwt.empty();
-        c_expJwt.reserve(m_nbFreq);
+        c_expJwt.reserve(this->m_nbFreq);
         c_expJwt.clear();
-=======
-    template<class StretchingType, class WaveSpectrumType>
-    void FrAiryIrregularOptimWaveField<StretchingType, WaveSpectrumType>::StepFinalize() {
-      FrWaveField::StepFinalize();
-      InternalUpdate();
-    }
 
-    template<class StretchingType, class WaveSpectrumType>
-    void FrAiryIrregularOptimWaveField<StretchingType, WaveSpectrumType>::InternalUpdate() {
-      c_expJwt.empty();
-      c_expJwt.reserve(this->m_nbFreq);
-      c_expJwt.clear();
->>>>>>> Stashed changes
+        Complex expTemp;
 
-      Complex expTemp;
-
-<<<<<<< Updated upstream
-        for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
-            expTemp = exp(-JJ * m_waveFrequencies[ifreq] * c_time);
+        for (unsigned int ifreq=0; ifreq<this->m_nbFreq; ++ifreq) {
+            expTemp = exp(-JJ * this->m_waveFrequencies[ifreq] * this->c_time);
             c_expJwt.push_back(expTemp);
         }
-=======
-      for (unsigned int ifreq = 0; ifreq < this->m_nbFreq; ++ifreq) {
-        expTemp = exp(-JJ * this->m_waveFrequencies[ifreq] * this->c_time);
-        c_expJwt.push_back(expTemp);
-      }
->>>>>>> Stashed changes
     }
 
 }  // end namespace frydom

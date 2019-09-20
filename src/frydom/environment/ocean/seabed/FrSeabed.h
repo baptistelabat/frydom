@@ -20,6 +20,7 @@
 namespace frydom {
 
     // Forward declarations
+    template <typename  OffshoreSystemType>
     class FrOcean;
 
     template <typename OffshoreSystemType>
@@ -29,17 +30,17 @@ namespace frydom {
      * \class FrSeabed
      * \brief Class for defining a seabed with either a finite or infinite water depth.
      */
-     template <typename OffshoreSystemType>
+    template <typename OffshoreSystemType>
     class FrSeabed  : public FrObject<OffshoreSystemType> {
     protected:
 
-        FrOcean *m_ocean;            ///< Pointer to the ocean containing this asset
+        FrOcean<OffshoreSystemType> *m_ocean;            ///< Pointer to the ocean containing this asset
         bool m_infiniteDepth = false; ///< true if the infinite depth condition is applied
 
     public:
         /// Default constructor
         /// \param ocean ocean containing this seabed
-        explicit FrSeabed(FrOcean* ocean);
+        explicit FrSeabed(FrOcean<OffshoreSystemType>* ocean);
 
         /// Default destructor
         ~FrSeabed() = default;
@@ -58,7 +59,7 @@ namespace frydom {
 
         /// Get the ocean containing this seabed
         /// \return ocean containing this seabed
-        FrOcean* GetOcean() const;
+        FrOcean<OffshoreSystemType>* GetOcean() const;
 
         /// Set the mean bathymetry of the seabed (negative in NWU/positive in NED)
         /// \param bathymetry mean bathymetry of the seabed
@@ -100,12 +101,12 @@ namespace frydom {
      * \brief Class for defining a seabed in case of infinite water depth.
      */
      template <typename OffshoreSystemType>
-    class FrNullSeabed  : public FrSeabed<OffshoreSystemType> {
+    class FrNullSeabed  : public FrSeabed<OffshoreSystemType> { // TODO : renommer en FrInfiniteSeabed
     public:
 
         /// Default constructor
         /// \param ocean ocean containing this seabed
-        explicit FrNullSeabed(FrOcean* ocean);
+        explicit FrNullSeabed(FrOcean<OffshoreSystemType>* ocean);
 
         //---------------------------- Asset ----------------------------//
 
@@ -148,7 +149,7 @@ namespace frydom {
      * \class FrMeanSeabed
      * \brief Class for defining a mean seabed in case of finite and constant water depth.
      */
-    template <typename  OffshoreSystemType>
+     template <typename OffshoreSystemType>
     class FrMeanSeabed  : public FrSeabed<OffshoreSystemType> {
     protected:
 
@@ -163,7 +164,7 @@ namespace frydom {
 
         /// Default constructor
         /// \param ocean ocean containing this seabed
-        explicit FrMeanSeabed(FrOcean* ocean);
+        explicit FrMeanSeabed(FrOcean<OffshoreSystemType>* ocean);
 
         /// Default destructor
         ~FrMeanSeabed() = default;

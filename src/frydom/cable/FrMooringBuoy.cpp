@@ -35,7 +35,7 @@ namespace frydom {
         m_hydrostaticForce = std::make_shared<FrSphereNonLinearHydrostaticForce>();
         AddExternalForce(m_hydrostaticForce);
 
-        m_dampingForce = std::make_shared<FrLinearDamping>(WATER,false);
+        m_dampingForce = std::make_shared<FrLinearDamping<OffshoreSystemType>>(WATER,false);
         m_dampingForce->SetDiagonalDamping(damping,damping,damping,damping,damping,damping);
         AddExternalForce(m_dampingForce);
 

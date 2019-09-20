@@ -22,19 +22,11 @@
 namespace frydom {
 
     // Forward Declarations
-<<<<<<< Updated upstream
     template<typename OffshoreSystemType>
     class FrEnvironment;
 
     template<typename OffshoreSystemType>
     class FrFreeSurface;
-=======
-    template <class OceanType>
-    class FrEnvironment;
-
-//    template <class WaveFieldType>
-//    class FrFreeSurface;
->>>>>>> Stashed changes
 
     template<typename OffshoreSystemType>
     class FrCurrent;
@@ -58,15 +50,9 @@ namespace frydom {
 
       //---------------------------- FrOcean elements ----------------------------//
 
-<<<<<<< Updated upstream
       std::unique_ptr<FrSeabed<OffshoreSystemType>> m_seabed;               ///> Seabed element, with bathymetry model information
       std::unique_ptr<FrFreeSurface<OffshoreSystemType>> m_freeSurface;     ///> Free surface element, with tidal, wavefield models information
       std::unique_ptr<FrCurrent<OffshoreSystemType>> m_current;             ///> Current, with current model information
-=======
-      std::unique_ptr<FrSeabed> m_seabed;               ///> Seabed element, with bathymetry model information
-      std::unique_ptr<FreeSurfaceType> m_freeSurface;     ///> Free surface element, with tidal, wavefield models information
-      std::unique_ptr<FrCurrent> m_current;             ///> Current, with current model information
->>>>>>> Stashed changes
       std::unique_ptr<FrFluidProperties> m_waterProp;    ///> Water properties
 
      public:
