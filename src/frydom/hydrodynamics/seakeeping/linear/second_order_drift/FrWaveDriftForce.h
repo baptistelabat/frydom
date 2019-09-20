@@ -25,7 +25,6 @@ namespace frydom {
     template<typename OffshoreSystemType>
     class FrHydroDB;
 
-    template<typename OffshoreSystemType>
     class FrWaveDriftPolarData;
 
     /**
@@ -37,7 +36,7 @@ namespace frydom {
 
      private:
       std::shared_ptr<FrHydroDB<OffshoreSystemType>> m_hdb;               ///< Hydrodynamic database
-      std::shared_ptr<FrWaveDriftPolarData<OffshoreSystemType>> m_table;  ///< Wave drift coefficient polar table
+      std::shared_ptr<FrWaveDriftPolarData> m_table;  ///< Wave drift coefficient polar table
 
      public:
 

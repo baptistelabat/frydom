@@ -17,39 +17,43 @@
 #include "frydom/environment/ocean/FrOcean.h"
 
 
-namespace frydom{
+namespace frydom {
 
-    void FrITTCResistance::Compute(double time) {
+  template<typename OffshoreSystemType>
+  void FrITTCResistance<OffshoreSystemType>::Compute(double time) {
 
-        Velocity cogBodyVel = m_body->GetCOGVelocityInBody(NWU);
-        double  ux = cogBodyVel.GetVx();
+    Velocity cogBodyVel = this->m_body->GetCOGVelocityInBody(NWU);
+    double ux = cogBodyVel.GetVx();
 
-        // Computing Reynolds number
-        double Re = GetSystem()->GetEnvironment()->GetOcean()->GetReynoldsNumberInWater(m_Lpp, ux);
+    // Computing Reynolds number
+    double Re = this->GetSystem()->GetEnvironment()->GetOcean()->GetReynoldsNumberInWater(m_Lpp, ux);
 
-        // Computing ITTC57 flat plate friction coefficient
-        auto Cf = 0.075 / pow( log10(Re)-2., 2. );
+    // Computing ITTC57 flat plate friction coefficient
+    auto Cf = 0.075 / pow(log10(Re) - 2., 2.);
 
-        // Total coefficient
-        auto Ct = (1. + m_k)*Cf + m_cr + m_ca + m_caa + m_capp;
+    // Total coefficient
+    auto Ct = (1. + m_k) * Cf + m_cr + m_ca + m_caa + m_capp;
 
-        // Resistance along the body X Axis
-        double Rt = - 0.5 * m_environment->GetOcean()->GetDensity() * m_hullWetSurface * Ct * ux * std::abs(ux);
+    // Resistance along the body X Axis
+    double Rt = -0.5 * m_environment->GetOcean()->GetDensity() * m_hullWetSurface * Ct * ux * std::abs(ux);
 
-        SetForceInBody(Force(Rt, 0., 0.), NWU);
-    }
+    this->SetForceInBody(Force(Rt, 0., 0.), NWU);
+  }
 
-    void FrITTCResistance::SetRoughnessFromLength(double Lwl, double surfaceRoughness) {
-        m_ca = (105. * std::pow(surfaceRoughness / Lwl, 1./3.) - 0.64) * 0.001;
-    }
+  template<typename OffshoreSystemType>
+  void FrITTCResistance<OffshoreSystemType>::SetRoughnessFromLength(double Lwl, double surfaceRoughness) {
+    m_ca = (105. * std::pow(surfaceRoughness / Lwl, 1. / 3.) - 0.64) * 0.001;
+  }
 
-    void FrITTCResistance::SetAirResistanceFromArea(double area) {
-        m_caa = area / (1000. * m_hullWetSurface);
-    }
+  template<typename OffshoreSystemType>
+  void FrITTCResistance<OffshoreSystemType>::SetAirResistanceFromArea(double area) {
+    m_caa = area / (1000. * m_hullWetSurface);
+  }
 
-    void FrITTCResistance::Initialize() {
-        FrForce::Initialize();
-        m_environment = GetSystem()->GetEnvironment(); // To reduce the number of indirections during update
-    }
+  template<typename OffshoreSystemType>
+  void FrITTCResistance<OffshoreSystemType>::Initialize() {
+    FrForce<OffshoreSystemType>::Initialize();
+    m_environment = this->GetSystem()->GetEnvironment(); // To reduce the number of indirections during update
+  }
 
 }  // end namespace frydom

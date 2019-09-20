@@ -49,7 +49,7 @@ namespace frydom {
 
       // This function computes the linear excitation forces from Nemoh results.
 
-      Compute_F_HDB();
+      this->Compute_F_HDB();
 
     }
 

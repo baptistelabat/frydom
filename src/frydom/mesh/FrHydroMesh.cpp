@@ -19,134 +19,157 @@
 
 namespace frydom {
 
-    FrHydroMesh::FrHydroMesh(FrOffshoreSystem *system, const std::shared_ptr<FrBody>& body, FrHydroMesh::ClippingSupport support)
-            : m_system(system), m_body(body), m_clippingSupport(support) {
-        // m_clipper
-        m_clipper = std::make_unique<mesh::FrMeshClipper>();
+  template<typename OffshoreSystemType>
+  FrHydroMesh<OffshoreSystemType>::FrHydroMesh(FrOffshoreSystem<OffshoreSystemType> *system,
+                                               const std::shared_ptr<FrBody<OffshoreSystemType>> &body,
+                                               FrHydroMesh<OffshoreSystemType>::ClippingSupport support)
+      : m_system(system), m_body(body), m_clippingSupport(support) {
+    // m_clipper
+    m_clipper = std::make_unique<mesh::FrMeshClipper>();
 
-        m_clippedMesh = mesh::FrMesh();
+    m_clippedMesh = mesh::FrMesh();
 
-    }
+  }
 
-    FrHydroMesh::FrHydroMesh(FrOffshoreSystem *system, const std::shared_ptr<FrBody>& body, const std::string& meshFile,
-                             FrFrame meshOffset, FrHydroMesh::ClippingSupport support)
-                             : m_system(system), m_body(body), m_clippingSupport(support) {
+  template<typename OffshoreSystemType>
+  FrHydroMesh<OffshoreSystemType>::FrHydroMesh(FrOffshoreSystem<OffshoreSystemType> *system,
+                                               const std::shared_ptr<FrBody<OffshoreSystemType>> &body,
+                                               const std::string &meshFile,
+                                               FrFrame meshOffset,
+                                               FrHydroMesh<OffshoreSystemType>::ClippingSupport support)
+      : m_system(system), m_body(body), m_clippingSupport(support) {
 
-        // Import and transform the initial mesh, into the body reference frame
-        ImportMesh(meshFile, meshOffset);
+    // Import and transform the initial mesh, into the body reference frame
+    ImportMesh(meshFile, meshOffset);
 
-        // m_clipper
-        m_clipper = std::make_unique<mesh::FrMeshClipper>();
+    // m_clipper
+    m_clipper = std::make_unique<mesh::FrMeshClipper>();
 
-        m_clippedMesh = mesh::FrMesh();
+    m_clippedMesh = mesh::FrMesh();
 
-    }
+  }
 
-    void FrHydroMesh::Initialize() {
+  template<typename OffshoreSystemType>
+  void FrHydroMesh<OffshoreSystemType>::Initialize() {
 
-        // This function initializes the hydrostatic force object.
+    // This function initializes the hydrostatic force object.
 
-        // Clipping surface.
-        switch (m_clippingSupport) {
-            case ClippingSupport::PLANESURFACE: {
+    // Clipping surface.
+    switch (m_clippingSupport) {
+      case ClippingSupport::PLANESURFACE: {
 //                c_nodeForClippingPlane = m_body->GetSystem()->GetWorldBody()->NewNode();
-                Position Tide(0., 0., m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU));
+        Position Tide(0., 0.,
+                      m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU));
 //                c_nodeForClippingPlane->SetPositionInBody(Tide, NWU);
 //
 //                auto plane = std::make_shared<FrCPlane>(c_nodeForClippingPlane);
 
-                c_clippingPlane = std::make_shared<geom::FrPlane>(Tide,Direction(0,0,1),NWU);
-                auto clippingSurface = std::make_shared<mesh::FrClippingPlane>(c_clippingPlane);
-                m_clipper->SetClippingSurface(clippingSurface);
-                break;
-            }
-            case ClippingSupport::WAVESURFACE: {
-                auto clippingSurface = std::make_shared<mesh::FrClippingWaveSurface>(
-                        m_system->GetEnvironment()->GetOcean()->GetFreeSurface());
-                m_clipper->SetClippingSurface(clippingSurface);
-                break;
-            }
-        }
-
-        // Initialization of the parent class.
-        FrPrePhysicsItem::Initialize();
-        m_chronoPhysicsItem->SetupInitial();
-
+        c_clippingPlane = std::make_shared<geom::FrPlane>(Tide, Direction(0, 0, 1), NWU);
+        auto clippingSurface = std::make_shared<mesh::FrClippingPlane>(c_clippingPlane);
+        m_clipper->SetClippingSurface(clippingSurface);
+        break;
+      }
+      case ClippingSupport::WAVESURFACE: {
+        auto clippingSurface = std::make_shared<mesh::FrClippingWaveSurface>(
+            m_system->GetEnvironment()->GetOcean()->GetFreeSurface());
+        m_clipper->SetClippingSurface(clippingSurface);
+        break;
+      }
     }
 
-    mesh::FrMesh& FrHydroMesh::GetClippedMesh() {
-        return m_clippedMesh;
-    }
+    // Initialization of the parent class.
+    FrPrePhysicsItem<OffshoreSystemType>::Initialize();
+    this->m_chronoPhysicsItem->SetupInitial();
 
-    mesh::FrMesh& FrHydroMesh::GetInitialMesh() {
-        return m_initMesh;
-    }
+  }
 
-    void FrHydroMesh::Compute(double time) {
+  template<typename OffshoreSystemType>
+  mesh::FrMesh &FrHydroMesh<OffshoreSystemType>::GetClippedMesh() {
+    return m_clippedMesh;
+  }
 
-        m_clippedMesh.clear();
-        m_clippedMesh = m_initMesh;
+  template<typename OffshoreSystemType>
+  mesh::FrMesh &FrHydroMesh<OffshoreSystemType>::GetInitialMesh() {
+    return m_initMesh;
+  }
 
-        // Rotating the mesh from the body reference frame to the world reference frame, and then translating
-        // it vertically. The resulting mesh horizontal position is kept close to (0.,0.) for the clipping process
-        // Rotation
-        m_clippedMesh.Rotate(m_body->GetRotation().GetRotationMatrix());
+  template<typename OffshoreSystemType>
+  void FrHydroMesh<OffshoreSystemType>::Compute(double time) {
 
-        // Translation
-        auto bodyPos = m_body->GetPosition(NWU); bodyPos.GetX() = 0.; bodyPos.GetY() = 0.;
-        m_clippedMesh.Translate(mesh::Vector3dToOpenMeshPoint(bodyPos));
+    m_clippedMesh.clear();
+    m_clippedMesh = m_initMesh;
 
-        // Set the body position for horizontal correction in the clipping surface
-        m_clipper->GetClippingSurface()->SetBodyPosition(m_body->GetPosition(NWU));
+    // Rotating the mesh from the body reference frame to the world reference frame, and then translating
+    // it vertically. The resulting mesh horizontal position is kept close to (0.,0.) for the clipping process
+    // Rotation
+    m_clippedMesh.Rotate(m_body->GetRotation().GetRotationMatrix());
 
-        // Update the node vertical position for the clippingplane to the position of the tidal height (mean free surface position) 
-        if (m_clippingSupport == ClippingSupport::PLANESURFACE) {
-            Position Tide(0., 0., m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU));
+    // Translation
+    auto bodyPos = m_body->GetPosition(NWU);
+    bodyPos.GetX() = 0.;
+    bodyPos.GetY() = 0.;
+    m_clippedMesh.Translate(mesh::Vector3dToOpenMeshPoint(bodyPos));
+
+    // Set the body position for horizontal correction in the clipping surface
+    m_clipper->GetClippingSurface()->SetBodyPosition(m_body->GetPosition(NWU));
+
+    // Update the node vertical position for the clippingplane to the position of the tidal height (mean free surface position)
+    if (m_clippingSupport == ClippingSupport::PLANESURFACE) {
+      Position Tide(0., 0.,
+                    m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU));
 //            c_nodeForClippingPlane->SetPositionInBody(Tide, NWU);
-            c_clippingPlane->SetOrigin(Tide, NWU);
-        }
-
-        // Application of the mesh clipper on the updated init mesh to obtain the clipped mesh
-        m_clipper->Apply(&m_clippedMesh);
-
-        // The clipped mesh obtained at this point is expressed in the world reference frame, but it's horizontal position
-        // does not coincide with the body's and is kept close to (0.,0.).
-
+      c_clippingPlane->SetOrigin(Tide, NWU);
     }
 
-    mesh::FrMesh &FrHydroMesh::ImportMesh(const std::string &meshFile, FrFrame meshOffset) {
+    // Application of the mesh clipper on the updated init mesh to obtain the clipped mesh
+    m_clipper->Apply(&m_clippedMesh);
 
-        m_initMesh = mesh::FrMesh(meshFile);
-        m_initMesh.Translate(mesh::Vector3dToOpenMeshPoint(meshOffset.GetPosition(NWU)));
-        m_initMesh.Rotate(meshOffset.GetRotation().GetRotationMatrix());
+    // The clipped mesh obtained at this point is expressed in the world reference frame, but it's horizontal position
+    // does not coincide with the body's and is kept close to (0.,0.).
 
-        return m_initMesh;
-    }
+  }
 
-    FrHydroMesh::ClippingSupport FrHydroMesh::GetClippingSupport() const {
-        return m_clippingSupport;
-    }
+  template<typename OffshoreSystemType>
+  mesh::FrMesh &FrHydroMesh<OffshoreSystemType>::ImportMesh(const std::string &meshFile, FrFrame meshOffset) {
 
-    std::shared_ptr<FrHydroMesh> make_hydro_mesh(const std::shared_ptr<FrBody>& body, FrHydroMesh::ClippingSupport support) {
+    m_initMesh = mesh::FrMesh(meshFile);
+    m_initMesh.Translate(mesh::Vector3dToOpenMeshPoint(meshOffset.GetPosition(NWU)));
+    m_initMesh.Rotate(meshOffset.GetRotation().GetRotationMatrix());
 
-        auto hydroMesh = std::make_shared<FrHydroMesh>(body->GetSystem(), body, support);
+    return m_initMesh;
+  }
 
-        body->GetSystem()->Add(hydroMesh);
+  template<typename OffshoreSystemType>
+  typename FrHydroMesh<OffshoreSystemType>::ClippingSupport
+  FrHydroMesh<OffshoreSystemType>::GetClippingSupport() const {
+    return m_clippingSupport;
+  }
 
-        return hydroMesh;
+  template<typename OffshoreSystemType>
+  std::shared_ptr<FrHydroMesh<OffshoreSystemType>>
+  make_hydro_mesh(const std::shared_ptr<FrBody<OffshoreSystemType>> &body,
+                  typename FrHydroMesh<OffshoreSystemType>::ClippingSupport support) {
 
-    }
+    auto hydroMesh = std::make_shared<FrHydroMesh>(body->GetSystem(), body, support);
 
-    std::shared_ptr<FrHydroMesh> make_hydro_mesh(const std::shared_ptr<FrBody>& body, const std::string& meshFile,
-            FrFrame meshOffset, FrHydroMesh::ClippingSupport support) {
+    body->GetSystem()->Add(hydroMesh);
 
-        auto hydroMesh = std::make_shared<FrHydroMesh>(body->GetSystem(), body, meshFile, meshOffset, support);
+    return hydroMesh;
 
-        body->GetSystem()->Add(hydroMesh);
+  }
 
-        return hydroMesh;
+  template<typename OffshoreSystemType>
+  std::shared_ptr<FrHydroMesh<OffshoreSystemType>>
+  make_hydro_mesh(const std::shared_ptr<FrBody<OffshoreSystemType>> &body, const std::string &meshFile,
+                  FrFrame meshOffset, typename FrHydroMesh<OffshoreSystemType>::ClippingSupport support) {
 
-    }
+    auto hydroMesh = std::make_shared<FrHydroMesh>(body->GetSystem(), body, meshFile, meshOffset, support);
+
+    body->GetSystem()->Add(hydroMesh);
+
+    return hydroMesh;
+
+  }
 
 //    std::shared_ptr<FrHydroMesh> make_hydro_mesh_nonlinear(const std::shared_ptr<FrBody>& body, const std::string& meshfile){
 //

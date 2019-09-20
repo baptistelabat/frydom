@@ -373,13 +373,13 @@ namespace frydom {
     template<typename OffshoreSystemType>
     void FrMorisonCompositeElement<OffshoreSystemType>::Update(double time) {
 
-      m_force.SetNull();
-      m_torque.SetNull();
+      this->m_force.SetNull();
+      this->m_torque.SetNull();
 
       for (auto &element : m_morison) {
         element->Update(time);
-        m_force += element->GetForceInWorld(NWU);
-        m_torque += element->GetTorqueInBody();
+        this->m_force += element->GetForceInWorld(NWU);
+        this->m_torque += element->GetTorqueInBody();
       }
     }
 

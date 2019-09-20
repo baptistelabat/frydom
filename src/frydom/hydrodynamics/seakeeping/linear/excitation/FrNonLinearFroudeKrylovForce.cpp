@@ -23,74 +23,78 @@
 
 namespace frydom {
 
-    FrNonLinearFroudeKrylovForce::FrNonLinearFroudeKrylovForce(const std::shared_ptr<FrHydroMesh> &HydroMesh) {
-        m_hydroMesh = HydroMesh;
-    }
+  template<typename OffshoreSystemType>
+  FrNonLinearFroudeKrylovForce<OffshoreSystemType>::FrNonLinearFroudeKrylovForce(const std::shared_ptr<FrHydroMesh<OffshoreSystemType>> &HydroMesh) {
+    m_hydroMesh = HydroMesh;
+  }
 
-    void FrNonLinearFroudeKrylovForce::Compute(double time) {
+  template<typename OffshoreSystemType>
+  void FrNonLinearFroudeKrylovForce<OffshoreSystemType>::Compute(double time) {
 
-        // This function computes the fully or weakly nonlinear Froude-Krylov forces from the pressure integration.
+    // This function computes the fully or weakly nonlinear Froude-Krylov forces from the pressure integration.
 
-        Force FKforce = {};
-        Torque FKtorque = {};
+    Force FKforce = {};
+    Torque FKtorque = {};
 
-        Position NormalPos;
+    Position NormalPos;
 
-        auto bodyPos = m_body->GetPosition(NWU); bodyPos.GetZ() = 0;
+    auto bodyPos = this->m_body->GetPosition(NWU);
+    bodyPos.GetZ() = 0;
 
-        auto clippedMesh = &(m_hydroMesh->GetClippedMesh());
-        
-        auto waveField = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
+    auto clippedMesh = &(m_hydroMesh->GetClippedMesh());
 
-        // Loop over the faces.
-        for (auto& f_iter : clippedMesh->faces()) {
+    auto waveField = this->m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
 
-            // Normal
-            NormalPos.GetX() = clippedMesh->normal(f_iter)[0];
-            NormalPos.GetY() = clippedMesh->normal(f_iter)[1];
-            NormalPos.GetZ() = clippedMesh->normal(f_iter)[2];
+    // Loop over the faces.
+    for (auto &f_iter : clippedMesh->faces()) {
 
-            // Centroid (where the pressure is evaluated).
-            Position Centroid = mesh::OpenMeshPointToVector3d<Position>(clippedMesh->data(f_iter).Center());
+      // Normal
+      NormalPos.GetX() = clippedMesh->normal(f_iter)[0];
+      NormalPos.GetY() = clippedMesh->normal(f_iter)[1];
+      NormalPos.GetZ() = clippedMesh->normal(f_iter)[2];
 
-            // Incident pressure.
-            // The pressure is assumed constant over a panel.
-            auto Pressure = waveField->GetPressure(Centroid + bodyPos, NWU);
+      // Centroid (where the pressure is evaluated).
+      Position Centroid = mesh::OpenMeshPointToVector3d<Position>(clippedMesh->data(f_iter).Center());
 
-            // Area.
-            double Area = clippedMesh->GetArea(f_iter);
+      // Incident pressure.
+      // The pressure is assumed constant over a panel.
+      auto Pressure = waveField->GetPressure(Centroid + bodyPos, NWU);
 
-            // Pressure * Area.
-            double PA = -Pressure*Area;
+      // Area.
+      double Area = clippedMesh->GetArea(f_iter);
 
-            // Froude-Krylov force.
-            FKforce += PA*NormalPos;
+      // Pressure * Area.
+      double PA = -Pressure * Area;
 
-            // Froude-Krylov torque.
-            FKtorque += PA*Centroid.cross(NormalPos);
+      // Froude-Krylov force.
+      FKforce += PA * NormalPos;
 
-        }
-
-        Position meshPos = m_body->GetPosition(NWU);
-        meshPos.GetZ() = 0;
-
-        SetForceTorqueInWorldAtPointInWorld(FKforce, FKtorque, meshPos, NWU);
+      // Froude-Krylov torque.
+      FKtorque += PA * Centroid.cross(NormalPos);
 
     }
 
-    std::shared_ptr<FrNonLinearFroudeKrylovForce>
-    make_nonlinear_froude_krylov_force(std::shared_ptr<FrBody> body, std::shared_ptr<FrHydroMesh> HydroMesh){
+    Position meshPos = this->m_body->GetPosition(NWU);
+    meshPos.GetZ() = 0;
 
-        // This function creates a fully or weakly nonlinear Froude-Krylov force object.
+    this->SetForceTorqueInWorldAtPointInWorld(FKforce, FKtorque, meshPos, NWU);
 
-        // Construction of the fully or weakly Froude-Krylov force object from the HDB.
-        auto NonlinFKForce = std::make_shared<FrNonLinearFroudeKrylovForce>(HydroMesh);
+  }
 
-        // Add the Froude-Krylov force object as an external force to the body.
-        body->AddExternalForce(NonlinFKForce); // Initialization of m_body.
+  template<typename OffshoreSystemType>
+  std::shared_ptr<FrNonLinearFroudeKrylovForce<OffshoreSystemType>>
+  make_nonlinear_froude_krylov_force(std::shared_ptr<FrBody<OffshoreSystemType>> body, std::shared_ptr<FrHydroMesh<OffshoreSystemType>> HydroMesh) {
 
-        return NonlinFKForce;
+    // This function creates a fully or weakly nonlinear Froude-Krylov force object.
 
-    }
+    // Construction of the fully or weakly Froude-Krylov force object from the HDB.
+    auto NonlinFKForce = std::make_shared<FrNonLinearFroudeKrylovForce>(HydroMesh);
+
+    // Add the Froude-Krylov force object as an external force to the body.
+    body->AddExternalForce(NonlinFKForce); // Initialization of m_body.
+
+    return NonlinFKForce;
+
+  }
 
 }  // end namespace frydom
