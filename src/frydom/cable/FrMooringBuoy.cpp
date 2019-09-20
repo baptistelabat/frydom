@@ -20,20 +20,22 @@
 namespace frydom {
 
 
-    void FrMooringBuoy::FrSphereNonLinearHydrostaticForce::Compute(double time) {
-        auto m_buoy = dynamic_cast<FrMooringBuoy*>(m_body);
+    template <typename OffshoreSystemType>
+    void FrMooringBuoy<OffshoreSystemType>::FrSphereNonLinearHydrostaticForce::Compute(double time) {
+        auto m_buoy = dynamic_cast<FrMooringBuoy*>(this->m_body);
         Force Gvector(0.,0.,-m_buoy->GetSystem()->GetGravityAcceleration());
-        auto rho_water = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetDensity();
+        auto rho_water = this->m_body->GetSystem()->GetEnvironment()->GetOcean()->GetDensity();
         // FIXME : appliquer la force au centre de poussée et non au centre de gravité : théoriquement aucun effet, mais plus propre.
         SetForceInWorldAtCOG(-m_buoy->GetVolume()*rho_water*Gvector, NWU);
     }
 
-    FrMooringBuoy::FrMooringBuoy(double radius, double mass, bool visual_asset, double damping) {
+    template <typename OffshoreSystemType>
+    FrMooringBuoy<OffshoreSystemType>::FrMooringBuoy(double radius, double mass, bool visual_asset, double damping) {
         m_radius = radius;
         m_hydrostaticForce = std::make_shared<FrSphereNonLinearHydrostaticForce>();
         AddExternalForce(m_hydrostaticForce);
 
-        m_dampingForce = std::make_shared<FrLinearDamping>(WATER,false);
+        m_dampingForce = std::make_shared<FrLinearDamping<OffshoreSystemType>>(WATER,false);
         m_dampingForce->SetDiagonalDamping(damping,damping,damping,damping,damping,damping);
         AddExternalForce(m_dampingForce);
 
@@ -44,28 +46,30 @@ namespace frydom {
 //            makeItSphere(this,radius,mass);
 
         // Building the Chrono body
-        SetInertiaTensor(FrInertiaTensor(mass, inertia, inertia, inertia, 0., 0., 0., Position(), NWU));
+        this->SetInertiaTensor(FrInertiaTensor(mass, inertia, inertia, inertia, 0., 0., 0., Position(), NWU));
 
         // Collision
-        auto collisionModel = m_chronoBody->GetCollisionModel();
+        auto collisionModel = this->m_chronoBody->GetCollisionModel();
         collisionModel->ClearModel();
         collisionModel->AddSphere(radius, chrono::ChVector<double>());  // TODO: permettre de specifier les coords relatives dans le modele !!
         collisionModel->BuildModel();
-        AllowCollision(true);  // A retirer ?
-        SetSmoothContact();  // Smooth contact by default
+        this->AllowCollision(true);  // A retirer ?
+        this->SetSmoothContact();  // Smooth contact by default
 
         // Asset
-        AddSphereShape(radius);
+      this->AddSphereShape(radius);
     }
 
-    void FrMooringBuoy::Update() {
+    template <typename OffshoreSystemType>
+    void FrMooringBuoy<OffshoreSystemType>::Update() {
         computeVolume();
     }
 
-    double FrMooringBuoy::computeDraft() {
+    template <typename OffshoreSystemType>
+    double FrMooringBuoy<OffshoreSystemType>::computeDraft() {
 
-        auto eta = GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetPosition(GetPosition(NWU), NWU);
-        auto zh = GetPosition(NWU).GetZ() - eta;
+        auto eta = this->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetPosition(this->GetPosition(NWU), NWU);
+        auto zh = this->GetPosition(NWU).GetZ() - eta;
 
         if (zh<-m_radius) { return m_radius;}
         if (zh>m_radius) {return -m_radius;}
@@ -73,10 +77,10 @@ namespace frydom {
 
     }
 
-
-    std::shared_ptr<FrMooringBuoy>
-    make_mooring_buoy(FrOffshoreSystem* system, double radius, double mass, bool visual_asset, double damping){
-        auto buoy = std::make_shared<FrMooringBuoy>(radius, mass, visual_asset, damping);
+    template <typename OffshoreSystemType>
+    std::shared_ptr<FrMooringBuoy<OffshoreSystemType>>
+    make_mooring_buoy(FrOffshoreSystem<OffshoreSystemType>* system, double radius, double mass, bool visual_asset, double damping){
+        auto buoy = std::make_shared<FrMooringBuoy<OffshoreSystemType>>(radius, mass, visual_asset, damping);
         system->Add(buoy);
         buoy->SetColor(DarkRed);
         return buoy;

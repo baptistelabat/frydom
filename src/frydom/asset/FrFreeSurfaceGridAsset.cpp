@@ -18,14 +18,15 @@
 
 namespace frydom{
 
-
-    FrFreeSurfaceGridAsset::FrFreeSurfaceGridAsset(FrFreeSurface* freeSurface) : FrGridAsset() {
+    template <typename OffshoreSystemType>
+    FrFreeSurfaceGridAsset<OffshoreSystemType>::FrFreeSurfaceGridAsset(FrFreeSurface<OffshoreSystemType>* freeSurface) : FrGridAsset() {
         m_freeSurface = freeSurface;
         m_gridHeight = m_freeSurface->GetTidal()->GetHeight(NWU);
         m_color = DodgerBlue;
     }
 
-    void FrFreeSurfaceGridAsset::StepFinalize() {
+    template <typename OffshoreSystemType>
+    void FrFreeSurfaceGridAsset<OffshoreSystemType>::StepFinalize() {
         FrGridAsset::StepFinalize();
         if (fmod(c_currentStep,m_updateStep)==0) {
             auto mesh = dynamic_cast<chrono::ChTriangleMeshShape*>(m_chronoAsset->GetAssetN(0).get())->GetMesh();

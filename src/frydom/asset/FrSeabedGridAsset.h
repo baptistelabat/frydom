@@ -18,20 +18,22 @@
 namespace frydom {
 
     // Forward declaration
+    template <typename OffshoreSystemType>
     class FrSeabed;
 
     /**
      * \class FrSeabedGridAsset
      * \brief Class to display the seabed grid.
      */
+     template <typename OffshoreSystemType>
     class FrSeabedGridAsset : public FrGridAsset {
 
-        FrSeabed* m_seabed;    ///> Seabed containing this asset
+        FrSeabed<OffshoreSystemType>* m_seabed;    ///> Seabed containing this asset
 
     public:
         /// Default constructor
         /// \param seabed pointer ot the seabed
-        explicit FrSeabedGridAsset(FrSeabed* seabed);
+        explicit FrSeabedGridAsset(FrSeabed<OffshoreSystemType>* seabed);
 
         /// Get the seabed grid height
         /// \return

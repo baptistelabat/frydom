@@ -18,13 +18,15 @@
 namespace frydom {
 
     // Forward declaration
+    template <typename OffshoreSystemType>
     class FrLinearDamping;
 
 
-    class FrMooringBuoy : public FrBody {
+    template <typename OffshoreSystemType>
+    class FrMooringBuoy : public FrBody<OffshoreSystemType> {
 
     private:
-        class FrSphereNonLinearHydrostaticForce : public FrForce {
+        class FrSphereNonLinearHydrostaticForce : public FrForce<OffshoreSystemType> {
 
         public:
 
@@ -46,7 +48,7 @@ namespace frydom {
         double m_radius = 1.;
         double c_volume;
         std::shared_ptr<FrSphereNonLinearHydrostaticForce> m_hydrostaticForce;
-        std::shared_ptr<FrLinearDamping> m_dampingForce;
+        std::shared_ptr<FrLinearDamping<OffshoreSystemType>> m_dampingForce;
 
     public:
 
@@ -79,8 +81,9 @@ namespace frydom {
     /// \param visual_asset true if an asset is to be viewed
     /// \param damping damping coefficient affected to the diagonal terms of a linear damping force.
     /// \return FrMooringBuoy instance
-    std::shared_ptr<FrMooringBuoy>
-    make_mooring_buoy(FrOffshoreSystem* system, double radius, double mass, bool visual_asset = true, double damping=0);
+    template <typename OffshoreSystemType>
+    std::shared_ptr<FrMooringBuoy<OffshoreSystemType>>
+    make_mooring_buoy(FrOffshoreSystem<OffshoreSystemType>* system, double radius, double mass, bool visual_asset = true, double damping=0);
 
 }  //end namespace frydom
 

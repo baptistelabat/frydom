@@ -25,20 +25,15 @@
 namespace frydom {
 
     //Forward declaration
-    class FrObject;
-    class FrBody;
+    template <typename OffshoreSystemType>
     class FrOffshoreSystem;
-    class FrForce;
-    class FrNode;
-    class FrPhysicsItem;
-    class FrLinkBase;
-    class FrStaticAnalysis;
-    class FrFEAMesh;
 
+
+    template <typename OffshoreSystemType>
     class FrPathManager {
     private:
 
-        FRAME_CONVENTION m_logFrameConvention;
+        FRAME_CONVENTION m_logFrameConvention; // FIXME : not used at that moment !!
 
         cppfs::FilePath m_outputPath;
         cppfs::FilePath m_projectPath;
@@ -73,7 +68,7 @@ namespace frydom {
 
 
         ///Initialize the log manager serice
-        void Initialize(FrOffshoreSystem* system);
+        void Initialize(FrOffshoreSystem<OffshoreSystemType>* system);
 
         std::string BuildPath(const std::string& rootPath, const std::string& relPath) const;
 

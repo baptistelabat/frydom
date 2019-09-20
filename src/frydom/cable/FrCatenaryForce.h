@@ -25,12 +25,13 @@ namespace frydom {
      * A differenciation is done on which side of the cable (starting or ending), the force is applied.
      * \see FrCatenaryLine_, FrForce
      */
-    class FrCatenaryForce : public FrForce {
+     template <typename OffshoreSystemType>
+    class FrCatenaryForce : public FrForce<OffshoreSystemType> {
 
     private:
 
-        FrCatenaryLine* m_line; ///< The parent line
-        FrCatenaryLine::LINE_SIDE m_line_side;   ///< The side of the line where the tension is applied
+        FrCatenaryLine<OffshoreSystemType>* m_line; ///< The parent line
+        typename FrCatenaryLine<OffshoreSystemType>::LINE_SIDE m_line_side;   ///< The side of the line where the tension is applied
 
     public:
 
@@ -41,7 +42,7 @@ namespace frydom {
         /// FrCatenaryForce constructor, from a catenary line, and the description of the side of this line
         /// \param line catenary line applying a tension
         /// \param side side of the line (starting or ending)
-        FrCatenaryForce(FrCatenaryLine* line, FrCatenaryLine::LINE_SIDE side) : m_line(line), m_line_side(side) {};
+        FrCatenaryForce(FrCatenaryLine<OffshoreSystemType>* line, typename FrCatenaryLine<OffshoreSystemType>::LINE_SIDE side) : m_line(line), m_line_side(side) {};
 
         /// Return true if the force is included in the static analysis
         bool IncludedInStaticAnalysis() const override {return true;}

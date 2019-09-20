@@ -21,6 +21,7 @@
 namespace frydom {
 
     // Forward declaration
+    template <typename OffshoreSystemType>
     class FrNode;
 
     class FrCableProperties {
@@ -111,6 +112,7 @@ namespace frydom {
      * \see FrCatenaryLine, FrDynamicCable, FrNode
      *
      */
+     template <typename OffshoreSystemType>
     class FrCable {
 
     protected:
@@ -122,8 +124,8 @@ namespace frydom {
 
         //--------------------------------------------------------------------------------------------------------------
         // Nodes
-        std::shared_ptr<FrNode> m_startingNode;       ///< starting node
-        std::shared_ptr<FrNode> m_endingNode;         ///< ending node
+        std::shared_ptr<FrNode<OffshoreSystemType>> m_startingNode;       ///< starting node
+        std::shared_ptr<FrNode<OffshoreSystemType>> m_endingNode;         ///< ending node
 
         //--------------------------------------------------------------------------------------------------------------
         // Cable properties
@@ -143,15 +145,15 @@ namespace frydom {
         /// FrCable constructor, using two nodes
         /// \param startingNode starting node
         /// \param endingNode ending node
-        FrCable(const std::shared_ptr<FrNode>& startingNode, const std::shared_ptr<FrNode>& endingNode);
+        FrCable(const std::shared_ptr<FrNode<OffshoreSystemType>>& startingNode, const std::shared_ptr<FrNode<OffshoreSystemType>>& endingNode);
 
         /// FrCable constructor, using two nodes and cable properties
         /// \param startingNode starting node
         /// \param endingNode ending node
         /// \param properties cable properties
         /// \param unstrainedLength unstrained length, in m
-        FrCable(const std::shared_ptr<FrNode>& startingNode,
-                const std::shared_ptr<FrNode>& endingNode,
+        FrCable(const std::shared_ptr<FrNode<OffshoreSystemType>>& startingNode,
+                const std::shared_ptr<FrNode<OffshoreSystemType>>& endingNode,
                 const std::shared_ptr<FrCableProperties>& properties,
                 double unstrainedLength);
 
@@ -186,19 +188,19 @@ namespace frydom {
         // Node accessors
         /// Set the starting node of the cable
         /// \param startingNode starting node
-        void SetStartingNode(const std::shared_ptr<FrNode> startingNode);
+        void SetStartingNode(const std::shared_ptr<FrNode<OffshoreSystemType>> startingNode);
 
         /// Get the starting node of the cable
         /// \return starting node
-        std::shared_ptr<FrNode> GetStartingNode() const;
+        std::shared_ptr<FrNode<OffshoreSystemType>> GetStartingNode() const;
 
         /// Set the ending node of the cable
         /// \param endingNode ending node
-        void SetEndingNode(const std::shared_ptr<FrNode> endingNode);
+        void SetEndingNode(const std::shared_ptr<FrNode<OffshoreSystemType>> endingNode);
 
         /// Get the ending node of the cable
         /// \return ending node
-        std::shared_ptr<FrNode> GetEndingNode() const;
+        std::shared_ptr<FrNode<OffshoreSystemType>> GetEndingNode() const;
 
         //--------------------------------------------------------------------------------------------------------------
         // pure virtual methods

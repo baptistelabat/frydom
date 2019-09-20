@@ -67,7 +67,7 @@ namespace frydom {
 
         double slope = (y1-y0) / (x1-x0);
         double intercept = (y0 - slope*x0);
-        m_function = clamp_after(clamp_before((slope*FrVarXFunction() + intercept), x0), x1).Clone();
+        m_function = clamp_after(clamp_before((slope * FrVarXFunction() + intercept), x0), x1).Clone();
     }
 
     void FrLinearRampFunction::GetByTwoPoints(double &x0, double &y0, double &x1, double &y1) {
@@ -79,9 +79,9 @@ namespace frydom {
 
     }
 
-    void FrLinearRampFunction::Initialize() {
-
-    }
+//    void FrLinearRampFunction::Initialize() {
+//
+//    }
 
     std::string FrLinearRampFunction::GetRepr() const {
         fmt::MemoryWriter mw;

@@ -27,7 +27,8 @@ namespace frydom {
      * \class FrLinearDamping
      * \brief Class for computing additional linear damping loads.
      */
-    class FrLinearDamping : public FrForce {
+     template <typename OffshoreSystemType>
+    class FrLinearDamping : public FrForce<OffshoreSystemType> {
 
     public:
         using DampingMatrix = mathutils::Matrix66<double>; // TODO : disposer d'une Matrix66 dans mathutils
@@ -89,8 +90,9 @@ namespace frydom {
     };
 
     /// This function creates a linear damping force.
-    std::shared_ptr<FrLinearDamping>
-    make_linear_damping_force(std::shared_ptr<FrBody> body, FLUID_TYPE ft, bool relativeToFluid);
+    template <typename OffshoreSystemType>
+    std::shared_ptr<FrLinearDamping<OffshoreSystemType>>
+    make_linear_damping_force(std::shared_ptr<FrBody<OffshoreSystemType>> body, FLUID_TYPE ft, bool relativeToFluid);
 
 }  // end namespace frydom
 

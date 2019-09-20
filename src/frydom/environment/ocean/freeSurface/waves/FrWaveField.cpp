@@ -25,7 +25,7 @@ namespace frydom {
         m_infinite_depth = freeSurface->GetOcean()->GetSeabed()->GetInfiniteDepth();
     }
 
-    FrWaveField::WAVE_MODEL FrWaveField::GetWaveModel() const { return m_waveModel; }
+//    FrWaveField::WAVE_MODEL FrWaveField::GetWaveModel() const { return m_waveModel; }
 
     Velocity FrWaveField::GetVelocity(double x, double y, double z, bool cutoff, FRAME_CONVENTION fc) const {
 
@@ -151,7 +151,7 @@ namespace frydom {
     // FrNullWaveField definitions
 
     FrNullWaveField::FrNullWaveField(FrFreeSurface* freeSurface) : FrWaveField(freeSurface) {
-        m_waveModel = NO_WAVES;
+//        m_waveModel = NO_WAVES;
     }
 
     double FrNullWaveField::GetElevation(double x, double y, FRAME_CONVENTION fc) const {

@@ -13,7 +13,7 @@
 #ifndef FRYDOM_FRWAVESINC_H
 #define FRYDOM_FRWAVESINC_H
 
-#include "FrKinematicStretching.h"
+//#include "FrKinematicStretching.h"
 #include "FrWaveDispersionRelation.h"
 #include "FrWaveField.h"
 

@@ -22,13 +22,16 @@
 namespace frydom {
 
     // Forward Declarations
+    template<typename OffshoreSystemType>
     class FrEnvironment;
 
-    template <class WaveFieldType>
+    template<typename OffshoreSystemType>
     class FrFreeSurface;
 
+    template<typename OffshoreSystemType>
     class FrCurrent;
 
+    template<typename OffshoreSystemType>
     class FrSeabed;
 
     class FrFluidProperties;
@@ -38,29 +41,29 @@ namespace frydom {
      * \class FrOcean
      * \brief Class for defining the ocean.
      */
-    template <class FreeSurfaceType>
-    class FrOcean : public FrObject {
+    template <typename OffshoreSystemType>
+    class FrOcean : public FrObject<OffshoreSystemType> {
 
      private:
 
-      FrEnvironment *m_environment;    ///> pointer to the container
+      FrEnvironment<OffshoreSystemType> *m_environment;    ///> pointer to the container
 
       //---------------------------- FrOcean elements ----------------------------//
 
-      std::unique_ptr<FrSeabed> m_seabed;               ///> Seabed element, with bathymetry model information
-      std::unique_ptr<FrFreeSurface> m_freeSurface;     ///> Free surface element, with tidal, wavefield models information
-      std::unique_ptr<FrCurrent> m_current;             ///> Current, with current model information
+      std::unique_ptr<FrSeabed<OffshoreSystemType>> m_seabed;               ///> Seabed element, with bathymetry model information
+      std::unique_ptr<FrFreeSurface<OffshoreSystemType>> m_freeSurface;     ///> Free surface element, with tidal, wavefield models information
+      std::unique_ptr<FrCurrent<OffshoreSystemType>> m_current;             ///> Current, with current model information
       std::unique_ptr<FrFluidProperties> m_waterProp;    ///> Water properties
 
      public:
 
       /// Default constructor
       /// \param environment environment containing this ocean
-      explicit FrOcean(FrEnvironment *environment);
+      explicit FrOcean(FrEnvironment<OffshoreSystemType> *environment);
 
       /// Get the environment containing this ocean
       /// \return environment containing this ocean
-      FrEnvironment *GetEnvironment() const;
+      FrEnvironment<OffshoreSystemType> *GetEnvironment() const;
 
       /// Get the type name of this object
       /// \return type name of this object
@@ -142,15 +145,15 @@ namespace frydom {
 
       /// Get the free surface element
       /// \return the free surface element
-      FrFreeSurface *GetFreeSurface() const;
+      FrFreeSurface<OffshoreSystemType> *GetFreeSurface() const;
 
       /// Get The current element
       /// \return the current element
-      FrCurrent *GetCurrent() const;
+      FrCurrent<OffshoreSystemType> *GetCurrent() const;
 
       /// Get the seabed element
       /// \return the seabed element
-      FrSeabed *GetSeabed() const;
+      FrSeabed<OffshoreSystemType> *GetSeabed() const;
 
       /// Enforce the infinite depth condition on the Seabed object.
       /// A NullSeabed is then considered, with no grid asset and no bathymetry getters

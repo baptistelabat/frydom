@@ -25,7 +25,8 @@ using json = nlohmann::json; // for convenience
 namespace frydom{
 
 
-    FrPathManager::FrPathManager() {
+    FrPathManager::FrPathManager() :
+      m_logFrameConvention(NWU) {
 
         ReadConfig();
 

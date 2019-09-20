@@ -18,19 +18,21 @@ namespace chrono{
 namespace frydom {
 
     // Forward declarations
+    template <typename OffshoreSystemType>
     class FrOffshoreSystem;
 
-    class FrFEAMesh : public FrObject {
+    template <typename OffshoreSystemType>
+    class FrFEAMesh : public FrObject<OffshoreSystemType> {
 
     protected:
 
-        FrOffshoreSystem * m_system;
+        FrOffshoreSystem<OffshoreSystemType> * m_system;
 
         virtual std::shared_ptr<chrono::fea::ChMesh> GetChronoMesh() = 0;
 
     public:
 
-        FrOffshoreSystem* GetSystem() { return m_system; };
+        FrOffshoreSystem<OffshoreSystemType>* GetSystem() { return m_system; };
 
         FrFEAMesh() = default;
 
@@ -44,8 +46,8 @@ namespace frydom {
 
         virtual void Relax() = 0;
 
-        friend void FrOffshoreSystem::AddFEAMesh(std::shared_ptr<FrFEAMesh>);
-        friend void FrOffshoreSystem::RemoveFEAMesh(std::shared_ptr<FrFEAMesh>);
+        friend void FrOffshoreSystem<OffshoreSystemType>::AddFEAMesh(std::shared_ptr<FrFEAMesh<OffshoreSystemType>>);
+        friend void FrOffshoreSystem<OffshoreSystemType>::RemoveFEAMesh(std::shared_ptr<FrFEAMesh<OffshoreSystemType>>);
 
     };
 

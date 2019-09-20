@@ -18,9 +18,11 @@
 namespace frydom{
 
     // Forward declarations
+    template <typename OffshoreSystemType>
     class FrOffshoreSystem;
 
-    class FrStaticAnalysis : public FrObject {
+    template <typename OffshoreSystemType>
+    class FrStaticAnalysis : public FrObject<OffshoreSystemType> {
 
     public:
 
@@ -33,7 +35,7 @@ namespace frydom{
         };
 
     private:
-        FrOffshoreSystem* m_system;     ///< Pointer to the offshore system, containing this structure
+        FrOffshoreSystem<OffshoreSystemType>* m_system;     ///< Pointer to the offshore system, containing this structure
 
         int m_nIterations = 10;         ///< Number of iterations for the static procedure
                                         /// each iteration contains m_nSteps steps; after each iteration a relaxation is applied
@@ -43,7 +45,7 @@ namespace frydom{
 
         RELAXTYPE m_relax = VELOCITY;   ///< relaxation method used
 
-        std::map<FrObject*, std::pair<bool,bool>> m_map;    ///< Map to keep the activity and log activity of
+        std::map<FrObject<OffshoreSystemType>*, std::pair<bool,bool>> m_map;    ///< Map to keep the activity and log activity of
                                                             ///< elements before the static analysis
 
         // Temporary stored variables
@@ -57,11 +59,11 @@ namespace frydom{
 
     public:
 
-        explicit FrStaticAnalysis(FrOffshoreSystem* system);;
+        explicit FrStaticAnalysis(FrOffshoreSystem<OffshoreSystemType>* system);;
 
         std::string GetTypeName() const override { return "StaticAnalysis"; }
 
-        FrOffshoreSystem* GetSystem();
+        FrOffshoreSystem<OffshoreSystemType>* GetSystem();
 
         /// Set the number of steps between two relaxations, during static iterations
         /// \param nSteps number of steps between two relaxations

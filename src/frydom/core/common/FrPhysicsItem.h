@@ -22,17 +22,19 @@
 
 namespace frydom {
 
+    template <typename OffshoreSystemType>
     class FrPhysicsItem;
 
 
     namespace internal {
 
+        template <typename OffshoreSystemType>
         struct FrPhysicsItemBase : public chrono::ChPhysicsItem {
 
-            FrPhysicsItem *m_frydomPhysicsItem;
+            FrPhysicsItem<OffshoreSystemType> *m_frydomPhysicsItem;
 
             /// Constructor.
-            explicit FrPhysicsItemBase(FrPhysicsItem *item);
+            explicit FrPhysicsItemBase(FrPhysicsItem<OffshoreSystemType> *item);
 
             void SetupInitial() override;
 
@@ -45,6 +47,7 @@ namespace frydom {
     }  // end namespace frydom::internal
 
 
+    template <typename OffshoreSystemType>
     class FrOffshoreSystem;
     class FrTriangleMeshConnected;
     class FrAsset;
@@ -53,29 +56,30 @@ namespace frydom {
      * \class FrPhysicsItem
      * \brief Class for defining objects which are neither bodies nor links, for instance caterany lines.
      */
-    class FrPhysicsItem: public FrObject {
+     template <typename OffshoreSystemType>
+    class FrPhysicsItem: public FrObject<OffshoreSystemType> {
 
     protected:
 
-        std::shared_ptr<internal::FrPhysicsItemBase>
+        std::shared_ptr<internal::FrPhysicsItemBase<OffshoreSystemType>>
                 m_chronoPhysicsItem;     ///> pointer to the related chrono physics item
 
-        FrOffshoreSystem* m_system;     ///< pointer to the system containing this physics item
+        FrOffshoreSystem<OffshoreSystemType>* m_system;     ///< pointer to the system containing this physics item
 
         bool m_isActive = true;         ///< boolean to check if the physics item is active
                                         ///< if it's not the case, it is not updated during the simulation
 
         /// Get the shared pointer to the chrono related physics item
         /// \return Chrono related physics item
-        virtual std::shared_ptr<internal::FrPhysicsItemBase> GetChronoPhysicsItem() const ;
+        virtual std::shared_ptr<internal::FrPhysicsItemBase<OffshoreSystemType>> GetChronoPhysicsItem() const ;
 
-        friend void FrOffshoreSystem::RemovePhysicsItem(std::shared_ptr<FrPhysicsItem>);
+        friend void FrOffshoreSystem<OffshoreSystemType>::RemovePhysicsItem(std::shared_ptr<FrPhysicsItem<OffshoreSystemType>>);
 
     public:
 
         FrPhysicsItem();
 
-        FrOffshoreSystem* GetSystem();
+        FrOffshoreSystem<OffshoreSystemType>* GetSystem();
 
         /// Check if the force is active
         bool IsActive() const;
@@ -104,27 +108,30 @@ namespace frydom {
      * \class FrPrePhysicsItem
      * \brief Class for defining physics items updated before bodies.
      */
-    class FrPrePhysicsItem : public FrPhysicsItem{
+     template <typename OffshoreSystemType>
+    class FrPrePhysicsItem : public FrPhysicsItem<OffshoreSystemType> {
     protected:
-        friend void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem>);
+        friend void FrOffshoreSystem<OffshoreSystemType>::AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem<OffshoreSystemType>>);
     };
 
     /**
      * \class FrMidPhysicsItem
      * \brief Class for defining physics items updated after bodies but before links.
      */
-    class FrMidPhysicsItem : public FrPhysicsItem{
+     template <typename OffshoreSystemType>
+    class FrMidPhysicsItem : public FrPhysicsItem<OffshoreSystemType> {
     protected:
-        friend void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem>);
+        friend void FrOffshoreSystem<OffshoreSystemType>::AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem<OffshoreSystemType>>);
     };
 
     /**
      * \class FrPostPhysicsItem
      * \brief Class for defining physics items updated after links.
      */
-    class FrPostPhysicsItem : public FrPhysicsItem{
+     template <typename OffshoreSystemType>
+    class FrPostPhysicsItem : public FrPhysicsItem<OffshoreSystemType> {
     protected:
-        friend void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem>);
+        friend void FrOffshoreSystem<OffshoreSystemType>::AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem<OffshoreSystemType>>);
     };
 
 }  // end namespace frydom

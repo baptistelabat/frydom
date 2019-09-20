@@ -30,7 +30,7 @@ namespace chrono {
 namespace frydom {
 
     // Forward declarations:
-//    class FrCatenaryLine;
+    template <typename OffshoreSystemType>
     class FrNode;
 
     class FrCatenaryAssetOwner : public FrAssetOwner {

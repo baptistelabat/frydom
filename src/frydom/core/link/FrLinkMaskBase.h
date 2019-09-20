@@ -12,6 +12,7 @@ namespace frydom {
     namespace internal {
 
     /// Specialized ChLinkMaskLF to be used with off-diagonal mass matrix coefficients
+    template <typename OffshoreSystemType>
     class FrLinkMaskBase : public chrono::ChLinkMaskLF {
 
     public:
@@ -21,7 +22,7 @@ namespace frydom {
 
         /// Create a FrLinkMaskBase with nmconstr scalar constraints of
         /// class FrConstraintTwoBodies.
-        FrLinkMaskBase(int mnconstr);
+        explicit FrLinkMaskBase(int mnconstr);
 
         /// Copy constructor
         FrLinkMaskBase(const FrLinkMaskBase& source) : chrono::ChLinkMaskLF(source) {}

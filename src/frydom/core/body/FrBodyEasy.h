@@ -18,21 +18,27 @@
 namespace frydom {
 
     // Forward declaration
+    template <typename OffshoreSystemType>
     class FrBody;
 
 
-    void makeItBox(std::shared_ptr<FrBody> body, double xSize, double ySize, double zSize, double mass);
+    template <typename OffshoreSystemType>
+    void makeItBox(std::shared_ptr<FrBody<OffshoreSystemType>> body, double xSize, double ySize, double zSize, double mass);
 
-    void makeItCylinder(std::shared_ptr<FrBody> body, double radius, double height, double mass);
+    template <typename OffshoreSystemType>
+    void makeItCylinder(std::shared_ptr<FrBody<OffshoreSystemType>> body, double radius, double height, double mass);
 
-    void makeItSphere(std::shared_ptr<FrBody> body, double radius, double mass);
+    template <typename OffshoreSystemType>
+    void makeItSphere(std::shared_ptr<FrBody<OffshoreSystemType>> body, double radius, double mass);
 
+    template <typename OffshoreSystemType>
+    std::shared_ptr<FrBody<OffshoreSystemType>> make_BoxBody(double xSize, double ySize, double zSize, double mass);
 
-    std::shared_ptr<FrBody> make_BoxBody(double xSize, double ySize, double zSize, double mass);
+    template <typename OffshoreSystemType>
+    std::shared_ptr<FrBody<OffshoreSystemType>> make_CylinderBody(double radius, double height, double mass);
 
-    std::shared_ptr<FrBody> make_CylinderBody(double radius, double height, double mass);
-
-    std::shared_ptr<FrBody> make_SphereBody(double radius, double mass);
+    template <typename OffshoreSystemType>
+    std::shared_ptr<FrBody<OffshoreSystemType>> make_SphereBody(double radius, double mass);
 
 
     // TODO : faire le make_ConeBody ---> mat d'eolienne...

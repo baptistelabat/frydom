@@ -20,23 +20,27 @@
 namespace frydom {
 
     // Forward declarations
+    template <typename  OffshoreSystemType>
     class FrOcean;
+
+    template <typename OffshoreSystemType>
     class FrSeabedGridAsset;
 
     /**
      * \class FrSeabed
      * \brief Class for defining a seabed with either a finite or infinite water depth.
      */
-    class FrSeabed  : public FrObject {
+    template <typename OffshoreSystemType>
+    class FrSeabed  : public FrObject<OffshoreSystemType> {
     protected:
 
-        FrOcean *m_ocean;            ///< Pointer to the ocean containing this asset
+        FrOcean<OffshoreSystemType> *m_ocean;            ///< Pointer to the ocean containing this asset
         bool m_infiniteDepth = false; ///< true if the infinite depth condition is applied
 
     public:
         /// Default constructor
         /// \param ocean ocean containing this seabed
-        explicit FrSeabed(FrOcean* ocean);
+        explicit FrSeabed(FrOcean<OffshoreSystemType>* ocean);
 
         /// Default destructor
         ~FrSeabed() = default;
@@ -49,13 +53,13 @@ namespace frydom {
 
         /// Get the seabed grid asset
         /// \return seabed grid asset
-        virtual FrSeabedGridAsset * GetSeabedGridAsset() = 0;
+        virtual FrSeabedGridAsset<OffshoreSystemType> * GetSeabedGridAsset() = 0;
 
         //---------------------------- Seabed elements Getters ----------------------------//
 
         /// Get the ocean containing this seabed
         /// \return ocean containing this seabed
-        FrOcean* GetOcean() const;
+        FrOcean<OffshoreSystemType>* GetOcean() const;
 
         /// Set the mean bathymetry of the seabed (negative in NWU/positive in NED)
         /// \param bathymetry mean bathymetry of the seabed
@@ -96,18 +100,19 @@ namespace frydom {
      * \class FrNullSeabed
      * \brief Class for defining a seabed in case of infinite water depth.
      */
-    class FrNullSeabed  : public FrSeabed { // TODO : renommer en FrInfiniteSeabed
+     template <typename OffshoreSystemType>
+    class FrNullSeabed  : public FrSeabed<OffshoreSystemType> { // TODO : renommer en FrInfiniteSeabed
     public:
 
         /// Default constructor
         /// \param ocean ocean containing this seabed
-        explicit FrNullSeabed(FrOcean* ocean);
+        explicit FrNullSeabed(FrOcean<OffshoreSystemType>* ocean);
 
         //---------------------------- Asset ----------------------------//
 
         /// Get the seabed grid asset
         /// \return seabed grid asset
-        FrSeabedGridAsset * GetSeabedGridAsset() override;
+        FrSeabedGridAsset<OffshoreSystemType> * GetSeabedGridAsset() override;
 
         //---------------------------- Seabed elements Getters ----------------------------//
 
@@ -144,12 +149,13 @@ namespace frydom {
      * \class FrMeanSeabed
      * \brief Class for defining a mean seabed in case of finite and constant water depth.
      */
-    class FrMeanSeabed  : public FrSeabed {
+     template <typename OffshoreSystemType>
+    class FrMeanSeabed  : public FrSeabed<OffshoreSystemType> {
     protected:
 
         bool m_showSeabed = true;     ///< Boolean checking if the seabed is shown/exists
                                       ///< It is turned to false also if the infinite depth condition is enforced.
-        std::shared_ptr<FrSeabedGridAsset> m_SeabedGridAsset;    ///> Seabed grid asset, containing also its asset visualization
+        std::shared_ptr<FrSeabedGridAsset<OffshoreSystemType>> m_SeabedGridAsset;    ///> Seabed grid asset, containing also its asset visualization
         double m_bathymetry = -30;    ///< Mean bathymetry, in NWU
 
         //TODO : consider varying bathymetry
@@ -158,7 +164,7 @@ namespace frydom {
 
         /// Default constructor
         /// \param ocean ocean containing this seabed
-        explicit FrMeanSeabed(FrOcean* ocean);
+        explicit FrMeanSeabed(FrOcean<OffshoreSystemType>* ocean);
 
         /// Default destructor
         ~FrMeanSeabed() = default;
@@ -167,7 +173,7 @@ namespace frydom {
 
         /// Get the seabed grid asset
         /// \return seabed grid asset
-        FrSeabedGridAsset * GetSeabedGridAsset() override;
+        FrSeabedGridAsset<OffshoreSystemType> * GetSeabedGridAsset() override;
 
         //---------------------------- Seabed elements Getters ----------------------------//
 

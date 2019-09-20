@@ -13,6 +13,7 @@ namespace frydom {
 
         /// This class override the ChConstraintTwoBodies class to be used with a full
         /// dense mass matrix
+        template <typename OffshoreSystemType>
         class FrConstraintTwoBodiesBase : public chrono::ChConstraintTwoBodies {
 
         public:
@@ -28,7 +29,7 @@ namespace frydom {
             ///  - the g_i product
             void Update_auxiliary() override;
 
-            virtual FrConstraintTwoBodiesBase* Clone() const override { return new FrConstraintTwoBodiesBase(*this); }
+            virtual FrConstraintTwoBodiesBase<OffshoreSystemType>* Clone() const override { return new FrConstraintTwoBodiesBase(*this); }
         };
 
     } //end namespace internal

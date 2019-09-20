@@ -26,6 +26,7 @@ namespace frydom {
 
     // Forward declarations
     class FrRadiationModel;
+    template <typename OffshoreSystemType>
     class FrBody;
     class FrBEMBody;
 
@@ -48,7 +49,8 @@ namespace frydom {
             }
         };
 
-        class FrRadiationModelBase : public FrPhysicsItemBase {
+        template <typename OffshoreSystemType>
+        class FrRadiationModelBase : public FrPhysicsItemBase<OffshoreSystemType> {
 
         private:
 
@@ -86,7 +88,7 @@ namespace frydom {
             void IntFromDescriptor(const unsigned int off_v, chrono::ChStateDelta& v,
                                    const unsigned int off_L, chrono::ChVectorDynamic<>& L) override;
 
-            int GetBodyOffset(FrBody* body) const;
+            int GetBodyOffset(FrBody<OffshoreSystemType>* body) const;
 
             void InjectVariablesToBody();
 

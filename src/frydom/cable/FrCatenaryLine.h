@@ -30,7 +30,10 @@ namespace frydom {
 
 
     // Forward declarations:
+    template <typename OffshoreSystemType>
     class FrCatenaryForce;
+
+    template <typename OffshoreSystemType>
     class FrNode;
 
     /**
@@ -45,7 +48,8 @@ namespace frydom {
      * International Journal of Solids and Structures,pp 1521-1533, 2014
      */
     //TODO: check that the chrono_objects are deleted correctly, when the frydom objects are deleted (assets included)
-    class FrCatenaryLine : public FrCable, public FrPrePhysicsItem, public FrCatenaryAssetOwner {
+    template <typename OffshoreSystemType>
+    class FrCatenaryLine : public FrCable<OffshoreSystemType>, public FrPrePhysicsItem<OffshoreSystemType>, public FrCatenaryAssetOwner {
 
     public:
 
@@ -82,9 +86,9 @@ namespace frydom {
 
         //--------------------------------------------------------------------------------------------------------------
         // Forces to apply to bodies
-        std::shared_ptr<FrCatenaryForce> m_startingForce;   ///< Force applied by the catenary line to the body at the
+        std::shared_ptr<FrCatenaryForce<OffshoreSystemType>> m_startingForce;   ///< Force applied by the catenary line to the body at the
                                                             ///< starting node
-        std::shared_ptr<FrCatenaryForce> m_endingForce;     ///< Force applied by the catenary line to the body at the
+        std::shared_ptr<FrCatenaryForce<OffshoreSystemType>> m_endingForce;     ///< Force applied by the catenary line to the body at the
                                                             ///< ending node
         //--------------------------------------------------------------------------------------------------------------
 
@@ -98,8 +102,8 @@ namespace frydom {
         /// \param elastic true if the catenary line is elastic (remember only an elastic line can be strained !)
         /// \param unstrainedLength Unstrained length of the catenary line
         /// \param fluid fluid type in which the catenary line is mostly in
-        FrCatenaryLine(const std::shared_ptr<FrNode>& startingNode,
-                       const std::shared_ptr<FrNode>& endingNode,
+        FrCatenaryLine(const std::shared_ptr<FrNode<OffshoreSystemType>>& startingNode,
+                       const std::shared_ptr<FrNode<OffshoreSystemType>>& endingNode,
                        const std::shared_ptr<FrCableProperties>& properties,
                        bool elastic,
                        double unstrainedLength,
@@ -135,11 +139,11 @@ namespace frydom {
         // Force accessors
         /// Get the starting force of the line
         /// \return the starting force of the line
-        std::shared_ptr<FrCatenaryForce> GetStartingForce();
+        std::shared_ptr<FrCatenaryForce<OffshoreSystemType>> GetStartingForce();
 
         /// Get the ending force of the line
         /// \return the ending force of the line
-        std::shared_ptr<FrCatenaryForce> GetEndingForce();
+        std::shared_ptr<FrCatenaryForce<OffshoreSystemType>> GetEndingForce();
 
         // TODO: accessors pour le champ de force distribue
         /// Get the inside line tension at the lagrangian coordinate s, from the starting node to the ending node
@@ -221,7 +225,7 @@ namespace frydom {
 
         /// Get the pointer to the chrono related physics item
         /// \return Chrono related physics item
-        internal::FrPhysicsItemBase* GetChronoItem_ptr() const override;
+        internal::FrPhysicsItemBase<OffshoreSystemType>* GetChronoItem_ptr() const override;
 
 
     private :
@@ -244,10 +248,11 @@ namespace frydom {
 
     };
 
-    std::shared_ptr<FrCatenaryLine>
-    make_catenary_line(const std::shared_ptr<FrNode>& startingNode,
-                       const std::shared_ptr<FrNode>& endingNode,
-                       FrOffshoreSystem* system,
+    template <typename OffshoreSystemType>
+    std::shared_ptr<FrCatenaryLine<OffshoreSystemType>>
+    make_catenary_line(const std::shared_ptr<FrNode<OffshoreSystemType>>& startingNode,
+                       const std::shared_ptr<FrNode<OffshoreSystemType>>& endingNode,
+                       FrOffshoreSystem<OffshoreSystemType>* system,
                        const std::shared_ptr<FrCableProperties>& properties,
                        bool elastic,
                        double unstrainedLength,

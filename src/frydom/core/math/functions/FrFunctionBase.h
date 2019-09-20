@@ -50,7 +50,7 @@ namespace frydom {
      * FrFunctionBase
      */
 
-    class FrFunctionBase : public FrObject {
+    class FrFunctionBase {
 
     private:
 
@@ -93,7 +93,7 @@ namespace frydom {
         double Get_y_dx(double x) const;
         double Get_y_dxdx(double x) const;
 
-        void Initialize() override;
+//        void Initialize() override;
 
         double operator()(double x) const;
 
@@ -202,15 +202,19 @@ namespace frydom {
      */
 
     /// Add a scalar to the function to the left
+    template <typename OffshoreSystemType>
     FrAddFunction operator+(double alpha, const FrFunctionBase& function);
 
     /// Add a scalar to the function to the left
+    template <typename OffshoreSystemType>
     FrSubFunction operator-(double alpha, const FrFunctionBase& function);
 
     /// Left multiply a function by a scalar
+    template <typename OffshoreSystemType>
     FrMulFunction operator*(double alpha, const FrFunctionBase& function);
 
     /// Inverse a function and multiply by a scalar
+    template <typename OffshoreSystemType>
     FrDivFunction operator/(double alpha, const FrFunctionBase& function);
 
 
@@ -218,6 +222,7 @@ namespace frydom {
 
         /// This class is used internally to add a chrono function object to be added into chrono objects that accept
         /// a ChFunction
+        template <typename OffshoreSystemType>
         class FrFunctionChronoInterface { // : public FrFunctionBase { // TODOD : doit-on heriter de FrFunctionBase ? -> oui !
 
         private:
@@ -248,7 +253,7 @@ namespace frydom {
         FrVarXFunction* Clone() const override;
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "VarXFunction"; }
+//        std::string GetTypeName() const override { return "VarXFunction"; }
 
     protected:
         void Eval(double x) const;
@@ -276,7 +281,7 @@ namespace frydom {
         double& operator()();
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "ConstantFunction"; }
+//        std::string GetTypeName() const override { return "ConstantFunction"; }
 
     protected:
         void Eval(double x) const override;
@@ -288,7 +293,6 @@ namespace frydom {
     /*
      * Results of unary operators
      */
-
     class FrUnaryOpFunction : public FrFunctionBase {
 
     private:
@@ -300,7 +304,7 @@ namespace frydom {
         FrUnaryOpFunction* Clone() const;
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "UnaryOpFunction"; }
+//        std::string GetTypeName() const override { return "UnaryOpFunction"; }
 
     protected:
         void Eval(double x) const override;
@@ -349,7 +353,7 @@ namespace frydom {
         FrAddFunction* Clone() const;
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "AddFunction"; }
+//        std::string GetTypeName() const override { return "AddFunction"; }
 
     protected:
         void Eval(double x) const override;
@@ -364,7 +368,7 @@ namespace frydom {
         FrSubFunction* Clone() const;
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "SubFunction"; }
+//        std::string GetTypeName() const override { return "SubFunction"; }
 
     protected:
         void Eval(double x) const override;
@@ -380,7 +384,7 @@ namespace frydom {
         FrMulFunction* Clone() const;
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "MulFunction"; }
+//        std::string GetTypeName() const override { return "MulFunction"; }
 
     protected:
         void Eval(double x) const override;
@@ -396,7 +400,7 @@ namespace frydom {
         FrDivFunction* Clone() const;
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "divFunction"; }
+//        std::string GetTypeName() const override { return "divFunction"; }
 
     protected:
         void Eval(double x) const override;
@@ -412,7 +416,7 @@ namespace frydom {
         FrCompFunction* Clone() const;
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "CompFunction"; }
+//        std::string GetTypeName() const override { return "CompFunction"; }
 
     protected:
         void Eval(double x) const override;

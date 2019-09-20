@@ -10,6 +10,7 @@
 namespace frydom {
 
     // Forward declaration
+    template <typename OffshoreSystemType>
     class FrNode;
 
 
@@ -17,16 +18,17 @@ namespace frydom {
      * \class FrNodeAsset
      * \brief Class to display a reference frame.
      */
+     template <typename OffshoreSystemType>
     class FrNodeAsset : public FrAsset {
 
     private:
 
-        FrNode* m_node;
+        FrNode<OffshoreSystemType>* m_node;
         double m_CharacteristicLength;
 
     public:
 
-        explicit FrNodeAsset(FrNode* node);
+        explicit FrNodeAsset(FrNode<OffshoreSystemType>* node);
 
         void SetSize(double size);;
 

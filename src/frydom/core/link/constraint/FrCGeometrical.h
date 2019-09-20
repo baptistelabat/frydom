@@ -11,78 +11,88 @@
 namespace frydom {
 
     // Forward declarations
+    template<typename OffshoreSystemType>
     class FrNode;
+
     class Position;
+
     class Direction;
 
-    enum AXISLABEL {XAXIS, YAXIS, ZAXIS};
+    enum AXISLABEL {
+      XAXIS, YAXIS, ZAXIS
+    };
 
+
+    template<typename OffshoreSystemType>
     class FrCGeometrical {
 
-    protected:
+     protected:
 
-        std::shared_ptr<FrNode> m_node;
+      std::shared_ptr<FrNode<OffshoreSystemType>> m_node;
 
-    public:
+     public:
 
-        explicit FrCGeometrical(const std::shared_ptr<FrNode>& node);
+      explicit FrCGeometrical(const std::shared_ptr<FrNode<OffshoreSystemType>> &node);
 
-        std::shared_ptr<FrNode> GetNode() const;
-
-    };
-
-    class FrCPoint : public FrCGeometrical {
-
-    public:
-
-        explicit FrCPoint(const std::shared_ptr<FrNode>& node);
-
-        Position GetPositionInWorld(FRAME_CONVENTION fc) const;
+      std::shared_ptr<FrNode<OffshoreSystemType>> GetNode() const;
 
     };
 
 
-    class FrCAxis : public FrCGeometrical {
+    template<typename OffshoreSystemType>
+    class FrCPoint : public FrCGeometrical<OffshoreSystemType> {
 
-    private:
+     public:
 
-        AXISLABEL m_axis;
+      explicit FrCPoint(const std::shared_ptr<FrNode<OffshoreSystemType>> &node);
 
-    public:
-
-        explicit FrCAxis(const std::shared_ptr<FrNode>& node);
-
-        FrCAxis(const std::shared_ptr<FrNode>& node, AXISLABEL axis);
-
-        Position GetOriginInWorld(FRAME_CONVENTION fc) const;
-
-        Direction GetDirectionInWorld(FRAME_CONVENTION fc) const;
-
-        AXISLABEL GetLabel() const;;
+      Position GetPositionInWorld(FRAME_CONVENTION fc) const;
 
     };
 
-    class FrCPlane : public FrCGeometrical {
+    template<typename OffshoreSystemType>
+    class FrCAxis : public FrCGeometrical<OffshoreSystemType> {
 
-    private:
+     private:
 
-        AXISLABEL m_normale;
+      AXISLABEL m_axis;
 
-    public:
+     public:
 
-        explicit FrCPlane(const std::shared_ptr<FrNode>& node);
+      explicit FrCAxis(const std::shared_ptr<FrNode<OffshoreSystemType>> &node);
 
-        FrCPlane(const std::shared_ptr<FrNode>& node, AXISLABEL axis);
+      FrCAxis(const std::shared_ptr<FrNode<OffshoreSystemType>> &node, AXISLABEL axis);
 
-        Position GetOriginInWorld(FRAME_CONVENTION fc) const;
+      Position GetOriginInWorld(FRAME_CONVENTION fc) const;
 
-        Direction GetNormaleInWorld(FRAME_CONVENTION fc) const;
+      Direction GetDirectionInWorld(FRAME_CONVENTION fc) const;
 
-        double GetDistanceToPointInWorld(Position PointInWorld, FRAME_CONVENTION fc) const;
+      AXISLABEL GetLabel() const;;
 
-        Position GetIntersectionWithLineInWorld(Position P0, Position P1, FRAME_CONVENTION fc) const;
+    };
 
-        Position GetClosestPointOnPlaneInWorld(Position PointInWorld, FRAME_CONVENTION fc) const;
+    template<typename OffshoreSystemType>
+    class FrCPlane : public FrCGeometrical<OffshoreSystemType> {
+
+     private:
+
+      AXISLABEL m_normale;
+
+     public:
+
+      explicit FrCPlane(const std::shared_ptr<FrNode<OffshoreSystemType>> &node);
+
+      FrCPlane(const std::shared_ptr<FrNode<OffshoreSystemType>> &node, AXISLABEL axis);
+
+      Position GetOriginInWorld(FRAME_CONVENTION fc) const;
+
+      Direction GetNormaleInWorld(FRAME_CONVENTION fc) const;
+
+      double GetDistanceToPointInWorld(Position PointInWorld, FRAME_CONVENTION fc) const;
+
+      Position GetIntersectionWithLineInWorld(Position P0, Position P1, FRAME_CONVENTION fc) const;
+
+      Position GetClosestPointOnPlaneInWorld(Position PointInWorld, FRAME_CONVENTION fc) const;
 
     };
 

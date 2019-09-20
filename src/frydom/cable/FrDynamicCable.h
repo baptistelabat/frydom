@@ -23,6 +23,7 @@ namespace chrono{
 namespace frydom {
 
     // Forward declaration
+    template <typename OffshoreSystemType>
     class FrDynamicCable;
 
     namespace internal{
@@ -35,9 +36,10 @@ namespace frydom {
          *
          * /see FrDynamicCable
          */
+         template <typename OffshoreSystemType>
         struct FrDynamicCableBase : public chrono::fea::ChMesh {
 
-            FrDynamicCable* m_frydomCable;      ///< pointer to the Dynamic cable containing this base class
+            FrDynamicCable<OffshoreSystemType>* m_frydomCable;      ///< pointer to the Dynamic cable containing this base class
 
             bool m_drawCableElements = true;    ///< Boolean to check if the FEA elements are to be drawnn
             bool m_drawCableNodes = true;       ///< Boolean to check if the FEA nodes are to be drawnn
@@ -52,7 +54,7 @@ namespace frydom {
 
             /// Constructor of the FrDynamicCableBase
             /// \param cable pointer to the FrDynamicCable containing this base class
-            explicit FrDynamicCableBase(FrDynamicCable* cable);
+            explicit FrDynamicCableBase(FrDynamicCable<OffshoreSystemType>* cable);
 
             /// Initialize the cable
             void Initialize();
@@ -109,14 +111,15 @@ namespace frydom {
      //TODO : Unrolling
      //TODO : Contact with seabed or other cable/bodies
      //TODO : Check for deactivation
-    class FrDynamicCable: public FrCable, public FrFEAMesh {
+     template <typename OffshoreSystemType>
+    class FrDynamicCable: public FrCable<OffshoreSystemType>, public FrFEAMesh<OffshoreSystemType> {
     public:
 
         enum HingeType { CONSTRAINED, SPHERICAL, NONE};
 
     private:
 
-        std::shared_ptr<internal::FrDynamicCableBase> m_chronoCable;    ///< pointer to the Chrono cable
+        std::shared_ptr<internal::FrDynamicCableBase<OffshoreSystemType>> m_chronoCable;    ///< pointer to the Chrono cable
 
         double m_rayleighDamping;               ///< Rayleigh damping
         unsigned int m_nbElements;              ///< Number of elements in the finite element cable model
@@ -143,8 +146,8 @@ namespace frydom {
         /// \param unstrainedLength unstretched length of the cable, in m
         /// \param rayleighDamping Rayleigh damping
         /// \param nbElements Number of elements/discretization
-        FrDynamicCable( const std::shared_ptr<FrNode>& startingNode,
-                        const std::shared_ptr<FrNode>& endingNode,
+        FrDynamicCable( const std::shared_ptr<FrNode<OffshoreSystemType>>& startingNode,
+                        const std::shared_ptr<FrNode<OffshoreSystemType>>& endingNode,
                         const std::shared_ptr<FrCableProperties>& properties,
                         double unstrainedLength,
                         double rayleighDamping,
@@ -253,15 +256,16 @@ namespace frydom {
 
         // Friend definitions
 
-        friend void FrOffshoreSystem::Add(std::shared_ptr<FrDynamicCable>);
-        friend void FrOffshoreSystem::Remove(std::shared_ptr<FrDynamicCable>);
+        friend void FrOffshoreSystem<OffshoreSystemType>::Add(std::shared_ptr<FrDynamicCable<OffshoreSystemType>>);
+        friend void FrOffshoreSystem<OffshoreSystemType>::Remove(std::shared_ptr<FrDynamicCable<OffshoreSystemType>>);
 
     };
 
-    std::shared_ptr<FrDynamicCable>
-    make_dynamic_cable(const std::shared_ptr<FrNode>& startingNode,
-                       const std::shared_ptr<FrNode>& endingNode,
-                       FrOffshoreSystem *system,
+     template <typename OffshoreSystemType>
+    std::shared_ptr<FrDynamicCable<OffshoreSystemType>>
+    make_dynamic_cable(const std::shared_ptr<FrNode<OffshoreSystemType>>& startingNode,
+                       const std::shared_ptr<FrNode<OffshoreSystemType>>& endingNode,
+                       FrOffshoreSystem<OffshoreSystemType> *system,
                        const std::shared_ptr<FrCableProperties>& properties,
                        double unstrainedLength,
                        double rayleighDamping,

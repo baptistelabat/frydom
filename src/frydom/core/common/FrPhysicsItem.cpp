@@ -22,49 +22,59 @@ namespace frydom {
 
     namespace internal {
 
+        template<typename OffshoreSystemType>
+        FrPhysicsItemBase<OffshoreSystemType>::FrPhysicsItemBase(FrPhysicsItem<OffshoreSystemType> *item)
+            : m_frydomPhysicsItem(item) {}
 
-        FrPhysicsItemBase::FrPhysicsItemBase(FrPhysicsItem *item) : m_frydomPhysicsItem(item) {}
-
-        void FrPhysicsItemBase::SetupInitial() {
+        template<typename OffshoreSystemType>
+        void FrPhysicsItemBase<OffshoreSystemType>::SetupInitial() {
         }
 
-        void FrPhysicsItemBase::Update(double time, bool update_assets) {
-            m_frydomPhysicsItem->Update(time);
-            ChPhysicsItem::Update(time, update_assets);
+        template<typename OffshoreSystemType>
+        void FrPhysicsItemBase<OffshoreSystemType>::Update(double time, bool update_assets) {
+          m_frydomPhysicsItem->Update(time);
+          ChPhysicsItem::Update(time, update_assets);
         }
 
     }  // end namespace frydom::internal
 
 
-
-    FrPhysicsItem::FrPhysicsItem() {
-        m_chronoPhysicsItem = std::make_shared<internal::FrPhysicsItemBase>(this);
+    template<typename OffshoreSystemType>
+    FrPhysicsItem<OffshoreSystemType>::FrPhysicsItem() {
+      m_chronoPhysicsItem = std::make_shared<internal::FrPhysicsItemBase>(this);
     };
 
-    FrOffshoreSystem* FrPhysicsItem::GetSystem() {
-        return m_system;
+    template<typename OffshoreSystemType>
+    FrOffshoreSystem<OffshoreSystemType> *FrPhysicsItem<OffshoreSystemType>::GetSystem() {
+      return m_system;
     }
 
-    bool FrPhysicsItem::IsActive() const {
-        return m_isActive;
+    template<typename OffshoreSystemType>
+    bool FrPhysicsItem<OffshoreSystemType>::IsActive() const {
+      return m_isActive;
     }
 
-    void FrPhysicsItem::SetActive(bool active) {
-        m_isActive = active;
+    template<typename OffshoreSystemType>
+    void FrPhysicsItem<OffshoreSystemType>::SetActive(bool active) {
+      m_isActive = active;
     }
 
-    std::shared_ptr<internal::FrPhysicsItemBase> FrPhysicsItem::GetChronoPhysicsItem() const {
-        return m_chronoPhysicsItem;
+    template<typename OffshoreSystemType>
+    std::shared_ptr<internal::FrPhysicsItemBase<OffshoreSystemType>>
+    FrPhysicsItem<OffshoreSystemType>::GetChronoPhysicsItem() const {
+      return m_chronoPhysicsItem;
     }
 
-    void FrPhysicsItem::SetupInitial() {
-        m_chronoPhysicsItem->SetupInitial();
-        Initialize();
+    template<typename OffshoreSystemType>
+    void FrPhysicsItem<OffshoreSystemType>::SetupInitial() {
+      m_chronoPhysicsItem->SetupInitial();
+      Initialize();
     }
 
-    void FrPhysicsItem::Update(double time) {
-        if(IsActive())
-            Compute(time);
+    template<typename OffshoreSystemType>
+    void FrPhysicsItem<OffshoreSystemType>::Update(double time) {
+      if (IsActive())
+        Compute(time);
     }
 
 }  // end namespace frydom

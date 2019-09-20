@@ -17,7 +17,8 @@
 
 namespace frydom {
 
-    void makeItBox(std::shared_ptr<FrBody> body, double xSize, double ySize, double zSize, double mass) {
+    template <typename OffshoreSystemType>
+    void makeItBox(std::shared_ptr<FrBody<OffshoreSystemType>> body, double xSize, double ySize, double zSize, double mass) {
 
         // Properties of the box
         double xSize2 = xSize * xSize;
@@ -46,7 +47,8 @@ namespace frydom {
 
     }
 
-    void makeItCylinder(std::shared_ptr<FrBody> body, double radius, double height, double mass) {
+    template <typename OffshoreSystemType>
+    void makeItCylinder(std::shared_ptr<FrBody<OffshoreSystemType>> body, double radius, double height, double mass) {
 
         // Properties of the cylinder
         double r2 = radius * radius;
@@ -71,7 +73,8 @@ namespace frydom {
 
     }
 
-    void makeItSphere(std::shared_ptr<FrBody> body, double radius, double mass) {
+    template <typename OffshoreSystemType>
+    void makeItSphere(std::shared_ptr<FrBody<OffshoreSystemType>> body, double radius, double mass) {
 
         // Properties of the sphere
         double inertia = (2.0 / 5.0) * mass * radius * radius;
@@ -92,20 +95,23 @@ namespace frydom {
 
     }
 
-    std::shared_ptr<FrBody> make_BoxBody(double xSize, double ySize, double zSize, double mass) {
-        auto box = std::make_shared<FrBody>();
+    template <typename OffshoreSystemType>
+    std::shared_ptr<FrBody<OffshoreSystemType>> make_BoxBody(double xSize, double ySize, double zSize, double mass) {
+        auto box = std::make_shared<FrBody<OffshoreSystemType>>();
         makeItBox(box, xSize, ySize, zSize, mass);
         return box;
     }
 
-    std::shared_ptr<FrBody> make_CylinderBody(double radius, double height, double mass) {
-        auto cylinder = std::make_shared<FrBody>();
+    template <typename OffshoreSystemType>
+    std::shared_ptr<FrBody<OffshoreSystemType>> make_CylinderBody(double radius, double height, double mass) {
+        auto cylinder = std::make_shared<FrBody<OffshoreSystemType>>();
         makeItCylinder(cylinder, radius, height, mass);
         return cylinder;
     }
 
-    std::shared_ptr<FrBody> make_SphereBody(double radius, double mass) {
-        auto sphere = std::make_shared<FrBody>();
+    template <typename OffshoreSystemType>
+    std::shared_ptr<FrBody<OffshoreSystemType>> make_SphereBody(double radius, double mass) {
+        auto sphere = std::make_shared<FrBody<OffshoreSystemType>>();
         makeItSphere(sphere, radius, mass);
         return sphere;
     }

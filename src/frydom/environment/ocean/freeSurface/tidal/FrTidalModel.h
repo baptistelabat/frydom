@@ -69,13 +69,15 @@ namespace frydom {
     };
 
     // Forward declaration
+    template <typename OffshoreSystemType>
     class FrFreeSurface;
 
     /**
      * \class FrTidal
      * \brief Class for defining tidals.
      */
-    class FrTidal : public FrObject { // TODO : Avoir un NullTidal...
+     template <typename OffshoreSystemType>
+    class FrTidal : public FrObject<OffshoreSystemType> { // TODO : Avoir un NullTidal...
 
         enum TIDAL_LEVEL {
             LOW,
@@ -89,7 +91,7 @@ namespace frydom {
 
     private:
 
-        FrFreeSurface* m_freeSurface;
+        FrFreeSurface<OffshoreSystemType>* m_freeSurface;
 
         std::unique_ptr<chrono::ChFrame<double>> m_tidalFrame;  // FIXME : utiliser un FrFrame !!!
 
@@ -113,9 +115,9 @@ namespace frydom {
 
     public:
 
-        explicit FrTidal(FrFreeSurface* freeSurface);
+        explicit FrTidal(FrFreeSurface<OffshoreSystemType>* freeSurface);
 
-        FrTidal(FrFreeSurface* freeSurface, const FrUTCTime t1, const double h1, TIDAL_LEVEL level1, const FrUTCTime t2, const double h2, TIDAL_LEVEL level2);
+        FrTidal(FrFreeSurface<OffshoreSystemType>* freeSurface, const FrUTCTime t1, const double h1, TIDAL_LEVEL level1, const FrUTCTime t2, const double h2, TIDAL_LEVEL level2);
 
         ~FrTidal();
 
