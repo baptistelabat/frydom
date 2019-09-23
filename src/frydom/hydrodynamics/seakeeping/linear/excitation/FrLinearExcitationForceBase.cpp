@@ -150,8 +150,8 @@ namespace frydom {
         auto waveField = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
 
         // Wave elevation.
-        auto complexElevations = waveField->GetComplexElevation(m_equilibriumFrame->GetX(NWU),
-                                                                m_equilibriumFrame->GetY(NWU),
+        auto complexElevations = waveField->GetComplexElevation(m_equilibriumFrame->GetFrameInWorld().GetX(NWU),
+                                                                m_equilibriumFrame->GetFrameInWorld().GetY(NWU),
                                                                 NWU);
 
         // DOF.
@@ -193,8 +193,8 @@ namespace frydom {
         }
 
         // Projection of the loads in the equilibrium frame.
-        m_WorldForce = m_equilibriumFrame->ProjectVectorFrameInParent(force, NWU);
-        m_WorldTorque = m_equilibriumFrame->ProjectVectorFrameInParent(torque, NWU);
+        m_WorldForce = m_equilibriumFrame->GetFrameInWorld().ProjectVectorFrameInParent(force, NWU);
+        m_WorldTorque = m_equilibriumFrame->GetFrameInWorld().ProjectVectorFrameInParent(torque, NWU);
 
         // Setting the nonlinear excitation loads in world at the CoG in world.
         this->SetForceTorqueInWorldAtCOG(m_WorldForce, m_WorldTorque, NWU);

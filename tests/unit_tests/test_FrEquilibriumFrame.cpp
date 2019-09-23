@@ -167,7 +167,7 @@ void TestFrEquilibriumFrame::TestInitPositionFromBody() {
 
 
 void TestFrEquilibriumFrame::TestSetPositionToBodyPosition() {
-    m_eqFrame->SetPositionToBodyPosition();
+    m_eqFrame->SetPositionToBodyCOGPosition();
 
     auto position = m_eqFrame->GetPosition(NWU);
     EXPECT_FLOAT_EQ(m_PositionInWorld.GetX(), position.GetX());
@@ -187,7 +187,7 @@ void TestFrEquilibriumFrame::TestSetPositionToBodyPosition() {
 void TestFrEquilibriumFrame::TestSetVelocityToBodyVelocity() {
     body->SetGeneralizedVelocityInWorld(m_VelocityInWorld, AngularVelocity(0., 0., m_angularVelocity), NWU);
 
-    m_eqFrame->SetVelocityToBodyVelocity();
+    m_eqFrame->SetVelocityToBodyCOGVelocity();
 
     CheckVelocity();
     EXPECT_FLOAT_EQ(0., m_eqFrame->GetAngularVelocityAroundZ(NWU));

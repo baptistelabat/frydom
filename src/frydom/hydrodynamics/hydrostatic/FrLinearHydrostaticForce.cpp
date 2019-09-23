@@ -47,7 +47,7 @@ namespace frydom {
         auto bodyFrame = m_body->GetFrameAtCOG(NWU);
 
         // Transformation from the body frame to equilibrium frame.
-        auto deltaFrame = m_equilibriumFrame->GetInverse() * bodyFrame;
+        auto deltaFrame = m_equilibriumFrame->GetFrameInWorld().GetInverse() * bodyFrame;
 
         // Position of the body frame with respect to the equilibrium frame expressed in the equilibrium frame.
         mathutils::Vector3d<double> state; double temp;

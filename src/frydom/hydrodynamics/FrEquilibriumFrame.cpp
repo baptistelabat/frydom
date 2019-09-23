@@ -22,8 +22,57 @@ namespace frydom {
     // Equilibrium frame
     // ---------------------------------------------------------------------
 
-    FrFrame FrEquilibriumFrame::GetPerturbationFrame() {
-        return GetInverse() * m_body->GetFrameAtCOG(NWU);;
+    FrEquilibriumFrame::FrEquilibriumFrame(FrBody *body) : FrPrePhysicsItem() {
+        m_velocity.SetNull();
+        m_angularVelocity = 0.;
+        m_frame = FrFrame();
+        m_body = body;
+        c_prevTime = 0.;
+        m_initSpeedFromBody = true;
+        m_initPositionFromBody = true;
+    }
+
+    void FrEquilibriumFrame::SetBody(FrBody* body, bool initPos) {
+        m_body = body;
+        m_initPositionFromBody = initPos;
+    }
+
+    void FrEquilibriumFrame::SetPositionToBodyCOGPosition() {
+        m_frame.SetPosition(m_body->GetCOGPositionInWorld(NWU), NWU);
+        m_frame.SetRotation(m_body->GetRotation());
+        m_initPositionFromBody = false;
+    }
+    void FrEquilibriumFrame::SetPositionInWorld(Position pos, FRAME_CONVENTION fc) {
+        m_frame.SetPosition(pos, fc);
+        InitPositionFromBody(false);
+    }
+
+    Position FrEquilibriumFrame::GetPositionInWorld(FRAME_CONVENTION fc) const {
+        return m_frame.GetPosition(fc);
+    }
+
+    void FrEquilibriumFrame::SetRotation(const FrRotation &rotation) {
+        m_frame.SetRotation(rotation);
+        InitPositionFromBody(false);
+    }
+
+    FrRotation FrEquilibriumFrame::GetRotation() const {
+        return m_frame.GetRotation();
+    }
+
+    void FrEquilibriumFrame::SetFrameInWorld(const FrFrame &frame) {
+        m_frame = frame;
+        InitPositionFromBody(false);
+    }
+
+    FrFrame FrEquilibriumFrame::GetFrameInWorld() const {
+        return m_frame;
+    }
+
+    void FrEquilibriumFrame::SetVelocityToBodyCOGVelocity() {
+        m_velocity = m_body->GetCOGLinearVelocityInWorld(NWU);
+        m_angularVelocity = 0.;
+        m_initSpeedFromBody = false;
     }
 
     void FrEquilibriumFrame::SetVelocityInWorld(const Velocity& velocity, FRAME_CONVENTION fc) {
@@ -32,8 +81,8 @@ namespace frydom {
         m_initSpeedFromBody = false;
     }
 
-    void FrEquilibriumFrame::SetVelocityInFrame(const Velocity& frameVel) { // TODO : voir a ajouter un FRAME_CONVENTION !!
-        auto worldVel = ProjectVectorFrameInParent(frameVel, NWU);
+    void FrEquilibriumFrame::SetVelocityInFrame(const Velocity& frameVel, FRAME_CONVENTION fc) {
+        auto worldVel = m_frame.ProjectVectorFrameInParent(frameVel, fc);
         this->SetVelocityInWorld(worldVel, NWU);
         m_initSpeedFromBody = false;
     }
@@ -44,19 +93,18 @@ namespace frydom {
         m_initSpeedFromBody = false;
     }
 
-    void FrEquilibriumFrame::SetBody(FrBody* body, bool initPos) {
-        m_body = body;
-        m_initPositionFromBody = initPos;
-    }
-
     Velocity FrEquilibriumFrame::GetVelocityInWorld(FRAME_CONVENTION fc) const {
         Velocity velocity = m_velocity;
         if (IsNED(fc)) internal::SwapFrameConvention(velocity);
         return velocity;
     }
 
-    Velocity FrEquilibriumFrame::GetVelocityInFrame() const { // TODO : voir a ajouter un FRAME_CONVENTION !!
-        return ProjectVectorParentInFrame<Velocity>(m_velocity, NWU);
+    Velocity FrEquilibriumFrame::GetVelocityInFrame(FRAME_CONVENTION fc) const {
+        return m_frame.ProjectVectorParentInFrame<Velocity>(m_velocity, fc);
+    }
+
+    FrFrame FrEquilibriumFrame::GetPerturbationFrame() {
+        return m_frame.GetInverse() * m_body->GetFrameAtCOG(NWU);;
     }
 
     Velocity FrEquilibriumFrame::GetPerturbationVelocityInWorld(FRAME_CONVENTION fc) const {
@@ -65,9 +113,9 @@ namespace frydom {
         return bodyVelocity - frameVelocity;
     }
 
-    Velocity FrEquilibriumFrame::GetPerturbationVelocityInFrame() const {
-        auto velocityInWorld = this->GetPerturbationVelocityInWorld(NWU);
-        return ProjectVectorParentInFrame<Velocity>(velocityInWorld, NWU);
+    Velocity FrEquilibriumFrame::GetPerturbationVelocityInFrame(FRAME_CONVENTION fc) const {
+        auto velocityInWorld = this->GetPerturbationVelocityInWorld(fc);
+        return m_frame.ProjectVectorParentInFrame<Velocity>(velocityInWorld, fc);
     }
 
     GeneralizedVelocity FrEquilibriumFrame::GetPerturbationGeneralizedVelocityInWorld(FRAME_CONVENTION fc) const {
@@ -76,9 +124,9 @@ namespace frydom {
         return GeneralizedVelocity(velocity, angularVelocity);
     }
 
-    GeneralizedVelocity FrEquilibriumFrame::GetPerturbationGeneralizedVelocityInFrame() const {
-        auto velocity = GetPerturbationVelocityInFrame();
-        auto angularVelocity = GetAngularPerturbationVelocityInFrame();
+    GeneralizedVelocity FrEquilibriumFrame::GetPerturbationGeneralizedVelocityInFrame(FRAME_CONVENTION fc) const {
+        auto velocity = GetPerturbationVelocityInFrame(fc);
+        auto angularVelocity = GetAngularPerturbationVelocityInFrame(fc);
         return GeneralizedVelocity(velocity, angularVelocity);
     }
 
@@ -99,51 +147,39 @@ namespace frydom {
         return bodyAngularVelocity - frameAngularVelocity;
     }
 
-    AngularVelocity FrEquilibriumFrame::GetAngularPerturbationVelocityInFrame() const {
-        auto worldAngularVelocity = this->GetAngularPerturbationVelocity(NWU);
-        return ProjectVectorParentInFrame<AngularVelocity>(worldAngularVelocity, NWU);
-    }
-
-    void FrEquilibriumFrame::SetPositionToBodyPosition() {
-        this->SetPosition(m_body->GetCOGPositionInWorld(NWU), NWU);
-        this->SetRotation(m_body->GetRotation());
-        m_initPositionFromBody = false;
-    }
-
-    void FrEquilibriumFrame::SetVelocityToBodyVelocity() {
-        m_velocity = m_body->GetCOGLinearVelocityInWorld(NWU);
-        m_angularVelocity = 0.;
-        m_initSpeedFromBody = false;
+    AngularVelocity FrEquilibriumFrame::GetAngularPerturbationVelocityInFrame(FRAME_CONVENTION fc) const {
+        auto worldAngularVelocity = this->GetAngularPerturbationVelocity(fc);
+        return m_frame.ProjectVectorParentInFrame<AngularVelocity>(worldAngularVelocity, fc);
     }
 
     void FrEquilibriumFrame::Initialize() {
 
         if(!m_body) { throw FrException("error : the body is not defined in equilibrium frame"); }
 
-        if (m_initPositionFromBody) this->SetPositionToBodyPosition();
-        if (m_initSpeedFromBody) this->SetVelocityToBodyVelocity();
+        if (m_initPositionFromBody) this->SetPositionToBodyCOGPosition();
+        if (m_initSpeedFromBody) this->SetVelocityToBodyCOGVelocity();
 
-        m_prevTime = 0.;
+        c_prevTime = 0.;
     }
 
     void FrEquilibriumFrame::Compute(double time) {
 
-        if (std::abs(time - m_prevTime) < FLT_EPSILON) {
+        if (std::abs(time - c_prevTime) < FLT_EPSILON) {
             return;
         }
 
-        auto dt = time - m_prevTime;
-        auto prevPosition = this->GetPosition(NWU);
+        auto dt = time - c_prevTime;
+        auto prevPosition = m_frame.GetPosition(NWU);
 
         if (m_velocity.squaredNorm() > FLT_EPSILON) {
-            this->SetPosition(prevPosition + m_velocity * dt, NWU);
+            m_frame.SetPosition(prevPosition + m_velocity * dt, NWU);
         }
 
         if (std::abs(m_angularVelocity) > FLT_EPSILON) {
-            this->RotZ_RADIANS(m_angularVelocity * dt, NWU, true);
+            m_frame.RotZ_RADIANS(m_angularVelocity * dt, NWU, true);
         }
 
-        m_prevTime = time;
+        c_prevTime = time;
     }
 
     void FrEquilibriumFrame::AddFields() {
@@ -151,17 +187,16 @@ namespace frydom {
         if (IsLogged()) {
 
             // Add the fields to be logged here
-            // TODO: A completer
             m_message->AddField<double>("time", "s", "Current time of the simulation",
                                         [this]() { return m_system->GetTime(); });
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
                     ("Position","m", fmt::format("Equilibrium frame position in the world reference frame in {}", GetLogFrameConvention()),
-                     [this]() {return GetPosition(GetLogFrameConvention());});
+                     [this]() {return m_frame.GetPosition(GetLogFrameConvention());});
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
                     ("CardanAngles","rad", fmt::format("Equilibrium frame orientation in the world reference frame in {}", GetLogFrameConvention()),
-                     [this]() {double phi, theta, psi; GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, GetLogFrameConvention()); return Vector3d<double>(phi, theta, psi);});
+                     [this]() {double phi, theta, psi; m_frame.GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, GetLogFrameConvention()); return Vector3d<double>(phi, theta, psi);});
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
                     ("VelocityInWorld","m/s", fmt::format("Equilibrium frame velocity in the world reference frame in {}", GetLogFrameConvention()),
@@ -194,25 +229,23 @@ namespace frydom {
 
     }
 
+
+    void FrEquilibriumFrame::InitSpeedFromBody(bool is_init) {
+        m_initSpeedFromBody = is_init;
+    }
+
+    void FrEquilibriumFrame::InitPositionFromBody(bool is_init) {
+        m_initPositionFromBody = is_init;
+    }
+
     // -----------------------------------------------------------------------
     // Equilibrium frame with spring damping restoring force
     // -----------------------------------------------------------------------
 
-    FrEqFrameSpringDamping::FrEqFrameSpringDamping(FrBody* body, double T0, double psi, bool initPos)
-        : FrEquilibriumFrame(body, initPos) { this->SetSpringDamping(T0, psi); }
+    FrEqFrameSpringDamping::FrEqFrameSpringDamping(FrBody* body, double T0, double psi)
+        : FrEquilibriumFrame(body) { this->SetSpringDamping(T0, psi); }
 
-    FrEqFrameSpringDamping::FrEqFrameSpringDamping(const Position &pos, const FrRotation &rotation,
-                                                     FRAME_CONVENTION fc, FrBody* body, double T0, double psi)
-            : FrEquilibriumFrame(pos, rotation, fc, body) { this->SetSpringDamping(T0, psi); }
-
-    FrEqFrameSpringDamping::FrEqFrameSpringDamping(const Position &pos, const FrUnitQuaternion& quaternion,
-                                                     FRAME_CONVENTION fc, FrBody* body, double T0, double psi)
-            : FrEquilibriumFrame(pos, quaternion, fc, body) { this->SetSpringDamping(T0, psi); }
-
-    FrEqFrameSpringDamping::FrEqFrameSpringDamping(const FrFrame& otherFrame, FrBody* body, double T0, double psi)
-            : FrEquilibriumFrame(otherFrame, body) { this->SetSpringDamping(T0, psi); }
-
-    void FrEqFrameSpringDamping::SetSpringDamping(const double T0, const double psi) {
+    void FrEqFrameSpringDamping::SetSpringDamping(double T0, double psi) {
 
         m_w0 = 2.*M_PI / T0;
         m_psi = psi;
@@ -227,7 +260,7 @@ namespace frydom {
 
         auto bodyPosition = m_body->GetCOGPositionInWorld(NWU);
         auto bodyVelocity = m_body->GetCOGLinearVelocityInWorld(NWU);
-        auto position = GetPosition(NWU);
+        auto position = m_frame.GetPosition(NWU);
 
         Force force;
         force = (bodyPosition - position) * m_stiffness + (bodyVelocity - m_velocity) * m_damping;
@@ -235,7 +268,7 @@ namespace frydom {
 
         double temp1, temp2;
         double bodyPsi, psi;
-        GetRotation().GetCardanAngles_RADIANS(temp1, temp2, psi, NWU);
+        m_frame.GetRotation().GetCardanAngles_RADIANS(temp1, temp2, psi, NWU);
         m_body->GetRotation().GetCardanAngles_RADIANS(temp1, temp2, bodyPsi, NWU);
         auto bodyAngularVelocity = m_body->GetAngularVelocityInWorld(NWU).GetWz();
 
@@ -247,8 +280,8 @@ namespace frydom {
 
         m_angularVelocity += torque * (time - m_prevTime);
 
-        this->SetPosition(position, NWU);
-        SetRotation( this->GetRotation().RotZ_RADIANS(m_angularVelocity * (time - m_prevTime), NWU) );
+        m_frame.SetPosition(position, NWU);
+        m_frame.SetRotation( m_frame.GetRotation().RotZ_RADIANS(m_angularVelocity * (time - m_prevTime), NWU) );
 
         m_prevTime = time;
     }
@@ -257,19 +290,8 @@ namespace frydom {
     // Equilibrium frame with updated mean velocity
     // ----------------------------------------------------------------
 
-    FrEqFrameMeanMotion::FrEqFrameMeanMotion(const Position &pos, const FrRotation &rotation, FRAME_CONVENTION fc,
-                                               FrBody* body, double timePersistence, double timeStep)
-            : FrEquilibriumFrame(pos, rotation, fc, body) { this->SetRecorders(timePersistence, timeStep); }
-
-    FrEqFrameMeanMotion::FrEqFrameMeanMotion(const Position &pos, const FrUnitQuaternion &quaternion, FRAME_CONVENTION fc,
-                                               FrBody* body, double timePersistence, double timeStep)
-            : FrEquilibriumFrame(pos, quaternion, fc, body) { this->SetRecorders(timePersistence, timeStep); }
-
-    FrEqFrameMeanMotion::FrEqFrameMeanMotion(const FrFrame &otherFrame, FrBody* body, double timePersistence, double timeStep)
-            : FrEquilibriumFrame(otherFrame, body) { this->SetRecorders(timePersistence, timeStep); }
-
-    FrEqFrameMeanMotion::FrEqFrameMeanMotion(FrBody *body, double timePersistence, double timeStep, bool initPos)
-    : FrEquilibriumFrame(body, initPos) { this->SetRecorders(timePersistence, timeStep); }
+    FrEqFrameMeanMotion::FrEqFrameMeanMotion(FrBody *body, double timePersistence, double timeStep)
+    : FrEquilibriumFrame(body) { this->SetRecorders(timePersistence, timeStep); }
 
 
     void FrEqFrameMeanMotion::SetRecorders(double timePersistence, double timeStep) {
@@ -299,27 +321,27 @@ namespace frydom {
         m_velocity = m_TrSpeedRec->GetMean();
         m_angularVelocity = m_AglSpeedRec->GetMean();
 
-        auto position = GetPosition(NWU);
+        auto position = m_frame.GetPosition(NWU);
         position += m_velocity * (time - m_prevTime);
 
         auto angle = m_angularVelocity * (time - m_prevTime);
 
         if (m_ErrPositionRec and m_ErrAngleRec) {
 
-            m_ErrPositionRec->Record(time, m_body->GetCOGPositionInWorld(NWU) - GetPosition(NWU));
+            m_ErrPositionRec->Record(time, m_body->GetCOGPositionInWorld(NWU) - m_frame.GetPosition(NWU));
             auto errMeanPosition = m_ErrPositionRec->GetMean();
             position += errMeanPosition * m_errPosCoeff;
 
             double temp1, temp2, bodyAngle, frameAngle;
             m_body->GetRotation().GetCardanAngles_RADIANS(temp1, temp2, bodyAngle, NWU);
-            this->GetRotation().GetCardanAngles_RADIANS(temp1, temp2, frameAngle, NWU);
+            m_frame.GetRotation().GetCardanAngles_RADIANS(temp1, temp2, frameAngle, NWU);
             m_ErrAngleRec->Record(time, bodyAngle - frameAngle);
             auto errMeanAngle = m_ErrAngleRec->GetMean();
             angle += errMeanAngle * m_errAngleCoeff;
         }
 
-        this->SetPosition(position, NWU);
-        SetRotation( GetRotation().RotZ_RADIANS(angle, NWU));
+        m_frame.SetPosition(position, NWU);
+        m_frame.SetRotation( m_frame.GetRotation().RotZ_RADIANS(angle, NWU));
 
         m_prevTime = time;
     }
