@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
     auto ocean = system.GetEnvironment()->GetOcean();
     auto waveField = ocean->GetFreeSurface()->SetAiryRegularWaveField();
     waveField->SetWavePeriod(3.);
-    waveField->SetWaveHeight(0); //0.1
+    waveField->SetWaveHeight(0.1); //0.1
     waveField->SetDirection(0., DEG, NWU, GOTO);
 
     system.GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0., 0., 15., 1.);
@@ -173,6 +173,20 @@ int main(int argc, char* argv[]) {
     auto eqFrame4 = std::make_shared<FrEquilibriumFrame>(Position(1.25, -2.165, 0.), FrRotation(), NWU, cyl5.get());
     auto eqFrame5 = std::make_shared<FrEquilibriumFrame>(Position(-1.25, -2.165, 0.), FrRotation(), NWU, cyl6.get());
 
+    eqFrame0->InitSpeedFromBody(true);
+    eqFrame1->InitSpeedFromBody(true);
+    eqFrame2->InitSpeedFromBody(true);
+    eqFrame3->InitSpeedFromBody(true);
+    eqFrame4->InitSpeedFromBody(true);
+    eqFrame5->InitSpeedFromBody(true);
+
+    system.Add(eqFrame0);
+    system.Add(eqFrame1);
+    system.Add(eqFrame2);
+    system.Add(eqFrame3);
+    system.Add(eqFrame4);
+    system.Add(eqFrame5);
+
     hdb->Map(0, cyl1.get(), eqFrame0);
     hdb->Map(1, cyl2.get(), eqFrame1);
     hdb->Map(2, cyl3.get(), eqFrame2);
@@ -180,53 +194,46 @@ int main(int argc, char* argv[]) {
     hdb->Map(4, cyl5.get(), eqFrame4);
     hdb->Map(5, cyl6.get(), eqFrame5);
 
-//    auto radiationModel = make_radiation_convolution_model(hdb, &system);
-//    radiationModel->SetImpulseResponseSize(cyl1.get(), 50., 0.02);
-//    radiationModel->SetImpulseResponseSize(cyl2.get(), 50., 0.02);
-//    radiationModel->SetImpulseResponseSize(cyl3.get(), 50., 0.02);
-//    radiationModel->SetImpulseResponseSize(cyl4.get(), 50., 0.02);
-//    radiationModel->SetImpulseResponseSize(cyl5.get(), 50., 0.02);
-//    radiationModel->SetImpulseResponseSize(cyl6.get(), 50., 0.02);
+    auto radiationModel = make_radiation_convolution_model(hdb, &system);
+    radiationModel->SetImpulseResponseSize(cyl1.get(), 50., 0.02);
+    radiationModel->SetImpulseResponseSize(cyl2.get(), 50., 0.02);
+    radiationModel->SetImpulseResponseSize(cyl3.get(), 50., 0.02);
+    radiationModel->SetImpulseResponseSize(cyl4.get(), 50., 0.02);
+    radiationModel->SetImpulseResponseSize(cyl5.get(), 50., 0.02);
+    radiationModel->SetImpulseResponseSize(cyl6.get(), 50., 0.02);
 
     // Hydrostatic
 
-//    auto cyl1Mesh = make_hydro_mesh(cyl1, system.GetDataPath("cylinder_base.obj"),
-//                                    FrFrame(Position(0., 0., 0.), FrRotation(), NWU),
-//                                    FrHydroMesh::ClippingSupport::PLANESURFACE);
-//
-//    auto cyl2Mesh = make_hydro_mesh(cyl2, system.GetDataPath("cylinder_base.obj"),
-//                                    FrFrame(Position(0., 0., 0.), FrRotation(Direction(0., 0., 1.), M_PI/3., NWU), NWU),
-//                                    FrHydroMesh::ClippingSupport::PLANESURFACE);
-//
-//    auto cyl3Mesh = make_hydro_mesh(cyl3, system.GetDataPath("cylinder_base.obj"),
-//                                    FrFrame(Position(0., 0., 0.) ,FrRotation(Direction(0., 0., 1.), -M_PI/3., NWU), NWU),
-//                                    FrHydroMesh::ClippingSupport::PLANESURFACE);
-//
-//    auto cyl4Mesh = make_hydro_mesh(cyl4, system.GetDataPath("cylinder_base.obj"),
-//                                    FrFrame(Position(0., 0., 0.), FrRotation(), NWU),
-//                                    FrHydroMesh::ClippingSupport::PLANESURFACE);
-//
-//    auto cyl5Mesh = make_hydro_mesh(cyl5, system.GetDataPath("cylinder_base.obj"),
-//                                    FrFrame(Position(0., 0., 0.), FrRotation(Direction(0., 0., 1.), M_PI/3., NWU), NWU),
-//                                    FrHydroMesh::ClippingSupport::PLANESURFACE);
-//
-//    auto cyl6Mesh = make_hydro_mesh(cyl6, system.GetDataPath("cylinder_base.obj"),
-//                                    FrFrame(Position(0., 0., 0.), FrRotation(Direction(0., 0., 1.), -M_PI/3., NWU), NWU),
-//                                    FrHydroMesh::ClippingSupport::PLANESURFACE);
-//
-//    auto forceHst1 = make_nonlinear_hydrostatic_force(cyl1, cyl1Mesh);
-//    auto forceHst2 = make_nonlinear_hydrostatic_force(cyl2, cyl2Mesh);
-//    auto forceHst3 = make_nonlinear_hydrostatic_force(cyl3, cyl3Mesh);
-//    auto forceHst4 = make_nonlinear_hydrostatic_force(cyl4, cyl4Mesh);
-//    auto forceHst5 = make_nonlinear_hydrostatic_force(cyl5, cyl5Mesh);
-//    auto forceHst6 = make_nonlinear_hydrostatic_force(cyl6, cyl6Mesh);
-    
-    auto forceHst1 = make_linear_hydrostatic_force(hdb, cyl1);
-    auto forceHst2 = make_linear_hydrostatic_force(hdb, cyl2);
-    auto forceHst3 = make_linear_hydrostatic_force(hdb, cyl3);
-    auto forceHst4 = make_linear_hydrostatic_force(hdb, cyl4);
-    auto forceHst5 = make_linear_hydrostatic_force(hdb, cyl5);
-    auto forceHst6 = make_linear_hydrostatic_force(hdb, cyl6);
+    auto cyl1Mesh = make_hydro_mesh(cyl1, system.GetDataPath("cylinder_base.obj"),
+                                    FrFrame(Position(0., 0., 0.), FrRotation(), NWU),
+                                    FrHydroMesh::ClippingSupport::PLANESURFACE);
+
+    auto cyl2Mesh = make_hydro_mesh(cyl2, system.GetDataPath("cylinder_base.obj"),
+                                    FrFrame(Position(0., 0., 0.), FrRotation(Direction(0., 0., 1.), M_PI/3., NWU), NWU),
+                                    FrHydroMesh::ClippingSupport::PLANESURFACE);
+
+    auto cyl3Mesh = make_hydro_mesh(cyl3, system.GetDataPath("cylinder_base.obj"),
+                                    FrFrame(Position(0., 0., 0.) ,FrRotation(Direction(0., 0., 1.), -M_PI/3., NWU), NWU),
+                                    FrHydroMesh::ClippingSupport::PLANESURFACE);
+
+    auto cyl4Mesh = make_hydro_mesh(cyl4, system.GetDataPath("cylinder_base.obj"),
+                                    FrFrame(Position(0., 0., 0.), FrRotation(), NWU),
+                                    FrHydroMesh::ClippingSupport::PLANESURFACE);
+
+    auto cyl5Mesh = make_hydro_mesh(cyl5, system.GetDataPath("cylinder_base.obj"),
+                                    FrFrame(Position(0., 0., 0.), FrRotation(Direction(0., 0., 1.), M_PI/3., NWU), NWU),
+                                    FrHydroMesh::ClippingSupport::PLANESURFACE);
+
+    auto cyl6Mesh = make_hydro_mesh(cyl6, system.GetDataPath("cylinder_base.obj"),
+                                    FrFrame(Position(0., 0., 0.), FrRotation(Direction(0., 0., 1.), -M_PI/3., NWU), NWU),
+                                    FrHydroMesh::ClippingSupport::PLANESURFACE);
+
+    auto forceHst1 = make_nonlinear_hydrostatic_force(cyl1, cyl1Mesh);
+    auto forceHst2 = make_nonlinear_hydrostatic_force(cyl2, cyl2Mesh);
+    auto forceHst3 = make_nonlinear_hydrostatic_force(cyl3, cyl3Mesh);
+    auto forceHst4 = make_nonlinear_hydrostatic_force(cyl4, cyl4Mesh);
+    auto forceHst5 = make_nonlinear_hydrostatic_force(cyl5, cyl5Mesh);
+    auto forceHst6 = make_nonlinear_hydrostatic_force(cyl6, cyl6Mesh);
 
     // Motor
 
