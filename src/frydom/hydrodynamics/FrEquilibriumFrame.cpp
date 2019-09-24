@@ -22,13 +22,14 @@ namespace frydom {
     // Equilibrium frame
     // ---------------------------------------------------------------------
 
-    FrEquilibriumFrame::FrEquilibriumFrame(FrBody *body) : FrPrePhysicsItem() {
+    FrEquilibriumFrame::FrEquilibriumFrame(FrBody *body)
+    : FrPrePhysicsItem() {
         m_velocity.SetNull();
         m_angularVelocity = 0.;
         m_frame = FrFrame();
         m_body = body;
         c_prevTime = 0.;
-        m_initSpeedFromBody = true;
+        m_initSpeedFromBody = false;
         m_initPositionFromBody = true;
     }
 
@@ -238,6 +239,10 @@ namespace frydom {
         m_initPositionFromBody = is_init;
     }
 
+    std::shared_ptr<FrEquilibriumFrame> make_equilibrium_frame(const std::shared_ptr<FrBody>& body) {
+        return std::make_shared<FrEquilibriumFrame>(body.get());
+    }
+
     // -----------------------------------------------------------------------
     // Equilibrium frame with spring damping restoring force
     // -----------------------------------------------------------------------
@@ -284,6 +289,10 @@ namespace frydom {
         m_frame.SetRotation( m_frame.GetRotation().RotZ_RADIANS(m_angularVelocity * (time - m_prevTime), NWU) );
 
         m_prevTime = time;
+    }
+
+    std::shared_ptr<FrEqFrameSpringDamping> make_spring_damping_equilibrium_frame(const std::shared_ptr<FrBody>& body) {
+        return std::make_shared<FrEqFrameSpringDamping>(body.get());
     }
 
     // ----------------------------------------------------------------
@@ -344,6 +353,10 @@ namespace frydom {
         m_frame.SetRotation( m_frame.GetRotation().RotZ_RADIANS(angle, NWU));
 
         m_prevTime = time;
+    }
+
+    std::shared_ptr<FrEqFrameMeanMotion> make_mean_motion_equilibrium_frame(const std::shared_ptr<FrBody>& body) {
+        return std::make_shared<FrEqFrameMeanMotion>(body.get());
     }
 
 }  // end namespace frydom

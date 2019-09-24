@@ -163,7 +163,7 @@ namespace frydom {
         // Update speed recorder
         for (auto BEMBody = m_HDB->begin(); BEMBody != m_HDB->end(); BEMBody++) {
             auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBody->first);
-            m_recorder[BEMBody->first].Record(time, eqFrame->GetPerturbationGeneralizedVelocityInFrame());
+            m_recorder[BEMBody->first].Record(time, eqFrame->GetPerturbationGeneralizedVelocityInFrame(NWU));
         }
 
         for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
@@ -191,7 +191,7 @@ namespace frydom {
             }
 
             auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBody->first);
-            auto meanSpeed = eqFrame->GetVelocityInFrame();
+            auto meanSpeed = eqFrame->GetVelocityInFrame(NWU);
 
             if (meanSpeed.squaredNorm() > FLT_EPSILON) {
                 radiationForce += ConvolutionKu(meanSpeed.norm());
@@ -248,7 +248,7 @@ namespace frydom {
                 }
 
                 auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBodyMotion->first);
-                auto angular = eqFrame->GetAngularPerturbationVelocityInFrame();
+                auto angular = eqFrame->GetAngularPerturbationVelocityInFrame(NWU);
 
                 auto damping = Ainf.col(2) * angular.y() - Ainf.col(1) * angular.z();
                 radiationForce += meanSpeed * damping;

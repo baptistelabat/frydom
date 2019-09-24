@@ -67,6 +67,17 @@ namespace frydom {
         /// \param initPos Boolean, if true the position of the frame is equal to the position of the body during initialization
         void SetBody(FrBody* body, bool initPos = true);
 
+        /// The velocity of the frame is initialized from the body velocity
+        /// \param is_init Boolean True/Flase
+        void InitSpeedFromBody(bool is_init);
+
+        /// The position of the frame is initialized from the body position
+        /// \param is_init Boolean True/False
+        void InitPositionFromBody(bool is_init);
+
+        /// Set the position of the equilibrium frame equals to the body COG position
+        void SetPositionToBodyCOGPosition();
+
         /// Set the position of the equilibrium frame, in the world reference frame
         /// \param Pos position of the equilibrium frame
         /// \param fc frame convention (NED/NWU)
@@ -94,6 +105,9 @@ namespace frydom {
         /// \param fc frame convention (NED/NWU
         /// \return equilibrium reference frame
         FrFrame GetFrameInWorld() const;
+
+        /// Set the velocity of the equilibrium frame equal to the body COG velocity
+        void SetVelocityToBodyCOGVelocity();
 
         /// Set velocity of the equilibrium frame in the world reference frame
         /// \param velocity Velocity vector in the world reference frame
@@ -165,20 +179,6 @@ namespace frydom {
 
     protected:
 
-        /// Set the position of the equilibrium frame equals to the body COG position
-        void SetPositionToBodyCOGPosition();
-
-        /// Set the velocity of the equilibrium frame equal to the body COG velocity
-        void SetVelocityToBodyCOGVelocity();
-
-        /// The velocity of the frame is initialized from the body velocity
-        /// \param is_init Boolean True/Flase
-        void InitSpeedFromBody(bool is_init);
-
-        /// The position of the frame is initialized from the body position
-        /// \param is_init Boolean True/False
-        void InitPositionFromBody(bool is_init);
-
     private:
 
         /// Update the velocity and position of the frame
@@ -186,6 +186,8 @@ namespace frydom {
         void Compute(double time) override;
 
     };
+
+    std::shared_ptr<FrEquilibriumFrame> make_equilibrium_frame(const std::shared_ptr<FrBody>& body);
 
 
     /**
@@ -248,6 +250,8 @@ namespace frydom {
 
     };
 
+    std::shared_ptr<FrEqFrameSpringDamping> make_spring_damping_equilibrium_frame(const std::shared_ptr<FrBody>& body);
+
     // TODO : il faudrait pouvoir retrancher une difference de position moyenne
 
     // Forward declaration
@@ -301,6 +305,8 @@ namespace frydom {
         void SetRecorders(double timePersistence, double timeStep);
 
     };
+
+    std::shared_ptr<FrEqFrameMeanMotion> make_mean_motion_equilibrium_frame(const std::shared_ptr<FrBody>& body);
 
 }  // end namespace frydom
 
