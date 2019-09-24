@@ -42,9 +42,9 @@ namespace frydom {
 
     protected:
         double m_prevTime;
-        FrBody* m_body = nullptr;               ///< Link to the body to which the equilibrium frame if applied
+        FrBody* m_body = nullptr;                ///< Link to the body to which the equilibrium frame if applied
         Velocity m_velocity;                     ///< translational velocity of the frame in world coordinates
-        double m_angularVelocity;                ///< angular velocity of the frame around Z-direction
+        double m_angularVelocity = 0.;           ///< angular velocity of the frame around Z-direction
         bool m_initSpeedFromBody = false;        ///< Initialize the frame position, orientation and velocity according
         bool m_initPositionFromBody = false;     ///< to the body during the initialization stage
 
@@ -53,14 +53,18 @@ namespace frydom {
         /// Constructor of a new equilibrium frame with default position and no velocity
         /// User will must define the body to linked with with the corresponding method
         /// before execution of the simulation
-        FrEquilibriumFrame() : FrFrame(), FrPrePhysicsItem(), m_angularVelocity(0.) { };
+        FrEquilibriumFrame() : FrFrame(), FrPrePhysicsItem(), m_angularVelocity(0.) {
+            m_velocity.SetNull();
+        };
 
         /// Constructor of a new equilibrium frame with body linked
         /// \param body Body to which the equilibrium frame is linked
         /// \param initPos Boolean, if true the position of the equilibrium is set to the position of
         /// the body during initialization
         FrEquilibriumFrame(FrBody* body, bool initPos = true) : FrFrame(), FrPrePhysicsItem(), m_body(body),
-                                                                  m_initPositionFromBody(initPos), m_angularVelocity(0.) { };
+                                                                  m_initPositionFromBody(initPos), m_angularVelocity(0.) {
+            m_velocity.SetNull();
+        };
 
         /// Constructor of a new equilibrium frame with defined position, rotation and body linked
         /// \param pos Initial position of the equilibrium frame in world coordinates
@@ -68,7 +72,9 @@ namespace frydom {
         /// \param fc Frame convention
         /// \param body Body link
         FrEquilibriumFrame(const Position& pos, const FrRotation& rotation, FRAME_CONVENTION fc, FrBody* body)
-                : FrFrame(pos, rotation, fc), FrPrePhysicsItem(), m_body(body), m_initPositionFromBody(false) { }
+                : FrFrame(pos, rotation, fc), FrPrePhysicsItem(), m_body(body), m_initPositionFromBody(false) {
+            m_velocity.SetNull();
+        }
 
         /// Constructor of a new equilibrium frame with defined position, rotation and body linked
         /// \param pos Initial position of the equilibrium frame in world coordinates
@@ -76,13 +82,17 @@ namespace frydom {
         /// \param fc Frame convention
         /// \param body Body link
         FrEquilibriumFrame(const Position& pos, const FrUnitQuaternion& quaternion, FRAME_CONVENTION fc, FrBody* body)
-                : FrFrame(pos, quaternion, fc), FrPrePhysicsItem(), m_body(body), m_initPositionFromBody(false) { }
+                : FrFrame(pos, quaternion, fc), FrPrePhysicsItem(), m_body(body), m_initPositionFromBody(false) {
+            m_velocity.SetNull();
+        }
 
         /// Constructor of a new equilibrium frame from an other frame and body link
         /// \param otherFrame Initial frame definition
         /// \param body Body link
         FrEquilibriumFrame(const FrFrame& otherFrame, FrBody* body)
-                : FrFrame(otherFrame), FrPrePhysicsItem(), m_body(body), m_initPositionFromBody(false) { }
+                : FrFrame(otherFrame), FrPrePhysicsItem(), m_body(body), m_initPositionFromBody(false) {
+            m_velocity.SetNull();
+        }
 
         /// Get the type name of this object
         /// \return type name of this object

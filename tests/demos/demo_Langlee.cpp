@@ -148,6 +148,10 @@ int main(int argc, char* argv[]) {
     auto eqFrame1 = std::make_shared<FrEquilibriumFrame>(flap1.get());
     auto eqFrame2 = std::make_shared<FrEquilibriumFrame>(flap2.get());
 
+    system.Add(eqFrame0);
+    system.Add(eqFrame1);
+    system.Add(eqFrame2);
+
     hdb->Map(0, flap1.get(), eqFrame1);
     hdb->Map(1, flap2.get(), eqFrame2);
     hdb->Map(2, barge.get(), eqFrame0);

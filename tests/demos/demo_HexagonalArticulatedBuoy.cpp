@@ -173,13 +173,6 @@ int main(int argc, char* argv[]) {
     auto eqFrame4 = std::make_shared<FrEquilibriumFrame>(Position(1.25, -2.165, 0.), FrRotation(), NWU, cyl5.get());
     auto eqFrame5 = std::make_shared<FrEquilibriumFrame>(Position(-1.25, -2.165, 0.), FrRotation(), NWU, cyl6.get());
 
-    eqFrame0->InitSpeedFromBody(true);
-    eqFrame1->InitSpeedFromBody(true);
-    eqFrame2->InitSpeedFromBody(true);
-    eqFrame3->InitSpeedFromBody(true);
-    eqFrame4->InitSpeedFromBody(true);
-    eqFrame5->InitSpeedFromBody(true);
-
     system.Add(eqFrame0);
     system.Add(eqFrame1);
     system.Add(eqFrame2);

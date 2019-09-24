@@ -90,6 +90,10 @@ void DemoModel(FrOffshoreSystem& system, bool flap1_fixed, bool flap2_fixed, dou
     auto eqFrame1 = std::make_shared<FrEquilibriumFrame>(Position(-0.65, 0., -0.29), FrRotation(), NWU, flap1.get());
     auto eqFrame2 = std::make_shared<FrEquilibriumFrame>(Position(0.65, 0., -0.29), FrRotation(), NWU, flap2.get());
 
+    system.Add(eqFrame0);
+    system.Add(eqFrame1);
+    system.Add(eqFrame2);
+
     hdb->Map(0, flap1.get(), eqFrame1);
     hdb->Map(1, flap2.get(), eqFrame2);
     hdb->Map(2, platform.get(), eqFrame0);
