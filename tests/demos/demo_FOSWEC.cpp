@@ -86,9 +86,11 @@ void DemoModel(FrOffshoreSystem& system, bool flap1_fixed, bool flap2_fixed, dou
 
     auto hdb = make_hydrodynamic_database(system.GetDataPath("FOSWEC_phase2_filtered.hdb5"));
 
-    auto eqFrame0 = std::make_shared<FrEquilibriumFrame>(platform.get());
-    auto eqFrame1 = std::make_shared<FrEquilibriumFrame>(Position(-0.65, 0., -0.29), FrRotation(), NWU, flap1.get());
-    auto eqFrame2 = std::make_shared<FrEquilibriumFrame>(Position(0.65, 0., -0.29), FrRotation(), NWU, flap2.get());
+    auto eqFrame0 = make_equilibrium_frame(platform, &system);
+    auto eqFrame1 = make_equilibrium_frame(flap1, &system);
+    auto eqFrame2 = make_equilibrium_frame(flap2, &system);
+    eqFrame1->SetPositionInWorld(Position(-0.65, 0., -0.29), NWU);
+    eqFrame2->SetPositionInWorld(Position(0.65, 0., -0.29), NWU);
 
     hdb->Map(0, flap1.get(), eqFrame1);
     hdb->Map(1, flap2.get(), eqFrame2);

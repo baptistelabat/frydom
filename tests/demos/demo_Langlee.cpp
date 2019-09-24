@@ -144,9 +144,9 @@ int main(int argc, char* argv[]) {
 
     auto hdb = make_hydrodynamic_database(system.GetDataPath("Langlee_draft8_5_filtered_t50.hdb5"));
 
-    auto eqFrame0 = std::make_shared<FrEquilibriumFrame>(barge.get());
-    auto eqFrame1 = std::make_shared<FrEquilibriumFrame>(flap1.get());
-    auto eqFrame2 = std::make_shared<FrEquilibriumFrame>(flap2.get());
+    auto eqFrame0 = make_equilibrium_frame(barge, &system);
+    auto eqFrame1 = make_equilibrium_frame(flap1, &system);
+    auto eqFrame2 = make_equilibrium_frame(flap2, &system);
 
     hdb->Map(0, flap1.get(), eqFrame1);
     hdb->Map(1, flap2.get(), eqFrame2);

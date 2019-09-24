@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
     auto hdb = std::make_shared<FrHydroDB>(resources_path.resolve("Platform_HDB.hdb5").path());
 
     std::cout << "--> Create eqFrame..." << std::endl;
-    auto eqFrame = std::make_shared<FrEquilibriumFrame>(body.get());
+    auto eqFrame = make_equilibrium_frame(body, &system);
 
     std::cout << "--> Link map..." << std::endl;
     hdb->Map(0, body.get(), eqFrame);

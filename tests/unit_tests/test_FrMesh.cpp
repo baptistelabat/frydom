@@ -28,7 +28,7 @@ protected:
 
     void Clip();
 
-    bool TestIntegrals(double volume, const Position& COG);
+    void TestIntegrals(double volume, const Position& COG);
 
 };
 
@@ -129,7 +129,7 @@ void TestMesh::Clip() {
 }
 
 
-bool TestMesh::TestIntegrals(double volume, const Position& COG) {
+void TestMesh::TestIntegrals(double volume, const Position& COG) {
 
     auto normal = m_plane->GetNormal(fc);
     auto origin = m_plane->GetOrigin(fc);

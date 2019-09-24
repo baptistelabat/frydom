@@ -133,6 +133,8 @@ namespace frydom {
 
         body->AddExternalForce(manoeuvring);
 
+        return manoeuvring;
+
     }
 
 }  // end namespace frydom

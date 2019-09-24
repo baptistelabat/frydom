@@ -136,6 +136,7 @@ namespace frydom {
             for (auto &ip : otherphysicslist) {
                 ip->SetNoSpeedNoAcceleration();
             }
+            return true;
         }
 
     }  // end namespace frydom::internal

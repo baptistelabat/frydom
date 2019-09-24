@@ -170,9 +170,9 @@ int main(int argc, char* argv[]) {
     auto hdb = make_hydrodynamic_database(resources_path.resolve("Ellipsoid_2774_faces_with_sym.hdb5").path());
 
     // Create an equilibrium frame for the platform and add it to the system at the position of the body CoG.
-    // auto eqFrame = std::make_shared<FrEquilibriumFrame>(Position(0.,0.,1.99043),FrRotation(),NWU,Ellipsoid.get()); // 2880 faces.
-    auto eqFrame = std::make_shared<FrEquilibriumFrame>(Position(0.,0.,2),FrRotation(),NWU,Ellipsoid.get()); // 4200 faces.
-    system.AddPhysicsItem(eqFrame);
+    // auto eqFrame = make_equilibrium_frame(Position(0.,0.,1.99043),FrRotation(),NWU,Ellipsoid.get()); // 2880 faces.
+    auto eqFrame = make_equilibrium_frame(Position(0.,0.,2),FrRotation(),NWU,Ellipsoid.get()); // 4200 faces.
+
 
     // Map the equilibrium frame and the body in the hdb mapper
     hdb->Map(0, Ellipsoid.get(), eqFrame);

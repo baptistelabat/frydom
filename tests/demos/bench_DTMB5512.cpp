@@ -231,11 +231,9 @@ int main(int argc, char* argv[]) {
 
     auto hdb = make_hydrodynamic_database(system.GetDataPath("DTMB5512.hdb5"));
 
-    auto eqFrame = std::make_shared<FrEquilibriumFrame>(body.get(), false);
-    eqFrame->SetPosition(Position(0., 0., 0.03), NWU);
+    auto eqFrame = make_equilibrium_frame(body, &system);
+    eqFrame->SetPositionInWorld(Position(0., 0., 0.03), NWU);
     eqFrame->SetVelocityInWorld(Velocity(speed, 0., 0.), NWU);
-
-    system.AddPhysicsItem(eqFrame);
 
     hdb->Map(0, body.get(), eqFrame);
 
