@@ -134,8 +134,8 @@ int main(int argc, char* argv[]) {
     auto hdb = make_hydrodynamic_database(resources_path.resolve("Platform_HDB_Without_drift.hdb5").path());
 
     // Create an equilibrium frame for the platform and add it to the system at the position of the body CoG.
-    auto eqFrame = std::make_shared<FrEquilibriumFrame>(platform.get());
-    system.AddPhysicsItem(eqFrame);
+    auto eqFrame = make_equilibrium_frame(platform.get());
+
 
     // Map the equilibrium frame and the body in the hdb mapper
     hdb->Map(0, platform.get(), eqFrame);

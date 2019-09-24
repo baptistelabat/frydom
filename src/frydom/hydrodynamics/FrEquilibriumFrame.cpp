@@ -239,24 +239,25 @@ namespace frydom {
         m_initPositionFromBody = is_init;
     }
 
-    std::shared_ptr<FrEquilibriumFrame> make_equilibrium_frame(const std::shared_ptr<FrBody>& body) {
-        return std::make_shared<FrEquilibriumFrame>(body.get());
+    std::shared_ptr<FrEquilibriumFrame> make_equilibrium_frame(const std::shared_ptr<FrBody>& body, FrOffshoreSystem* system) {
+        auto eqframe = std::make_shared<FrEquilibriumFrame>(body.get());
+        system->Add(eqframe);
+        return eqframe;
     }
 
     // -----------------------------------------------------------------------
     // Equilibrium frame with spring damping restoring force
     // -----------------------------------------------------------------------
 
-    FrEqFrameSpringDamping::FrEqFrameSpringDamping(FrBody* body, double T0, double psi)
-        : FrEquilibriumFrame(body) { this->SetSpringDamping(T0, psi); }
+    FrEqFrameSpringDamping::FrEqFrameSpringDamping(FrBody* body, double cutoffTime, double dampingRatio)
+        : FrEquilibriumFrame(body) { this->SetSpringDamping(cutoffTime, dampingRatio); }
 
-    void FrEqFrameSpringDamping::SetSpringDamping(double T0, double psi) {
+    void FrEqFrameSpringDamping::SetSpringDamping(double cutoffTime, double dampingRatio) {
 
-        m_w0 = 2.*M_PI / T0;
-        m_psi = psi;
+        auto w0 = 2.*MU_PI / cutoffTime;
+        m_damping = 2. * dampingRatio * w0;
+        m_stiffness = w0 * w0;
 
-        m_damping = 2. * m_psi * m_w0;
-        m_stiffness = m_w0 * m_w0;
     }
 
     void FrEqFrameSpringDamping::Compute(double time) {
@@ -291,8 +292,10 @@ namespace frydom {
         m_prevTime = time;
     }
 
-    std::shared_ptr<FrEqFrameSpringDamping> make_spring_damping_equilibrium_frame(const std::shared_ptr<FrBody>& body) {
-        return std::make_shared<FrEqFrameSpringDamping>(body.get());
+    std::shared_ptr<FrEqFrameSpringDamping> make_spring_damping_equilibrium_frame(const std::shared_ptr<FrBody>& body, FrOffshoreSystem* system, double cutoffTime, double dampingRatio) {
+        auto eqframe = std::make_shared<FrEqFrameSpringDamping>(body.get(), cutoffTime, dampingRatio);
+        system->Add(eqframe);
+        return eqframe;
     }
 
     // ----------------------------------------------------------------
@@ -355,8 +358,10 @@ namespace frydom {
         m_prevTime = time;
     }
 
-    std::shared_ptr<FrEqFrameMeanMotion> make_mean_motion_equilibrium_frame(const std::shared_ptr<FrBody>& body) {
-        return std::make_shared<FrEqFrameMeanMotion>(body.get());
+    std::shared_ptr<FrEqFrameMeanMotion> make_mean_motion_equilibrium_frame(const std::shared_ptr<FrBody>& body, FrOffshoreSystem* system, double timePersistence, double timeStep) {
+        auto eqframe = std::make_shared<FrEqFrameMeanMotion>(body.get(), timePersistence, timeStep);
+        system->Add(eqframe);
+        return eqframe;
     }
 
 }  // end namespace frydom

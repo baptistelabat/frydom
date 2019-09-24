@@ -187,7 +187,7 @@ namespace frydom {
 
     };
 
-    std::shared_ptr<FrEquilibriumFrame> make_equilibrium_frame(const std::shared_ptr<FrBody>& body);
+    std::shared_ptr<FrEquilibriumFrame> make_equilibrium_frame(const std::shared_ptr<FrBody>& body, FrOffshoreSystem* system);
 
 
     /**
@@ -196,15 +196,13 @@ namespace frydom {
      *
      * The velocity of the equilibrium frame is solution of a dynamic equation with spring
      * and damping forces. This system creates a low pass filter on the velocity of the body.
-     * The spring-damping system is defined from T0, the cutoff time in seconds, and
-     * psi the damping rate coefficient.
+     * The spring-damping system is defined from the cutoff time in seconds, and the damping
+     * ratio coefficient.
      *
      */
     class FrEqFrameSpringDamping : public FrEquilibriumFrame {
 
     private:
-        double m_w0 = 0;                    ///< cutoff frequency
-        double m_psi = 0;                   ///< damping parameter
         double m_damping = 0;               ///< damping coefficient of the system
         double m_stiffness = 0;             ///< stiffness coefficient of the system
         double m_prevTime = 0;              ///< previous time step
@@ -213,19 +211,19 @@ namespace frydom {
 
         /// Constructor of a new equilibrium frame with body link and spring-damping parameters
         /// \param body Body link
-        /// \param T0 Cutoff time period
-        /// \param psi Damping ratio
+        /// \param cutoffTime Cutoff time period
+        /// \param dampingRatio Damping ratio
         /// \param initPos If true the frame is initialized with the position of the body
-        FrEqFrameSpringDamping(FrBody* body, double T0, double psi);
+        FrEqFrameSpringDamping(FrBody* body, double cutoffTime, double dampingRatio);
 
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "EqFrameSpringDamping"; }
 
         /// Set the spring-damping parameters
-        /// \param T0 Cutoff time period
-        /// \param psi Damping ratio
-        void SetSpringDamping(double T0 = 60., double psi = 0.5);
+        /// \param cutoffTime Cutoff time period
+        /// \param dampingRatio Damping ratio
+        void SetSpringDamping(double cutoffTime = 60., double dampingRatio = 0.5);
 
         /// Get the damping coefficient of the spring-damping system
         /// \return Damping coefficient
@@ -250,7 +248,8 @@ namespace frydom {
 
     };
 
-    std::shared_ptr<FrEqFrameSpringDamping> make_spring_damping_equilibrium_frame(const std::shared_ptr<FrBody>& body);
+    std::shared_ptr<FrEqFrameSpringDamping>
+    make_spring_damping_equilibrium_frame(const std::shared_ptr<FrBody>& body, FrOffshoreSystem* system, double cutoffTime, double dampingRatio);
 
     // TODO : il faudrait pouvoir retrancher une difference de position moyenne
 
@@ -306,7 +305,8 @@ namespace frydom {
 
     };
 
-    std::shared_ptr<FrEqFrameMeanMotion> make_mean_motion_equilibrium_frame(const std::shared_ptr<FrBody>& body);
+    std::shared_ptr<FrEqFrameMeanMotion>
+    make_mean_motion_equilibrium_frame(const std::shared_ptr<FrBody>& body, FrOffshoreSystem* system, double timePersistence, double timeStep);
 
 }  // end namespace frydom
 

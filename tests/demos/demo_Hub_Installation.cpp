@@ -111,9 +111,8 @@ int main(int argc, char* argv[]) {
 
     auto hdb = make_hydrodynamic_database(system.GetDataPath("Barge_HDB.h5"));
 
-    auto eqFrame = std::make_shared<FrEquilibriumFrame>(barge.get());
+    auto eqFrame = make_equilibrium_frame(barge, &system);
     eqFrame->SetLogged(true);
-    system.AddPhysicsItem(eqFrame);
 
     hdb->Map(0, barge.get(), eqFrame);
 

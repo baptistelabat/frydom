@@ -60,8 +60,8 @@ int main(int argc, char* argv[]) {
 
     auto hdb = std::make_shared<FrHydroDB>(resources_path.resolve("Platform_HDB.hdb5").path());
 
-    auto eqFrame = std::make_shared<FrEquilibriumFrame>(body.get());
-    system.AddPhysicsItem(eqFrame);
+    auto eqFrame = make_equilibrium_frame(body, &system);
+
 
     hdb->Map(0, body.get(), eqFrame);
 

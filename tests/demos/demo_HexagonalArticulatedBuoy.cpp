@@ -109,12 +109,19 @@ std::shared_ptr<FrHydroDB> SetUpHydrodynamicModel(FrOffshoreSystem* system, std:
 
     auto hdb = make_hydrodynamic_database(system->GetDataPath("hexagonal_articulated_buoy.hdb5"));
 
-    auto eqFrame0 = std::make_shared<FrEquilibriumFrame>(Position(-2.498, 0., 0.), FrRotation(), NWU, bodyList[0].get());
-    auto eqFrame1 = std::make_shared<FrEquilibriumFrame>(Position(-1.25, 2.165, 0.), FrRotation(), NWU, bodyList[1].get());
-    auto eqFrame2 = std::make_shared<FrEquilibriumFrame>(Position(1.25, 2.165, 0.), FrRotation(), NWU, bodyList[2].get());
-    auto eqFrame3 = std::make_shared<FrEquilibriumFrame>(Position(2.498, 0., 0.), FrRotation(), NWU, bodyList[3].get());
-    auto eqFrame4 = std::make_shared<FrEquilibriumFrame>(Position(1.25, -2.165, 0.), FrRotation(), NWU, bodyList[4].get());
-    auto eqFrame5 = std::make_shared<FrEquilibriumFrame>(Position(-1.25, -2.165, 0.), FrRotation(), NWU, bodyList[5].get());
+    auto eqFrame0 = make_equilibrium_frame(bodyList[0], system);
+    auto eqFrame1 = make_equilibrium_frame(bodyList[1], system);
+    auto eqFrame2 = make_equilibrium_frame(bodyList[2], system);
+    auto eqFrame3 = make_equilibrium_frame(bodyList[3], system);
+    auto eqFrame4 = make_equilibrium_frame(bodyList[4], system);
+    auto eqFrame5 = make_equilibrium_frame(bodyList[5], system);
+
+    eqFrame0->SetPositionInWorld(Position(-2.498, 0., 0.), NWU);
+    eqFrame1->SetPositionInWorld(Position(-1.25, 2.165, 0.), NWU);
+    eqFrame2->SetPositionInWorld(Position(1.25, 2.165, 0.), NWU);
+    eqFrame3->SetPositionInWorld(Position(2.498, 0., 0.), NWU);
+    eqFrame4->SetPositionInWorld(Position(1.25, -2.165, 0.), NWU);
+    eqFrame5->SetPositionInWorld(Position(-1.25, -2.165, 0.), NWU);
 
     hdb->Map(0, bodyList[0].get(), eqFrame0);
     hdb->Map(1, bodyList[1].get(), eqFrame1);

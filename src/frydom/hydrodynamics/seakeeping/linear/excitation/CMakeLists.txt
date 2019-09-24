@@ -3,7 +3,7 @@ message(STATUS "    ...excitation")
 set(SRC_FILES
         FrLinearExcitationForce.cpp
 	FrNonLinearFroudeKrylovForce.cpp
-	FrLinearExcitationForceBase.cpp
+        FrLinearHDBForce.cpp
 	FrLinearDiffractionForce.cpp
 	FrLinearFroudeKrylovForce.cpp
         )

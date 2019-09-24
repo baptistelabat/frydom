@@ -54,8 +54,8 @@ int main(int argc, char* argv[]) {
 
     auto hdb = make_hydrodynamic_database(resources_path.resolve("CylinderInteraction.hdb5").path());
 
-    auto eqFrame1 = std::make_shared<FrEquilibriumFrame>(cyl1.get());
-    auto eqFrame2 = std::make_shared<FrEquilibriumFrame>(cyl2.get());
+    auto eqFrame1 = make_equilibrium_frame(cyl1, &system);
+    auto eqFrame2 = make_equilibrium_frame(cyl2, &system);
 
     hdb->Map(0, cyl1.get(), eqFrame1);
     hdb->Map(1, cyl2.get(), eqFrame2);

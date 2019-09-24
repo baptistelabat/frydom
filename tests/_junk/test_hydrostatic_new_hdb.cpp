@@ -29,8 +29,8 @@ int main(int argc, char* argv[]) {
     auto hdb = make_hydrodynamic_database(resources_path.resolve("Platform_HDB.hdb5").path());
 
     std::cout << "--> Eq Frame ... " << std::endl;
-    auto eqFrame = std::make_shared<FrEquilibriumFrame>(body.get());
-    system.AddPhysicsItem(eqFrame);
+    auto eqFrame = make_equilibrium_frame(body, &system);
+
 
     std::cout << "--> Set Map ..." << std::endl;
     hdb->Map(0, body.get(), eqFrame);

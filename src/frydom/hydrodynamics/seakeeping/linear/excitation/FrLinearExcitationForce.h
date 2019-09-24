@@ -18,7 +18,7 @@
 
 #include "MathUtils/Matrix66.h"
 #include "frydom/core/force/FrForce.h"
-#include "FrLinearExcitationForceBase.h"
+#include "FrLinearHDBForce.h"
 
 namespace frydom {
 
@@ -32,29 +32,20 @@ namespace frydom {
      * \brief Class for computing the linear excitation loads.
      */
 
-    class FrLinearExcitationForce : public FrLinearExcitationForceBase {
+    class FrLinearExcitationForce : public FrLinearHDBForce {
 
     public:
 
         /// Constructor.
-        explicit FrLinearExcitationForce(std::shared_ptr<FrHydroDB> HDB) : FrLinearExcitationForceBase(HDB) {};
+        explicit FrLinearExcitationForce(const std::shared_ptr<FrHydroDB>& HDB) : FrLinearHDBForce(HDB) {};
 
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "LinearExcitationForce"; }
 
-        /// Method to initialize the linear excitation force
-        void Initialize() override;
-
         Eigen::MatrixXcd GetHDBData(unsigned int iangle) const override;
 
         Eigen::VectorXcd GetHDBData(unsigned int iangle, unsigned int iforce) const override;
-
-    private:
-
-        /// Compute the linear excitation force
-        /// \param time Current time of the simulation from beginning, in seconds
-        void Compute(double time) override;
 
     };
 

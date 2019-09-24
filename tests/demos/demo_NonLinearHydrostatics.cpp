@@ -118,7 +118,7 @@ int main(int argc, char* argv[]) {
     CylinderMesh->GetInitialMesh().Write("Mesh_Initial.obj");
 
 //    // -- Hydrostatic stiffness matrix, for checking only
-//    auto eqFrame = std::make_shared<FrEquilibriumFrame>(cylinder.get());
+//    auto eqFrame = make_equilibrium_frame(cylinder.get());
 //    auto linearHSForce = make_linear_hydrostatic_force(eqFrame, cylinder, "Free_cylinder_2900_panels.obj", FrFrame());
 
     // -- Hydrostatics NL

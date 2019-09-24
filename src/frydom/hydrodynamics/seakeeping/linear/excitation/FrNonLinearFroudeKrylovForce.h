@@ -25,7 +25,7 @@
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/mesh/FrHydroMesh.h"
-#include "FrLinearExcitationForceBase.h"
+#include "FrLinearHDBForce.h"
 
 namespace frydom {
 
