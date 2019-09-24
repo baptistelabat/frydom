@@ -95,8 +95,8 @@ int main(int argc, char* argv[]) {
     bool linear = false;
     if (linear) {
         // -- Linear hydrostatics
-        auto eqFrame = std::make_shared<FrEquilibriumFrame>(body.get());
-        system.AddPhysicsItem(eqFrame);
+        auto eqFrame = make_equilibrium_frame(body, &system);
+
         auto forceHst = make_linear_hydrostatic_force(eqFrame, body, resources_path.resolve("box_385.obj").path(), FrFrame());
     } else {
         // Nonlinear hydrostatics

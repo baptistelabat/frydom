@@ -49,10 +49,10 @@ int main(int argc, char* argv[]) {
 
     //auto eqFrame = std::make_shared<FrEqFrameMeanMotion_>(body.get(), 60., 0.1);
     //eqFrame->SetPositionCorrection(60., 0.1, 0.01/60., 0.01/60.);
-    //system.AddPhysicsItem(eqFrame);
+    //
 
     auto eqFrame = std::make_shared<FrEqFrameSpringDamping_>(body.get(), 120., 0.5);
-    system.AddPhysicsItem(eqFrame);
+
 
     eqFrame->InitSpeedFromBody(true);
 

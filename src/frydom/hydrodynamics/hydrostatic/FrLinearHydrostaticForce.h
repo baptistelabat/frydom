@@ -39,20 +39,10 @@ namespace frydom {
      */
     class FrLinearHydrostaticForce : public FrForce {
 
-    private:
-//        std::shared_ptr<FrHydroDB> m_HDB;
-        FrLinearHydrostaticStiffnessMatrix m_stiffnessMatrix;      ///< Hydrostatic stiffness matrix
-        //TODO: passed the raw to shared ptr, need some modif in the mapper.
-        FrEquilibriumFrame* m_equilibriumFrame;    ///< Equilibrium frame of the body to which the force is applied
-
-        /// Boolean to know if the hydrostatic matrix is obtained from the HDB5 file (true) or not (false).
-        bool HydrostaticsMatrixHDB5 = true;
-
     public:
 
         /// Constructor.
         explicit FrLinearHydrostaticForce(const std::shared_ptr<FrEquilibriumFrame>& eqFrame);
-        explicit FrLinearHydrostaticForce(FrEquilibriumFrame* eqFrame);
 
         /// Get the type name of this object
         /// \return type name of this object
@@ -75,6 +65,10 @@ namespace frydom {
         void Initialize() override;
 
     private:
+
+        FrLinearHydrostaticStiffnessMatrix m_stiffnessMatrix;      ///< Hydrostatic stiffness matrix
+
+        std::shared_ptr<FrEquilibriumFrame> m_equilibriumFrame;    ///< Equilibrium frame of the body to which the force is applied
 
         /// Compute the linear hydrostatic force
         /// \param time Current time of the simulation from beginning
