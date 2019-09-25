@@ -11,6 +11,10 @@ namespace frydom {
       // Testing if the name is not already used !!! // TODO : l'unicite ne se fait pas sur les noms mais sur les path !!!!
     }
 
+  const std::string& FrLoggable::GetName() const {
+      return m_name;
+    }
+
     void FrLoggable::InitializeLog(const std::string &path) {
 
 //    if (IsLogged()) {

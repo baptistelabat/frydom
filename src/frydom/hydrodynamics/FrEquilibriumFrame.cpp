@@ -241,8 +241,8 @@ namespace frydom {
     }
 
     std::shared_ptr<FrEquilibriumFrame>
-    make_equilibrium_frame(const std::shared_ptr<FrBody> &body, FrOffshoreSystem *system) {
-      auto eqframe = std::make_shared<FrEquilibriumFrame>(body.get());
+    make_equilibrium_frame(const std::string&& name, const std::shared_ptr<FrBody> &body, FrOffshoreSystem *system) {
+      auto eqframe = std::make_shared<FrEquilibriumFrame>(std::move(name), body.get());
       system->Add(eqframe);
       return eqframe;
     }

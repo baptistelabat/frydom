@@ -111,7 +111,7 @@ namespace frydom {
         // Loop over every body subject to hydrodynamic loads.
         for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
             auto body = m_HDB->GetBody(BEMBody->first);
-            body->AddExternalForce(std::make_shared<FrRadiationConvolutionForce>(this)); // Addition of the hydrodynamic loads to every body.
+            body->AddExternalForce(std::make_shared<FrRadiationConvolutionForce>("radiation_force", this)); // Addition of the hydrodynamic loads to every body.
         }
     }
 

@@ -47,12 +47,12 @@ namespace frydom {
         e2.normalize();
 
 //        m_node = std::make_shared<FrNode>(body, position, FrRotation(e1, e2, e3, NWU));
-        m_node = std::make_shared<FrNode>(body);  // TODO : doit etre gere par la classe de base !!
+        m_node = std::make_shared<FrNode>("", body);  // TODO : doit etre gere par la classe de base !! FIXME : comment nommer tous les noeuds pour pas avoir de doublon ???
         m_node->SetFrameInBody(FrFrame(position, FrRotation(e1, e2, e3, NWU), NWU));
     }
 
     void FrMorisonElement::SetFrame(FrBody* body, const FrFrame& frame) {
-        m_node = std::make_shared<FrNode>(body);
+        m_node = std::make_shared<FrNode>("", body);
         m_node->SetFrameInBody(frame);
     }
 
@@ -74,7 +74,7 @@ namespace frydom {
     // ---------------------------------------------------------------------
 
     FrMorisonSingleElement::FrMorisonSingleElement(FrBody* body) {
-        m_node = std::make_shared<FrNode>(body);
+        m_node = std::make_shared<FrNode>("", body);
     }
 
     FrMorisonSingleElement::FrMorisonSingleElement(FrBody* body, Position posA, Position posB, double diameter,
@@ -130,9 +130,9 @@ namespace frydom {
     }
 
     void FrMorisonSingleElement::SetNodes(FrBody* body, Position posA, Position posB) {
-        m_nodeA = std::make_shared<FrNode>(body);
+        m_nodeA = std::make_shared<FrNode>("", body);
         m_nodeA->SetPositionInBody(posA, NWU);
-        m_nodeB = std::make_shared<FrNode>(body);
+        m_nodeB = std::make_shared<FrNode>("", body);
         m_nodeB->SetPositionInBody(posB, NWU);
         SetLength(m_nodeA->GetPositionInWorld(NWU), m_nodeB->GetPositionInWorld(NWU));
     }
@@ -252,11 +252,11 @@ namespace frydom {
     // -------------------------------------------------------------------
 
     FrMorisonCompositeElement::FrMorisonCompositeElement(FrBody* body) {
-        m_node = std::make_shared<FrNode>(body);
+        m_node = std::make_shared<FrNode>("", body);
     }
 
     FrMorisonCompositeElement::FrMorisonCompositeElement(FrBody* body, FrFrame& frame) {
-        m_node = std::make_shared<FrNode>(body); // TODO : Devrait etre instancie dans la classe de base
+        m_node = std::make_shared<FrNode>("", body); // TODO : Devrait etre instancie dans la classe de base
         m_node->SetFrameInBody(frame);
     }
 
