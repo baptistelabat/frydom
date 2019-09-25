@@ -17,6 +17,7 @@
 #include "FrRotation.h"
 #include "FrFrame.h"
 #include "FrObject.h"
+#include "frydom/logging/FrLoggable.h"
 
 #include "frydom/core/link/links_lib/FrLink.h"
 
@@ -47,7 +48,7 @@ namespace frydom {
      * \class FrNode
      * \brief Class for defining nodes (in order to add links).
      */
-    class FrNode : public FrObject {
+    class FrNode : public FrObject, public FrLoggable {
 
     private:
 

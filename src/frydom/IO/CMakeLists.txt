@@ -3,7 +3,6 @@ message(STATUS "    ...IO")
 set(SRC_FILES
         FrHDF5.cpp
         FrLoader.cpp
-        FrPathManager.cpp
 )
 
 set(FRYDOM_IO_SOURCES "")

@@ -18,7 +18,7 @@
 #include "chrono/physics/ChSystemSMC.h"
 #include "chrono/physics/ChSystemNSC.h"
 
-#include "frydom/core/common/FrObject.h"
+//#include "frydom/core/common/FrObject.h"
 #include "frydom/core/statics/FrStaticAnalysis.h"
 
 // TODO: les objets environnement devront etre mis dans une classe environnement qui encapsule tout l'environnement:
@@ -95,7 +95,7 @@ namespace frydom {
     /// This object will be responsible of performing the entire physical simulation (dynamics, kinematics, statics, etc.),
     /// so you need at least one FrOffshoreSystem_ object in your program, in order to perform simulations
     /// (you'll insert rigid bodies and links into it..).
-    class FrOffshoreSystem : public FrObject {
+    class FrOffshoreSystem {
 
     public:
 
@@ -252,9 +252,9 @@ namespace frydom {
         /// Destructor
         ~FrOffshoreSystem();
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "OffshoreSystem"; }
+//        /// Get the type name of this object
+//        /// \return type name of this object
+//        std::string GetTypeName() const override { return "OffshoreSystem"; }
 
         /// Add an item (body, link, etc.) to the offshore sytem
         /// \param item item to be added to the offshore system
@@ -386,28 +386,28 @@ namespace frydom {
 
         // FIXME: Get sure Initialize is not called twice !!
         /// Initialize the state of the offshore system and its components (Environment, systemBase)
-        void Initialize() override;
+        void Initialize();
 
         /// Method called at the send of a time step. Logging may be used here
-        void StepFinalize() override;
+        void StepFinalize();
 
         // Logging
 
-        /// Initialize the logs (log files and folders creation)
-        void InitializeLog_Dependencies(const std::string& path) override;
-
-        /// Clear the logging message of every elements
-        void ClearLogs();
-
-        void AddFields() override;
-
-        // Resources path
-
-        std::string GetDataPath(const std::string& relPath) const;
-
-    protected:
-
-        std::string BuildPath(const std::string& rootPath) override;
+//        /// Initialize the logs (log files and folders creation)
+//        void InitializeLog_Dependencies(const std::string& path); // FIXME : on a pas vraiment besoin de cette separation
+//
+//        /// Clear the logging message of every elements
+//        void ClearLogs();
+//
+//        void AddFields();
+//
+//        // Resources path
+//
+//        std::string GetDataPath(const std::string& relPath) const;
+//
+//    protected:
+//
+//        std::string BuildPath(const std::string& rootPath);
 
     public:
 

@@ -8,6 +8,7 @@ set(FRYDOM_SRC_FILES "")
 
 # Adding a new subdirectory to the FRyDoM root source directory must be done by adding its name here
 set(subdirs
+        logging
         asset
         cable
         collision

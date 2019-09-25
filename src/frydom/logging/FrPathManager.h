@@ -24,6 +24,39 @@
 
 namespace frydom {
 
+
+  /*
+   * TODO : mettre m_system dans FrObject !!!
+   * TODO : avoir une methode GetParent dans FrObject (abstraite)
+   *
+   *
+   */
+
+
+//
+//  class FrPathManager {
+//
+//   public:
+//    static FrPathManager* instance() {
+//      return m_instance.get();
+//    }
+//
+//
+//   private:
+//    std::unique_ptr<FrPathManager> m_instance;
+//
+//
+//  };
+//
+//
+
+
+
+
+
+
+
+
     //Forward declaration
     class FrObject;
     class FrBody;
@@ -35,7 +68,7 @@ namespace frydom {
     class FrStaticAnalysis;
     class FrFEAMesh;
 
-    class FrPathManager {
+    class FrPathManager_ {
     private:
 
         FRAME_CONVENTION m_logFrameConvention;
@@ -48,7 +81,7 @@ namespace frydom {
     public:
 
         /// Constructor for a log manager service
-        explicit FrPathManager();
+        explicit FrPathManager_();
 
 
         /// Set the frame convention for the logs

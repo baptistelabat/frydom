@@ -25,6 +25,7 @@
 #include "frydom/core/link/links_lib/FrDOFMaskLink.h"
 #include "frydom/core/misc/FrColors.h"
 #include "frydom/mesh/FrMesh.h"
+#include "frydom/logging/FrLoggable.h"
 
 // TODO : voir si il n'y a pas moyen de passer ces includes
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrRadiationModelBase.h"
@@ -137,7 +138,7 @@ namespace frydom {
      * \class FrBody
      * \brief Class for defining a body.
      */
-    class FrBody : public FrObject, public FrAssetOwner {
+    class FrBody : public FrObject, public FrAssetOwner, public FrLoggable {
 
     protected:
 

@@ -5,11 +5,12 @@
 #ifndef FRYDOM_FRDYNAMICCABLE_H
 #define FRYDOM_FRDYNAMICCABLE_H
 
+#include <chrono/fea/ChMesh.h>
+
 #include "FrCable.h"
 #include "frydom/core/common/FrFEAMesh.h"
 #include "frydom/core/FrOffshoreSystem.h"
 
-#include <chrono/fea/ChMesh.h>
 
 namespace chrono{
     namespace fea {

@@ -20,7 +20,7 @@
 
 
 namespace frydom {
-    
+
     FrCatenaryLine::FrCatenaryLine(const std::shared_ptr<FrNode>& startingNode,
                                    const std::shared_ptr<FrNode>& endingNode,
                                    const std::shared_ptr<FrCableProperties>& properties,
@@ -32,7 +32,7 @@ namespace frydom {
                                    FrCable(startingNode, endingNode, properties, unstrainedLength),
                                    FrPrePhysicsItem(){
         m_q = properties->GetLinearDensity();
-        SetLogged(true);
+//        SetLogged(true);
     };
 
     void FrCatenaryLine::SetSolverTolerance(double tol) {
@@ -282,7 +282,7 @@ namespace frydom {
 
     void FrCatenaryLine::AddFields() {
 
-        if (IsLogged()) {
+//        if (IsLogged()) {
 
             // Add the fields to be logged here
             m_message->AddField<double>("time", "s", "Current time of the simulation",
@@ -301,7 +301,7 @@ namespace frydom {
 
             //TODO : logger la position de la ligne pour un ensemble d'abscisses curvilignes?
 
-        }
+//        }
 
     }
 

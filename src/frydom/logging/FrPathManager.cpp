@@ -25,13 +25,13 @@ using json = nlohmann::json; // for convenience
 namespace frydom{
 
 
-    FrPathManager::FrPathManager() {
+    FrPathManager_::FrPathManager_() {
 
         ReadConfig();
 
     }
 
-    void FrPathManager::ReadConfig() {
+    void FrPathManager_::ReadConfig() {
 
         cppfs::FilePath homePath = cppfs::system::homeDir();
         cppfs::FilePath configPath = homePath.resolve(".frydom.json");
@@ -63,7 +63,7 @@ namespace frydom{
 
     }
 
-    void FrPathManager::Initialize(FrOffshoreSystem* system) {
+    void FrPathManager_::Initialize(FrOffshoreSystem* system) {
 
         // Open the FRyDom workspace directory
         cppfs::FileHandle workspaceDir = cppfs::fs::open(m_outputPath.path());
@@ -75,13 +75,13 @@ namespace frydom{
         std::stringstream ss;
         ss << std::put_time(std::localtime(&tt), "%Y-%m-%d_%HH%M");
 
-        m_projectPath = m_outputPath.resolve(fmt::format("{}_{}",system->GetName(),ss.str()));
+        m_projectPath = m_outputPath.resolve(fmt::format("{}_{}","system",ss.str()));
         cppfs::FileHandle runDir = cppfs::fs::open(m_projectPath.path());
         runDir.createDirectory();
 
     }
 
-    void FrPathManager::SetRunPath(std::string relPath){
+    void FrPathManager_::SetRunPath(std::string relPath){
 
         m_runPath = m_projectPath.resolve(relPath);
         cppfs::FileHandle runDir = cppfs::fs::open(m_runPath.path());
@@ -89,45 +89,45 @@ namespace frydom{
 
     }
 
-    std::string FrPathManager::GetRunPath() const {
+    std::string FrPathManager_::GetRunPath() const {
         return m_runPath.path();
     }
 
-    void FrPathManager::SetLogFrameConvention(FRAME_CONVENTION fc) {
+    void FrPathManager_::SetLogFrameConvention(FRAME_CONVENTION fc) {
         m_logFrameConvention = fc;
     }
 
-    FRAME_CONVENTION FrPathManager::GetLogFrameConvention() const {
+    FRAME_CONVENTION FrPathManager_::GetLogFrameConvention() const {
         return m_logFrameConvention;
     }
 
-    void FrPathManager::SetLogOutputPath(std::string path) {
+    void FrPathManager_::SetLogOutputPath(std::string path) {
         m_outputPath = path;
     }
 
-    std::string FrPathManager::GetLogOutputPath() const {
+    std::string FrPathManager_::GetLogOutputPath() const {
         return m_outputPath.path();
     }
 
-    std::string FrPathManager::BuildPath(const std::string& rootPath, const std::string& relPath) const {
+    std::string FrPathManager_::BuildPath(const std::string& rootPath, const std::string& relPath) const {
         cppfs::FilePath filePath = m_runPath.resolve(fmt::format("{}/{}", rootPath, relPath));
         cppfs::FileHandle fileDir = cppfs::fs::open(filePath.directoryPath());
         fileDir.createDirectory();
         return filePath.path();
     }
 
-    std::string FrPathManager::BuildPath(const std::string& absPath) const {
+    std::string FrPathManager_::BuildPath(const std::string& absPath) const {
         cppfs::FilePath filePath = m_runPath.resolve(fmt::format("{}", absPath));
         cppfs::FileHandle fileDir = cppfs::fs::open(filePath.directoryPath());
         fileDir.createDirectory();
         return filePath.path();
     }
 
-    void FrPathManager::SetResourcesPath(std::string absPath) {
+    void FrPathManager_::SetResourcesPath(std::string absPath) {
         m_resourcesPath.setPath(absPath);
     }
 
-    std::string FrPathManager::GetDataPath(const std::string& relPath) const {
+    std::string FrPathManager_::GetDataPath(const std::string& relPath) const {
         //cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
         cppfs::FilePath filePath = m_resourcesPath.resolve(fmt::format("{}", relPath));
         return filePath.path();

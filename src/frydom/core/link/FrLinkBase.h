@@ -22,6 +22,7 @@
 #include "frydom/core/common/FrFrame.h"
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/asset/FrAssetOwner.h"
+#include "frydom/logging/FrLoggable.h"
 
 
 namespace chrono {
@@ -41,7 +42,7 @@ namespace frydom {
      * \class FrLinkBase
      * \brief Pure abstract class for every FRyDoM constraints (FrLink, FrConstraint_, FrActuator_).
      */
-    class FrLinkBase : public FrObject, public FrAssetOwner {
+    class FrLinkBase : public FrObject, public FrAssetOwner, public FrLoggable {
 
     protected:
 

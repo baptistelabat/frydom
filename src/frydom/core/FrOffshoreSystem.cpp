@@ -27,7 +27,7 @@
 #include "frydom/core/statics/FrStaticAnalysis.h"
 
 #include "frydom/core/math/functions/ramp/FrCosRampFunction.h"
-#include "frydom/utils/FrSerializerFactory.h"
+//#include "frydom/utils/FrSerializerFactory.h"
 
 
 namespace frydom {
@@ -147,7 +147,7 @@ namespace frydom {
     /// \param solver solver type
     FrOffshoreSystem::FrOffshoreSystem(SYSTEM_TYPE systemType, TIME_STEPPER timeStepper, SOLVER solver) {
 
-        SetLogged(true);
+//        SetLogged(true);
 
         // Creating the chrono System backend. It drives the way contact are modelled
         SetSystemType(systemType, false);
@@ -168,9 +168,9 @@ namespace frydom {
         m_environment = std::make_unique<FrEnvironment>(this); // FIXME: voir bug dans FrEnvironment pour le reglage du systeme
 
         // Creating the log manager service
-        m_pathManager = std::make_shared<FrPathManager>();
-        
-        // Create the static analysis 
+//        m_pathManager = std::make_shared<FrPathManager>();
+
+        // Create the static analysis
         m_statics = std::make_unique<FrStaticAnalysis>(this);
 
 //        m_message = std::make_unique<hermes::Message>();
@@ -503,7 +503,7 @@ namespace frydom {
         }
 
         // Serialize and send the message log
-        FrObject::SendLog();
+//        FrObject::SendLog();
 
     }
 
@@ -1046,115 +1046,115 @@ namespace frydom {
         return m_linkList.cend();
     }
 
-    void FrOffshoreSystem::InitializeLog_Dependencies(const std::string& systemPath) {
-
-        if (IsLogged()) {
-
-            // Initializing environment before bodies
-//            m_environment->InitializeLog();
-
-            for (auto &item : m_PrePhysicsList) {
-                item->SetPathManager(GetPathManager());
-                item->InitializeLog(systemPath);
-            }
-
-            for (auto &item : m_bodyList) {
-                item->SetPathManager(GetPathManager());
-                item->InitializeLog(systemPath);
-            }
-
-            for (auto &item : m_MidPhysicsList) {
-                item->SetPathManager(GetPathManager());
-                item->InitializeLog(systemPath);
-            }
-
-            for (auto &item : m_linkList) {
-                item->SetPathManager(GetPathManager());
-                item->InitializeLog(systemPath);
-            }
-
-            for (auto &item : m_feaMeshList) {
-                item->SetPathManager(GetPathManager());
-                item->InitializeLog(systemPath);
-            }
-
-            for (auto &item : m_PostPhysicsList) {
-                item->SetPathManager(GetPathManager());
-                item->InitializeLog(systemPath);
-            }
-
-        }
-    }
-
-    void FrOffshoreSystem::ClearLogs() {
-
-        ClearMessage();
-
-        for (auto &item : m_PrePhysicsList) {
-            item->ClearMessage();
-        }
-
-        for (auto &item : m_bodyList) {
-            item->ClearMessage();
-            for (auto& force : item->GetForceList()) {
-                force->ClearMessage();
-            }
-            for (auto& node : item->GetNodeList()) {
-                node->ClearMessage();
-            }
-        }
-
-        for (auto &item : m_MidPhysicsList) {
-            item->ClearMessage();
-        }
-
-        for (auto &item : m_linkList) {
-            item->ClearMessage();
-        }
-
-        for (auto &item : m_PostPhysicsList) {
-            item->ClearMessage();
-        }
-
-    }
-
-    void FrOffshoreSystem::AddFields() {
-        m_message->AddField<double>("time", "s", "Current time of the simulation",
-                                    [this]() { return GetTime(); });
-
-        m_message->AddField<int>("iter", "", "number of total iterations taken by the solver", [this]() {
-            return dynamic_cast<chrono::ChIterativeSolver*>(m_chronoSystem->GetSolver().get())->GetTotalIterations();
-        });
-
-        if (dynamic_cast<chrono::ChIterativeSolver*>(m_chronoSystem->GetSolver().get())->GetRecordViolation()) {
-
-            m_message->AddField<double>("violationResidual", "", "constraint violation", [this]() {
-                return dynamic_cast<chrono::ChIterativeSolver *>(m_chronoSystem->GetSolver().get())->GetViolationHistory().back();
-                                        });
-
-            m_message->AddField<double>("LagrangeResidual", "", "maximum change in Lagrange multipliers", [this]() {
-                return dynamic_cast<chrono::ChIterativeSolver *>(m_chronoSystem->GetSolver().get())->GetDeltalambdaHistory().back();
-            });
-
-        }
-
-    }
-
-    std::string FrOffshoreSystem::GetDataPath(const std::string& relPath) const {
-        return GetPathManager()->GetDataPath(relPath);
-    }
-
-    std::string FrOffshoreSystem::BuildPath(const std::string &rootPath) {
-
-        auto objPath= fmt::format("{}_{}", GetTypeName(), GetShortenUUID());
-
-        auto logPath = GetPathManager()->BuildPath(objPath, fmt::format("{}_{}.csv", GetTypeName(), GetShortenUUID()));
-
-        // Add a serializer
-        m_message->AddSerializer(FrSerializerFactory::instance().Create(this, logPath));
-
-        return objPath;
-    }
+//    void FrOffshoreSystem::InitializeLog_Dependencies(const std::string& systemPath) {
+//
+//        if (IsLogged()) {
+//
+//            // Initializing environment before bodies
+////            m_environment->InitializeLog();
+//
+//            for (auto &item : m_PrePhysicsList) {
+//                item->SetPathManager(GetPathManager());
+//                item->InitializeLog(systemPath);
+//            }
+//
+//            for (auto &item : m_bodyList) {
+//                item->SetPathManager(GetPathManager());
+//                item->InitializeLog(systemPath);
+//            }
+//
+//            for (auto &item : m_MidPhysicsList) {
+//                item->SetPathManager(GetPathManager());
+//                item->InitializeLog(systemPath);
+//            }
+//
+//            for (auto &item : m_linkList) {
+//                item->SetPathManager(GetPathManager());
+//                item->InitializeLog(systemPath);
+//            }
+//
+//            for (auto &item : m_feaMeshList) {
+//                item->SetPathManager(GetPathManager());
+//                item->InitializeLog(systemPath);
+//            }
+//
+//            for (auto &item : m_PostPhysicsList) {
+//                item->SetPathManager(GetPathManager());
+//                item->InitializeLog(systemPath);
+//            }
+//
+//        }
+//    }
+//
+//    void FrOffshoreSystem::ClearLogs() {
+//
+//        ClearMessage();
+//
+//        for (auto &item : m_PrePhysicsList) {
+//            item->ClearMessage();
+//        }
+//
+//        for (auto &item : m_bodyList) {
+//            item->ClearMessage();
+//            for (auto& force : item->GetForceList()) {
+//                force->ClearMessage();
+//            }
+//            for (auto& node : item->GetNodeList()) {
+//                node->ClearMessage();
+//            }
+//        }
+//
+//        for (auto &item : m_MidPhysicsList) {
+//            item->ClearMessage();
+//        }
+//
+//        for (auto &item : m_linkList) {
+//            item->ClearMessage();
+//        }
+//
+//        for (auto &item : m_PostPhysicsList) {
+//            item->ClearMessage();
+//        }
+//
+//    }
+//
+//    void FrOffshoreSystem::AddFields() {
+//        m_message->AddField<double>("time", "s", "Current time of the simulation",
+//                                    [this]() { return GetTime(); });
+//
+//        m_message->AddField<int>("iter", "", "number of total iterations taken by the solver", [this]() {
+//            return dynamic_cast<chrono::ChIterativeSolver*>(m_chronoSystem->GetSolver().get())->GetTotalIterations();
+//        });
+//
+//        if (dynamic_cast<chrono::ChIterativeSolver*>(m_chronoSystem->GetSolver().get())->GetRecordViolation()) {
+//
+//            m_message->AddField<double>("violationResidual", "", "constraint violation", [this]() {
+//                return dynamic_cast<chrono::ChIterativeSolver *>(m_chronoSystem->GetSolver().get())->GetViolationHistory().back();
+//                                        });
+//
+//            m_message->AddField<double>("LagrangeResidual", "", "maximum change in Lagrange multipliers", [this]() {
+//                return dynamic_cast<chrono::ChIterativeSolver *>(m_chronoSystem->GetSolver().get())->GetDeltalambdaHistory().back();
+//            });
+//
+//        }
+//
+//    }
+//
+//    std::string FrOffshoreSystem::GetDataPath(const std::string& relPath) const {
+//        return GetPathManager()->GetDataPath(relPath);
+//    }
+//
+//    std::string FrOffshoreSystem::BuildPath(const std::string &rootPath) {
+//
+//        auto objPath= fmt::format("{}_{}", GetTypeName(), GetShortenUUID());
+//
+//        auto logPath = GetPathManager()->BuildPath(objPath, fmt::format("{}_{}.csv", GetTypeName(), GetShortenUUID()));
+//
+//        // Add a serializer
+//        m_message->AddSerializer(FrSerializerFactory::instance().Create(this, logPath));
+//
+//        return objPath;
+//    }
 
     void FrOffshoreSystem::SetSolverVerbose(bool verbose) {
         m_chronoSystem->GetSolver()->SetVerbose(verbose);
