@@ -63,7 +63,7 @@ namespace frydom {
 
         /// Default Constructor
         /// \param body body to which the node belongs
-        explicit FrNode(FrBody* body);
+        explicit FrNode(const std::string &&name, FrBody* body);
 
         /// Destructor
 //        ~FrNode() = default;

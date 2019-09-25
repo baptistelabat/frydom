@@ -44,7 +44,7 @@ namespace frydom {
     public:
 
         /// Constructor.
-        explicit FrLinearHDBForce(const std::shared_ptr<FrHydroDB>& HDB) : m_HDB(HDB) {};
+        FrLinearHDBForce(const std::string &&name, const std::shared_ptr<FrHydroDB>& HDB);
 
         virtual Eigen::MatrixXcd GetHDBData(unsigned int iangle) const = 0;
 

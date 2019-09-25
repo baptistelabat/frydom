@@ -23,52 +23,54 @@ namespace frydom {
 
     class FrMooringBuoy : public FrBody {
 
-    private:
-        class FrSphereNonLinearHydrostaticForce : public FrForce {
+     private:
+      class FrSphereNonLinearHydrostaticForce : public FrForce {
 
-        public:
+       public:
 
-            /// Get the type name of this object
-            /// \return type name of this object
-            std::string GetTypeName() const override { return "SphereNonLinearHydrostaticForce"; }
-
-            /// Return true if the force is included in the static analysis
-            bool IncludedInStaticAnalysis() const override {return true;}
-
-        private:
-
-            /// Compute the nonlinear hydrostatic force for a sphere
-            /// \param time Current time of the simulation from beginning, in seconds
-            void Compute(double time) override;
-        };
-
-
-        double m_radius = 1.;
-        double c_volume;
-        std::shared_ptr<FrSphereNonLinearHydrostaticForce> m_hydrostaticForce;
-        std::shared_ptr<FrLinearDamping> m_dampingForce;
-
-    public:
-
-        FrMooringBuoy(double radius, double mass, bool visual_asset = true, double damping=0);
+        explicit FrSphereNonLinearHydrostaticForce(const std::string &&name) : FrForce(std::move(name)) {}
 
         /// Get the type name of this object
         /// \return type name of this object
-        std::string GetTypeName() const override { return "MooringBuoy"; }
+        std::string GetTypeName() const override { return "SphereNonLinearHydrostaticForce"; }
 
-        double GetVolume() {return c_volume;}
+        /// Return true if the force is included in the static analysis
+        bool IncludedInStaticAnalysis() const override { return true; }
+
+       private:
+
+        /// Compute the nonlinear hydrostatic force for a sphere
+        /// \param time Current time of the simulation from beginning, in seconds
+        void Compute(double time) override;
+      };
 
 
-        void Update() override;
+      double m_radius = 1.;
+      double c_volume;
+      std::shared_ptr<FrSphereNonLinearHydrostaticForce> m_hydrostaticForce;
+      std::shared_ptr<FrLinearDamping> m_dampingForce;
 
-    private:
+     public:
 
-        double computeDraft();
+      FrMooringBuoy(const std::string &&name, double radius, double mass, bool visual_asset = true, double damping = 0);
 
-        double inline computeVolume(){
-            auto Zt = computeDraft();
-            return c_volume = M_PI/3 * (Zt*(3*m_radius*m_radius - Zt*Zt) + 2*std::pow(m_radius,3));
-        }
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "MooringBuoy"; }
+
+      double GetVolume() { return c_volume; }
+
+
+      void Update() override;
+
+     private:
+
+      double computeDraft();
+
+      double inline computeVolume() {
+        auto Zt = computeDraft();
+        return c_volume = M_PI / 3 * (Zt * (3 * m_radius * m_radius - Zt * Zt) + 2 * std::pow(m_radius, 3));
+      }
 
     };
 
@@ -80,7 +82,8 @@ namespace frydom {
     /// \param damping damping coefficient affected to the diagonal terms of a linear damping force.
     /// \return FrMooringBuoy instance
     std::shared_ptr<FrMooringBuoy>
-    make_mooring_buoy(FrOffshoreSystem* system, double radius, double mass, bool visual_asset = true, double damping=0);
+    make_mooring_buoy(const std::string &&name, FrOffshoreSystem *system, double radius, double mass,
+                      bool visual_asset = true, double damping = 0);
 
 }  //end namespace frydom
 

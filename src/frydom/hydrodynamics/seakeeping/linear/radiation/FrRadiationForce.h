@@ -34,12 +34,9 @@ namespace frydom {
 
     public:
 
-        /// Default constructor
-        FrRadiationForce() = default;
-
         /// Constructor with the radiation model
         /// \param radiationModel Radiation model where the radiation force is applied
-        explicit FrRadiationForce(FrRadiationModel* radiationModel);
+        explicit FrRadiationForce(const std::string &&name, FrRadiationModel* radiationModel);
 
         /// Define the radiation model where the radiation force is applied
         /// \param radiationModel Radiation model where the radiation force is applied
@@ -73,7 +70,7 @@ namespace frydom {
 
         /// Constructor with the radiation model
         /// \param radiationModel Radiation model where the radiation force is applied
-        explicit FrRadiationConvolutionForce(FrRadiationConvolutionModel* radiationModel);
+        FrRadiationConvolutionForce(const std::string &&name, FrRadiationConvolutionModel* radiationModel);
 
         void AddFields() override;
 

@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -45,7 +45,7 @@ namespace frydom {
     public:
 
         /// Constructor.
-        explicit FrNonlinearHydrostaticForce(const std::shared_ptr<FrHydroMesh>& HydroMesh);
+        FrNonlinearHydrostaticForce(const std::string &&name, const std::shared_ptr<FrHydroMesh>& hydroMesh);
 
         /// Get the type name of this object
         /// \return type name of this object

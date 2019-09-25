@@ -20,32 +20,38 @@ namespace frydom {
 
     Eigen::MatrixXcd FrLinearExcitationForce::GetHDBData(unsigned int iangle) const {
 
-        auto BEMBody = m_HDB->GetBody(m_body);
+      auto BEMBody = m_HDB->GetBody(m_body);
 
-        return BEMBody->GetExcitation(iangle);
+      return BEMBody->GetExcitation(iangle);
 
     }
 
     Eigen::VectorXcd FrLinearExcitationForce::GetHDBData(unsigned int iangle, unsigned int iforce) const {
 
-        auto BEMBody = m_HDB->GetBody(m_body);
+      auto BEMBody = m_HDB->GetBody(m_body);
 
-        return BEMBody->GetExcitation(iangle,iforce);
+      return BEMBody->GetExcitation(iangle, iforce);
 
     }
 
+    FrLinearExcitationForce::FrLinearExcitationForce(const std::string &&name,
+                                                     const std::shared_ptr<FrHydroDB> &HDB) :
+        FrLinearHDBForce(std::move(name), HDB) {}
+
     std::shared_ptr<FrLinearExcitationForce>
-    make_linear_excitation_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body){
+    make_linear_excitation_force(const std::string &&name,
+                                 std::shared_ptr<FrHydroDB> HDB,
+                                 std::shared_ptr<FrBody> body) {
 
-        // This function creates the linear excitation force object.
+      // This function creates the linear excitation force object.
 
-        // Construction of the excitation force object from the HDB.
-        auto excitationForce = std::make_shared<FrLinearExcitationForce>(HDB);
+      // Construction of the excitation force object from the HDB.
+      auto excitationForce = std::make_shared<FrLinearExcitationForce>(std::move(name), HDB);
 
-        // Add the excitation force object as an external force to the body.
-        body->AddExternalForce(excitationForce); // Initialization of m_body.
+      // Add the excitation force object as an external force to the body.
+      body->AddExternalForce(excitationForce); // Initialization of m_body.
 
-        return excitationForce;
+      return excitationForce;
 
     }
 

@@ -14,63 +14,64 @@
 namespace frydom {
 
 
-    FrLinearActuator::FrLinearActuator(FrLink *actuatedLink, ACTUATOR_CONTROL control) : FrActuator(actuatedLink) {
+    FrLinearActuator::FrLinearActuator(const std::string &&name, FrLink *actuatedLink, ACTUATOR_CONTROL control)
+        : FrActuator(std::move(name), actuatedLink) {
 
-        switch (control) {
-            case POSITION :
-                m_chronoActuator = std::make_shared<chrono::ChLinkMotorLinearPosition>();
-                break;
-            case VELOCITY :
-                m_chronoActuator = std::make_shared<chrono::ChLinkMotorLinearSpeed>();
-                break;
-            case FORCE :
-                m_chronoActuator = std::make_shared<chrono::ChLinkMotorLinearForce>();
-                break;
-        }
-        m_chronoActuator->SetGuideConstraint(chrono::ChLinkMotorLinear::GuideConstraint::FREE);
+      switch (control) {
+        case POSITION :
+          m_chronoActuator = std::make_shared<chrono::ChLinkMotorLinearPosition>();
+          break;
+        case VELOCITY :
+          m_chronoActuator = std::make_shared<chrono::ChLinkMotorLinearSpeed>();
+          break;
+        case FORCE :
+          m_chronoActuator = std::make_shared<chrono::ChLinkMotorLinearForce>();
+          break;
+      }
+      m_chronoActuator->SetGuideConstraint(chrono::ChLinkMotorLinear::GuideConstraint::FREE);
 
     }
 
     void FrLinearActuator::SetMotorFunction(const FrFunctionBase &function) {
 
-        auto chronoFunctionInterface = internal::FrFunctionChronoInterface(function);
+      auto chronoFunctionInterface = internal::FrFunctionChronoInterface(function);
 
-        m_chronoActuator->SetMotorFunction(chronoFunctionInterface.GetChronoFunction());
+      m_chronoActuator->SetMotorFunction(chronoFunctionInterface.GetChronoFunction());
 
     }
 
     std::shared_ptr<chrono::ChLink> FrLinearActuator::GetChronoLink() {
-        return m_chronoActuator;
+      return m_chronoActuator;
     }
 
     chrono::ChLinkMotorLinear *FrLinearActuator::GetChronoItem_ptr() const {
-        return m_chronoActuator.get();
+      return m_chronoActuator.get();
     }
 
     void FrLinearActuator::Initialize() {
 
-        // IMPORTANT : in FRyDoM the first node is the master and the second one the slave, as opposed to Chrono !!!
-        // ChLinkMotorLinear motorized along the x axis, while ChLinkLock::Prismatic is along z axis...
-        auto frame1 = GetNode1()->GetFrameWRT_COG_InBody();
-        frame1.RotY_RADIANS(MU_PI_2,NWU,true);
-        auto frame2 = GetNode2()->GetFrameWRT_COG_InBody();
-        frame2.RotY_RADIANS(MU_PI_2,NWU,true);
+      // IMPORTANT : in FRyDoM the first node is the master and the second one the slave, as opposed to Chrono !!!
+      // ChLinkMotorLinear motorized along the x axis, while ChLinkLock::Prismatic is along z axis...
+      auto frame1 = GetNode1()->GetFrameWRT_COG_InBody();
+      frame1.RotY_RADIANS(MU_PI_2, NWU, true);
+      auto frame2 = GetNode2()->GetFrameWRT_COG_InBody();
+      frame2.RotY_RADIANS(MU_PI_2, NWU, true);
 
-        m_chronoActuator->Initialize(GetChronoBody2(), GetChronoBody1(), true,
-                   internal::FrFrame2ChFrame(frame2), internal::FrFrame2ChFrame(frame1));
+      m_chronoActuator->Initialize(GetChronoBody2(), GetChronoBody1(), true,
+                                   internal::FrFrame2ChFrame(frame2), internal::FrFrame2ChFrame(frame1));
 
     }
 
     double FrLinearActuator::GetMotorPower() const {
-        return m_chronoActuator->GetMotorForce() * m_chronoActuator->GetMotorPos_dt();
+      return m_chronoActuator->GetMotorForce() * m_chronoActuator->GetMotorPos_dt();
     }
 
     Force FrLinearActuator::GetMotorForceInNode(FRAME_CONVENTION fc) const {
-        return {0.,0.,m_chronoActuator->GetMotorForce()};
+      return {0., 0., m_chronoActuator->GetMotorForce()};
     }
 
     Torque FrLinearActuator::GetMotorTorqueInNode(FRAME_CONVENTION fc) const {
-        return {};
+      return {};
     }
 
 

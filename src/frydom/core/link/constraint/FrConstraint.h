@@ -13,10 +13,15 @@
 namespace frydom {
 
     class FrCPoint;
+
     class FrCAxis;
+
     class FrCPlane;
+
     class Force;
+
     class Torque;
+
     class FrFrame;
 
     /**
@@ -25,83 +30,87 @@ namespace frydom {
      */
     class FrConstraint : public FrLinkBase {
 
-    protected:
+     protected:
 
-        std::shared_ptr<chrono::ChLink> m_chronoConstraint; ///< Chrono object handling the constraint
+      std::shared_ptr<chrono::ChLink> m_chronoConstraint; ///< Chrono object handling the constraint
 
-    public:
+     public:
 
-        /// Constraint constructor, requires 2 nodes, fixed in their respective body reference frame.
-        /// \param node1 first node
-        /// \param node2 second node
-        /// \param system system in charge of the constraint
-        FrConstraint(const std::shared_ptr<FrNode>& node1, const std::shared_ptr<FrNode>& node2, FrOffshoreSystem *system);
+      /// Constraint constructor, requires 2 nodes, fixed in their respective body reference frame.
+      /// \param node1 first node
+      /// \param node2 second node
+      /// \param system system in charge of the constraint
+      FrConstraint(const std::string &&name, const std::shared_ptr<FrNode> &node1, const std::shared_ptr<FrNode> &node2,
+                   FrOffshoreSystem *system);
 
-        /// Get the constraint reference frame, relatively to the world reference frame
-        /// \return constraint reference frame, relatively to the world reference frame
-        FrFrame GetConstraintReferenceFrameInWorld() const;
+      /// Get the constraint reference frame, relatively to the world reference frame
+      /// \return constraint reference frame, relatively to the world reference frame
+      FrFrame GetConstraintReferenceFrameInWorld() const;
 
-        /// Get the constraint reference frame, relatively to the first body reference frame
-        /// \return constraint reference frame, relatively to the first body reference frame
-        FrFrame GetConstraintReferenceFrameInBody1() const;
+      /// Get the constraint reference frame, relatively to the first body reference frame
+      /// \return constraint reference frame, relatively to the first body reference frame
+      FrFrame GetConstraintReferenceFrameInBody1() const;
 
-        /// Get the constraint reaction force (Body2 on Body1) in the constraint reference frame
-        /// \param fc frame convention (NED/NWU)
-        /// \return constraint reaction force (Body2 on Body1)
-        Force GetForceInConstraint(FRAME_CONVENTION fc) const;
+      /// Get the constraint reaction force (Body2 on Body1) in the constraint reference frame
+      /// \param fc frame convention (NED/NWU)
+      /// \return constraint reaction force (Body2 on Body1)
+      Force GetForceInConstraint(FRAME_CONVENTION fc) const;
 
-        /// Get the constraint reaction torque (Body2 on Body1) in the constraint reference frame at its origin
-        /// \param fc frame convention (NED/NWU)
-        /// \return constraint reaction torque (Body2 on Body1)
-        Torque GetTorqueInConstraint(FRAME_CONVENTION fc) const;
+      /// Get the constraint reaction torque (Body2 on Body1) in the constraint reference frame at its origin
+      /// \param fc frame convention (NED/NWU)
+      /// \return constraint reaction torque (Body2 on Body1)
+      Torque GetTorqueInConstraint(FRAME_CONVENTION fc) const;
 
-        /// Get the constraint reaction force (Body2 on Body1) in the first body reference frame
-        /// \param fc frame convention (NED/NWU)
-        /// \return constraint reaction force (Body2 on Body1)
-        Force GetForceInBody1(FRAME_CONVENTION fc) const;
+      /// Get the constraint reaction force (Body2 on Body1) in the first body reference frame
+      /// \param fc frame convention (NED/NWU)
+      /// \return constraint reaction force (Body2 on Body1)
+      Force GetForceInBody1(FRAME_CONVENTION fc) const;
 
-        /// Get the constraint reaction torque (Body2 on Body1) in the first body reference frame at its COG
-        /// \param fc frame convention (NED/NWU)
-        /// \return constraint reaction torque (Body2 on Body1)
-        Torque GetTorqueInBody1AtCOG(FRAME_CONVENTION fc) const;
+      /// Get the constraint reaction torque (Body2 on Body1) in the first body reference frame at its COG
+      /// \param fc frame convention (NED/NWU)
+      /// \return constraint reaction torque (Body2 on Body1)
+      Torque GetTorqueInBody1AtCOG(FRAME_CONVENTION fc) const;
 
 
-        /// Get the constraint reaction force (Body2 on Body1) in the world reference frame
-        /// \param fc frame convention (NED/NWU)
-        /// \return constraint reaction force (Body2 on Body1)
-        Force GetForceInWorld(FRAME_CONVENTION fc) const;
+      /// Get the constraint reaction force (Body2 on Body1) in the world reference frame
+      /// \param fc frame convention (NED/NWU)
+      /// \return constraint reaction force (Body2 on Body1)
+      Force GetForceInWorld(FRAME_CONVENTION fc) const;
 
-        /// Get the constraint reaction torque (Body2 on Body1) in the world reference frame at constraint reference
-        /// frame origin
-        /// \param fc frame convention (NED/NWU)
-        /// \return constraint reaction torque (Body2 on Body1)
-        Torque GetTorqueInWorldAtConstraint(FRAME_CONVENTION fc) const;
+      /// Get the constraint reaction torque (Body2 on Body1) in the world reference frame at constraint reference
+      /// frame origin
+      /// \param fc frame convention (NED/NWU)
+      /// \return constraint reaction torque (Body2 on Body1)
+      Torque GetTorqueInWorldAtConstraint(FRAME_CONVENTION fc) const;
 
-        /// Tells if all constraints of this constraint are currently turned on or off by the user.
-        bool IsDisabled() const override;;
+      /// Tells if all constraints of this constraint are currently turned on or off by the user.
+      bool IsDisabled() const override;;
 
-        /// User can use this to enable/disable all the constraint of the constraint as desired.
-        void SetDisabled(bool disabled) override;
+      /// User can use this to enable/disable all the constraint of the constraint as desired.
+      void SetDisabled(bool disabled) override;
 
-        /// Tells if the constraint is currently active, in general,
-        /// that is tells if it must be included into the system solver or not.
-        /// This method cumulates the effect of various flags (so a constraint may
-        /// be not active either because disabled, or broken, or not valid)
-        bool IsActive() const override;
+      /// Tells if the constraint is currently active, in general,
+      /// that is tells if it must be included into the system solver or not.
+      /// This method cumulates the effect of various flags (so a constraint may
+      /// be not active either because disabled, or broken, or not valid)
+      bool IsActive() const override;
 
-    protected:
+     protected:
 
-        /// Add the fields to the Hermes message
-        void AddFields() override;
+      /// Add the fields to the Hermes message
+      void AddFields() override;
 
-        /// Get the embedded Chrono object
-        std::shared_ptr<chrono::ChLink> GetChronoLink() override;
+      /// Get the embedded Chrono object
+      std::shared_ptr<chrono::ChLink> GetChronoLink() override;
 
-        /// Get the pointer to the chrono constraint
-        /// \return pointer to the chrono constraint
-        chrono::ChLink* GetChronoItem_ptr() const override;
+      /// Get the pointer to the chrono constraint
+      /// \return pointer to the chrono constraint
+      chrono::ChLink *GetChronoItem_ptr() const override;
 
     };
+
+
+    // TODO : splitter le fichier en autant de fichiers de contraintes specifiques !!
 
     //------------------------------------------------------------------------------------------------------------------
 
@@ -112,31 +121,35 @@ namespace frydom {
      */
     class FrConstraintParallel : public FrConstraint {
 
-    private:
+     private:
 
-        const std::shared_ptr<FrCAxis> m_axis1;  ///< first axis to be constrained
-        const std::shared_ptr<FrCAxis> m_axis2;  ///< second axis to be constrained
+      const std::shared_ptr<FrCAxis> m_axis1;  ///< first axis to be constrained
+      const std::shared_ptr<FrCAxis> m_axis2;  ///< second axis to be constrained
 
-    public:
+     public:
 
-        /// Constructor for a parallel constraint between two axis
-        /// \param axis1 first axis to be constrained
-        /// \param axis2 second axis to be constrained
-        /// \param system system to add the constrain
-        FrConstraintParallel(const std::shared_ptr<FrCAxis>& axis1, const std::shared_ptr<FrCAxis>& axis2, FrOffshoreSystem* system);
+      /// Constructor for a parallel constraint between two axis
+      /// \param axis1 first axis to be constrained
+      /// \param axis2 second axis to be constrained
+      /// \param system system to add the constrain
+      FrConstraintParallel(const std::string &&name,
+                           const std::shared_ptr<FrCAxis> &axis1,
+                           const std::shared_ptr<FrCAxis> &axis2,
+                           FrOffshoreSystem *system);
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "ConstraintParallel"; }
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "ConstraintParallel"; }
 
-        /// Initialize the constraint
-        void Initialize() override;
+      /// Initialize the constraint
+      void Initialize() override;
 
-    protected:
+     protected:
 
-        /// Get the pointer to the chrono constraint
-        /// \return pointer to the chrono constraint
-        chrono::ChLinkMateParallel* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkMateParallel*>(m_chronoConstraint.get()); }
+      /// Get the pointer to the chrono constraint
+      /// \return pointer to the chrono constraint
+      chrono::ChLinkMateParallel *
+      GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkMateParallel *>(m_chronoConstraint.get()); }
 
     };
 
@@ -146,10 +159,10 @@ namespace frydom {
     /// \param system system to add the constraint
     /// \return parallel constraint
     std::shared_ptr<FrConstraintParallel>
-    make_constraint_parallel(
-            const std::shared_ptr<FrCAxis>& axis1,
-            const std::shared_ptr<FrCAxis>& axis2,
-            FrOffshoreSystem* system);
+    make_constraint_parallel(const std::string &&name,
+                             const std::shared_ptr<FrCAxis> &axis1,
+                             const std::shared_ptr<FrCAxis> &axis2,
+                             FrOffshoreSystem *system);
 
 
     //------------------------------------------------------------------------------------------------------------------
@@ -161,31 +174,35 @@ namespace frydom {
      */
     class FrConstraintPerpendicular : public FrConstraint {
 
-    private:
+     private:
 
-        const std::shared_ptr<FrCAxis> m_axis1;  ///< first axis to be constrained
-        const std::shared_ptr<FrCAxis> m_axis2;  ///< second axis to be constrained
+      const std::shared_ptr<FrCAxis> m_axis1;  ///< first axis to be constrained
+      const std::shared_ptr<FrCAxis> m_axis2;  ///< second axis to be constrained
 
-    public:
+     public:
 
-        /// Constructor for a perpendicular constraint between two axis
-        /// \param axis1 first axis to be constrained
-        /// \param axis2 second axis to be constrained
-        /// \param system system to add the constrain
-        FrConstraintPerpendicular(const std::shared_ptr<FrCAxis>& axis1, const std::shared_ptr<FrCAxis>& axis2, FrOffshoreSystem* system);
+      /// Constructor for a perpendicular constraint between two axis
+      /// \param axis1 first axis to be constrained
+      /// \param axis2 second axis to be constrained
+      /// \param system system to add the constrain
+      FrConstraintPerpendicular(const std::string &&name,
+                                const std::shared_ptr<FrCAxis> &axis1,
+                                const std::shared_ptr<FrCAxis> &axis2,
+                                FrOffshoreSystem *system);
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "ConstraintPerpendicular"; }
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "ConstraintPerpendicular"; }
 
-        /// Initialize the constraint
-        void Initialize() override;
+      /// Initialize the constraint
+      void Initialize() override;
 
-    protected:
+     protected:
 
-        /// Get the pointer to the chrono constraint
-        /// \return pointer to the chrono constraint
-        chrono::ChLinkMateOrthogonal* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkMateOrthogonal*>(m_chronoConstraint.get()); }
+      /// Get the pointer to the chrono constraint
+      /// \return pointer to the chrono constraint
+      chrono::ChLinkMateOrthogonal *
+      GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkMateOrthogonal *>(m_chronoConstraint.get()); }
 
     };
 
@@ -195,10 +212,10 @@ namespace frydom {
     /// \param system system to add the constraint
     /// \return perpendicular constraint
     std::shared_ptr<FrConstraintPerpendicular>
-    make_constraint_perpendicular(
-            const std::shared_ptr<FrCAxis>& axis1,
-            const std::shared_ptr<FrCAxis>& axis2,
-            FrOffshoreSystem* system);
+    make_constraint_perpendicular(const std::string &&name,
+                                  const std::shared_ptr<FrCAxis> &axis1,
+                                  const std::shared_ptr<FrCAxis> &axis2,
+                                  FrOffshoreSystem *system);
 
 
     //------------------------------------------------------------------------------------------------------------------
@@ -210,46 +227,47 @@ namespace frydom {
      */
     class FrConstraintPlaneOnPlane : public FrConstraint {
 
-    private:
+     private:
 
-        const std::shared_ptr<FrCPlane> m_plane1;    ///< first plane to constrain
-        const std::shared_ptr<FrCPlane> m_plane2;    ///< second plane to constrain
+      const std::shared_ptr<FrCPlane> m_plane1;    ///< first plane to constrain
+      const std::shared_ptr<FrCPlane> m_plane2;    ///< second plane to constrain
 
-    public:
+     public:
 
-        /// Constructor for a plane on plane constraint
-        /// \param plane1 first plane to constrain
-        /// \param plane2 second plane to constrain
-        /// \param system system to add the constraint
-        /// \param flipped if true, the normale of the first plane is flipped
-        /// \param distance distance separating the two planes
-        FrConstraintPlaneOnPlane(
-                const std::shared_ptr<FrCPlane>& plane1,
-                const std::shared_ptr<FrCPlane>& plane2,
-                FrOffshoreSystem* system,
-                bool flipped = false,
-                double distance = 0.);
+      /// Constructor for a plane on plane constraint
+      /// \param plane1 first plane to constrain
+      /// \param plane2 second plane to constrain
+      /// \param system system to add the constraint
+      /// \param flipped if true, the normale of the first plane is flipped
+      /// \param distance distance separating the two planes
+      FrConstraintPlaneOnPlane(const std::string &&name,
+                               const std::shared_ptr<FrCPlane> &plane1,
+                               const std::shared_ptr<FrCPlane> &plane2,
+                               FrOffshoreSystem *system,
+                               bool flipped = false,
+                               double distance = 0.);
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "ConstraintPlaneOnPlane"; }
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "ConstraintPlaneOnPlane"; }
 
-        /// Initialize the constraint
-        void Initialize() override;
+      /// Initialize the constraint
+      void Initialize() override;
 
-        /// Set if the normale of the first plan is to be flipped
-        /// \param flip true if the normale of the first plan is to be flipped
-        void SetFlipped(bool flip);
+      /// Set if the normale of the first plan is to be flipped
+      /// \param flip true if the normale of the first plan is to be flipped
+      void SetFlipped(bool flip);
 
-        /// Set the distance between the two planes
-        /// \param distance distance between the two planes, in m
-        void SetDistance(double distance);
+      /// Set the distance between the two planes
+      /// \param distance distance between the two planes, in m
+      void SetDistance(double distance);
 
-    protected:
+     protected:
 
-        /// Get the pointer to the chrono constraint
-        /// \return pointer to the chrono constraint
-        chrono::ChLinkMatePlane* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkMatePlane*>(m_chronoConstraint.get()); }
+      /// Get the pointer to the chrono constraint
+      /// \return pointer to the chrono constraint
+      chrono::ChLinkMatePlane *
+      GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkMatePlane *>(m_chronoConstraint.get()); }
 
     };
 
@@ -261,12 +279,12 @@ namespace frydom {
     /// \param distance distance separating the two planes
     /// \return plane on plane constraint
     std::shared_ptr<FrConstraintPlaneOnPlane>
-    make_constraint_plane_on_plane(
-            const std::shared_ptr<FrCPlane>& plane1,
-            const std::shared_ptr<FrCPlane>& plane2,
-            FrOffshoreSystem* system,
-            bool flipped = false,
-            double distance = 0.);
+    make_constraint_plane_on_plane(const std::string &&name,
+                                   const std::shared_ptr<FrCPlane> &plane1,
+                                   const std::shared_ptr<FrCPlane> &plane2,
+                                   FrOffshoreSystem *system,
+                                   bool flipped = false,
+                                   double distance = 0.);
 
 
     //------------------------------------------------------------------------------------------------------------------
@@ -278,39 +296,41 @@ namespace frydom {
      */
     class FrConstraintPointOnPlane : public FrConstraint {
 
-    private:
+     private:
 
-        const std::shared_ptr<FrCPoint> m_point; ///< point constrained to stay on the plane
-        const std::shared_ptr<FrCPlane> m_plane; ///< plane on which the point is constrained
+      const std::shared_ptr<FrCPoint> m_point; ///< point constrained to stay on the plane
+      const std::shared_ptr<FrCPlane> m_plane; ///< plane on which the point is constrained
 
-    public:
+     public:
 
-        /// Constructor of the point on plane constraint
-        /// \param plane plane on which the point is constrained
-        /// \param point point constrained to stay on the plane
-        /// \param system system to add the constraint
-        /// \param distance distance to the plane
-        FrConstraintPointOnPlane(const std::shared_ptr<FrCPlane>& plane,
-                                 const std::shared_ptr<FrCPoint>& point,
-                                 FrOffshoreSystem* system,
-                                 double distance = 0.);
+      /// Constructor of the point on plane constraint
+      /// \param plane plane on which the point is constrained
+      /// \param point point constrained to stay on the plane
+      /// \param system system to add the constraint
+      /// \param distance distance to the plane
+      FrConstraintPointOnPlane(const std::string &&name,
+                               const std::shared_ptr<FrCPlane> &plane,
+                               const std::shared_ptr<FrCPoint> &point,
+                               FrOffshoreSystem *system,
+                               double distance = 0.);
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "ConstraintPointOnPlane"; }
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "ConstraintPointOnPlane"; }
 
-        /// Initialize the constraint
-        void Initialize() override;
+      /// Initialize the constraint
+      void Initialize() override;
 
-        /// Set the distance between the point and the plane
-        /// \param distance distance between the point and the plane, in m
-        void SetDistance(double distance);
+      /// Set the distance between the point and the plane
+      /// \param distance distance between the point and the plane, in m
+      void SetDistance(double distance);
 
-    protected:
+     protected:
 
-        /// Get the pointer to the chrono constraint
-        /// \return pointer to the chrono constraint
-        chrono::ChLinkMateXdistance* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkMateXdistance*>(m_chronoConstraint.get()); }
+      /// Get the pointer to the chrono constraint
+      /// \return pointer to the chrono constraint
+      chrono::ChLinkMateXdistance *
+      GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkMateXdistance *>(m_chronoConstraint.get()); }
 
     };
 
@@ -321,11 +341,11 @@ namespace frydom {
     /// \param distance distance to the plane
     /// \return point on plane constraint
     std::shared_ptr<FrConstraintPointOnPlane>
-    make_constraint_point_on_plane(
-            const std::shared_ptr<FrCPlane>& plane,
-            const std::shared_ptr<FrCPoint>& point,
-            FrOffshoreSystem* system,
-            double distance = 0.);
+    make_constraint_point_on_plane(const std::string &&name,
+                                   const std::shared_ptr<FrCPlane> &plane,
+                                   const std::shared_ptr<FrCPoint> &point,
+                                   FrOffshoreSystem *system,
+                                   double distance = 0.);
 
     //------------------------------------------------------------------------------------------------------------------
 
@@ -336,36 +356,38 @@ namespace frydom {
      */
     class FrConstraintPointOnLine : public FrConstraint {
 
-    private:
+     private:
 
-        const std::shared_ptr<FrCPoint> m_point; ///< point constrained to stay on the plane
-        const std::shared_ptr<FrCAxis> m_axis;   ///< axis on which the point is constrained
+      const std::shared_ptr<FrCPoint> m_point; ///< point constrained to stay on the plane
+      const std::shared_ptr<FrCAxis> m_axis;   ///< axis on which the point is constrained
 
-    public:
+     public:
 
-        /// Constructor of the point on plane constraint
-        /// \param line line on which the point is constrained
-        /// \param point point constrained to stay on the line
-        /// \param system system to add the constraint
-        /// \param distance distance to the line
-        FrConstraintPointOnLine(const std::shared_ptr<FrCAxis>& line,
-                                 const std::shared_ptr<FrCPoint>& point,
-                                 FrOffshoreSystem* system,
-                                 double distance = 0.);
+      /// Constructor of the point on plane constraint
+      /// \param line line on which the point is constrained
+      /// \param point point constrained to stay on the line
+      /// \param system system to add the constraint
+      /// \param distance distance to the line
+      FrConstraintPointOnLine(const std::string &&name,
+                              const std::shared_ptr<FrCAxis> &line,
+                              const std::shared_ptr<FrCPoint> &point,
+                              FrOffshoreSystem *system,
+                              double distance = 0.);
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "ConstraintPointOnLine"; }
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "ConstraintPointOnLine"; }
 
-        /// Initialize the constraint
-        void Initialize() override;
+      /// Initialize the constraint
+      void Initialize() override;
 
-    protected:
-        friend class FrNode; // To make possible to declare SetMarkers friend in FrNode
+     protected:
+      friend class FrNode; // To make possible to declare SetMarkers friend in FrNode
 
-        /// Get the pointer to the chrono constraint
-        /// \return pointer to the chrono constraint
-        chrono::ChLinkLockPointLine* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkLockPointLine*>(m_chronoConstraint.get()); }
+      /// Get the pointer to the chrono constraint
+      /// \return pointer to the chrono constraint
+      chrono::ChLinkLockPointLine *
+      GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkLockPointLine *>(m_chronoConstraint.get()); }
 
     };
 
@@ -376,10 +398,10 @@ namespace frydom {
     /// \param distance distance to the line
     /// \return point on plane constraint
     std::shared_ptr<FrConstraintPointOnLine>
-    make_constraint_point_on_line(
-            const std::shared_ptr<FrCAxis>& line,
-            const std::shared_ptr<FrCPoint>& point,
-            FrOffshoreSystem* system);
+    make_constraint_point_on_line(const std::string &&name,
+                                  const std::shared_ptr<FrCAxis> &line,
+                                  const std::shared_ptr<FrCPoint> &point,
+                                  FrOffshoreSystem *system);
 
     //------------------------------------------------------------------------------------------------------------------
 
@@ -390,48 +412,52 @@ namespace frydom {
      */
     class FrConstraintDistanceToAxis : public FrConstraint {
 
-    private:
+     private:
 
-        const std::shared_ptr<FrCPoint> m_point;     ///< point to constraint
-        const std::shared_ptr<FrCAxis> m_axis;       ///< axis around which constraining the point
-        bool m_autoDistance;                        ///< if true, the imposed distance is the distance from the point
-                                                    ///< to the axis as given
-        double m_distance;                          ///< distance to constraint the point around the axis
+      const std::shared_ptr<FrCPoint> m_point;     ///< point to constraint
+      const std::shared_ptr<FrCAxis> m_axis;       ///< axis around which constraining the point
+      bool m_autoDistance;                        ///< if true, the imposed distance is the distance from the point
+      ///< to the axis as given
+      double m_distance;                          ///< distance to constraint the point around the axis
 
-    public:
+     public:
 
-        /// Constructor to a distance constraint from a point to an axis.
-        /// \param axis axis around which to constrain the point
-        /// \param point point to be constrained
-        /// \param system system to add the constraint
-        /// \param autoDistance if true, the imposed distance is the distance from the point to the axis, as given
-        /// \param distance distance to constraint the point around the axis
-        FrConstraintDistanceToAxis(const std::shared_ptr<FrCAxis>& axis,
-                                   const std::shared_ptr<FrCPoint>& point,
-                                   FrOffshoreSystem* system,
+      /// Constructor to a distance constraint from a point to an axis.
+      /// \param axis axis around which to constrain the point
+      /// \param point point to be constrained
+      /// \param system system to add the constraint
+      /// \param autoDistance if true, the imposed distance is the distance from the point to the axis, as given
+      /// \param distance distance to constraint the point around the axis
+      FrConstraintDistanceToAxis(const std::string &&name,
+                                 const std::shared_ptr<FrCAxis> &axis,
+                                 const std::shared_ptr<FrCPoint> &point,
+                                 FrOffshoreSystem *system,
                                  bool autoDistance,
                                  double distance = 0.);
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "ConstraintDistanceToAxis"; }
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "ConstraintDistanceToAxis"; }
 
-        /// Initialize the constraint
-        void Initialize() override;
+      /// Initialize the constraint
+      void Initialize() override;
 
-        /// Set the distance between the point and the axis
-        /// \param distance distance between the point and the axis, in m
-        void SetDistance(double distance);
+      /// Set the distance between the point and the axis
+      /// \param distance distance between the point and the axis, in m
+      void SetDistance(double distance);
 
-        /// Get the distance between the point and the axis
-        /// \return distance between the point and the axis, in m
-        double GetDistance() const;
+      /// Get the distance between the point and the axis
+      /// \return distance between the point and the axis, in m
+      double GetDistance() const;
 
-    protected:
+     protected:
 
-        /// Get the pointer to the chrono constraint
-        /// \return pointer to the chrono constraint
-        chrono::ChLinkRevoluteSpherical* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkRevoluteSpherical*>(m_chronoConstraint.get()); }
+      /// Get the pointer to the chrono constraint
+      /// \return pointer to the chrono constraint
+      chrono::ChLinkRevoluteSpherical *
+      GetChronoItem_ptr() const override {
+        return dynamic_cast<chrono::ChLinkRevoluteSpherical *>(m_chronoConstraint.get());
+      }
 
     };
 
@@ -443,12 +469,12 @@ namespace frydom {
     /// \param distance distance to be imposed between the two points
     /// \return distance constraint between a point to an axis
     std::shared_ptr<FrConstraintDistanceToAxis>
-    make_constraint_distance_to_axis(
-            const std::shared_ptr<FrCAxis>& axis,
-            const std::shared_ptr<FrCPoint>& point,
-            FrOffshoreSystem* system,
-            bool autoDistance,
-            double distance = 0.);
+    make_constraint_distance_to_axis(const std::string &&name,
+                                     const std::shared_ptr<FrCAxis> &axis,
+                                     const std::shared_ptr<FrCPoint> &point,
+                                     FrOffshoreSystem *system,
+                                     bool autoDistance,
+                                     double distance = 0.);
 
 
     //------------------------------------------------------------------------------------------------------------------
@@ -460,47 +486,49 @@ namespace frydom {
      */
     class FrConstraintDistanceBetweenPoints : public FrConstraint {
 
-    private:
+     private:
 
-        const std::shared_ptr<FrCPoint> m_point1;    ///< first point
-        const std::shared_ptr<FrCPoint> m_point2;    ///< second point
-        bool m_autoDistance;                        ///< distance between the points is computed automatically
-        double m_distance;                          ///< distance to be constrained between the points
+      const std::shared_ptr<FrCPoint> m_point1;    ///< first point
+      const std::shared_ptr<FrCPoint> m_point2;    ///< second point
+      bool m_autoDistance;                        ///< distance between the points is computed automatically
+      double m_distance;                          ///< distance to be constrained between the points
 
-    public:
+     public:
 
-        /// Constructor of the distance contraint between tow points
-        /// \param point1 first point
-        /// \param point2 second point
-        /// \param system system to add the constrain
-        /// \param autoDistance if true, initializes the imposed distance as the distance between the two points
-        /// \param distance distance between the two points
-        FrConstraintDistanceBetweenPoints(const std::shared_ptr<FrCPoint>& point1,
-                                   const std::shared_ptr<FrCPoint>& point2,
-                                   FrOffshoreSystem* system,
-                                   bool autoDistance = false,
-                                   double distance = 0.);
+      /// Constructor of the distance contraint between tow points
+      /// \param point1 first point
+      /// \param point2 second point
+      /// \param system system to add the constrain
+      /// \param autoDistance if true, initializes the imposed distance as the distance between the two points
+      /// \param distance distance between the two points
+      FrConstraintDistanceBetweenPoints(const std::string &&name,
+                                        const std::shared_ptr<FrCPoint> &point1,
+                                        const std::shared_ptr<FrCPoint> &point2,
+                                        FrOffshoreSystem *system,
+                                        bool autoDistance = false,
+                                        double distance = 0.);
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "ConstraintDistanceBetweenPoints"; }
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "ConstraintDistanceBetweenPoints"; }
 
-        /// Initialize the constraint
-        void Initialize() override;
+      /// Initialize the constraint
+      void Initialize() override;
 
-        /// Set the distance between the two points
-        /// \param distance distance between the two points, in m
-        void SetDistance(double distance);
+      /// Set the distance between the two points
+      /// \param distance distance between the two points, in m
+      void SetDistance(double distance);
 
-        /// Get the distance between the two points
-        /// \return distance between the two points, in m
-        double GetDistance() const;
+      /// Get the distance between the two points
+      /// \return distance between the two points, in m
+      double GetDistance() const;
 
-    protected:
+     protected:
 
-        /// Get the pointer to the chrono constraint
-        /// \return pointer to the chrono constraint
-        chrono::ChLinkDistance* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkDistance*>(m_chronoConstraint.get()); }
+      /// Get the pointer to the chrono constraint
+      /// \return pointer to the chrono constraint
+      chrono::ChLinkDistance *
+      GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkDistance *>(m_chronoConstraint.get()); }
 
     };
 
@@ -511,12 +539,13 @@ namespace frydom {
     /// \param autoDistance if true, the imposed distance is the distance between the two given points
     /// \param distance distance to be imposed between the two points
     /// \return distance constraint between two points
-    std::shared_ptr<FrConstraintDistanceBetweenPoints> make_constraint_distance_between_points(
-                    const std::shared_ptr<FrCPoint>& point1,
-                    const std::shared_ptr<FrCPoint>& point2,
-                    FrOffshoreSystem* system,
-                    bool autoDistance,
-                    double distance = 0.);
+    std::shared_ptr<FrConstraintDistanceBetweenPoints>
+    make_constraint_distance_between_points(const std::string &&name,
+                                            const std::shared_ptr<FrCPoint> &point1,
+                                            const std::shared_ptr<FrCPoint> &point2,
+                                            FrOffshoreSystem *system,
+                                            bool autoDistance,
+                                            double distance = 0.);
 
 
 } // end namespace frydom

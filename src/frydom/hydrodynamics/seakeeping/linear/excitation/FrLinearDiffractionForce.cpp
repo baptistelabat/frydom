@@ -21,32 +21,38 @@ namespace frydom {
 
     Eigen::MatrixXcd FrLinearDiffractionForce::GetHDBData(unsigned int iangle) const {
 
-        auto BEMBody = m_HDB->GetBody(m_body);
+      auto BEMBody = m_HDB->GetBody(m_body);
 
-        return BEMBody->GetDiffraction(iangle);
+      return BEMBody->GetDiffraction(iangle);
 
     }
 
     Eigen::VectorXcd FrLinearDiffractionForce::GetHDBData(unsigned int iangle, unsigned int iforce) const {
 
-        auto BEMBody = m_HDB->GetBody(m_body);
+      auto BEMBody = m_HDB->GetBody(m_body);
 
-        return BEMBody->GetDiffraction(iangle,iforce);
+      return BEMBody->GetDiffraction(iangle, iforce);
 
     }
 
+    FrLinearDiffractionForce::FrLinearDiffractionForce(const std::string &&name,
+                                                       const std::shared_ptr<FrHydroDB> &HDB)
+        : FrLinearHDBForce(std::move(name), HDB) {}
+
     std::shared_ptr<FrLinearDiffractionForce>
-    make_linear_diffraction_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body){
+    make_linear_diffraction_force(const std::string &&name,
+                                  std::shared_ptr<FrHydroDB> HDB,
+                                  std::shared_ptr<FrBody> body) {
 
-        // This function creates the linear excitation force object.
+      // This function creates the linear excitation force object.
 
-        // Construction of the excitation force object from the HDB.
-        auto diffractionForce = std::make_shared<FrLinearDiffractionForce>(HDB);
+      // Construction of the excitation force object from the HDB.
+      auto diffractionForce = std::make_shared<FrLinearDiffractionForce>(std::move(name), HDB);
 
-        // Add the excitation force object as an external force to the body.
-        body->AddExternalForce(diffractionForce); // Initialization of m_body.
+      // Add the excitation force object as an external force to the body.
+      body->AddExternalForce(diffractionForce); // Initialization of m_body.
 
-        return diffractionForce;
+      return diffractionForce;
 
     }
 

@@ -24,7 +24,9 @@ namespace frydom {
 
     // Forward declaration
     class FrHydroDB;
+
     class FrBody;
+
     class FrEquilibriumFrame;
 
     /**
@@ -34,23 +36,26 @@ namespace frydom {
 
     class FrLinearExcitationForce : public FrLinearHDBForce {
 
-    public:
+     public:
 
-        /// Constructor.
-        explicit FrLinearExcitationForce(const std::shared_ptr<FrHydroDB>& HDB) : FrLinearHDBForce(HDB) {};
+      /// Constructor.
+      explicit FrLinearExcitationForce(const std::string &&name,
+                                       const std::shared_ptr<FrHydroDB> &HDB);;
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "LinearExcitationForce"; }
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "LinearExcitationForce"; }
 
-        Eigen::MatrixXcd GetHDBData(unsigned int iangle) const override;
+      Eigen::MatrixXcd GetHDBData(unsigned int iangle) const override;
 
-        Eigen::VectorXcd GetHDBData(unsigned int iangle, unsigned int iforce) const override;
+      Eigen::VectorXcd GetHDBData(unsigned int iangle, unsigned int iforce) const override;
 
     };
 
     std::shared_ptr<FrLinearExcitationForce>
-    make_linear_excitation_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body);
+    make_linear_excitation_force(const std::string &&name,
+                                 std::shared_ptr<FrHydroDB> HDB,
+                                 std::shared_ptr<FrBody> body);
 
 
 }  // end namespace frydom

@@ -172,7 +172,8 @@ namespace frydom {
       CreateWorldBody();
 
       // Creating the environment
-      m_environment = std::make_unique<FrEnvironment>(this); // FIXME: voir bug dans FrEnvironment pour le reglage du systeme
+      m_environment = std::make_unique<FrEnvironment>(
+          this); // FIXME: voir bug dans FrEnvironment pour le reglage du systeme
 
       // Creating the log manager service
       m_LogManager = std::make_unique<FrLogManager>();
@@ -892,9 +893,9 @@ namespace frydom {
     }
 
     void FrOffshoreSystem::CreateWorldBody() {
-      m_worldBody = std::make_shared<FrBody>();
+      m_worldBody = std::make_shared<FrBody>("world_body");
       m_worldBody->SetFixedInWorld(true);
-      m_worldBody->SetName("WorldBody");
+//      m_worldBody->SetName("WorldBody");
 //      m_worldBody->SetLogged(false);
       switch (m_systemType) {
         case SMOOTH_CONTACT:
@@ -907,8 +908,9 @@ namespace frydom {
       AddBody(m_worldBody);
     }
 
-    std::shared_ptr<FrBody> FrOffshoreSystem::NewBody() {
-      auto body = std::make_shared<FrBody>();  // TODO : suivant le type de systeme SMC ou NSC, regler le type de surface...
+    std::shared_ptr<FrBody> FrOffshoreSystem::NewBody(const std::string &&name) {
+      auto body = std::make_shared<FrBody>(std::move(name));
+      // TODO : suivant le type de systeme SMC ou NSC, regler le type de surface...
 
       switch (m_systemType) {
         case SMOOTH_CONTACT:

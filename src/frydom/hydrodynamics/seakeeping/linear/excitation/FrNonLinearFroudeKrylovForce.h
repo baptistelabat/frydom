@@ -31,7 +31,9 @@ namespace frydom {
 
     // Forward declarations.
     class FrHydroDB;
+
     class FrBody;
+
     class FrEquilibriumFrame;
 
     /**
@@ -40,27 +42,30 @@ namespace frydom {
      */
     class FrNonLinearFroudeKrylovForce : public FrForce {
 
-    private:
+     private:
 
-        std::shared_ptr<FrHydroMesh> m_hydroMesh;   ///< clipped mesh container
+      std::shared_ptr<FrHydroMesh> m_hydroMesh;   ///< clipped mesh container
 
-    public:
+     public:
 
-        explicit FrNonLinearFroudeKrylovForce(const std::shared_ptr<FrHydroMesh>& HydroMesh);
+      FrNonLinearFroudeKrylovForce(const std::string &&name,
+                                   const std::shared_ptr<FrHydroMesh> &HydroMesh);
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "NonLinearFroudeKrylovForce"; }
+      /// Get the type name of this object
+      /// \return type name of this object
+      std::string GetTypeName() const override { return "NonLinearFroudeKrylovForce"; }
 
-    private:
+     private:
 
-        void Compute(double time) override;
+      void Compute(double time) override;
 
     };
 
     /// This function creates a (fully or weakly) nonlinear Froude-Krylov force object.
     std::shared_ptr<FrNonLinearFroudeKrylovForce>
-    make_nonlinear_froude_krylov_force(std::shared_ptr<FrBody> body, std::shared_ptr<FrHydroMesh> HydroMesh);
+    make_nonlinear_froude_krylov_force(const std::string &&name,
+                                       std::shared_ptr<FrBody> body,
+                                       std::shared_ptr<FrHydroMesh> HydroMesh);
 
 }  // end namespace frydom
 

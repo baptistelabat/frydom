@@ -73,7 +73,7 @@ namespace frydom{
 
     // FrForce methods implementations
 
-    FrForce::FrForce() {
+    FrForce::FrForce(const std::string &&name) : FrLoggable(std::move(name)) {
 
         m_chronoForce = std::make_shared<internal::FrForceBase>(this);
 //        SetLogged(true);

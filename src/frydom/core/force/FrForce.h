@@ -90,7 +90,7 @@ namespace frydom {
     public:
 
         /// Default constructor that builds a new force with zero force and torque
-        FrForce();
+        explicit FrForce(const std::string &&name);
 
         /// This subroutine initializes the object FrForce.
         void Initialize() override;

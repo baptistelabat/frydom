@@ -19,47 +19,47 @@ namespace frydom {
      */
 
     void FrDOFMask::SetLock_X(bool lock) {
-        m_xLocked = lock;
-        m_linkType = LINK_TYPE::CUSTOM;
+      m_xLocked = lock;
+      m_linkType = LINK_TYPE::CUSTOM;
     }
 
     void FrDOFMask::SetLock_Y(bool lock) {
-        m_yLocked = lock;
-        m_linkType = LINK_TYPE::CUSTOM;
+      m_yLocked = lock;
+      m_linkType = LINK_TYPE::CUSTOM;
     }
 
     void FrDOFMask::SetLock_Z(bool lock) {
-        m_zLocked = lock;
-        m_linkType = LINK_TYPE::CUSTOM;
+      m_zLocked = lock;
+      m_linkType = LINK_TYPE::CUSTOM;
     }
 
     void FrDOFMask::SetLock_Rx(bool lock) {
-        m_RxLocked = lock;
-        m_linkType = LINK_TYPE::CUSTOM;
+      m_RxLocked = lock;
+      m_linkType = LINK_TYPE::CUSTOM;
     }
 
     void FrDOFMask::SetLock_Ry(bool lock) {
-        m_RyLocked = lock;
-        m_linkType = LINK_TYPE::CUSTOM;
+      m_RyLocked = lock;
+      m_linkType = LINK_TYPE::CUSTOM;
     }
 
     void FrDOFMask::SetLock_Rz(bool lock) {
-        m_RzLocked = lock;
-        m_linkType = LINK_TYPE::CUSTOM;
+      m_RzLocked = lock;
+      m_linkType = LINK_TYPE::CUSTOM;
     }
 
     void FrDOFMask::LockXZPlane() {
-        MakeItFree();
-        SetLock_Y(true);
-        SetLock_Rx(true);
-        SetLock_Rz(true);
+      MakeItFree();
+      SetLock_Y(true);
+      SetLock_Rx(true);
+      SetLock_Rz(true);
     }
 
     void FrDOFMask::LockXYPlane() {
-        MakeItFree();
-        SetLock_Z(true);
-        SetLock_Rx(true);
-        SetLock_Ry(true);
+      MakeItFree();
+      SetLock_Z(true);
+      SetLock_Rx(true);
+      SetLock_Ry(true);
     }
 
     bool FrDOFMask::GetLock_X() const { return m_xLocked; }
@@ -75,90 +75,89 @@ namespace frydom {
     bool FrDOFMask::GetLock_Rz() const { return m_RzLocked; }
 
     bool FrDOFMask::HasLockedDOF() const {
-        return m_xLocked || m_yLocked || m_zLocked || m_RxLocked || m_RyLocked || m_RzLocked;
+      return m_xLocked || m_yLocked || m_zLocked || m_RxLocked || m_RyLocked || m_RzLocked;
     }
 
     bool FrDOFMask::IsFree() const {
-        return !HasLockedDOF();
+      return !HasLockedDOF();
     }
 
     void FrDOFMask::MakeItFree() {
-        m_xLocked = false;
-        m_yLocked = false;
-        m_zLocked = false;
-        m_RxLocked = false;
-        m_RyLocked = false;
-        m_RzLocked = false;
-        m_linkType = LINK_TYPE::FREE_LINK;
+      m_xLocked = false;
+      m_yLocked = false;
+      m_zLocked = false;
+      m_RxLocked = false;
+      m_RyLocked = false;
+      m_RzLocked = false;
+      m_linkType = LINK_TYPE::FREE_LINK;
     }
 
     void FrDOFMask::MakeItLocked() {
-        m_xLocked = true;
-        m_yLocked = true;
-        m_zLocked = true;
-        m_RxLocked = true;
-        m_RyLocked = true;
-        m_RzLocked = true;
-        m_linkType = LINK_TYPE::FIXED_LINK;
+      m_xLocked = true;
+      m_yLocked = true;
+      m_zLocked = true;
+      m_RxLocked = true;
+      m_RyLocked = true;
+      m_RzLocked = true;
+      m_linkType = LINK_TYPE::FIXED_LINK;
     }
 
     unsigned int FrDOFMask::GetNbLockedDOF() const {
-        unsigned int nb = 0;
-        if (m_xLocked) nb++;
-        if (m_yLocked) nb++;
-        if (m_zLocked) nb++;
-        if (m_RxLocked) nb++;
-        if (m_RyLocked) nb++;
-        if (m_RzLocked) nb++;
-        return nb;
+      unsigned int nb = 0;
+      if (m_xLocked) nb++;
+      if (m_yLocked) nb++;
+      if (m_zLocked) nb++;
+      if (m_RxLocked) nb++;
+      if (m_RyLocked) nb++;
+      if (m_RzLocked) nb++;
+      return nb;
     }
 
     unsigned int FrDOFMask::GetNbFreeDOF() const {
-        return 6 - GetNbLockedDOF();
+      return 6 - GetNbLockedDOF();
     }
 
     void FrDOFMask::SetLinkType(frydom::LINK_TYPE linkType) {
-        m_linkType = linkType;
+      m_linkType = linkType;
 
-        switch(m_linkType) {
-            case LINK_TYPE::FREE_LINK:
-                SetLock(false, false, false, false, false, false);
-                break;
-            case LINK_TYPE::FIXED_LINK:
-                SetLock(true, true, true, true, true, true);
-                break;
-            case LINK_TYPE::REVOLUTE:
-                SetLock(true, true, true, true, true, false);
-                break;
-            case LINK_TYPE::PRISMATIC:
-                SetLock(true, true, false, true, true, true);
-                break;
-            case LINK_TYPE::CYLINDRICAL:
-                SetLock(true, true, false, true, true, false);
-                break;
-            case LINK_TYPE::SPHERICAL:
-                SetLock(true, true, true, false ,false, false);
-                break;
-            default:
-                SetLock(false, false, false, false, false, false);
-                break;
-        }
+      switch (m_linkType) {
+        case LINK_TYPE::FREE_LINK:
+          SetLock(false, false, false, false, false, false);
+          break;
+        case LINK_TYPE::FIXED_LINK:
+          SetLock(true, true, true, true, true, true);
+          break;
+        case LINK_TYPE::REVOLUTE:
+          SetLock(true, true, true, true, true, false);
+          break;
+        case LINK_TYPE::PRISMATIC:
+          SetLock(true, true, false, true, true, true);
+          break;
+        case LINK_TYPE::CYLINDRICAL:
+          SetLock(true, true, false, true, true, false);
+          break;
+        case LINK_TYPE::SPHERICAL:
+          SetLock(true, true, true, false, false, false);
+          break;
+        default:
+          SetLock(false, false, false, false, false, false);
+          break;
+      }
     }
 
     LINK_TYPE FrDOFMask::GetLinkType() const {
-        return m_linkType;
+      return m_linkType;
     }
 
     void FrDOFMask::SetLock(bool xLocked, bool yLocked, bool zLocked, bool rxLocked, bool ryLocked, bool rzLocked) {
-        m_xLocked = xLocked;
-        m_yLocked = yLocked;
-        m_zLocked = zLocked;
-        m_RxLocked = rxLocked;
-        m_RyLocked = ryLocked;
-        m_RzLocked = rzLocked;
-        m_linkType = LINK_TYPE::CUSTOM;
+      m_xLocked = xLocked;
+      m_yLocked = yLocked;
+      m_zLocked = zLocked;
+      m_RxLocked = rxLocked;
+      m_RyLocked = ryLocked;
+      m_RzLocked = rzLocked;
+      m_linkType = LINK_TYPE::CUSTOM;
     }
-
 
 
     /*
@@ -167,13 +166,14 @@ namespace frydom {
 
 
     void FrDOFMaskLink::SetDOFMask(FrDOFMask *mask) {
-        m_chronoLink->SetMask(mask);
+      m_chronoLink->SetMask(mask);
     }
 
-    FrDOFMaskLink::FrDOFMaskLink(const std::shared_ptr<FrNode> &node1, const std::shared_ptr<FrNode> &node2,
-                                 FrOffshoreSystem *system) : FrLink(node1, node2, system) {
-
-    }
+    FrDOFMaskLink::FrDOFMaskLink(const std::string &&name,
+                                 const std::shared_ptr<FrNode> &node1,
+                                 const std::shared_ptr<FrNode> &node2,
+                                 FrOffshoreSystem *system) :
+        FrLink(std::move(name), node1, node2, system) {}
 
 
 }
