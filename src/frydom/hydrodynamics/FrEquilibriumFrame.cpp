@@ -185,40 +185,40 @@ namespace frydom {
 
     void FrEquilibriumFrame::AddFields() {
 
-        if (IsLogged()) {
-
-            // Add the fields to be logged here
-            m_message->AddField<double>("time", "s", "Current time of the simulation",
-                                        [this]() { return m_system->GetTime(); });
-
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                    ("Position","m", fmt::format("Equilibrium frame position in the world reference frame in {}", GetLogFrameConvention()),
-                     [this]() {return m_frame.GetPosition(GetLogFrameConvention());});
-
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                    ("CardanAngles","rad", fmt::format("Equilibrium frame orientation in the world reference frame in {}", GetLogFrameConvention()),
-                     [this]() {double phi, theta, psi; m_frame.GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, GetLogFrameConvention()); return Vector3d<double>(phi, theta, psi);});
-
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                    ("VelocityInWorld","m/s", fmt::format("Equilibrium frame velocity in the world reference frame in {}", GetLogFrameConvention()),
-                     [this]() {return GetVelocityInWorld(GetLogFrameConvention());});
-
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                    ("AngularVelocity","rad/s", fmt::format("Equilibrium frame angular velocity in the world reference frame in {}", GetLogFrameConvention()),
-                     [this]() {return GetAngularVelocity(GetLogFrameConvention());});
-
-
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                    ("PerturbationPosition","m", fmt::format("Perturbation position between the equilibrium frame and the body frame in the world reference frame in {}", GetLogFrameConvention()),
-                     [this]() {return GetPerturbationFrame().GetPosition(GetLogFrameConvention());});
-
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                    ("PerturbationOrientation","m", fmt::format("Perturbation orientation between the equilibrium frame and the body frame in the world reference frame in {}", GetLogFrameConvention()),
-                     [this]() {double phi, theta, psi;
-                     GetPerturbationFrame().GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, GetLogFrameConvention());
-                     return Vector3d<double>(phi, theta, psi);});
-
-        }
+//        if (IsLogged()) {
+//
+//            // Add the fields to be logged here
+//            m_message->AddField<double>("time", "s", "Current time of the simulation",
+//                                        [this]() { return m_system->GetTime(); });
+//
+//            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                    ("Position","m", fmt::format("Equilibrium frame position in the world reference frame in {}", GetLogFrameConvention()),
+//                     [this]() {return m_frame.GetPosition(GetLogFrameConvention());});
+//
+//            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                    ("CardanAngles","rad", fmt::format("Equilibrium frame orientation in the world reference frame in {}", GetLogFrameConvention()),
+//                     [this]() {double phi, theta, psi; m_frame.GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, GetLogFrameConvention()); return Vector3d<double>(phi, theta, psi);});
+//
+//            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                    ("VelocityInWorld","m/s", fmt::format("Equilibrium frame velocity in the world reference frame in {}", GetLogFrameConvention()),
+//                     [this]() {return GetVelocityInWorld(GetLogFrameConvention());});
+//
+//            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                    ("AngularVelocity","rad/s", fmt::format("Equilibrium frame angular velocity in the world reference frame in {}", GetLogFrameConvention()),
+//                     [this]() {return GetAngularVelocity(GetLogFrameConvention());});
+//
+//
+//            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                    ("PerturbationPosition","m", fmt::format("Perturbation position between the equilibrium frame and the body frame in the world reference frame in {}", GetLogFrameConvention()),
+//                     [this]() {return GetPerturbationFrame().GetPosition(GetLogFrameConvention());});
+//
+//            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                    ("PerturbationOrientation","m", fmt::format("Perturbation orientation between the equilibrium frame and the body frame in the world reference frame in {}", GetLogFrameConvention()),
+//                     [this]() {double phi, theta, psi;
+//                     GetPerturbationFrame().GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, GetLogFrameConvention());
+//                     return Vector3d<double>(phi, theta, psi);});
+//
+//        }
     }
 
     void FrEquilibriumFrame::StepFinalize() {
@@ -226,7 +226,7 @@ namespace frydom {
         FrPhysicsItem::StepFinalize();
 
         // Serialize and send the message log
-        FrObject::SendLog();
+//        FrObject::SendLog();
 
     }
 

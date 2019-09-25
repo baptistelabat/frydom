@@ -9,7 +9,11 @@
 //
 // ==========================================================================
 
+#include "fmt/format.h"
+
 #include <MathUtils/Constants.h>
+
+
 #include "FrCosRampFunction.h"
 #include "frydom/core/math/functions/lib/FrClampFunction.h"
 #include "frydom/core/math/functions/lib/FrTrigonometricFunctions.h"

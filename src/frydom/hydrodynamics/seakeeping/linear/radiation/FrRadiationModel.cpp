@@ -206,7 +206,7 @@ namespace frydom {
 
     void FrRadiationConvolutionModel::StepFinalize() {
         // Serialize and send the message log
-        FrObject::SendLog();
+//        FrObject::SendLog();
     }
 
     void FrRadiationConvolutionModel::GetImpulseResponseSize(double &Te, double &dt, unsigned int &N) const {

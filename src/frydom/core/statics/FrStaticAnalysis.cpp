@@ -23,7 +23,7 @@ namespace frydom{
 
 
     FrStaticAnalysis::FrStaticAnalysis(FrOffshoreSystem *system) : m_system(system) {
-        SetLogged(true);
+//        SetLogged(true);
     }
 
     void FrStaticAnalysis::SetNbSteps(int nSteps) {
@@ -60,8 +60,8 @@ namespace frydom{
 
     void FrStaticAnalysis::Initialize() {
 
-        // Log
-        SetPathManager(m_system->GetPathManager());
+//        // Log
+//        SetPathManager(m_system->GetPathManager());
 
         // Store the starting time of the simulation
         m_undoTime = m_system->GetTime();
@@ -70,56 +70,56 @@ namespace frydom{
         m_system->GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0.,0.,1.,0.);
 
         for (auto& body : m_system->GetBodyList()) {
-            m_map.emplace(body.get(),std::make_pair(body->IsActive(),body->IsLogged()));
+//            m_map.emplace(body.get(),std::make_pair(body->IsActive(),body->IsLogged()));
             body->SetSleeping(!body->IncludedInStaticAnalysis());
-            body->SetLogged(body->IncludedInStaticAnalysis() && body->IsLogged());
+//            body->SetLogged(body->IncludedInStaticAnalysis() && body->IsLogged());
             for (auto& force : body->GetForceList()) {
-                m_map.emplace(force.get(),std::make_pair(force->IsActive(),force->IsLogged()));
+//                m_map.emplace(force.get(),std::make_pair(force->IsActive(),force->IsLogged()));
                 force->SetActive(force->IncludedInStaticAnalysis());
-                force->SetLogged(force->IncludedInStaticAnalysis() && force->IsLogged());
+//                force->SetLogged(force->IncludedInStaticAnalysis() && force->IsLogged());
             }
         }
 
         for (auto& link : m_system->GetLinkList()) {
-            m_map.emplace(link.get(),std::make_pair(link->IsActive(),link->IsLogged()));
+//            m_map.emplace(link.get(),std::make_pair(link->IsActive(),link->IsLogged()));
             link->SetDisabled(!link->IncludedInStaticAnalysis());
-            link->SetLogged(link->IncludedInStaticAnalysis() && link->IsLogged());
+//            link->SetLogged(link->IncludedInStaticAnalysis() && link->IsLogged());
         }
 
         for (auto& pi : m_system->GetPrePhysicsItemList()) {
-            m_map.emplace(pi.get(),std::make_pair(pi->IsActive(),pi->IsLogged()));
+//            m_map.emplace(pi.get(),std::make_pair(pi->IsActive(),pi->IsLogged()));
             pi->SetActive(pi->IncludedInStaticAnalysis());
-            pi->SetLogged(pi->IncludedInStaticAnalysis() && pi->IsLogged());
+//            pi->SetLogged(pi->IncludedInStaticAnalysis() && pi->IsLogged());
         }
 
         for (auto& pi : m_system->GetMidPhysicsItemList()) {
-            m_map.emplace(pi.get(),std::make_pair(pi->IsActive(),pi->IsLogged()));
+//            m_map.emplace(pi.get(),std::make_pair(pi->IsActive(),pi->IsLogged()));
             pi->SetActive(pi->IncludedInStaticAnalysis());
-            pi->SetLogged(pi->IncludedInStaticAnalysis() && pi->IsLogged());
+//            pi->SetLogged(pi->IncludedInStaticAnalysis() && pi->IsLogged());
         }
 
         for (auto& pi : m_system->GetPostPhysicsItemList()) {
-            m_map.emplace(pi.get(),std::make_pair(pi->IsActive(),pi->IsLogged()));
+//            m_map.emplace(pi.get(),std::make_pair(pi->IsActive(),pi->IsLogged()));
             pi->SetActive(pi->IncludedInStaticAnalysis());
-            pi->SetLogged(pi->IncludedInStaticAnalysis() && pi->IsLogged());
+//            pi->SetLogged(pi->IncludedInStaticAnalysis() && pi->IsLogged());
         }
 
         // Logging
-        m_system->GetPathManager()->SetRunPath("Static");
-        m_system->ClearLogs();
-        m_system->InitializeLog("");
+//        m_system->GetPathManager()->SetRunPath("Static");
+//        m_system->ClearLogs();
+//        m_system->InitializeLog("");
 
-         auto logPath = m_system->GetPathManager()->BuildPath("statics.csv");
+//         auto logPath = m_system->GetPathManager()->BuildPath("statics.csv");
 
         // Add the fields to be logged
-        m_message->AddField<double>("iteration", "-", "iteration of the static analysis",
-                                    [this]() { return c_iter; });
-
-        m_message->AddField<double>("residual", "-", "residual of the static analysis",
-                                    [this]() { return c_residual; });
+//        m_message->AddField<double>("iteration", "-", "iteration of the static analysis",
+//                                    [this]() { return c_iter; });
+//
+//        m_message->AddField<double>("residual", "-", "residual of the static analysis",
+//                                    [this]() { return c_residual; });
 
         // Initialize the message
-        FrObject::InitializeLog(logPath);
+//        FrObject::InitializeLog(logPath);
     }
 
     void FrStaticAnalysis::StepFinalize() {
@@ -128,11 +128,11 @@ namespace frydom{
         for (auto& body : m_system->GetBodyList()) {
 
             body->SetSleeping(!m_map.find(body.get())->second.first);
-            body->SetLogged(m_map.find(body.get())->second.second);
+//            body->SetLogged(m_map.find(body.get())->second.second);
 
             for (auto& force : body->GetForceList()) {
                 force->SetActive(m_map.find(force.get())->second.first);
-                force->SetLogged(m_map.find(force.get())->second.second);
+//                force->SetLogged(m_map.find(force.get())->second.second);
             }
 
         }
@@ -140,28 +140,28 @@ namespace frydom{
         for (auto& link : m_system->GetLinkList()) {
 
             link->SetDisabled(!m_map.find(link.get())->second.first);
-            link->SetLogged(m_map.find(link.get())->second.second);
+//            link->SetLogged(m_map.find(link.get())->second.second);
 
         }
 
         for (auto& pi : m_system->GetPrePhysicsItemList()) {
 
             pi->SetActive(m_map.find(pi.get())->second.first);
-            pi->SetLogged(m_map.find(pi.get())->second.second);
+//            pi->SetLogged(m_map.find(pi.get())->second.second);
 
         }
 
         for (auto& pi : m_system->GetMidPhysicsItemList()) {
 
             pi->SetActive(m_map.find(pi.get())->second.first);
-            pi->SetLogged(m_map.find(pi.get())->second.second);
+//            pi->SetLogged(m_map.find(pi.get())->second.second);
 
         }
 
         for (auto& pi : m_system->GetPostPhysicsItemList()) {
 
             pi->SetActive(m_map.find(pi.get())->second.first);
-            pi->SetLogged(m_map.find(pi.get())->second.second);
+//            pi->SetLogged(m_map.find(pi.get())->second.second);
 
         }
 
@@ -175,9 +175,9 @@ namespace frydom{
         m_system->GetEnvironment()->GetTimeRamp()->SetByTwoPoints(m_x0,m_y0,m_x1,m_y1);
 
         // Set all the output paths for the logs back to their original paths
-        m_system->GetPathManager()->SetRunPath("Dynamic");
-        m_system->ClearLogs();
-        m_system->InitializeLog("");
+//        m_system->GetPathManager()->SetRunPath("Dynamic");
+//        m_system->ClearLogs();
+//        m_system->InitializeLog("");
 
     }
 
@@ -206,7 +206,7 @@ namespace frydom{
                 c_residual += mesh->GetStaticResidual();
             }
 
-            FrObject::SendLog();
+//            FrObject::SendLog();
 
             std::cout<<"t = "<<m_system->GetTime()<<", res = "<<c_residual<<std::endl;
 

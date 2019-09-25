@@ -17,7 +17,7 @@
 #include "frydom/asset/FrNodeAsset.h"
 #include "frydom/core/body/FrBody.h"
 
-#include "frydom/utils/FrSerializerFactory.h"
+//#include "frydom/utils/FrSerializerFactory.h"
 
 
 namespace frydom {
@@ -251,31 +251,31 @@ namespace frydom {
 
     }
 
-    void FrNode::AddFields(){
+    void FrNode::AddFields() {
 
-        if (IsLogged()) {
-
-            // Add the fields to be logged here
-            m_message->AddField<double>("time", "s", "Current time of the simulation",
-                                        [this]() { return m_chronoMarker->GetChTime(); });
-
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("PositionInWorld","m", fmt::format("Node position in world reference frame in {}",GetLogFrameConvention()),
-                    [this]() {return GetPositionInWorld(GetLogFrameConvention());});
-
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("VelocityInWorld","m/s", fmt::format("Node velocity in world reference frame in {}",GetLogFrameConvention()),
-                    [this]() {return GetVelocityInWorld(GetLogFrameConvention());});
-
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("AccelerationInWorld","m/s²", fmt::format("Node acceleration in world reference frame in {}",GetLogFrameConvention()),
-                    [this]() {return GetAccelerationInWorld(GetLogFrameConvention());});
-
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("NodePositionInBody","m", fmt::format("Node position in body reference frame in {}",GetLogFrameConvention()),
-                    [this]() {return GetNodePositionInBody(GetLogFrameConvention());});
-
-        }
+//        if (IsLogged()) {
+//
+//            // Add the fields to be logged here
+//            m_message->AddField<double>("time", "s", "Current time of the simulation",
+//                                        [this]() { return m_chronoMarker->GetChTime(); });
+//
+//            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//            ("PositionInWorld","m", fmt::format("Node position in world reference frame in {}",GetLogFrameConvention()),
+//                    [this]() {return GetPositionInWorld(GetLogFrameConvention());});
+//
+//            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//            ("VelocityInWorld","m/s", fmt::format("Node velocity in world reference frame in {}",GetLogFrameConvention()),
+//                    [this]() {return GetVelocityInWorld(GetLogFrameConvention());});
+//
+//            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//            ("AccelerationInWorld","m/s²", fmt::format("Node acceleration in world reference frame in {}",GetLogFrameConvention()),
+//                    [this]() {return GetAccelerationInWorld(GetLogFrameConvention());});
+//
+//            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//            ("NodePositionInBody","m", fmt::format("Node position in body reference frame in {}",GetLogFrameConvention()),
+//                    [this]() {return GetNodePositionInBody(GetLogFrameConvention());});
+//
+//        }
 
     }
 
@@ -293,14 +293,14 @@ namespace frydom {
 
     std::string FrNode::BuildPath(const std::string &rootPath) {
 
-        auto objPath = fmt::format("{}/Nodes", rootPath);
-
-        auto logPath = GetPathManager()->BuildPath(objPath, fmt::format("{}_{}.csv", GetTypeName(), GetShortenUUID()));
-
-        // Add a serializer
-        m_message->AddSerializer(FrSerializerFactory::instance().Create(this, logPath));
-
-        return objPath;
+//        auto objPath = fmt::format("{}/Nodes", rootPath);
+//
+//        auto logPath = GetPathManager()->BuildPath(objPath, fmt::format("{}_{}.csv", GetTypeName(), GetShortenUUID()));
+//
+//        // Add a serializer
+//        m_message->AddSerializer(FrSerializerFactory::instance().Create(this, logPath));
+//
+//        return objPath;
     }
 
 }  // end namespace frydom

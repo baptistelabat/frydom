@@ -15,6 +15,8 @@
 
 #include "frydom/core/FrOffshoreSystem.h"
 
+#include "cppfs/FilePath.h"
+
 
 #define SQ2_2 (sqrt(2.)/2.)
 
@@ -36,7 +38,7 @@ namespace frydom {
 
         AddCustomCamera(irr::core::vector3df(-(irr::f32)dist, (irr::f32)dist*0, (irr::f32)dist),
                          irr::core::vector3df(0, (irr::f32)SQ2_2, (irr::f32)SQ2_2));
-        cppfs::FilePath resources_path(std::string(RESOURCES_VIZU_PATH));
+        cppfs::FilePath resources_path(std::string(RESOURCES_VIZU_PATH));  // FIXME : est-ce que c'est ici qu'on doit gerer les paths ?
         AddTypicalLogo(resources_path.resolve("frydom_logo.png").path());
     }
 

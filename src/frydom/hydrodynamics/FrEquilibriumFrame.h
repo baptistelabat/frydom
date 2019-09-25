@@ -16,7 +16,7 @@
 #include "frydom/core/common/FrFrame.h"
 #include "frydom/core/math/FrVector.h"
 #include "frydom/core/common/FrPhysicsItem.h"
-
+#include "frydom/logging/FrLoggable.h"
 
 
 namespace frydom {
@@ -37,7 +37,7 @@ namespace frydom {
      * during the initialization stage.
      *
      */
-    class FrEquilibriumFrame : public FrPrePhysicsItem {
+    class FrEquilibriumFrame : public FrPrePhysicsItem, public FrLoggable {
 
     protected:
 

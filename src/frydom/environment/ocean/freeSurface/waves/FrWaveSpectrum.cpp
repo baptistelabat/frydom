@@ -10,6 +10,7 @@
 // ==========================================================================
 
 
+#include <frydom/core/common/FrException.h>
 #include "FrWaveSpectrum.h"
 
 #include "MathUtils/VectorGeneration.h"
@@ -61,7 +62,7 @@ namespace frydom {
                     theta_max=theta_result;
             }
         }
-        throw FrException("FrWaveDirectionalModel::dichotomySearch no convergence");
+        throw FrException("FrWaveDirectionalModel::Bisection Search  no convergence");
     }
 
     // FrCos2sDirectionalModel descriptions

@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "FrNonlinearHydrostaticForce.h"
@@ -34,12 +34,12 @@ namespace frydom {
 
         // This function initializes the logger for the nonlinear hydrostatic loads by giving the position of the center of buoyancy in the body frame.
 
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("CenterOfBuoyancyInBody","m", fmt::format("Center of buoyancy in body reference frame in {}", GetLogFrameConvention()),
-                 [this]() {return GetCenterOfBuoyancyInBody(GetLogFrameConvention());});
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("CenterOfBuoyancyInWorld","m", fmt::format("Center of buoyancy in world reference frame in {}", GetLogFrameConvention()),
-                 [this]() {return GetCenterOfBuoyancyInWorld(GetLogFrameConvention());});
+//        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                ("CenterOfBuoyancyInBody","m", fmt::format("Center of buoyancy in body reference frame in {}", GetLogFrameConvention()),
+//                 [this]() {return GetCenterOfBuoyancyInBody(GetLogFrameConvention());});
+//        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                ("CenterOfBuoyancyInWorld","m", fmt::format("Center of buoyancy in world reference frame in {}", GetLogFrameConvention()),
+//                 [this]() {return GetCenterOfBuoyancyInWorld(GetLogFrameConvention());});
 //        m_message->AddField<Eigen::Matrix<double, 3, 1>>
 //                ("MetacentricHeights","m", "Transversal and longitudinal metacentric heights",
 //                 [this]() {return GetMetacentricHeight();});
@@ -102,7 +102,7 @@ namespace frydom {
         // This function performs the hydrostatic pressure integration.
 
         Force hydrostaticForce = {0.,0.,0.};
-        
+
         auto clippedMesh = &(m_hydroMesh->GetClippedMesh());
 
         // Loop over the faces.

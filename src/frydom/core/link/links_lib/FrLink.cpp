@@ -245,7 +245,7 @@ namespace frydom {
                      FrLinkBase(node1, node2, system),
                      m_frame2WRT1_reference() {
         m_chronoLink = std::make_shared<internal::FrLinkLockBase>(this);
-        SetLogged(true);
+//        SetLogged(true);
         m_actuator = nullptr;
     }
 
@@ -513,87 +513,87 @@ namespace frydom {
     }
 
     void FrLink::AddFields() {
-        m_message->AddField<double>("time", "s", "Current time of the simulation",
-                                    [this]() { return m_system->GetTime(); });
-
-        // Node Position
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("PositionOfNode2WRTNode1","m", fmt::format("Node 2 position relatively to Node 1, in Node 1 reference frame in {}", GetLogFrameConvention()),
-                 [this]() {return GetNode2PositionWRTNode1(GetLogFrameConvention());});
-        // Node Velocity
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("VelocityOfNode2WRTNode1","m/s", fmt::format("Node 2 velocity relatively to Node 1, in Node 1 reference frame in {}", GetLogFrameConvention()),
-                 [this]() {return GetVelocityOfNode2WRTNode1(GetLogFrameConvention());});
-        // Node Acceleration
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("AccelerationOfNode2WRTNode1","m/s^2", fmt::format("Node 2 acceleration relatively to Node 1, in Marker 1 reference frame in {}", GetLogFrameConvention()),
-                 [this]() {return GetAccelerationOfNode2WRTNode1(GetLogFrameConvention());});
-
-        // Node Orientation
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("OrientationOfNode2WRTNode1","rad", fmt::format("Node 2 orientation relatively to Node 1, in Node 1 reference frame in {}", GetLogFrameConvention()),
-                 [this]() {double phi, theta, psi; GetNode2OrientationWRTNode1().GetCardanAngles_RADIANS(phi, theta, psi, GetLogFrameConvention());
-                    return Position(phi, theta, psi);});
-        // Node Angular Velocity
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("AngularVelocityOfNode2WRTNode1","rad/s", fmt::format("Node 2 angular velocity relatively to Node 1, in Node 1 reference frame in {}", GetLogFrameConvention()),
-                 [this]() {return GetAngularVelocityOfNode2WRTNode1(GetLogFrameConvention());});
-        // Node Angular Acceleration
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("AngularAccelerationOfNode2WRTNode1","m/s^2", fmt::format("Node 2 angular acceleration relatively to Node 1, in Node 1 reference frame in {}", GetLogFrameConvention()),
-                 [this]() {return GetAngularAccelerationOfNode2WRTNode1(GetLogFrameConvention());});
-
-
-        // Force
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("LinkReactionForceOnBody1","N", fmt::format("link reaction force applied at marker 1, expressed in body 1 reference frame in {}", GetLogFrameConvention()),
-                 [this]() {return GetLinkReactionForceOnBody1(GetLogFrameConvention());});
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("LinkReactionForceOnBody2","N", fmt::format("link reaction force applied at marker 2, expressed in body 2 reference frame in {}", GetLogFrameConvention()),
-                 [this]() {return GetLinkReactionForceOnBody2(GetLogFrameConvention());});
-        // Torque
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("LinkReactionTorqueOnBody1","Nm", fmt::format("link reaction torque at Node 1, expressed in Node 1 reference frame in {}", GetLogFrameConvention()),
-                 [this]() {return GetLinkReactionTorqueOnNode1(GetLogFrameConvention());});
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("LinkReactionTorqueOnBody2","Nm", fmt::format("link reaction torque at Node 2, expressed in Node 2 reference frame in {}", GetLogFrameConvention()),
-                 [this]() {return GetLinkReactionTorqueOnNode2(GetLogFrameConvention());});
-
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("LinkReactionTorqueOnBody1AtCOG","Nm", fmt::format("link reaction torque at CoG applied at marker 1, expressed in body 1 reference frame in {}", GetLogFrameConvention()),
-                 [this]() {return GetLinkReactionTorqueOnBody1AtCOG(GetLogFrameConvention());});
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("LinkReactionTorqueOnBody2AtCOG","Nm", fmt::format("link reaction torque at CoG applied at marker 2, expressed in body 2 reference frame in {}", GetLogFrameConvention()),
-                 [this]() {return GetLinkReactionTorqueOnBody2AtCOG(GetLogFrameConvention());});
-
-        // Power
-        m_message->AddField<double>
-                ("LinkPower","kW", "power delivered in a FrLink", [this]() {return 0.001*GetLinkPower();});
-
-        // Motor
-        if (m_actuator) {
-            m_message->AddField<double>
-                    ("MotorPower","kW", "power delivered by the motor", [this]() {return m_actuator->GetMotorPower();});
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                    ("MotorForceInBody1","N", fmt::format("Force applied by the motor on body 1, in body 1 reference frame {}", GetLogFrameConvention()),
-                     [this]() {return m_actuator->GetMotorForceInBody1(GetLogFrameConvention());});
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                    ("MotorForceInBody2","N", fmt::format("Force applied by the motor on body 1, in body 2 reference frame {}", GetLogFrameConvention()),
-                     [this]() {return m_actuator->GetMotorForceInBody2(GetLogFrameConvention());});
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                    ("MotorTorqueInBody1(","Nm", fmt::format("Torque applied by the motor on body 1, in body 1 reference frame {}", GetLogFrameConvention()),
-                     [this]() {return m_actuator->GetMotorTorqueInBody1(GetLogFrameConvention());});
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                    ("MotorTorqueInBody2(","Nm", fmt::format("Torque applied by the motor on body 2, in body 2 reference frame {}", GetLogFrameConvention()),
-                     [this]() {return m_actuator->GetMotorTorqueInBody2(GetLogFrameConvention());});
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                    ("MotorTorqueAtCOGInBody1(","Nm", fmt::format("Torque applied by the motor at COG on body 1, in body 1 reference frame {}", GetLogFrameConvention()),
-                     [this]() {return m_actuator->GetMotorTorqueAtCOGInBody1(GetLogFrameConvention());});
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                    ("MotorTorqueAtCOGInBody2(","Nm", fmt::format("Torque applied by the motor at COG on body 2, in body 2 reference frame {}", GetLogFrameConvention()),
-                     [this]() {return m_actuator->GetMotorTorqueAtCOGInBody2(GetLogFrameConvention());});
-
-        }
+//        m_message->AddField<double>("time", "s", "Current time of the simulation",
+//                                    [this]() { return m_system->GetTime(); });
+//
+//        // Node Position
+//        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                ("PositionOfNode2WRTNode1","m", fmt::format("Node 2 position relatively to Node 1, in Node 1 reference frame in {}", GetLogFrameConvention()),
+//                 [this]() {return GetNode2PositionWRTNode1(GetLogFrameConvention());});
+//        // Node Velocity
+//        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                ("VelocityOfNode2WRTNode1","m/s", fmt::format("Node 2 velocity relatively to Node 1, in Node 1 reference frame in {}", GetLogFrameConvention()),
+//                 [this]() {return GetVelocityOfNode2WRTNode1(GetLogFrameConvention());});
+//        // Node Acceleration
+//        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                ("AccelerationOfNode2WRTNode1","m/s^2", fmt::format("Node 2 acceleration relatively to Node 1, in Marker 1 reference frame in {}", GetLogFrameConvention()),
+//                 [this]() {return GetAccelerationOfNode2WRTNode1(GetLogFrameConvention());});
+//
+//        // Node Orientation
+//        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                ("OrientationOfNode2WRTNode1","rad", fmt::format("Node 2 orientation relatively to Node 1, in Node 1 reference frame in {}", GetLogFrameConvention()),
+//                 [this]() {double phi, theta, psi; GetNode2OrientationWRTNode1().GetCardanAngles_RADIANS(phi, theta, psi, GetLogFrameConvention());
+//                    return Position(phi, theta, psi);});
+//        // Node Angular Velocity
+//        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                ("AngularVelocityOfNode2WRTNode1","rad/s", fmt::format("Node 2 angular velocity relatively to Node 1, in Node 1 reference frame in {}", GetLogFrameConvention()),
+//                 [this]() {return GetAngularVelocityOfNode2WRTNode1(GetLogFrameConvention());});
+//        // Node Angular Acceleration
+//        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                ("AngularAccelerationOfNode2WRTNode1","m/s^2", fmt::format("Node 2 angular acceleration relatively to Node 1, in Node 1 reference frame in {}", GetLogFrameConvention()),
+//                 [this]() {return GetAngularAccelerationOfNode2WRTNode1(GetLogFrameConvention());});
+//
+//
+//        // Force
+//        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                ("LinkReactionForceOnBody1","N", fmt::format("link reaction force applied at marker 1, expressed in body 1 reference frame in {}", GetLogFrameConvention()),
+//                 [this]() {return GetLinkReactionForceOnBody1(GetLogFrameConvention());});
+//        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                ("LinkReactionForceOnBody2","N", fmt::format("link reaction force applied at marker 2, expressed in body 2 reference frame in {}", GetLogFrameConvention()),
+//                 [this]() {return GetLinkReactionForceOnBody2(GetLogFrameConvention());});
+//        // Torque
+//        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                ("LinkReactionTorqueOnBody1","Nm", fmt::format("link reaction torque at Node 1, expressed in Node 1 reference frame in {}", GetLogFrameConvention()),
+//                 [this]() {return GetLinkReactionTorqueOnNode1(GetLogFrameConvention());});
+//        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                ("LinkReactionTorqueOnBody2","Nm", fmt::format("link reaction torque at Node 2, expressed in Node 2 reference frame in {}", GetLogFrameConvention()),
+//                 [this]() {return GetLinkReactionTorqueOnNode2(GetLogFrameConvention());});
+//
+//        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                ("LinkReactionTorqueOnBody1AtCOG","Nm", fmt::format("link reaction torque at CoG applied at marker 1, expressed in body 1 reference frame in {}", GetLogFrameConvention()),
+//                 [this]() {return GetLinkReactionTorqueOnBody1AtCOG(GetLogFrameConvention());});
+//        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                ("LinkReactionTorqueOnBody2AtCOG","Nm", fmt::format("link reaction torque at CoG applied at marker 2, expressed in body 2 reference frame in {}", GetLogFrameConvention()),
+//                 [this]() {return GetLinkReactionTorqueOnBody2AtCOG(GetLogFrameConvention());});
+//
+//        // Power
+//        m_message->AddField<double>
+//                ("LinkPower","kW", "power delivered in a FrLink", [this]() {return 0.001*GetLinkPower();});
+//
+//        // Motor
+//        if (m_actuator) {
+//            m_message->AddField<double>
+//                    ("MotorPower","kW", "power delivered by the motor", [this]() {return m_actuator->GetMotorPower();});
+//            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                    ("MotorForceInBody1","N", fmt::format("Force applied by the motor on body 1, in body 1 reference frame {}", GetLogFrameConvention()),
+//                     [this]() {return m_actuator->GetMotorForceInBody1(GetLogFrameConvention());});
+//            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                    ("MotorForceInBody2","N", fmt::format("Force applied by the motor on body 1, in body 2 reference frame {}", GetLogFrameConvention()),
+//                     [this]() {return m_actuator->GetMotorForceInBody2(GetLogFrameConvention());});
+//            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                    ("MotorTorqueInBody1(","Nm", fmt::format("Torque applied by the motor on body 1, in body 1 reference frame {}", GetLogFrameConvention()),
+//                     [this]() {return m_actuator->GetMotorTorqueInBody1(GetLogFrameConvention());});
+//            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                    ("MotorTorqueInBody2(","Nm", fmt::format("Torque applied by the motor on body 2, in body 2 reference frame {}", GetLogFrameConvention()),
+//                     [this]() {return m_actuator->GetMotorTorqueInBody2(GetLogFrameConvention());});
+//            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                    ("MotorTorqueAtCOGInBody1(","Nm", fmt::format("Torque applied by the motor at COG on body 1, in body 1 reference frame {}", GetLogFrameConvention()),
+//                     [this]() {return m_actuator->GetMotorTorqueAtCOGInBody1(GetLogFrameConvention());});
+//            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                    ("MotorTorqueAtCOGInBody2(","Nm", fmt::format("Torque applied by the motor at COG on body 2, in body 2 reference frame {}", GetLogFrameConvention()),
+//                     [this]() {return m_actuator->GetMotorTorqueAtCOGInBody2(GetLogFrameConvention());});
+//
+//        }
 
     }
 

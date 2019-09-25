@@ -85,7 +85,8 @@ namespace frydom {
     class FrEnvironment;
     class FrCable;
     class FrDynamicCable;
-    class FrPathManager;
+//    class FrPathManager;
+    class FrLogManager;
 
     /// Main class for a FRyDoM offshore system. This class is used to represent a multibody physical system,
     /// so it acts also as a database for most items involved in simulations, most noticeably objects of FrBody and FrLink
@@ -236,6 +237,7 @@ namespace frydom {
 
         // Logs
 //        std::unique_ptr<FrPathManager> m_pathManager;
+        std::unique_ptr<FrLogManager> m_LogManager;
 
 
     public:

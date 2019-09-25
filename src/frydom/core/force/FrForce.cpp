@@ -13,9 +13,9 @@
 
 #include "frydom/asset/FrForceAsset.h"
 
-#include "frydom/IO/FrPathManager.h"
-
-#include "frydom/utils/FrSerializerFactory.h"
+//#include "frydom/IO/FrPathManager.h"
+//
+//#include "frydom/utils/FrSerializerFactory.h"
 
 
 namespace frydom{
@@ -76,8 +76,8 @@ namespace frydom{
     FrForce::FrForce() {
 
         m_chronoForce = std::make_shared<internal::FrForceBase>(this);
-        SetLogged(true);
-        
+//        SetLogged(true);
+
     }
 
     void FrForce::Initialize() {
@@ -100,29 +100,29 @@ namespace frydom{
 
     void FrForce::AddFields() {
 
-        if (IsLogged()) {
-
-            // Add the fields to be logged
-            m_message->AddField<double>("time", "s", "Current time of the simulation",
-                                        [this]() { return m_chronoForce->GetChTime(); });
-
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("ForceInBody","N", fmt::format("force in body reference frame in {}", GetLogFrameConvention()),
-                    [this]() {return GetForceInBody(GetLogFrameConvention());});
-
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("TorqueInBodyAtCOG","Nm", fmt::format("torque at COG in body reference frame in {}", GetLogFrameConvention()),
-                    [this]() {return GetTorqueInBodyAtCOG(GetLogFrameConvention());});
-
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("ForceInWorld","N", fmt::format("force in world reference frame in {}", GetLogFrameConvention()),
-                    [this]() {return GetForceInWorld(GetLogFrameConvention());});
-
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("TorqueInWorldAtCOG","Nm", fmt::format("torque at COG in world reference frame in {}", GetLogFrameConvention()),
-                    [this]() {return GetTorqueInWorldAtCOG(GetLogFrameConvention());});
-
-        }
+//        if (IsLogged()) {
+//
+//            // Add the fields to be logged
+//            m_message->AddField<double>("time", "s", "Current time of the simulation",
+//                                        [this]() { return m_chronoForce->GetChTime(); });
+//
+//            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//            ("ForceInBody","N", fmt::format("force in body reference frame in {}", GetLogFrameConvention()),
+//                    [this]() {return GetForceInBody(GetLogFrameConvention());});
+//
+//            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//            ("TorqueInBodyAtCOG","Nm", fmt::format("torque at COG in body reference frame in {}", GetLogFrameConvention()),
+//                    [this]() {return GetTorqueInBodyAtCOG(GetLogFrameConvention());});
+//
+//            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//            ("ForceInWorld","N", fmt::format("force in world reference frame in {}", GetLogFrameConvention()),
+//                    [this]() {return GetForceInWorld(GetLogFrameConvention());});
+//
+//            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//            ("TorqueInWorldAtCOG","Nm", fmt::format("torque at COG in world reference frame in {}", GetLogFrameConvention()),
+//                    [this]() {return GetTorqueInWorldAtCOG(GetLogFrameConvention());});
+//
+//        }
     }
 
 
@@ -442,14 +442,14 @@ namespace frydom{
 
     std::string FrForce::BuildPath(const std::string &rootPath) {
 
-        auto objPath = fmt::format("{}/Forces", rootPath);
-
-        auto logPath = GetPathManager()->BuildPath(objPath, fmt::format("{}_{}.csv", GetTypeName(), GetShortenUUID()));
-
-        // Add a serializer
-        m_message->AddSerializer(FrSerializerFactory::instance().Create(this, logPath));
-
-        return objPath;
+//        auto objPath = fmt::format("{}/Forces", rootPath);
+//
+//        auto logPath = GetPathManager()->BuildPath(objPath, fmt::format("{}_{}.csv", GetTypeName(), GetShortenUUID()));
+//
+//        // Add a serializer
+//        m_message->AddSerializer(FrSerializerFactory::instance().Create(this, logPath));
+//
+//        return objPath;
 
     }
 
