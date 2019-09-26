@@ -37,7 +37,7 @@ namespace frydom {
     double m_caa;  ///< air resistance coefficient
     double m_capp; ///< appendage resistance coefficient
 
-    FrEnvironment *m_environment;
+    FrEnvironment *m_environment; // FIXME : pourquoi ce pointeur vers environnment, on peut l'avoir depuis body->system !!!
 
    public:
 

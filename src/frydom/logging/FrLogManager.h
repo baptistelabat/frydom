@@ -8,6 +8,8 @@
 
 #include <string>
 
+#include "frydom/core/common/FrObject.h"
+
 namespace frydom {
 
     class FrLogManager {

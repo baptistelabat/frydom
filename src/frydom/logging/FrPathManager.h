@@ -28,8 +28,6 @@ namespace frydom {
   /*
    * TODO : mettre m_system dans FrObject !!!
    * TODO : avoir une methode GetParent dans FrObject (abstraite)
-   *
-   *
    */
 
 
@@ -57,69 +55,69 @@ namespace frydom {
 
 
 
-    //Forward declaration
-    class FrObject;
-    class FrBody;
-    class FrOffshoreSystem;
-    class FrForce;
-    class FrNode;
-    class FrPhysicsItem;
-    class FrLinkBase;
-    class FrStaticAnalysis;
-    class FrFEAMesh;
+  //Forward declaration  // FIXME : il n'y a aucune raison pour laquelle FrPathManager devrait connaitre quoique ce soit des classes de FRyDoM, seulement une interface (FrLoggable)
+//    class FrObject;
+//    class FrBody;
+  class FrOffshoreSystem;
+//    class FrForce;
+//    class FrNode;
+//    class FrPhysicsItem;
+//    class FrLinkBase;
+//    class FrStaticAnalysis;
+//    class FrFEAMesh;
 
-    class FrPathManager_ {
-    private:
+  class FrPathManager_ {
+   private:
 
-        FRAME_CONVENTION m_logFrameConvention;
+    FRAME_CONVENTION m_logFrameConvention;
 
-        cppfs::FilePath m_outputPath;
-        cppfs::FilePath m_projectPath;
-        cppfs::FilePath m_runPath;
-        cppfs::FilePath m_resourcesPath;
+    cppfs::FilePath m_outputPath; // TODO : tous ces path doivent etre geres par le FrLogManager
+    cppfs::FilePath m_projectPath;
+    cppfs::FilePath m_runPath;
+    cppfs::FilePath m_resourcesPath;
 
-    public:
+   public:
 
-        /// Constructor for a log manager service
-        explicit FrPathManager_();
-
-
-        /// Set the frame convention for the logs
-        /// \param fc frame convention (NED/NWU)
-        void SetLogFrameConvention(FRAME_CONVENTION fc);
-
-        /// Get the frame convention for the logs
-        /// \return frame convention (NED/NWU)
-        FRAME_CONVENTION GetLogFrameConvention() const;
-
-        /// Set the path for the output directory, containing all log files
-        /// \param path path for the output directory
-        void SetLogOutputPath(std::string path);
-
-        /// Get the path for the output directory, containing all log files
-        /// \return path for the output directory
-        std::string GetLogOutputPath() const;
-
-        void SetRunPath(std::string relPath);
-
-        std::string GetRunPath() const;
+    /// Constructor for a log manager service
+    explicit FrPathManager_();
 
 
-        ///Initialize the log manager serice
-        void Initialize(FrOffshoreSystem* system);
+    /// Set the frame convention for the logs
+    /// \param fc frame convention (NED/NWU)
+    void SetLogFrameConvention(FRAME_CONVENTION fc);
 
-        std::string BuildPath(const std::string& rootPath, const std::string& relPath) const;
+    /// Get the frame convention for the logs
+    /// \return frame convention (NED/NWU)
+    FRAME_CONVENTION GetLogFrameConvention() const;
 
-        std::string BuildPath(const std::string& absPath) const;
+    /// Set the path for the output directory, containing all log files
+    /// \param path path for the output directory
+    void SetLogOutputPath(std::string path);
 
-        void SetResourcesPath(std::string absPath);
+    /// Get the path for the output directory, containing all log files
+    /// \return path for the output directory
+    std::string GetLogOutputPath() const;
 
-        std::string GetDataPath(const std::string& relPath) const;
+    void SetRunPath(std::string relPath);
 
-    private:
-        /// Read the config file
-        void ReadConfig();
-    };
+    std::string GetRunPath() const;
+
+
+    ///Initialize the log manager serice
+    void Initialize(FrOffshoreSystem *system);
+
+    std::string BuildPath(const std::string &rootPath, const std::string &relPath) const;
+
+    std::string BuildPath(const std::string &absPath) const;
+
+    void SetResourcesPath(std::string absPath);
+
+    std::string GetDataPath(const std::string &relPath) const;
+
+   private:
+    /// Read the config file
+    void ReadConfig();
+  };
 
 } // end namespace frydom
 

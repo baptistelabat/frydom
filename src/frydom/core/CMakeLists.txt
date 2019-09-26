@@ -15,6 +15,7 @@ list(APPEND SRC_FILES
 
 # COMMON
 list(APPEND SRC_FILES
+        common/FrTreeNode.cpp
         common/FrException.cpp
         common/FrFrame.cpp
         common/FrNode.cpp
