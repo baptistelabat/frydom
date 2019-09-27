@@ -38,6 +38,10 @@ namespace frydom {
 
             void Update(double time, bool update_assets) override;
 
+            void RemoveAsset(std::shared_ptr<chrono::ChAsset> asset);
+
+            void RemoveIrrNodeAsset();
+
             friend class FrPhysicsItem_;
 
         };

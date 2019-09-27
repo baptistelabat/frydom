@@ -14,6 +14,7 @@
 
 #include "chrono/assets/ChTriangleMeshShape.h"
 #include "chrono/assets/ChColorAsset.h"
+#include "chrono_irrlicht/ChIrrNodeAsset.h"
 
 #include "frydom/asset/FrAsset.h"
 #include "frydom/mesh/FrTriangleMeshConnected.h"
@@ -31,6 +32,34 @@ namespace frydom {
         void FrPhysicsItemBase::Update(double time, bool update_assets) {
             m_frydomPhysicsItem->Update(time);
             ChPhysicsItem::Update(time, update_assets);
+        }
+
+        void FrPhysicsItemBase::RemoveAsset(std::shared_ptr<chrono::ChAsset> asset) {
+            assert(std::find<std::vector<std::shared_ptr<chrono::ChAsset>>::iterator>(assets.begin(), assets.end(),
+                    asset) != assets.end());
+
+            auto it = std::find(assets.begin(), assets.end(), asset);
+            if (it != assets.end())
+                assets.erase(it);
+
+            RemoveIrrNodeAsset();
+        }
+
+        void FrPhysicsItemBase::RemoveIrrNodeAsset() {
+
+            std::shared_ptr<chrono::irrlicht::ChIrrNodeAsset> myirrasset;
+
+            for (unsigned int k = 0; k < assets.size(); k++) {
+                std::shared_ptr<chrono::ChAsset> k_asset = assets[k];
+                myirrasset = std::dynamic_pointer_cast<chrono::irrlicht::ChIrrNodeAsset>(k_asset);
+            }
+
+            if (myirrasset) {
+                auto it = std::find(assets.begin(), assets.end(), myirrasset);
+                if (it != assets.end())
+                    assets.erase(it);
+            }
+
         }
 
     }  // end namespace frydom::internal

@@ -70,6 +70,16 @@ namespace frydom{
         GetChronoItem_ptr()->GetAssets().clear();
     }
 
+    void FrAssetOwner::RemoveAsset(std::shared_ptr<FrAsset> asset) {
+
+        assert(std::find<std::vector<std::shared_ptr<FrAsset>>::iterator>(m_assets.begin(), m_assets.end(), asset) !=
+                m_assets.end());
+
+        m_assets.erase(std::find<std::vector<std::shared_ptr<FrAsset>>::iterator>(m_assets.begin(), m_assets.end(), asset));
+
+        RemoveChronoAsset(asset->GetChronoAsset());
+    }
+
     FrAssetOwner::BoxShapeConstContainer FrAssetOwner::GetBoxShapes() const {
         FrAssetOwner::BoxShapeConstContainer result;
         for (const auto& shape : m_boxShapes) {

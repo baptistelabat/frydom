@@ -95,12 +95,14 @@ namespace frydom {
 
     void FrIrrApp::Run(double endTime) {
 
-        AssetBindAll();
-        AssetUpdateAll();
-
         // Temporal loop.
         while (GetDevice()->run()) {
+
             std::cout << "Time : " << m_system->GetTime() << std::endl;
+
+            AssetBindAll();
+            AssetUpdateAll();
+
             BeginScene();
             DrawAll();
             // Time-stepping.
@@ -109,7 +111,6 @@ namespace frydom {
 
             // Condition to stop the time-domain simulation using the time after time-stepping.
             if (endTime > 0. && m_system->GetTime() > endTime) break; // If the endTime given is negative or null, the loop is infinite :)
-
 
         }
 
