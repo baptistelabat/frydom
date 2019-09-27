@@ -171,6 +171,11 @@ namespace frydom {
       /// Default constructor
       FrBody(const std::string& name);
 
+      ~FrBody() {
+        std::cout << "deallocate body" << std::endl;
+
+      }
+
       /// Get the FrOffshoreSystem where the body has been registered
       FrOffshoreSystem *GetSystem() const;
 

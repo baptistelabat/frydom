@@ -8,7 +8,7 @@
 namespace frydom {
 
 
-    FrLogManager::FrLogManager() : m_log_folder(InitializeLogFolder()){
+    FrLogManager::FrLogManager() : m_log_folder(InitializeLogFolder()) {
     }
 
     FrLogManager::FrLogManager(const std::string&& log_folder) : FrLogManager() {
@@ -35,6 +35,11 @@ namespace frydom {
        *
        */
 
+
+
+
+
+      return ".";
 
     }
 

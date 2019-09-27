@@ -14,6 +14,8 @@ namespace frydom {
 
    protected:
 
+    ~FrTreeNode() = default;
+
     void SetParent(ParentType* parent);
 
     ParentType* GetParent() const;
@@ -23,7 +25,8 @@ namespace frydom {
 
   };
 
-}  // end namespace frydomœ
+}  // end namespace frydom
 
+#include "FrTreeNode.cpp"
 
 #endif //FRYDOM_FRTREENODE_H

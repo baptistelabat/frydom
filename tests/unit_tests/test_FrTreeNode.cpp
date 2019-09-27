@@ -6,18 +6,20 @@
 
 
 
-void str(const std::string& s) {
-
-  std::cout << s << std::endl;
-}
+//void str(const std::string& s) {
+//
+//  std::cout << s << std::endl;
+//}
+using namespace frydom;
 
 int main() {
 
-  std::string a("str1");
-
-  str(a);
-
-  str("st2");
+  FrOffshoreSystem system;
+//  std::string a("str1");
+//
+//  str(a);
+//
+//  str("st2");
 
 
 

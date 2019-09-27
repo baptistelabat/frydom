@@ -24,6 +24,8 @@ namespace frydom {
 
       explicit FrLoggable(const std::string &name);
 
+      ~FrLoggable() = default;
+
       const std::string& GetName() const;
 
 //    /// Check if the object is logged
@@ -85,5 +87,7 @@ namespace frydom {
 
 
 }  // end namespace frydom
+
+#include "FrLoggable.cpp"
 
 #endif //FRYDOM_FRLOGGABLE_H
