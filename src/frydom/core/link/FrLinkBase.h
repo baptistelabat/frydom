@@ -49,8 +49,6 @@ namespace frydom {
 
      protected:
 
-      FrOffshoreSystem *m_system;     ///< pointer to the system containing this physics item
-
       std::shared_ptr<FrNode> m_node1;   ///< the node on body 1 of the link
       std::shared_ptr<FrNode> m_node2;   ///< the node on body 2 of the link
 
@@ -60,7 +58,9 @@ namespace frydom {
 
       /// Get the pointer to the system containing this linkbase item
       /// \return Pointer to the system containing this linkbase item
-      FrOffshoreSystem *GetSystem();
+      inline FrOffshoreSystem *GetSystem() const {
+        return GetParent();
+      }
 
       /// Tells if all constraints of this link are currently turned on or off by the user.
       virtual bool IsDisabled() const = 0;

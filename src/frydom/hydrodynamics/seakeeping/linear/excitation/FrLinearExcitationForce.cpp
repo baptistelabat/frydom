@@ -20,7 +20,7 @@ namespace frydom {
 
     Eigen::MatrixXcd FrLinearExcitationForce::GetHDBData(unsigned int iangle) const {
 
-      auto BEMBody = m_HDB->GetBody(m_body);
+      auto BEMBody = m_HDB->GetBody(GetBody());
 
       return BEMBody->GetExcitation(iangle);
 
@@ -28,7 +28,7 @@ namespace frydom {
 
     Eigen::VectorXcd FrLinearExcitationForce::GetHDBData(unsigned int iangle, unsigned int iforce) const {
 
-      auto BEMBody = m_HDB->GetBody(m_body);
+      auto BEMBody = m_HDB->GetBody(GetBody());
 
       return BEMBody->GetExcitation(iangle, iforce);
 

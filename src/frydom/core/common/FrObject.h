@@ -150,10 +150,6 @@ namespace frydom {
       /// This function is called at the end of the time step, after the last step of the integration scheme.
       virtual void StepFinalize();
 
-
-     protected:
-      FrOffshoreSystem *m_system;
-
     };
 
 }  // end namespace frydom

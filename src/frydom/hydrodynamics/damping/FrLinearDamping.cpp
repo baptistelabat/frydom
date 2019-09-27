@@ -19,7 +19,7 @@
 
 namespace frydom {
 
-    FrLinearDamping::FrLinearDamping(const std::string& name,
+    FrLinearDamping::FrLinearDamping(const std::string &name,
                                      FLUID_TYPE ft,
                                      bool relativeToFluid) :
         FrForce(name), m_fluidType(ft), m_relativeToFluid(relativeToFluid) {
@@ -63,18 +63,20 @@ namespace frydom {
 
     void FrLinearDamping::Compute(double time) {
 
+      auto body = GetBody();
+
       // Body Velocity at COG in body coordinates
       Velocity cogRelVel;
       if (m_relativeToFluid) {
-        FrFrame cogFrame = m_body->GetFrameAtCOG(NWU);
-        cogRelVel = -m_body->GetSystem()->GetEnvironment()->GetRelativeVelocityInFrame(
-            cogFrame, m_body->GetCOGLinearVelocityInWorld(NWU), m_fluidType, NWU);
+        FrFrame cogFrame = body->GetFrameAtCOG(NWU);
+        cogRelVel = -body->GetSystem()->GetEnvironment()->GetRelativeVelocityInFrame(
+            cogFrame, body->GetCOGLinearVelocityInWorld(NWU), m_fluidType, NWU);
 
       } else {
-        cogRelVel = m_body->GetCOGVelocityInBody(NWU);
+        cogRelVel = body->GetCOGVelocityInBody(NWU);
       }
 
-      AngularVelocity rotVel = m_body->GetAngularVelocityInBody(NWU);
+      AngularVelocity rotVel = body->GetAngularVelocityInBody(NWU);
 
       GeneralizedVelocity genRelVel(cogRelVel, rotVel);
 
@@ -101,7 +103,7 @@ namespace frydom {
     }
 
     std::shared_ptr<FrLinearDamping>
-    make_linear_damping_force(const std::string& name,
+    make_linear_damping_force(const std::string &name,
                               std::shared_ptr<FrBody> body,
                               FLUID_TYPE ft,
                               bool relativeToFluid) {

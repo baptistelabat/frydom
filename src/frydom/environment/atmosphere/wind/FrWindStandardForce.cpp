@@ -20,7 +20,7 @@
 
 namespace frydom {
 
-    FrWindStandardForce::FrWindStandardForce(const std::string& name) : FrForce(name) {}
+    FrWindStandardForce::FrWindStandardForce(const std::string &name) : FrForce(name) {}
 
     void FrWindStandardForce::SetLateralArea(double lateralArea) {
       assert(lateralArea > FLT_EPSILON);
@@ -53,15 +53,19 @@ namespace frydom {
       Force force;
       Torque torque;
 
-      auto rho = GetSystem()->GetEnvironment()->GetAtmosphere()->GetDensity();
+      auto body = GetBody();
+      auto environment = body->GetSystem()->GetEnvironment();
 
-      FrFrame FrameAtCOG = m_body->GetFrameAtCOG(NWU);
+      auto rho = environment->GetAtmosphere()->GetDensity();
 
-      auto bodyVelocity = m_body->GetLinearVelocityInWorld(NWU);
+      FrFrame FrameAtCOG = body->GetFrameAtCOG(NWU);
+
+      auto bodyVelocity = body->GetLinearVelocityInWorld(NWU);
       bodyVelocity.z() = 0.;
 
-      Velocity fluxVelocityInBody = m_body->GetSystem()->GetEnvironment()->GetAtmosphere()->GetWind()
-          ->GetRelativeVelocityInFrame(FrameAtCOG, bodyVelocity, NWU);
+      Velocity fluxVelocityInBody = environment->GetAtmosphere()->GetWind()->GetRelativeVelocityInFrame(FrameAtCOG,
+                                                                                                        bodyVelocity,
+                                                                                                        NWU);
 
       fluxVelocityInBody = internal::SwapFrameConvention(fluxVelocityInBody);
       fluxVelocityInBody = -fluxVelocityInBody;   // Swap convention GOTO/COMEFROM;
@@ -83,9 +87,9 @@ namespace frydom {
 
       // Build the projected rotation in the XoY plane.
       double phi, theta, psi;
-      m_body->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
+      body->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
       auto bodyRotation = FrRotation(Direction(0., 0., 1.), psi, NWU);
-      auto frame = FrFrame(m_body->GetCOGPositionInWorld(NWU), bodyRotation, NWU);
+      auto frame = FrFrame(body->GetCOGPositionInWorld(NWU), bodyRotation, NWU);
 
       auto worldForce = frame.ProjectVectorFrameInParent(force, NWU);
       auto worldTorque = frame.ProjectVectorFrameInParent(torque, NWU);

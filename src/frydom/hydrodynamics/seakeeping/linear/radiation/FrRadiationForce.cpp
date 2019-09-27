@@ -110,8 +110,10 @@ namespace frydom {
 
     void FrRadiationConvolutionForce::Compute(double time) {
 
-      auto force = m_radiationModel->GetRadiationForce(m_body);
-      auto torque = m_radiationModel->GetRadiationTorque(m_body);
+      auto body = GetBody();
+
+      auto force = m_radiationModel->GetRadiationForce(body);
+      auto torque = m_radiationModel->GetRadiationTorque(body);
 
       SetForceTorqueInWorldAtCOG(force, torque, NWU);
 

@@ -151,8 +151,6 @@ namespace frydom {
 
       std::shared_ptr<internal::FrBodyBase> m_chronoBody;  ///< Embedded Chrono body Object
 
-      FrOffshoreSystem *m_system;                ///< Pointer to the FrOffshoreSystem where the body has been registered
-
       using ForceContainer = std::vector<std::shared_ptr<FrForce>>;
       ForceContainer m_externalForces;            ///< Container of the external forces acting on body
 
@@ -177,7 +175,9 @@ namespace frydom {
       }
 
       /// Get the FrOffshoreSystem where the body has been registered
-      FrOffshoreSystem *GetSystem() const;
+      inline FrOffshoreSystem *GetSystem() const {
+        GetParent();
+      }
 
       /// Make the body fixed
       /// \param state true if body is fixed, false otherwise

@@ -211,7 +211,7 @@ namespace frydom {
 
     void FrRadiationConvolutionModel::GetImpulseResponseSize(double &Te, double &dt, unsigned int &N) const {
 
-        auto timeStep = m_system->GetTimeStep();
+        auto timeStep = GetParent()->GetTimeStep();
 
         auto freqStep = m_HDB->GetStepFrequency();
 

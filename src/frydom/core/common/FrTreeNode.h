@@ -22,10 +22,11 @@ namespace frydom {
 
       ParentType *GetParent() const;
 
-     private:
+     protected:
       ParentType *m_parent;
 
          };
+
 }  // end namespace frydom
 
 #include "FrTreeNode.cpp"

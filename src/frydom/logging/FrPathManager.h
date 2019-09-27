@@ -25,12 +25,6 @@
 namespace frydom {
 
 
-  /*
-   * TODO : mettre m_system dans FrObject !!!
-   * TODO : avoir une methode GetParent dans FrObject (abstraite)
-   */
-
-
 //
 //  class FrPathManager {
 //

@@ -108,9 +108,11 @@ namespace frydom {
       auto force = Force();
       auto torque = Torque();
 
-      auto vx = m_body->GetVelocityInBody(NWU).GetVx();
-      auto vy = m_body->GetVelocityInBody(NWU).GetVy();
-      auto vrz = m_body->GetAngularVelocityInBody(NWU).GetWz();
+      auto body = GetBody();
+
+      auto vx = body->GetVelocityInBody(NWU).GetVx();
+      auto vy = body->GetVelocityInBody(NWU).GetVy();
+      auto vrz = body->GetAngularVelocityInBody(NWU).GetWz();
 
       for (auto &cx: m_cx) {
         force.GetFx() -= ForceComponent(cx, vx, vy, vrz);

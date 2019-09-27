@@ -233,7 +233,7 @@ namespace frydom {
       m_chronoSystem->AddBody(body->GetChronoBody());  // Authorized because this method is a friend of FrBody
       m_bodyList.push_back(body);
 
-      body->m_system = this;
+      body->SetParent(this);
 
     }
 
@@ -248,7 +248,7 @@ namespace frydom {
       auto it = std::find(body_begin(), body_end(), body);
       assert(it != body_end());
       m_bodyList.erase(it);
-      body->m_system = nullptr;
+      body->SetParent(nullptr);
 
     }
 
@@ -274,7 +274,7 @@ namespace frydom {
       auto it = std::find(link_begin(), link_end(), link);
       assert(it != link_end());
       m_linkList.erase(it);
-      link->m_system = nullptr;
+      link->SetParent(nullptr);
 
     }
 
@@ -290,7 +290,7 @@ namespace frydom {
 
     void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem> otherPhysics) {
       m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
-      otherPhysics->m_system = this;
+      otherPhysics->SetParent(this);
       m_PrePhysicsList.push_back(otherPhysics);
     }
 
@@ -300,7 +300,7 @@ namespace frydom {
 
     void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem> otherPhysics) {
       m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
-      otherPhysics->m_system = this;
+      otherPhysics->SetParent(this);
       m_MidPhysicsList.push_back(otherPhysics);
     }
 
@@ -310,7 +310,7 @@ namespace frydom {
 
     void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem> otherPhysics) {
       m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
-      otherPhysics->m_system = this;
+      otherPhysics->SetParent(this);
       m_PostPhysicsList.push_back(otherPhysics);
     }
 
@@ -339,8 +339,7 @@ namespace frydom {
         }
       }
 
-
-      item->m_system = nullptr;
+      item->SetParent(nullptr);
 
     }
 

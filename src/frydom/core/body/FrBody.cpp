@@ -213,10 +213,6 @@ namespace frydom {
       m_DOFMask = std::make_unique<FrDOFMask>();
     }
 
-    FrOffshoreSystem *FrBody::GetSystem() const {
-      return m_system;
-    }
-
     void FrBody::SetFixedInWorld(bool state) {
       m_chronoBody->SetBodyFixed(state);
     }
@@ -445,7 +441,7 @@ namespace frydom {
       /// This subroutine is used for adding the hydrodynamic loads.
       m_chronoBody->AddForce(force->GetChronoForce());  // FrBody is a friend class of FrForce
 
-      force->m_body = this;
+      force->SetParent(this);
       m_externalForces.push_back(force);
 
     }
@@ -472,14 +468,13 @@ namespace frydom {
 
       }
 
-
-      force->m_body = nullptr;
+      force->SetParent(nullptr);
     }
 
     void FrBody::RemoveAllForces() {
       m_chronoBody->RemoveAllForces();
       for (auto forceIter = force_begin(); forceIter != force_end(); forceIter++) {
-        (*forceIter)->m_body = nullptr;
+        (*forceIter)->SetParent(nullptr);
       }
       m_externalForces.clear();
     }
@@ -959,7 +954,7 @@ namespace frydom {
       DOFLink->SetDOFMask(m_DOFMask.get());
 
       // Adding the link to the system
-      m_system->AddLink(DOFLink);
+      GetSystem()->AddLink(DOFLink);
 
     }
 

@@ -32,16 +32,13 @@ namespace frydom {
 
     FrNode::FrNode(const std::string& name, frydom::FrBody *body) :
         FrLoggable(name),
-        m_body(body),
         m_showAsset(false) {
+
+      SetParent(body);
 
       m_chronoMarker = std::make_shared<internal::FrMarker>(this);
       body->GetChronoBody()->AddMarker(
           m_chronoMarker);  //Chrono body can be retrieved because this constructor is a friend of FrBody
-    }
-
-    FrBody *FrNode::GetBody() {
-      return m_body;
     }
 
     void FrNode::Set(const Position &position, const Direction &e1, const Direction &e2, const Direction &e3,
@@ -65,7 +62,7 @@ namespace frydom {
     FrFrame FrNode::GetFrameInBody() const {
       auto frame = GetFrameWRT_COG_InBody();
 //        frame.SetPosition(frame.GetPosition(NWU) + m_body->GetCOG(NWU), NWU);
-      frame.TranslateInParent(m_body->GetCOG(NWU),
+      frame.TranslateInParent(GetBody()->GetCOG(NWU),
                               NWU);  // TODO : comparer cette implementation a la ligne precendente...
       return frame;
     }
@@ -78,7 +75,7 @@ namespace frydom {
     }
 
     void FrNode::SetFrameInBody(const FrFrame &frameInBody) {
-      Position localPosition_WRT_COG = frameInBody.GetPosition(NWU) - m_body->GetCOG(NWU);
+      Position localPosition_WRT_COG = frameInBody.GetPosition(NWU) - GetBody()->GetCOG(NWU);
       auto chCoord = chrono::ChCoordsys<double>(
           internal::Vector3dToChVector(localPosition_WRT_COG),
           internal::Fr2ChQuaternion(frameInBody.GetQuaternion())
@@ -258,7 +255,7 @@ namespace frydom {
 
       if (m_showAsset) {
         m_asset->Initialize();
-        m_body->AddAsset(m_asset);
+        GetBody()->AddAsset(m_asset);
       }
 
     }

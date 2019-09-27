@@ -14,7 +14,7 @@
 #define FRYDOM_FRIRRAPP_H
 
 #include "chrono_irrlicht/ChIrrApp.h"
-
+#include "frydom/core/common/FrTreeNode.h"
 
 
 
@@ -29,10 +29,7 @@ namespace frydom {
      * \class FrIrrApp
      * \brief Class for Irrlicht applications (visualization).
      */
-    class FrIrrApp : public chrono::irrlicht::ChIrrApp {
-
-    private:
-        FrOffshoreSystem* m_system;
+    class FrIrrApp : public FrTreeNode<FrOffshoreSystem>, public chrono::irrlicht::ChIrrApp {
 
     public:
 

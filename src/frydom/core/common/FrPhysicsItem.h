@@ -19,6 +19,8 @@
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/core/misc/FrColors.h"
 
+#include "frydom/core/common/FrTreeNode.h"
+
 
 namespace frydom {
 
@@ -53,14 +55,14 @@ namespace frydom {
      * \class FrPhysicsItem
      * \brief Class for defining objects which are neither bodies nor links, for instance caterany lines.
      */
-    class FrPhysicsItem: public FrObject {
+    class FrPhysicsItem: public FrTreeNode<FrOffshoreSystem>, public FrObject {
 
     protected:
 
         std::shared_ptr<internal::FrPhysicsItemBase>
                 m_chronoPhysicsItem;     ///> pointer to the related chrono physics item
 
-        FrOffshoreSystem* m_system;     ///< pointer to the system containing this physics item
+//        FrOffshoreSystem* m_system;     ///< pointer to the system containing this physics item
 
         bool m_isActive = true;         ///< boolean to check if the physics item is active
                                         ///< if it's not the case, it is not updated during the simulation
@@ -104,7 +106,7 @@ namespace frydom {
      * \class FrPrePhysicsItem
      * \brief Class for defining physics items updated before bodies.
      */
-    class FrPrePhysicsItem : public FrPhysicsItem{
+    class FrPrePhysicsItem : public FrPhysicsItem {
     protected:
         friend void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem>);
     };

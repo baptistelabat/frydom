@@ -18,9 +18,14 @@
 
 namespace frydom {
 
-    FrLinkBase::FrLinkBase(const std::string& name, const std::shared_ptr<FrNode> &node1,
-                           const std::shared_ptr<FrNode> &node2, FrOffshoreSystem *system) :
-        FrLoggable(name), m_node1(node1), m_node2(node2), m_system(system) {
+    FrLinkBase::FrLinkBase(const std::string &name,
+                           const std::shared_ptr<FrNode> &node1,
+                           const std::shared_ptr<FrNode> &node2,
+                           FrOffshoreSystem *system) :
+        FrLoggable(name),
+        m_node1(node1),
+        m_node2(node2) {
+      SetParent(system);
     }
 
     std::shared_ptr<FrNode> FrLinkBase::GetNode1() {
@@ -55,9 +60,9 @@ namespace frydom {
       return GetBody2()->GetChronoBody();
     }
 
-    FrOffshoreSystem *FrLinkBase::GetSystem() {
-      return m_system;
-    }
+//    FrOffshoreSystem *FrLinkBase::GetSystem() {
+//      return m_system;
+//    }
 //
 //    FrFrame FrLinkBase::GetTransformFromFrame2ToFrame1() const {
 //        return m_node2->GetFrameInWorld().GetOtherFrameRelativeTransform_WRT_ThisFrame(m_node1->GetFrameInWorld());

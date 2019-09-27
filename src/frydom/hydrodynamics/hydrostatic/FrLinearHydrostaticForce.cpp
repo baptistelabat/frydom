@@ -40,6 +40,8 @@ namespace frydom {
 
     void FrLinearHydrostaticForce::Compute(double time) {
 
+      auto body = GetBody();
+
       // This function computes the linear hydrostatic loads.
 
       // Delta frame
@@ -60,7 +62,7 @@ namespace frydom {
       auto worldForce = Force(0., 0.,
                               forceState[0]); // Only the heave component is used from forceState, so the first one.
       // WARNING: It is assumed that the displacement is equal to the mass, which can be false.
-      worldForce.z() += m_body->GetSystem()->GetGravityAcceleration() * m_body->GetMass();
+      worldForce.z() += body->GetSystem()->GetGravityAcceleration() * body->GetMass();
       SetForceInWorldAtCOG(worldForce, NWU);
 
       // Linear hydrostatic torque: assumed in the body frame/
@@ -140,7 +142,7 @@ namespace frydom {
       hydroMesh->Update(0.);
 
       // To check the clipped mesh, uncomment the following line
-      hydroMesh->GetClippedMesh().Write("Clipped_Mesh.obj");
+//      hydroMesh->GetClippedMesh().Write("Clipped_Mesh.obj");
 
       // Compute all hydrostatics properties and files a report
       FrHydrostaticsProperties hsp(body->GetSystem()->GetEnvironment()->GetFluidDensity(WATER),

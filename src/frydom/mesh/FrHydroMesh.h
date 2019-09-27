@@ -83,7 +83,7 @@ namespace frydom {
 
     private:
 
-        FrOffshoreSystem* m_system;                     ///< reference to the offshore system
+//        FrOffshoreSystem* m_system;                     ///< reference to the offshore system  // FIXME : cette reference ne devrait pas exister !
         std::shared_ptr<FrBody> m_body;                 ///< reference to the body related to this FrHydroMesh
 
         std::unique_ptr<mesh::FrMeshClipper> m_clipper; ///< mesh clipper service

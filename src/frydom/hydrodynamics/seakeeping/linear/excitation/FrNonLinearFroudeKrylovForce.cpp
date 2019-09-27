@@ -36,14 +36,16 @@ namespace frydom {
       Force FKforce = {};
       Torque FKtorque = {};
 
+      auto body = GetBody();
+
       Position NormalPos;
 
-      auto bodyPos = m_body->GetPosition(NWU);
+      auto bodyPos = body->GetPosition(NWU);
       bodyPos.GetZ() = 0;
 
       auto clippedMesh = &(m_hydroMesh->GetClippedMesh());
 
-      auto waveField = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
+      auto waveField = body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
 
       // Loop over the faces.
       for (auto &f_iter : clippedMesh->faces()) {
@@ -74,7 +76,7 @@ namespace frydom {
 
       }
 
-      Position meshPos = m_body->GetPosition(NWU);
+      Position meshPos = body->GetPosition(NWU);
       meshPos.GetZ() = 0;
 
       SetForceTorqueInWorldAtPointInWorld(FKforce, FKtorque, meshPos, NWU);

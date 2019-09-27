@@ -21,11 +21,13 @@ namespace frydom {
 
     void FrLinearHDBForce::Initialize() {
 
+      auto body = GetBody();
+
       // Wave field.
-      auto waveField = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
+      auto waveField = body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
 
       // BEMBody.
-      auto BEMBody = m_HDB->GetBody(m_body);
+      auto BEMBody = m_HDB->GetBody(body);
 
       // Interpolation of the excitation loads with respect to the wave direction.
       BuildHDBInterpolators();
@@ -51,7 +53,7 @@ namespace frydom {
       // This function return the excitation force (linear excitation) or the diffraction force (nonlinear excitation) form the interpolator.
 
       // BEMBody.
-      auto BEMBody = m_HDB->GetBody(m_body);
+      auto BEMBody = m_HDB->GetBody(GetBody());
 
       // --> Getting sizes
 
@@ -102,7 +104,7 @@ namespace frydom {
       // This function creates the interpolator for the excitation loads (linear excitation) or the diffraction loads (nonlinear excitation) with respect to the wave frequencies and directions.
 
       // BEMBody.
-      auto BEMBody = m_HDB->GetBody(m_body);
+      auto BEMBody = m_HDB->GetBody(GetBody());
 
       auto nbWaveDirections = BEMBody->GetNbWaveDirections();
       auto nbFreq = BEMBody->GetNbFrequencies();
@@ -140,12 +142,14 @@ namespace frydom {
 
     void FrLinearHDBForce::Compute_F_HDB() {
 
+      auto body = GetBody();
+
       // This function computes the excitation loads (linear excitation) or the diffraction loads (nonlinear excitation).
 
-      auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(m_body);
+      auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(body);
 
       // Wave field structure.
-      auto waveField = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
+      auto waveField = body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
 
       // Wave elevation.
       auto complexElevations = waveField->GetComplexElevation(eqFrame->GetFrameInWorld().GetX(NWU),
@@ -153,7 +157,7 @@ namespace frydom {
                                                               NWU);
 
       // DOF.
-      auto nbMode = m_HDB->GetBody(m_body)->GetNbForceMode();
+      auto nbMode = m_HDB->GetBody(body)->GetNbForceMode();
 
       // Number of wave frequencies.
       auto nbFreq = waveField->GetWaveFrequencies(RADS).size();
@@ -180,7 +184,7 @@ namespace frydom {
 
       for (unsigned int imode = 0; imode < nbMode; ++imode) {
 
-        auto mode = m_HDB->GetBody(m_body)->GetForceMode(imode);
+        auto mode = m_HDB->GetBody(body)->GetForceMode(imode);
         Direction direction = mode->GetDirection(); // Unit vector for the force direction.
         switch (mode->GetType()) {
           case FrBEMMode::LINEAR:

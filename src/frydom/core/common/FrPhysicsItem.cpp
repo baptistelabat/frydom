@@ -42,7 +42,7 @@ namespace frydom {
     };
 
     FrOffshoreSystem* FrPhysicsItem::GetSystem() {
-        return m_system;
+        return GetParent();
     }
 
     bool FrPhysicsItem::IsActive() const {

@@ -24,89 +24,92 @@
 namespace frydom {
 
     void FrCurrentStandardForce::SetMaximumBreadth(double breadth) {
-        assert(breadth > FLT_EPSILON);
-        m_breadth = breadth;
+      assert(breadth > FLT_EPSILON);
+      m_breadth = breadth;
     }
 
     void FrCurrentStandardForce::SetDraft(double draft) {
-        assert(draft > FLT_EPSILON);
-        m_draft = draft;
+      assert(draft > FLT_EPSILON);
+      m_draft = draft;
     }
 
     void FrCurrentStandardForce::SetLateralArea(double lateralArea) {
-        assert(lateralArea > FLT_EPSILON);
-        m_lateralArea = lateralArea;
+      assert(lateralArea > FLT_EPSILON);
+      m_lateralArea = lateralArea;
     }
 
     void FrCurrentStandardForce::SetTransverseArea(double transverseArea) {
-        assert(transverseArea > FLT_EPSILON);
-        m_transverseArea = transverseArea;
+      assert(transverseArea > FLT_EPSILON);
+      m_transverseArea = transverseArea;
     }
 
     void FrCurrentStandardForce::SetXCenter(double xCenter) {
-        m_xCenter = xCenter;
+      m_xCenter = xCenter;
     }
 
     void FrCurrentStandardForce::SetLengthBetweenPerpendicular(double lpp) {
-        assert(lpp > FLT_EPSILON);
-        m_lpp = lpp;
+      assert(lpp > FLT_EPSILON);
+      m_lpp = lpp;
     }
 
     void FrCurrentStandardForce::Initialize() {
-        FrForce::Initialize();
+      FrForce::Initialize();
 
-        if (m_transverseArea < FLT_EPSILON and m_draft > FLT_EPSILON and m_breadth > FLT_EPSILON) {
-            m_transverseArea = m_draft * m_breadth;
-        }
-        if (m_lateralArea < FLT_EPSILON) throw FrException("error value lateral area");
-        if (m_transverseArea < FLT_EPSILON) throw FrException("error value transverse area");
-        if (m_lpp < FLT_EPSILON) throw  FrException("error value length between perpendicular");
+      if (m_transverseArea < FLT_EPSILON and m_draft > FLT_EPSILON and m_breadth > FLT_EPSILON) {
+        m_transverseArea = m_draft * m_breadth;
+      }
+      if (m_lateralArea < FLT_EPSILON) throw FrException("error value lateral area");
+      if (m_transverseArea < FLT_EPSILON) throw FrException("error value transverse area");
+      if (m_lpp < FLT_EPSILON) throw FrException("error value length between perpendicular");
     }
 
     void FrCurrentStandardForce::Compute(double time) {
 
-        Force force;
-        Torque torque;
+      Force force;
+      Torque torque;
 
-        auto rho = GetSystem()->GetEnvironment()->GetOcean()->GetDensity();
+      auto body = GetBody();
 
-        FrFrame FrameAtCOG = m_body->GetFrameAtCOG(NWU);
+      auto rho = body->GetSystem()->GetEnvironment()->GetOcean()->GetDensity();
 
-        auto bodyVelocity = m_body->GetLinearVelocityInWorld(NWU);
-        bodyVelocity.z() = 0.;
+      FrFrame FrameAtCOG = body->GetFrameAtCOG(NWU);
 
-        Velocity fluxVelocityInBody =
-                m_body->GetSystem()->GetEnvironment()->GetOcean()->GetCurrent()->GetRelativeVelocityInFrame(FrameAtCOG, bodyVelocity, NWU);
+      auto bodyVelocity = body->GetLinearVelocityInWorld(NWU);
+      bodyVelocity.z() = 0.;
 
-        fluxVelocityInBody = internal::SwapFrameConvention(fluxVelocityInBody);
-        fluxVelocityInBody = -fluxVelocityInBody;       // Swap convention GOTO/COMEFROM
+      Velocity fluxVelocityInBody =
+          body->GetSystem()->GetEnvironment()->GetOcean()->GetCurrent()->GetRelativeVelocityInFrame(FrameAtCOG,
+                                                                                                    bodyVelocity, NWU);
 
-        double alpha = fluxVelocityInBody.GetProjectedAngleAroundZ(RAD);
-        alpha = Normalize_0_2PI(alpha);
+      fluxVelocityInBody = internal::SwapFrameConvention(fluxVelocityInBody);
+      fluxVelocityInBody = -fluxVelocityInBody;       // Swap convention GOTO/COMEFROM
 
-        auto ak = 0.5 * rho * fluxVelocityInBody.squaredNorm();
+      double alpha = fluxVelocityInBody.GetProjectedAngleAroundZ(RAD);
+      alpha = Normalize_0_2PI(alpha);
 
-        force.x() = -0.07 * ak * m_transverseArea * cos(alpha);
-        force.y() = 0.6 * ak * m_lateralArea * sin(alpha);
-        force.z() = 0.;
+      auto ak = 0.5 * rho * fluxVelocityInBody.squaredNorm();
 
-        if (alpha > M_PI) alpha = 2.*M_PI - alpha;
-        auto m1 = std::min(0.4 * (1. - 2.* alpha / M_PI), 0.25);
-        auto m2 = std::max(m1, -0.2);
-        torque.x() = 0.;
-        torque.y() = 0.;
-        torque.z() = force.y() * m2 * m_lpp;
+      force.x() = -0.07 * ak * m_transverseArea * cos(alpha);
+      force.y() = 0.6 * ak * m_lateralArea * sin(alpha);
+      force.z() = 0.;
 
-        // Build the projected rotation in the XoY plane.
-        double phi, theta, psi;
-        m_body->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
-        auto bodyRotation = FrRotation(Direction(0.,0.,1.), psi, NWU);
-        auto frame = FrFrame(m_body->GetCOGPositionInWorld(NWU), bodyRotation, NWU);
+      if (alpha > M_PI) alpha = 2. * M_PI - alpha;
+      auto m1 = std::min(0.4 * (1. - 2. * alpha / M_PI), 0.25);
+      auto m2 = std::max(m1, -0.2);
+      torque.x() = 0.;
+      torque.y() = 0.;
+      torque.z() = force.y() * m2 * m_lpp;
 
-        auto worldForce = frame.ProjectVectorFrameInParent(force, NWU);
-        auto worldTorque = frame.ProjectVectorFrameInParent(torque, NWU);
+      // Build the projected rotation in the XoY plane.
+      double phi, theta, psi;
+      body->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
+      auto bodyRotation = FrRotation(Direction(0., 0., 1.), psi, NWU);
+      auto frame = FrFrame(body->GetCOGPositionInWorld(NWU), bodyRotation, NWU);
 
-        SetForceTorqueInWorldAtPointInBody(worldForce, worldTorque, Position(m_xCenter, 0., 0.), NWU);
+      auto worldForce = frame.ProjectVectorFrameInParent(force, NWU);
+      auto worldTorque = frame.ProjectVectorFrameInParent(torque, NWU);
+
+      SetForceTorqueInWorldAtPointInBody(worldForce, worldTorque, Position(m_xCenter, 0., 0.), NWU);
     }
 
 

@@ -21,7 +21,7 @@ namespace frydom {
 
     Eigen::MatrixXcd FrLinearFroudeKrylovForce::GetHDBData(unsigned int iangle) const {
 
-      auto BEMBody = m_HDB->GetBody(m_body);
+      auto BEMBody = m_HDB->GetBody(GetBody());
 
       return BEMBody->GetFroudeKrylov(iangle);
 
@@ -29,7 +29,7 @@ namespace frydom {
 
     Eigen::VectorXcd FrLinearFroudeKrylovForce::GetHDBData(unsigned int iangle, unsigned int iforce) const {
 
-      auto BEMBody = m_HDB->GetBody(m_body);
+      auto BEMBody = m_HDB->GetBody(GetBody());
 
       return BEMBody->GetFroudeKrylov(iangle, iforce);
 

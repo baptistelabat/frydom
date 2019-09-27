@@ -21,9 +21,10 @@ namespace frydom {
 
 
     void FrMooringBuoy::FrSphereNonLinearHydrostaticForce::Compute(double time) {
-      auto m_buoy = dynamic_cast<FrMooringBuoy *>(m_body);
+      auto m_buoy = dynamic_cast<FrMooringBuoy *>(GetBody());
       Force Gvector(0., 0., -m_buoy->GetSystem()->GetGravityAcceleration());
-      auto rho_water = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetDensity();
+      auto rho_water = GetBody()->GetSystem()->GetEnvironment()->GetOcean()->GetDensity();
+      GetParent();
       // FIXME : appliquer la force au centre de poussée et non au centre de gravité : théoriquement aucun effet, mais plus propre.
       SetForceInWorldAtCOG(-m_buoy->GetVolume() * rho_water * Gvector, NWU);
     }

@@ -52,7 +52,6 @@ namespace frydom {
 
     private:
 
-        FrBody* m_body;                                    ///< Pointer to the body containing this node
         std::shared_ptr<internal::FrMarker> m_chronoMarker;   ///< Chrono class for nodes/marker.
 
         // Asset for a node
@@ -126,7 +125,9 @@ namespace frydom {
 
         /// Get the body pointer
         /// \return the body to which the node belongs
-        FrBody* GetBody();
+        inline FrBody* GetBody() const {
+          return GetParent();
+        }
 
         /// Get the node frame, given in the world reference frame
         /// \return the node frame in the world reference frame
