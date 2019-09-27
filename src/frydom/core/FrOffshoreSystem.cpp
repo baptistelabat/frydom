@@ -30,6 +30,7 @@
 //#include "frydom/utils/FrSerializerFactory.h"
 
 #include "frydom/logging/FrLogManager.h"
+#include "frydom/logging/FrPathManager.h"
 
 
 namespace frydom {
@@ -177,6 +178,8 @@ namespace frydom {
 
       // Creating the log manager service
       m_LogManager = std::make_unique<FrLogManager>();
+
+      m_pathManager = std::make_unique<FrPathManager>();
 
       // Create the static analysis
       m_statics = std::make_unique<FrStaticAnalysis>(this);

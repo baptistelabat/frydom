@@ -21,7 +21,7 @@
 namespace frydom {
 
 
-    class FrPathManager;
+//    class FrPathManager;
 
     class FrLoggable {
 

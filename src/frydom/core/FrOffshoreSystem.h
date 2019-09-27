@@ -95,7 +95,8 @@ namespace frydom {
 
     class FrDynamicCable;
 
-//    class FrPathManager;
+    class FrPathManager;
+
     class FrLogManager;
 
     /// Main class for a FRyDoM offshore system. This class is used to represent a multibody physical system,
@@ -246,7 +247,7 @@ namespace frydom {
       bool m_isInitialized = false;
 
       // Logs
-//        std::unique_ptr<FrPathManager> m_pathManager;
+      std::unique_ptr<FrPathManager> m_pathManager;
       std::unique_ptr<FrLogManager> m_LogManager;
 
 
@@ -743,8 +744,7 @@ namespace frydom {
       void AddAsset(std::shared_ptr<chrono::ChAsset> asset);  // TODO : mettre en prive
 
       /// Get a pointer to the log manager
-      FrLogManager* GetLogManager() const;
-
+      FrLogManager *GetLogManager() const;
 
 
      private:
