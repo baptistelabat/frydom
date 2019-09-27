@@ -1,6 +1,13 @@
+// ==========================================================================
+// FRyDoM - frydom-ce.org
 //
-// Created by frongere on 24/09/19.
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+//
+// ==========================================================================
 
 #ifndef FRYDOM_FRLOGGABLE_H
 #define FRYDOM_FRLOGGABLE_H
@@ -10,15 +17,13 @@
 #include <memory>
 
 #include "hermes/hermes.h"
-#include "frydom/core/common/FrTreeNode.h"
 
 namespace frydom {
 
 
     class FrPathManager;
 
-    template<class ParentType>
-    class FrLoggable : public FrTreeNode<ParentType> {
+    class FrLoggable {
 
      public:
 
@@ -86,6 +91,5 @@ namespace frydom {
 }  // end namespace frydom
 
 
-#include "FrLoggable.cpp"
 
 #endif //FRYDOM_FRLOGGABLE_H

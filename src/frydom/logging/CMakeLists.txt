@@ -1,7 +1,7 @@
 message(STATUS "    ...logging")
 
 set(SRC_FILES
-#        FrLoggable.cpp
+        FrLoggable.cpp
         FrLogManager.cpp
         FrPathManager.cpp
         )

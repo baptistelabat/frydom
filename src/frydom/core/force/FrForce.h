@@ -18,6 +18,7 @@
 
 #include "frydom/core/math/FrVector.h"
 #include "frydom/core/common/FrObject.h"
+#include "frydom/core/common/FrTreeNode.h"
 #include "frydom/logging/FrLoggable.h"
 
 
@@ -71,7 +72,7 @@ namespace frydom {
      * \class FrForce
      * \brief  Class defining an effort with force and torque vector
      */
-    class FrForce : public FrObject, public FrLoggable<FrBody> {
+    class FrForce : public FrObject, public FrTreeNode<FrBody>, public FrLoggable {
 
      protected:
 

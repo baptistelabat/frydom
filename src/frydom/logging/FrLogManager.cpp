@@ -11,7 +11,7 @@ namespace frydom {
     FrLogManager::FrLogManager() : m_log_folder(InitializeLogFolder()) {
     }
 
-    FrLogManager::FrLogManager(const std::string &&log_folder) : FrLogManager() {
+    FrLogManager::FrLogManager(const std::string &log_folder) : FrLogManager() {
       m_log_folder = log_folder;
     }
 

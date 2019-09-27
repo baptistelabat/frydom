@@ -16,6 +16,7 @@
 
 #include "frydom/core/math/FrVector.h"
 #include "frydom/core/common/FrConvention.h"
+#include "frydom/core/common/FrTreeNode.h"
 #include "frydom/logging/FrLoggable.h"
 
 
@@ -113,7 +114,7 @@ namespace frydom {
      * \see FrCatenaryLine, FrDynamicCable, FrNode
      *
      */
-    class FrCable : public FrLoggable<FrOffshoreSystem> {
+    class FrCable : public FrTreeNode<FrOffshoreSystem>, public FrLoggable {
 
      protected:
 

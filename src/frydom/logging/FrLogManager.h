@@ -7,8 +7,11 @@
 
 
 #include <string>
+#include <vector>
 
-#include "frydom/core/common/FrObject.h"
+//#include "frydom/core/common/FrObject.h"
+#include "FrLoggable.h"
+
 
 namespace frydom {
 
@@ -18,7 +21,7 @@ namespace frydom {
 
       FrLogManager();
 
-      explicit FrLogManager(const std::string&& log_folder);
+      explicit FrLogManager(const std::string &log_folder);
 
       const std::string GetLogFolder() const;
 
@@ -29,6 +32,8 @@ namespace frydom {
 
      private:
       std::string m_log_folder;
+
+      std::vector<std::shared_ptr<FrLoggable>> m_loggable_list;
 
 
     };

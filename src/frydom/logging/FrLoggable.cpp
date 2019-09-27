@@ -2,24 +2,20 @@
 // Created by frongere on 24/09/19.
 //
 
-//#include "FrLoggable.h"
+#include "FrLoggable.h"
 
 
 namespace frydom {
 
-    template<class ParentType>
-    FrLoggable<ParentType>::FrLoggable(const std::string &name) : m_name(
-        name) {  // TODO : Faire un FrNameManager::NewName(name)
+    FrLoggable::FrLoggable(const std::string &name) : m_name(name) {  // TODO : Faire un FrNameManager::NewName(name)
       // Testing if the name is not already used !!! // TODO : l'unicite ne se fait pas sur les noms mais sur les path !!!!
     }
 
-    template<class ParentType>
-    const std::string &FrLoggable<ParentType>::GetName() const {
+    const std::string &FrLoggable::GetName() const {
       return m_name;
     }
 
-    template<class ParentType>
-    void FrLoggable<ParentType>::InitializeLog(const std::string &path) {
+    void FrLoggable::InitializeLog(const std::string &path) {
 
 //    if (IsLogged()) {
 //
@@ -47,8 +43,7 @@ namespace frydom {
 
     }
 
-    template<class ParentType>
-    void FrLoggable<ParentType>::SendLog() {
+    void FrLoggable::SendLog() {
 
 //    if (IsLogged()) {
 //      m_message->Serialize();
@@ -57,8 +52,7 @@ namespace frydom {
 
     }
 
-    template<class ParentType>
-    std::string FrLoggable<ParentType>::BuildPath(const std::string &rootPath) {
+    std::string FrLoggable::BuildPath(const std::string &rootPath) {
 
 //    auto objPath = fmt::format("{}/{}_{}_{}", rootPath, GetTypeName(), GetName(), GetShortenUUID());
 //
@@ -90,8 +84,7 @@ namespace frydom {
 
 //  void FrLoggable<ParentType>::SetLogged(bool isLogged) { m_isLogged = isLogged; }
 
-    template<class ParentType>
-    void FrLoggable<ParentType>::ClearMessage() {
+    void FrLoggable::ClearMessage() {
 //    m_message = std::make_unique<hermes::Message>();
     }
 

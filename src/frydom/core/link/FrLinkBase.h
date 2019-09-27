@@ -20,6 +20,7 @@
 #include "frydom/core/math/FrVector.h"
 #include "frydom/core/common/FrConvention.h"
 #include "frydom/core/common/FrFrame.h"
+#include "frydom/core/common/FrTreeNode.h"
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/asset/FrAssetOwner.h"
 #include "frydom/logging/FrLoggable.h"
@@ -45,7 +46,7 @@ namespace frydom {
      * \class FrLinkBase
      * \brief Pure abstract class for every FRyDoM constraints (FrLink, FrConstraint_, FrActuator_).
      */
-    class FrLinkBase : public FrObject, public FrAssetOwner, public FrLoggable<FrOffshoreSystem> {
+    class FrLinkBase : public FrObject, public FrTreeNode<FrOffshoreSystem>, public FrAssetOwner, public FrLoggable {
 
      protected:
 
