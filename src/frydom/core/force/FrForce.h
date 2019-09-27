@@ -68,7 +68,7 @@ namespace frydom {
      * \class FrForce
      * \brief  Class defining an effort with force and torque vector
      */
-    class FrForce : public FrObject, public FrLoggable {
+    class FrForce : public FrObject, public FrLoggable<FrBody> {
 
     protected:
 

@@ -113,7 +113,7 @@ namespace frydom {
      * \see FrCatenaryLine, FrDynamicCable, FrNode
      *
      */
-    class FrCable : public FrLoggable {
+    class FrCable : public FrLoggable<FrOffshoreSystem> {
 
      protected:
 

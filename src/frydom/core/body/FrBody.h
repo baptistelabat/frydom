@@ -145,7 +145,7 @@ namespace frydom {
      * \class FrBody
      * \brief Class for defining a body.
      */
-    class FrBody : public FrObject, public FrAssetOwner, public FrLoggable {
+    class FrBody : public FrObject, public FrAssetOwner, public FrLoggable<FrOffshoreSystem> {
 
      protected:
 

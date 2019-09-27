@@ -10,15 +10,15 @@
 #include <memory>
 
 #include "hermes/hermes.h"
-
+#include "frydom/core/common/FrTreeNode.h"
 
 namespace frydom {
 
 
     class FrPathManager;
 
-
-    class FrLoggable {
+    template <class ParentType>
+    class FrLoggable : public FrTreeNode<ParentType> {
 
      public:
 

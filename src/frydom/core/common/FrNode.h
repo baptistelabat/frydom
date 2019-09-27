@@ -48,7 +48,7 @@ namespace frydom {
      * \class FrNode
      * \brief Class for defining nodes (in order to add links).
      */
-    class FrNode : public FrObject, public FrLoggable {
+    class FrNode : public FrObject, public FrLoggable<FrBody> {
 
     private:
 
