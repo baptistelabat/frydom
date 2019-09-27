@@ -17,16 +17,14 @@ namespace frydom {
 
     class FrPathManager;
 
-    template <class ParentType>
+    template<class ParentType>
     class FrLoggable : public FrTreeNode<ParentType> {
 
      public:
 
       explicit FrLoggable(const std::string &name);
 
-      ~FrLoggable() = default;
-
-      const std::string& GetName() const;
+      const std::string &GetName() const;
 
 //    /// Check if the object is logged
 //    /// \return true if the object is logged
@@ -81,12 +79,12 @@ namespace frydom {
 //    std::shared_ptr<FrPathManager> m_pathManager;   ///< pointer to the path manager, in charge of building the path
 //                                                    ///< to the log file of this object
      protected:
-      const std::string& m_name;
+      const std::string &m_name;
 
     };
 
-
 }  // end namespace frydom
+
 
 #include "FrLoggable.cpp"
 

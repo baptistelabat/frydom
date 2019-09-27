@@ -4,23 +4,17 @@
 
 #include "frydom/frydom.h"
 
-
-
-//void str(const std::string& s) {
-//
-//  std::cout << s << std::endl;
-//}
 using namespace frydom;
 
 int main() {
 
   FrOffshoreSystem system;
-//  std::string a("str1");
-//
-//  str(a);
-//
-//  str("st2");
 
+
+  FrTreeNode<FrOffshoreSystem> tree_node(&system);
+
+//  tree_node.SetParent(&system);
+  auto parent = tree_node.GetParent();
 
 
   return 0;

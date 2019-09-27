@@ -9,22 +9,23 @@
 
 namespace frydom {
 
-  template <class ParentType>
-  class FrTreeNode {
+    template<class ParentType>
+    class FrTreeNode {
 
-   protected:
+     public:
 
-    ~FrTreeNode() = default;
+      FrTreeNode() = default;
 
-    void SetParent(ParentType* parent);
+      explicit FrTreeNode(ParentType *parent);
 
-    ParentType* GetParent() const;
+      void SetParent(ParentType *parent);
 
-   private:
-    ParentType* m_parent;
+      ParentType *GetParent() const;
 
-  };
+     private:
+      ParentType *m_parent;
 
+         };
 }  // end namespace frydom
 
 #include "FrTreeNode.cpp"

@@ -29,7 +29,7 @@ set(UNIT_TESTS
         test_FrQuadraticDamping
         test_FrShape
         #test_FrLinks
-#        test_FrFunction
+        #        test_FrFunction
         test_edge_splitting
         test_FrAssembly
         test_FrClippingSurface
@@ -41,7 +41,7 @@ set(UNIT_TESTS
 # Set the path definition of the data resources
 set(unit_test_resources_path ${CMAKE_SOURCE_DIR}/tests/data/unit_test/)
 
-foreach(test ${UNIT_TESTS})
+foreach (test ${UNIT_TESTS})
     message(STATUS "        ...add ${test}")
 
     add_executable(${test} ${test}.cpp)
@@ -49,7 +49,7 @@ foreach(test ${UNIT_TESTS})
     target_compile_definitions(${test} PUBLIC RESOURCES_PATH="${unit_test_resources_path}")
     add_test(NAME ${test}
             COMMAND ${test})
-endforeach()
+endforeach ()
 
 
 set(subdirs

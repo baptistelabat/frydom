@@ -7,18 +7,19 @@
 
 namespace frydom {
 
-  template<class ParentType>
-  FrLoggable<ParentType>::FrLoggable(const std::string &name) : m_name(name) {  // TODO : Faire un FrNameManager::NewName(name)
-    // Testing if the name is not already used !!! // TODO : l'unicite ne se fait pas sur les noms mais sur les path !!!!
-  }
+    template<class ParentType>
+    FrLoggable<ParentType>::FrLoggable(const std::string &name) : m_name(
+        name) {  // TODO : Faire un FrNameManager::NewName(name)
+      // Testing if the name is not already used !!! // TODO : l'unicite ne se fait pas sur les noms mais sur les path !!!!
+    }
 
-  template<class ParentType>
-  const std::string &FrLoggable<ParentType>::GetName() const {
-    return m_name;
-  }
+    template<class ParentType>
+    const std::string &FrLoggable<ParentType>::GetName() const {
+      return m_name;
+    }
 
-  template<class ParentType>
-  void FrLoggable<ParentType>::InitializeLog(const std::string &path) {
+    template<class ParentType>
+    void FrLoggable<ParentType>::InitializeLog(const std::string &path) {
 
 //    if (IsLogged()) {
 //
@@ -44,20 +45,20 @@ namespace frydom {
 //
 //    }
 
-  }
+    }
 
-  template<class ParentType>
-  void FrLoggable<ParentType>::SendLog() {
+    template<class ParentType>
+    void FrLoggable<ParentType>::SendLog() {
 
 //    if (IsLogged()) {
 //      m_message->Serialize();
 //      m_message->Send();
 //    }
 
-  }
+    }
 
-  template<class ParentType>
-  std::string FrLoggable<ParentType>::BuildPath(const std::string &rootPath) {
+    template<class ParentType>
+    std::string FrLoggable<ParentType>::BuildPath(const std::string &rootPath) {
 
 //    auto objPath = fmt::format("{}/{}_{}_{}", rootPath, GetTypeName(), GetName(), GetShortenUUID());
 //
@@ -67,7 +68,7 @@ namespace frydom {
 //    m_message->AddSerializer(FrSerializerFactory::instance().Create(this, logPath));
 //
 //    return objPath;
-  }
+    }
 
 
 
@@ -89,10 +90,10 @@ namespace frydom {
 
 //  void FrLoggable<ParentType>::SetLogged(bool isLogged) { m_isLogged = isLogged; }
 
-  template<class ParentType>
-  void FrLoggable<ParentType>::ClearMessage() {
+    template<class ParentType>
+    void FrLoggable<ParentType>::ClearMessage() {
 //    m_message = std::make_unique<hermes::Message>();
-  }
+    }
 
 
 }  // end namespace frydom

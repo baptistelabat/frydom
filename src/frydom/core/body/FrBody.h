@@ -169,7 +169,7 @@ namespace frydom {
      public:
 
       /// Default constructor
-      FrBody(const std::string& name);
+      FrBody(const std::string &name);
 
       ~FrBody() {
         std::cout << "deallocate body" << std::endl;
@@ -347,7 +347,7 @@ namespace frydom {
       /// Generates a new node attached to the body which position and orientation are coincident with the body
       /// reference frame
       /// \return node created
-      std::shared_ptr<FrNode> NewNode(const std::string& name);
+      std::shared_ptr<FrNode> NewNode(const std::string &name);
 
       /// Get the list of all nodes added to the body
       /// \return List of all nodes added to the body
@@ -990,7 +990,7 @@ namespace frydom {
       friend void makeItSphere(std::shared_ptr<FrBody>, double, double);
 
 
-      friend FrNode::FrNode(const std::string& name, FrBody *);
+      friend FrNode::FrNode(const std::string &name, FrBody *);
 
       friend class FrLinkBase;
 
