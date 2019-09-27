@@ -29,6 +29,7 @@ namespace chrono {
 namespace frydom {
 
     // Forward declarations:
+    class FrPhysicsItem;
     class FrAsset;
     class FrTriangleMeshConnected;
     class FrBoxShape;
@@ -60,7 +61,9 @@ namespace frydom {
         /// \return internal item, related to chrono::ChPhysicsItem
         virtual chrono::ChPhysicsItem* GetChronoItem_ptr() const = 0;
 
-        virtual void RemoveChronoAsset(std::shared_ptr<chrono::ChAsset> asset) {}
+        virtual void RemoveChronoAsset(std::shared_ptr<chrono::ChAsset> asset);
+
+        virtual FrPhysicsItem* GetPhysicsItem_ptr() const { return nullptr; }
 
     public:
 

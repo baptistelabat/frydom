@@ -15,7 +15,6 @@
 
 #include "chrono/physics/ChPhysicsItem.h"
 
-#include "frydom/asset/FrAssetOwner.h"
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/core/misc/FrColors.h"
 
@@ -37,10 +36,6 @@ namespace frydom {
             void SetupInitial() override;
 
             void Update(double time, bool update_assets) override;
-
-            void RemoveAsset(std::shared_ptr<chrono::ChAsset> asset);
-
-            void RemoveIrrNodeAsset();
 
             friend class FrPhysicsItem_;
 
