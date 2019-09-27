@@ -29,7 +29,7 @@ namespace frydom {
 
       /// Constructor from two nodes and a pointer to the system.
       /// It automatically adds the link to the system
-      FrFixedLink(const std::string& name,
+      FrFixedLink(const std::string &name,
                   const std::shared_ptr<FrNode> &node1,
                   const std::shared_ptr<FrNode> &node2,
                   FrOffshoreSystem *system);
@@ -43,7 +43,7 @@ namespace frydom {
 
     /// Helper function to make it easy to link two nodes by a fixed link
     std::shared_ptr<FrFixedLink>
-    make_fixed_link(const std::string& name,
+    make_fixed_link(const std::string &name,
                     const std::shared_ptr<FrNode> &node1,
                     const std::shared_ptr<FrNode> &node2,
                     FrOffshoreSystem *system);

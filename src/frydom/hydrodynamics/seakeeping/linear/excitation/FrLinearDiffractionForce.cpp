@@ -35,12 +35,12 @@ namespace frydom {
 
     }
 
-    FrLinearDiffractionForce::FrLinearDiffractionForce(const std::string& name,
+    FrLinearDiffractionForce::FrLinearDiffractionForce(const std::string &name,
                                                        const std::shared_ptr<FrHydroDB> &HDB)
         : FrLinearHDBForce(name, HDB) {}
 
     std::shared_ptr<FrLinearDiffractionForce>
-    make_linear_diffraction_force(const std::string& name,
+    make_linear_diffraction_force(const std::string &name,
                                   std::shared_ptr<FrHydroDB> HDB,
                                   std::shared_ptr<FrBody> body) {
 

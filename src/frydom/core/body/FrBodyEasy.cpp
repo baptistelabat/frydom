@@ -95,21 +95,21 @@ namespace frydom {
 
     }
 
-    std::shared_ptr<FrBody> make_BoxBody(const std::string& name,
+    std::shared_ptr<FrBody> make_BoxBody(const std::string &name,
                                          double xSize, double ySize, double zSize, double mass) {
       auto box = std::make_shared<FrBody>(name);
       makeItBox(box, xSize, ySize, zSize, mass);
       return box;
     }
 
-    std::shared_ptr<FrBody> make_CylinderBody(const std::string& name,
+    std::shared_ptr<FrBody> make_CylinderBody(const std::string &name,
                                               double radius, double height, double mass) {
       auto cylinder = std::make_shared<FrBody>(name);
       makeItCylinder(cylinder, radius, height, mass);
       return cylinder;
     }
 
-    std::shared_ptr<FrBody> make_SphereBody(const std::string& name,
+    std::shared_ptr<FrBody> make_SphereBody(const std::string &name,
                                             double radius, double mass) {
       auto sphere = std::make_shared<FrBody>(name);
       makeItSphere(sphere, radius, mass);

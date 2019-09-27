@@ -90,7 +90,7 @@ namespace frydom {
 //    std::shared_ptr<FrPathManager> m_pathManager;   ///< pointer to the path manager, in charge of building the path
 //                                                    ///< to the log file of this object
      protected:
-      const std::string &m_name;
+      std::string m_name;
 
       bool m_log_this;
 

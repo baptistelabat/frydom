@@ -28,7 +28,7 @@ namespace frydom {
 
        public:
 
-        explicit FrSphereNonLinearHydrostaticForce(const std::string& name) : FrForce(name) {}
+        explicit FrSphereNonLinearHydrostaticForce(const std::string &name) : FrForce(name) {}
 
         /// Get the type name of this object
         /// \return type name of this object
@@ -52,7 +52,7 @@ namespace frydom {
 
      public:
 
-      FrMooringBuoy(const std::string& name, double radius, double mass, bool visual_asset = true, double damping = 0);
+      FrMooringBuoy(const std::string &name, double radius, double mass, bool visual_asset = true, double damping = 0);
 
       /// Get the type name of this object
       /// \return type name of this object
@@ -82,7 +82,7 @@ namespace frydom {
     /// \param damping damping coefficient affected to the diagonal terms of a linear damping force.
     /// \return FrMooringBuoy instance
     std::shared_ptr<FrMooringBuoy>
-    make_mooring_buoy(const std::string& name, FrOffshoreSystem *system, double radius, double mass,
+    make_mooring_buoy(const std::string &name, FrOffshoreSystem *system, double radius, double mass,
                       bool visual_asset = true, double damping = 0);
 
 }  //end namespace frydom

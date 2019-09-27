@@ -43,7 +43,7 @@ namespace frydom {
 
      public:
 
-      FrLinearDamping(const std::string& name, FLUID_TYPE ft, bool relativeToFluid);
+      FrLinearDamping(const std::string &name, FLUID_TYPE ft, bool relativeToFluid);
 
       /// Get the type name of this object
       /// \return type name of this object
@@ -89,7 +89,7 @@ namespace frydom {
 
     /// This function creates a linear damping force.
     std::shared_ptr<FrLinearDamping>
-    make_linear_damping_force(const std::string& name,
+    make_linear_damping_force(const std::string &name,
                               std::shared_ptr<FrBody> body,
                               FLUID_TYPE ft,
                               bool relativeToFluid);

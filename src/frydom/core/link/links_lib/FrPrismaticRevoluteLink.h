@@ -19,7 +19,7 @@ namespace frydom {
 
      public:
 
-      FrPrismaticRevoluteLink(const std::string& name,
+      FrPrismaticRevoluteLink(const std::string &name,
                               const std::shared_ptr<FrNode> &node1,
                               const std::shared_ptr<FrNode> &node2,
                               FrOffshoreSystem *system);
@@ -31,7 +31,7 @@ namespace frydom {
     };
 
     /// Helper function to make it easy to link two nodes by a revolute-prismatic link
-    std::shared_ptr<FrPrismaticRevoluteLink> make_prismatic_revolute_link(const std::string& name,
+    std::shared_ptr<FrPrismaticRevoluteLink> make_prismatic_revolute_link(const std::string &name,
                                                                           const std::shared_ptr<FrNode> &node1,
                                                                           const std::shared_ptr<FrNode> &node2,
                                                                           FrOffshoreSystem *system);

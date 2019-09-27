@@ -24,7 +24,7 @@
 
 namespace frydom {
 
-    FrLinearHydrostaticForce::FrLinearHydrostaticForce(const std::string& name,
+    FrLinearHydrostaticForce::FrLinearHydrostaticForce(const std::string &name,
                                                        const std::shared_ptr<FrEquilibriumFrame> &eqFrame) :
         FrForce(name),
         m_equilibriumFrame(eqFrame) {}
@@ -94,7 +94,7 @@ namespace frydom {
     }
 
     std::shared_ptr<FrLinearHydrostaticForce>
-    make_linear_hydrostatic_force(const std::string& name,
+    make_linear_hydrostatic_force(const std::string &name,
                                   const std::shared_ptr<FrEquilibriumFrame> &eqFrame,
                                   const std::shared_ptr<FrBody> &body) {
 
@@ -109,7 +109,7 @@ namespace frydom {
     }
 
     std::shared_ptr<FrLinearHydrostaticForce>
-    make_linear_hydrostatic_force(const std::string& name,
+    make_linear_hydrostatic_force(const std::string &name,
                                   const std::shared_ptr<FrHydroDB> &HDB,
                                   const std::shared_ptr<FrBody> &body) {
 
@@ -126,7 +126,7 @@ namespace frydom {
     }
 
     std::shared_ptr<FrLinearHydrostaticForce>
-    make_linear_hydrostatic_force(const std::string& name,
+    make_linear_hydrostatic_force(const std::string &name,
                                   const std::shared_ptr<FrEquilibriumFrame> &eqFrame,
                                   const std::shared_ptr<FrBody> &body,
                                   const std::string &meshFile,

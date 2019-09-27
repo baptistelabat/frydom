@@ -21,7 +21,7 @@
 
 namespace frydom {
 
-    FrCatenaryLine::FrCatenaryLine(const std::string& name,
+    FrCatenaryLine::FrCatenaryLine(const std::string &name,
                                    const std::shared_ptr<FrNode> &startingNode,
                                    const std::shared_ptr<FrNode> &endingNode,
                                    const std::shared_ptr<FrCableProperties> &properties,
@@ -324,7 +324,7 @@ namespace frydom {
 
 
     std::shared_ptr<FrCatenaryLine>
-    make_catenary_line(const std::string& name,
+    make_catenary_line(const std::string &name,
                        const std::shared_ptr<FrNode> &startingNode,
                        const std::shared_ptr<FrNode> &endingNode,
                        FrOffshoreSystem *system,

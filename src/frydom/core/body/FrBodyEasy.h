@@ -28,11 +28,11 @@ namespace frydom {
     void makeItSphere(std::shared_ptr<FrBody> body, double radius, double mass);
 
 
-    std::shared_ptr<FrBody> make_BoxBody(const std::string& name, double xSize, double ySize, double zSize, double mass);
+    std::shared_ptr<FrBody> make_BoxBody(const std::string &name, double xSize, double ySize, double zSize, double mass);
 
-    std::shared_ptr<FrBody> make_CylinderBody(const std::string& name, double radius, double height, double mass);
+    std::shared_ptr<FrBody> make_CylinderBody(const std::string &name, double radius, double height, double mass);
 
-    std::shared_ptr<FrBody> make_SphereBody(const std::string& name, double radius, double mass);
+    std::shared_ptr<FrBody> make_SphereBody(const std::string &name, double radius, double mass);
 
 
     // TODO : faire le make_ConeBody ---> mat d'eolienne...

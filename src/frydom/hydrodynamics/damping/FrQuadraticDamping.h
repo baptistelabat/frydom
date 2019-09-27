@@ -45,7 +45,7 @@ namespace frydom {
 
      public:
 
-      FrQuadraticDamping(const std::string& name, FLUID_TYPE ft, bool relativeToFluid);
+      FrQuadraticDamping(const std::string &name, FLUID_TYPE ft, bool relativeToFluid);
 
       /// Get the type name of this object
       /// \return type name of this object
@@ -82,7 +82,7 @@ namespace frydom {
 
     /// This function creates a quadratic damping force.
     std::shared_ptr<FrQuadraticDamping>
-    make_quadratic_damping_force(const std::string& name, std::shared_ptr<FrBody> body, FLUID_TYPE ft,
+    make_quadratic_damping_force(const std::string &name, std::shared_ptr<FrBody> body, FLUID_TYPE ft,
                                  bool relativeToFluid);
 
 }  // end namespace frydom

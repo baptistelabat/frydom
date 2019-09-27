@@ -209,7 +209,7 @@ namespace frydom {
       Compute_F_HDB();
     }
 
-    FrLinearHDBForce::FrLinearHDBForce(const std::string& name, const std::shared_ptr<FrHydroDB> &HDB) :
+    FrLinearHDBForce::FrLinearHDBForce(const std::string &name, const std::shared_ptr<FrHydroDB> &HDB) :
         FrForce(name), m_HDB(HDB) {}
 
 

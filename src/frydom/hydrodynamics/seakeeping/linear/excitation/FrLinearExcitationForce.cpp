@@ -34,12 +34,12 @@ namespace frydom {
 
     }
 
-    FrLinearExcitationForce::FrLinearExcitationForce(const std::string& name,
+    FrLinearExcitationForce::FrLinearExcitationForce(const std::string &name,
                                                      const std::shared_ptr<FrHydroDB> &HDB) :
         FrLinearHDBForce(name, HDB) {}
 
     std::shared_ptr<FrLinearExcitationForce>
-    make_linear_excitation_force(const std::string& name,
+    make_linear_excitation_force(const std::string &name,
                                  std::shared_ptr<FrHydroDB> HDB,
                                  std::shared_ptr<FrBody> body) {
 

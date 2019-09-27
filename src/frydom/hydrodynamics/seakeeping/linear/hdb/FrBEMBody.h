@@ -134,7 +134,7 @@ namespace frydom {
         /// \param x Wave directions with respect to the heading angle
         /// \param y Wave frequency
         /// \return Interpolated value of the wave drift coefficient
-        double Eval(const std::string name, double x, double y) const;
+        double Eval(const std::string &name, double x, double y) const;
 
         /// Return true if wave drift coefficient in "surge" is present
         bool HasSurge() const;

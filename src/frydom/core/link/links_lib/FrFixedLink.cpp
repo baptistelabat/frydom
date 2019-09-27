@@ -16,7 +16,7 @@
 namespace frydom {
 
 
-    FrFixedLink::FrFixedLink(const std::string& name,
+    FrFixedLink::FrFixedLink(const std::string &name,
                              const std::shared_ptr<FrNode> &node1,
                              const std::shared_ptr<FrNode> &node2,
                              FrOffshoreSystem *system)
@@ -25,7 +25,7 @@ namespace frydom {
     }
 
     std::shared_ptr<FrFixedLink>
-    make_fixed_link(const std::string& name,
+    make_fixed_link(const std::string &name,
                     const std::shared_ptr<FrNode> &node1,
                     const std::shared_ptr<FrNode> &node2,
                     FrOffshoreSystem *system) {

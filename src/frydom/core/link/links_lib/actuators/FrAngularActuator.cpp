@@ -16,7 +16,7 @@
 namespace frydom {
 
 
-    FrAngularActuator::FrAngularActuator(const std::string& name, FrLink *actuatedLink, ACTUATOR_CONTROL control)
+    FrAngularActuator::FrAngularActuator(const std::string &name, FrLink *actuatedLink, ACTUATOR_CONTROL control)
         : FrActuator(name, actuatedLink) {
 
       switch (control) {

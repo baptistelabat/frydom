@@ -31,7 +31,7 @@ namespace frydom {
     }  // end namespace frydom::internal
 
 
-    FrNode::FrNode(const std::string& name, frydom::FrBody *body) :
+    FrNode::FrNode(const std::string &name, frydom::FrBody *body) :
         FrLoggable(name),
         m_showAsset(false) {
 

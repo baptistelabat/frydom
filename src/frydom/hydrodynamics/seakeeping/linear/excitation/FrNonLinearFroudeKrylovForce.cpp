@@ -23,7 +23,7 @@
 
 namespace frydom {
 
-    FrNonLinearFroudeKrylovForce::FrNonLinearFroudeKrylovForce(const std::string& name,
+    FrNonLinearFroudeKrylovForce::FrNonLinearFroudeKrylovForce(const std::string &name,
                                                                const std::shared_ptr<FrHydroMesh> &HydroMesh) :
         FrForce(name) {
       m_hydroMesh = HydroMesh;
@@ -84,7 +84,7 @@ namespace frydom {
     }
 
     std::shared_ptr<FrNonLinearFroudeKrylovForce>
-    make_nonlinear_froude_krylov_force(const std::string& name,
+    make_nonlinear_froude_krylov_force(const std::string &name,
                                        std::shared_ptr<FrBody> body,
                                        std::shared_ptr<FrHydroMesh> HydroMesh) {
 

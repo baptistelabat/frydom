@@ -20,7 +20,7 @@
 
 namespace frydom {
 
-    FrQuadraticDamping::FrQuadraticDamping(const std::string& name, FLUID_TYPE ft, bool relativeToFluid) :
+    FrQuadraticDamping::FrQuadraticDamping(const std::string &name, FLUID_TYPE ft, bool relativeToFluid) :
         FrForce(name), m_fluidType(ft), m_relative2Fluid(relativeToFluid) {}
 
     void FrQuadraticDamping::SetDampingCoefficients(double Cu, double Cv, double Cw) {
@@ -79,7 +79,7 @@ namespace frydom {
     }
 
     std::shared_ptr<FrQuadraticDamping>
-    make_quadratic_damping_force(const std::string& name,
+    make_quadratic_damping_force(const std::string &name,
                                  std::shared_ptr<FrBody> body,
                                  FLUID_TYPE ft,
                                  bool relativeToFluid) {

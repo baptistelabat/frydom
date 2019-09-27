@@ -36,7 +36,7 @@ namespace frydom {
     public:
 
         /// Constructor.
-        explicit FrLinearDiffractionForce(const std::string& name,
+        explicit FrLinearDiffractionForce(const std::string &name,
             const std::shared_ptr<FrHydroDB>& HDB);;
 
         /// Get the type name of this object
@@ -50,7 +50,7 @@ namespace frydom {
     };
 
     std::shared_ptr<FrLinearDiffractionForce>
-    make_linear_diffraction_force(const std::string& name,
+    make_linear_diffraction_force(const std::string &name,
         std::shared_ptr<FrHydroDB> HDB,
         std::shared_ptr<FrBody> body);
 

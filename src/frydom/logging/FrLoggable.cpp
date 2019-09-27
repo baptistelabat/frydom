@@ -7,7 +7,7 @@
 
 namespace frydom {
 
-    FrLoggable::FrLoggable(const std::string &name) : m_name(std::move(name)), m_log_this(true) {  // TODO : Faire un FrNameManager::NewName(name)
+    FrLoggable::FrLoggable(const std::string &name) : m_name(name), m_log_this(true) {  // TODO : Faire un FrNameManager::NewName(name)
       // Testing if the name is not already used !!! // TODO : l'unicite ne se fait pas sur les noms mais sur les path !!!!
     }
 

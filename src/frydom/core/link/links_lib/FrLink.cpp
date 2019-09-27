@@ -247,7 +247,7 @@ namespace frydom {
      *
      */
 
-    FrLink::FrLink(const std::string& name,
+    FrLink::FrLink(const std::string &name,
                    const std::shared_ptr<FrNode> &node1,
                    const std::shared_ptr<FrNode> &node2,
                    FrOffshoreSystem *system) :

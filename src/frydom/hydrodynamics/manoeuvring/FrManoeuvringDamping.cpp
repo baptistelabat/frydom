@@ -127,10 +127,10 @@ namespace frydom {
       SetForceTorqueInBodyAtCOG(force, torque, NWU);
     }
 
-    FrManDampingTaylorExpansion::FrManDampingTaylorExpansion(const std::string& name) : FrForce(name) {}
+    FrManDampingTaylorExpansion::FrManDampingTaylorExpansion(const std::string &name) : FrForce(name) {}
 
     std::shared_ptr<FrManDampingTaylorExpansion>
-    make_manoeuvring_model(const std::string& name, const std::shared_ptr<FrBody> &body) {
+    make_manoeuvring_model(const std::string &name, const std::shared_ptr<FrBody> &body) {
 
       auto manoeuvring = std::make_shared<FrManDampingTaylorExpansion>(name);
       manoeuvring->ClearAll();

@@ -29,7 +29,7 @@ namespace frydom {
       return dynamic_cast<FrMorisonCompositeElement *>(m_model.get());
     }
 
-    FrMorisonForce::FrMorisonForce(const std::string& name, std::shared_ptr<FrMorisonElement> model)
+    FrMorisonForce::FrMorisonForce(const std::string &name, std::shared_ptr<FrMorisonElement> model)
         : FrForce(name), m_model(model) {}
 
     void FrMorisonForce::Compute(double time) {
@@ -47,7 +47,7 @@ namespace frydom {
     }
 
     std::shared_ptr<FrMorisonForce>
-    make_morison_force(const std::string& name,
+    make_morison_force(const std::string &name,
                        std::shared_ptr<FrMorisonElement> model,
                        std::shared_ptr<FrBody> body) {
       assert(body.get() == model->GetNode()->GetBody());

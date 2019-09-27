@@ -42,7 +42,7 @@ namespace frydom {
 
       /// Constructor of the morison force with specified morison model
       /// \param model Morison model
-      FrMorisonForce(const std::string& name, std::shared_ptr<FrMorisonElement> model);
+      FrMorisonForce(const std::string &name, std::shared_ptr<FrMorisonElement> model);
 
       /// Get the type name of this object
       /// \return type name of this object
@@ -78,7 +78,7 @@ namespace frydom {
     /// \return Morison force
     // TODO : delete the body variable, and get it from the node contained in the model?
     std::shared_ptr<FrMorisonForce>
-    make_morison_force(const std::string& name,
+    make_morison_force(const std::string &name,
                        std::shared_ptr<FrMorisonElement> model,
                        std::shared_ptr<FrBody> body);
 

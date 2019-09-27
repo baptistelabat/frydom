@@ -285,7 +285,7 @@ namespace frydom {
     }
 
 
-    FrDynamicCable::FrDynamicCable(const std::string& name,
+    FrDynamicCable::FrDynamicCable(const std::string &name,
                                    const std::shared_ptr<frydom::FrNode> &startingNode,
                                    const std::shared_ptr<frydom::FrNode> &endingNode,
                                    const std::shared_ptr<FrCableProperties> &properties,
@@ -456,7 +456,7 @@ namespace frydom {
     }
 
     std::shared_ptr<FrDynamicCable>
-    make_dynamic_cable(const std::string& name,
+    make_dynamic_cable(const std::string &name,
                        const std::shared_ptr<FrNode> &startingNode,
                        const std::shared_ptr<FrNode> &endingNode,
                        FrOffshoreSystem *system,

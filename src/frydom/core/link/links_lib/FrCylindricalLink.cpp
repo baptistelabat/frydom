@@ -15,7 +15,7 @@
 
 namespace frydom {
 
-    FrCylindricalLink::FrCylindricalLink(const std::string& name,
+    FrCylindricalLink::FrCylindricalLink(const std::string &name,
                                          const std::shared_ptr<FrNode> &node1,
                                          const std::shared_ptr<FrNode> &node2,
                                          FrOffshoreSystem *system)
@@ -24,7 +24,7 @@ namespace frydom {
     }
 
     std::shared_ptr<FrCylindricalLink>
-    make_cylindrical_link(const std::string& name,
+    make_cylindrical_link(const std::string &name,
                           const std::shared_ptr<FrNode> &node1,
                           const std::shared_ptr<FrNode> &node2,
                           FrOffshoreSystem *system) {
