@@ -7,6 +7,7 @@
 #include "FrCGeometrical.h"
 #include "frydom/core/common/FrNode.h"
 #include "frydom/core/common/FrFrame.h"
+#include "frydom/logging/FrLogManager.h"
 
 namespace frydom {
 
@@ -131,6 +132,8 @@ namespace frydom {
       auto chDir2 = internal::Vector3dToChVector(m_axis2->GetDirectionInWorld(NWU));
 
       GetChronoItem_ptr()->Initialize(GetChronoBody2(), GetChronoBody1(), false, chPos2, chPos1, chDir2, chDir1);
+
+      GetSystem()->GetLogManager()->Add(this);
 
     }
 

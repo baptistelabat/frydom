@@ -7,7 +7,7 @@
 
 namespace frydom {
 
-    FrLoggable::FrLoggable(const std::string &name) : m_name(name) {  // TODO : Faire un FrNameManager::NewName(name)
+    FrLoggable::FrLoggable(const std::string &name) : m_name(std::move(name)), m_log_this(true) {  // TODO : Faire un FrNameManager::NewName(name)
       // Testing if the name is not already used !!! // TODO : l'unicite ne se fait pas sur les noms mais sur les path !!!!
     }
 
@@ -15,7 +15,11 @@ namespace frydom {
       return m_name;
     }
 
-    void FrLoggable::InitializeLog(const std::string &path) {
+    void FrLoggable::LogThis(bool log) {
+      m_log_this = log;
+    }
+
+    void FrLoggable::InitializeLog() {
 
 //    if (IsLogged()) {
 //
@@ -41,14 +45,20 @@ namespace frydom {
 //
 //    }
 
+    std::cout << "Initializing log of " << GetName() << std::endl;
+
     }
 
-    void FrLoggable::SendLog() {
+    void FrLoggable::UpdateLog() {
 
 //    if (IsLogged()) {
 //      m_message->Serialize();
 //      m_message->Send();
 //    }
+
+    }
+
+    void FrLoggable::FinalizeLog() {
 
     }
 

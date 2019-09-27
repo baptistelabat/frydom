@@ -266,6 +266,8 @@ namespace frydom {
       }
 
       FrCatenaryAssetOwner::Initialize();
+
+      FrCable::Initialize();
     }
 
     void FrCatenaryLine::Compute(double time) {

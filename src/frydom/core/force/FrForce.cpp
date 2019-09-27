@@ -12,10 +12,7 @@
 #include "FrForce.h"
 
 #include "frydom/asset/FrForceAsset.h"
-
-//#include "frydom/IO/FrPathManager.h"
-//
-//#include "frydom/utils/FrSerializerFactory.h"
+#include "frydom/logging/FrLogManager.h"
 
 
 namespace frydom {
@@ -88,6 +85,9 @@ namespace frydom {
         m_asset->Initialize();
         GetBody()->AddAsset(m_asset);
       }
+
+      GetBody()->GetSystem()->GetLogManager()->Add(this);
+
     }
 
     std::shared_ptr<chrono::ChForce> FrForce::GetChronoForce() {

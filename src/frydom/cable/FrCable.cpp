@@ -12,6 +12,8 @@
 
 #include "FrCable.h"
 #include "frydom/core/common/FrObject.h"
+#include "frydom/core/FrOffshoreSystem.h"
+#include "frydom/logging/FrLogManager.h"
 
 
 namespace frydom {
@@ -84,6 +86,10 @@ namespace frydom {
     FrCable::FrCable(const std::string& name) : FrLoggable(name) {}
 
     FrCable::~FrCable() = default;
+
+    void FrCable::Initialize() {
+      GetParent()->GetLogManager()->Add(this);
+    }
 
     FrCable::FrCable(const std::string& name, const std::shared_ptr<FrNode>& startingNode, const std::shared_ptr<FrNode>& endingNode)
             : FrLoggable(name), m_startingNode(startingNode), m_endingNode(endingNode) {

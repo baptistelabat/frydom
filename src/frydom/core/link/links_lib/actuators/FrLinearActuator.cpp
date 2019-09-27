@@ -10,6 +10,7 @@
 
 #include "frydom/core/math/functions/FrFunctionsInc.h"
 #include "frydom/core/common/FrNode.h"
+#include "frydom/logging/FrLogManager.h"
 
 namespace frydom {
 
@@ -60,6 +61,7 @@ namespace frydom {
       m_chronoActuator->Initialize(GetChronoBody2(), GetChronoBody1(), true,
                                    internal::FrFrame2ChFrame(frame2), internal::FrFrame2ChFrame(frame1));
 
+      GetSystem()->GetLogManager()->Add(this);
     }
 
     double FrLinearActuator::GetMotorPower() const {

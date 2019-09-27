@@ -39,9 +39,15 @@ namespace frydom {
 //    /// \param isLogged true if the object is to be logged
 //    void SetLogged(bool isLogged);
 
+      void LogThis(bool log);
+
       /// Initialize the logging of the object : build the path, create the directory, add the fields to be logged, etc.
       /// \param path path of the parent object, to build the path of the present object
-      void InitializeLog(const std::string &path);
+      void InitializeLog();
+
+      void UpdateLog();
+
+      void FinalizeLog();
 
       /// Initialize the logging of the dependencies (attributes of the present object)
       /// \param path path of the present object, to give to the InitializeLog of the dependencies to build their log path
@@ -64,8 +70,8 @@ namespace frydom {
 
      protected:
 
-      /// Serialize and send the message
-      void SendLog();
+//      /// Serialize and send the message
+//      void Update();
 
       /// Build the path to the log file, create the directory and add a csv serializer
       /// \param rootPath path of the parent directory
@@ -85,6 +91,8 @@ namespace frydom {
 //                                                    ///< to the log file of this object
      protected:
       const std::string &m_name;
+
+      bool m_log_this;
 
     };
 

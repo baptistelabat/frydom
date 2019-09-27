@@ -62,8 +62,6 @@ namespace frydom {
         std::shared_ptr<internal::FrPhysicsItemBase>
                 m_chronoPhysicsItem;     ///> pointer to the related chrono physics item
 
-//        FrOffshoreSystem* m_system;     ///< pointer to the system containing this physics item
-
         bool m_isActive = true;         ///< boolean to check if the physics item is active
                                         ///< if it's not the case, it is not updated during the simulation
 
@@ -115,7 +113,7 @@ namespace frydom {
      * \class FrMidPhysicsItem
      * \brief Class for defining physics items updated after bodies but before links.
      */
-    class FrMidPhysicsItem : public FrPhysicsItem{
+    class FrMidPhysicsItem : public FrPhysicsItem {
     protected:
         friend void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem>);
     };
@@ -124,7 +122,7 @@ namespace frydom {
      * \class FrPostPhysicsItem
      * \brief Class for defining physics items updated after links.
      */
-    class FrPostPhysicsItem : public FrPhysicsItem{
+    class FrPostPhysicsItem : public FrPhysicsItem {
     protected:
         friend void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem>);
     };

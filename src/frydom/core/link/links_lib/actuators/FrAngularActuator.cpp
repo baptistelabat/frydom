@@ -11,6 +11,8 @@
 #include "frydom/core/math/functions/FrFunctionsInc.h"
 #include "frydom/core/common/FrNode.h"
 
+#include "frydom/logging/FrLogManager.h"
+
 namespace frydom {
 
 
@@ -54,6 +56,8 @@ namespace frydom {
       m_chronoActuator->Initialize(GetChronoBody2(), GetChronoBody1(), true,
                                    internal::FrFrame2ChFrame(GetNode2()->GetFrameWRT_COG_InBody()),
                                    internal::FrFrame2ChFrame(GetNode1()->GetFrameWRT_COG_InBody()));
+
+      GetSystem()->GetLogManager()->Add(this);
 
     }
 

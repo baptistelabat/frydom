@@ -164,6 +164,8 @@ namespace frydom {
       /// Default destructor
       ~FrCable();
 
+      void Initialize();
+
       //--------------------------------------------------------------------------------------------------------------
 
       /// Set the cable properties (section, Young modulus, linear density, etc.)

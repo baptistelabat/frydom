@@ -26,6 +26,8 @@
 #include "frydom/collision/FrCollisionModel.h"
 #include "frydom/core/link/links_lib/FrDOFMaskLink.h"
 #include "frydom/core/link/links_lib/FrFixedLink.h"
+#include "frydom/logging/FrLogManager.h"
+
 
 namespace frydom {
 
@@ -271,6 +273,8 @@ namespace frydom {
       if (m_DOFMask->HasLockedDOF()) {
         InitializeLockedDOF();
       }
+
+      GetSystem()->GetLogManager()->Add(this);
 
     }
 

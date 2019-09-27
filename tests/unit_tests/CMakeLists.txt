@@ -3,7 +3,6 @@ message(STATUS "    ...UNIT TESTS :")
 
 set(UNIT_TESTS
         # include test source files here (without .cpp)
-        test_FrTreeNode
         test_FrForce
         test_internal
         test_FrBody

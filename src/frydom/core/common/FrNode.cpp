@@ -17,7 +17,8 @@
 #include "frydom/asset/FrNodeAsset.h"
 #include "frydom/core/body/FrBody.h"
 
-//#include "frydom/utils/FrSerializerFactory.h"
+#include "frydom/core/FrOffshoreSystem.h"
+#include "frydom/logging/FrLogManager.h"
 
 
 namespace frydom {
@@ -257,6 +258,8 @@ namespace frydom {
         m_asset->Initialize();
         GetBody()->AddAsset(m_asset);
       }
+
+      GetBody()->GetSystem()->GetLogManager()->Add(this);
 
     }
 

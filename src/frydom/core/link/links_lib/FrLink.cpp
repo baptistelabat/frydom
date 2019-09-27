@@ -23,6 +23,8 @@
 #include "frydom/core/link/FrLinkMaskBase.h"
 #include "frydom/core/link/constraint/FrConstraintTwoBodiesBase.h"
 
+#include "frydom/logging/FrLogManager.h"
+
 
 namespace frydom {
 
@@ -451,6 +453,8 @@ namespace frydom {
 
       SetNodes(m_node1.get(), m_node2.get());
       m_chronoLink->SetupInitial();
+
+      GetSystem()->GetLogManager()->Add(this);
     }
 
     void FrLink::Update(double time) {

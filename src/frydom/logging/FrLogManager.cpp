@@ -19,9 +19,28 @@ namespace frydom {
       return m_log_folder;
     }
 
+    void FrLogManager::Add(FrLoggable* obj){
+      auto it = std::find(m_loggable_list.begin(), m_loggable_list.end(), obj);
+
+      // Don't add if already present !
+      if (it == m_loggable_list.end()) {
+        m_loggable_list.push_back(obj);
+      }
+    }
+
+    void FrLogManager::Remove(FrLoggable* obj) {
+      auto it = std::find(m_loggable_list.begin(), m_loggable_list.end(), obj);
+
+      // Remove if present
+      if (it != m_loggable_list.end()) {
+        m_loggable_list.erase(it);
+      }
+    }
+
     std::string FrLogManager::InitializeLogFolder() {
       // Looking for frydom configuration file
       /*
+       * TODO :
        * On regarde en premier si on a un .frydom dans le repertoire courant --> avoir du frydom init a la git ?
        * On devrait pouvoir faire un frydom init.
        *
@@ -37,10 +56,27 @@ namespace frydom {
 
 
 
-
-
       return ".";
 
+    }
+
+    void FrLogManager::Initialize() {
+      for (auto& obj : m_loggable_list) {
+        obj->InitializeLog();
+        std::cout << obj->GetName() << std::endl;
+      }
+    }
+
+    void FrLogManager::Update() {
+      for (auto& obj : m_loggable_list) {
+        obj->UpdateLog();
+      }
+    }
+
+    void FrLogManager::Finalize() {
+      for (auto& obj : m_loggable_list) {
+        obj->FinalizeLog();
+      }
     }
 
 }  // end namespace frydom

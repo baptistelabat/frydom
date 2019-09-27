@@ -225,8 +225,7 @@ namespace frydom {
 
     void FrOffshoreSystem::AddBody(std::shared_ptr<FrBody> body) {
 
-      if (!CheckBodyContactMethod(
-          body)) { // TODO : voir si on set pas d'autorite le mode de contact a celui du systeme plutot que de faire un if...
+      if (!CheckBodyContactMethod(body)) { // TODO : voir si on set pas d'autorite le mode de contact a celui du systeme plutot que de faire un if...
         body->SetContactMethod(m_systemType);
       }
 
@@ -905,6 +904,7 @@ namespace frydom {
           break;
       }
       AddBody(m_worldBody);
+      m_worldBody->LogThis(false);  // No log for the world body
     }
 
     std::shared_ptr<FrBody> FrOffshoreSystem::NewBody(const std::string &name) {
@@ -1017,6 +1017,10 @@ namespace frydom {
 
     void FrOffshoreSystem::AddAsset(std::shared_ptr<chrono::ChAsset> asset) {
       m_chronoSystem->AddAsset(std::move(asset));
+    }
+
+    FrLogManager* FrOffshoreSystem::GetLogManager() const {
+      return m_LogManager.get();
     }
 
     void FrOffshoreSystem::IsInitialized() {

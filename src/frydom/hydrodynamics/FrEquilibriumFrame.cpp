@@ -14,6 +14,7 @@
 
 #include "frydom/core/body/FrBody.h"
 #include "frydom/utils/FrRecorder.h"
+#include "frydom/logging/FrLogManager.h"
 
 
 namespace frydom {
@@ -162,6 +163,9 @@ namespace frydom {
       if (m_initSpeedFromBody) this->SetVelocityToBodyCOGVelocity();
 
       c_prevTime = 0.;
+
+      // Declare this object to the log manager
+      GetSystem()->GetLogManager()->Add(this);
     }
 
     void FrEquilibriumFrame::Compute(double time) {
