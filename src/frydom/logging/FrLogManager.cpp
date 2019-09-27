@@ -63,7 +63,6 @@ namespace frydom {
     void FrLogManager::Initialize() {
       for (auto& obj : m_loggable_list) {
         obj->InitializeLog();
-        std::cout << obj->GetName() << std::endl;
       }
     }
 

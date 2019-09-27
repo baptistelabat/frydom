@@ -45,7 +45,6 @@ namespace frydom {
 //
 //    }
 
-    std::cout << "Initializing log of " << GetName() << std::endl;
 
     }
 
