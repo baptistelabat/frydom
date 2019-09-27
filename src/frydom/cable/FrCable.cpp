@@ -81,18 +81,18 @@ namespace frydom {
     //------------------------------------------------------------------------------------------------------------------
     // FrCable
 
-    FrCable::FrCable(const std::string&& name) : FrLoggable(std::move(name)) {}
+    FrCable::FrCable(const std::string& name) : FrLoggable(name) {}
 
     FrCable::~FrCable() = default;
 
-    FrCable::FrCable(const std::string&& name, const std::shared_ptr<FrNode>& startingNode, const std::shared_ptr<FrNode>& endingNode)
-            : FrLoggable(std::move(name)), m_startingNode(startingNode), m_endingNode(endingNode) {
+    FrCable::FrCable(const std::string& name, const std::shared_ptr<FrNode>& startingNode, const std::shared_ptr<FrNode>& endingNode)
+            : FrLoggable(name), m_startingNode(startingNode), m_endingNode(endingNode) {
         m_properties = std::make_shared<FrCableProperties>();
     }
 
-    FrCable::FrCable(const std::string&& name, const std::shared_ptr<FrNode>& startingNode, const std::shared_ptr<FrNode>& endingNode,
+    FrCable::FrCable(const std::string& name, const std::shared_ptr<FrNode>& startingNode, const std::shared_ptr<FrNode>& endingNode,
                      const std::shared_ptr<FrCableProperties>& properties, double unstrainedLength)
-            : FrLoggable(std::move(name)), m_startingNode(startingNode), m_endingNode(endingNode),
+            : FrLoggable(name), m_startingNode(startingNode), m_endingNode(endingNode),
               m_unstrainedLength(unstrainedLength), m_properties(properties){}
 
 

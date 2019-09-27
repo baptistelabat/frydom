@@ -34,19 +34,19 @@ namespace frydom {
 
     }
 
-    FrLinearExcitationForce::FrLinearExcitationForce(const std::string &&name,
+    FrLinearExcitationForce::FrLinearExcitationForce(const std::string& name,
                                                      const std::shared_ptr<FrHydroDB> &HDB) :
-        FrLinearHDBForce(std::move(name), HDB) {}
+        FrLinearHDBForce(name, HDB) {}
 
     std::shared_ptr<FrLinearExcitationForce>
-    make_linear_excitation_force(const std::string &&name,
+    make_linear_excitation_force(const std::string& name,
                                  std::shared_ptr<FrHydroDB> HDB,
                                  std::shared_ptr<FrBody> body) {
 
       // This function creates the linear excitation force object.
 
       // Construction of the excitation force object from the HDB.
-      auto excitationForce = std::make_shared<FrLinearExcitationForce>(std::move(name), HDB);
+      auto excitationForce = std::make_shared<FrLinearExcitationForce>(name, HDB);
 
       // Add the excitation force object as an external force to the body.
       body->AddExternalForce(excitationForce); // Initialization of m_body.

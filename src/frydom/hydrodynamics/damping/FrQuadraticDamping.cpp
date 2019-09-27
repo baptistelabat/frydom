@@ -20,8 +20,8 @@
 
 namespace frydom {
 
-    FrQuadraticDamping::FrQuadraticDamping(const std::string &&name, FLUID_TYPE ft, bool relativeToFluid) :
-        FrForce(std::move(name)), m_fluidType(ft), m_relative2Fluid(relativeToFluid) {}
+    FrQuadraticDamping::FrQuadraticDamping(const std::string& name, FLUID_TYPE ft, bool relativeToFluid) :
+        FrForce(name), m_fluidType(ft), m_relative2Fluid(relativeToFluid) {}
 
     void FrQuadraticDamping::SetDampingCoefficients(double Cu, double Cv, double Cw) {
       m_Cu = Cu;
@@ -77,7 +77,7 @@ namespace frydom {
     }
 
     std::shared_ptr<FrQuadraticDamping>
-    make_quadratic_damping_force(const std::string &&name,
+    make_quadratic_damping_force(const std::string& name,
                                  std::shared_ptr<FrBody> body,
                                  FLUID_TYPE ft,
                                  bool relativeToFluid) {
@@ -85,7 +85,7 @@ namespace frydom {
       // This function creates a linear damping force.
 
       // Construction of the linear damping force object.
-      auto forceQuadraticDamping = std::make_shared<FrQuadraticDamping>(std::move(name), ft, relativeToFluid);
+      auto forceQuadraticDamping = std::make_shared<FrQuadraticDamping>(name, ft, relativeToFluid);
 
       // Add the linear damping force object as an external force to the body.
       body->AddExternalForce(forceQuadraticDamping);

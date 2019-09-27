@@ -59,7 +59,7 @@ namespace frydom {
      public:
 
       /// Default constructor
-      explicit FrManDampingTaylorExpansion(const std::string &&name);
+      explicit FrManDampingTaylorExpansion(const std::string& name);
 
       /// Get the type name of this object
       /// \return type name of this object
@@ -120,7 +120,7 @@ namespace frydom {
     /// \param body body to add the force
     /// \return manoeuvring model to be set up
     std::shared_ptr<FrManDampingTaylorExpansion>
-    make_manoeuvring_model(const std::string &&name, const std::shared_ptr<FrBody> &body);
+    make_manoeuvring_model(const std::string& name, const std::shared_ptr<FrBody> &body);
 
 }  // end namespace frydom
 

@@ -28,8 +28,8 @@ namespace frydom {
       SetForceInWorldAtCOG(-m_buoy->GetVolume() * rho_water * Gvector, NWU);
     }
 
-    FrMooringBuoy::FrMooringBuoy(const std::string &&name, double radius, double mass, bool visual_asset,
-                                 double damping) : FrBody(std::move(name)) {
+    FrMooringBuoy::FrMooringBuoy(const std::string& name, double radius, double mass, bool visual_asset,
+                                 double damping) : FrBody(name) {
       m_radius = radius;
       m_hydrostaticForce = std::make_shared<FrSphereNonLinearHydrostaticForce>("NonlinearHydrostaticsForceOn_" + name);
       AddExternalForce(m_hydrostaticForce);
@@ -77,9 +77,9 @@ namespace frydom {
 
 
     std::shared_ptr<FrMooringBuoy>
-    make_mooring_buoy(const std::string &&name, FrOffshoreSystem *system, double radius, double mass, bool visual_asset,
+    make_mooring_buoy(const std::string& name, FrOffshoreSystem *system, double radius, double mass, bool visual_asset,
                       double damping) {
-      auto buoy = std::make_shared<FrMooringBuoy>(std::move(name), radius, mass, visual_asset, damping);
+      auto buoy = std::make_shared<FrMooringBuoy>(name, radius, mass, visual_asset, damping);
       system->Add(buoy);
       buoy->SetColor(DarkRed);
       return buoy;

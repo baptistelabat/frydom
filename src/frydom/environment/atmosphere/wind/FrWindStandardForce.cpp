@@ -20,7 +20,7 @@
 
 namespace frydom {
 
-    FrWindStandardForce::FrWindStandardForce(const std::string &&name) : FrForce(std::move(name)) {}
+    FrWindStandardForce::FrWindStandardForce(const std::string& name) : FrForce(name) {}
 
     void FrWindStandardForce::SetLateralArea(double lateralArea) {
       assert(lateralArea > FLT_EPSILON);

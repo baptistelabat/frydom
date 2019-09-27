@@ -908,8 +908,8 @@ namespace frydom {
       AddBody(m_worldBody);
     }
 
-    std::shared_ptr<FrBody> FrOffshoreSystem::NewBody(const std::string &&name) {
-      auto body = std::make_shared<FrBody>(std::move(name));
+    std::shared_ptr<FrBody> FrOffshoreSystem::NewBody(const std::string& name) {
+      auto body = std::make_shared<FrBody>(name);
       // TODO : suivant le type de systeme SMC ou NSC, regler le type de surface...
 
       switch (m_systemType) {

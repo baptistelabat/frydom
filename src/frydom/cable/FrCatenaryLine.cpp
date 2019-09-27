@@ -21,7 +21,7 @@
 
 namespace frydom {
 
-    FrCatenaryLine::FrCatenaryLine(const std::string &&name,
+    FrCatenaryLine::FrCatenaryLine(const std::string& name,
                                    const std::shared_ptr<FrNode> &startingNode,
                                    const std::shared_ptr<FrNode> &endingNode,
                                    const std::shared_ptr<FrCableProperties> &properties,
@@ -30,7 +30,7 @@ namespace frydom {
                                    FLUID_TYPE fluid) :
         m_elastic(elastic),
         c_fluid(fluid),
-        FrCable(std::move(name), startingNode, endingNode, properties, unstrainedLength),
+        FrCable(name, startingNode, endingNode, properties, unstrainedLength),
         FrPrePhysicsItem() {
       m_q = properties->GetLinearDensity();
 //        SetLogged(true);
@@ -322,7 +322,7 @@ namespace frydom {
 
 
     std::shared_ptr<FrCatenaryLine>
-    make_catenary_line(const std::string &&name,
+    make_catenary_line(const std::string& name,
                        const std::shared_ptr<FrNode> &startingNode,
                        const std::shared_ptr<FrNode> &endingNode,
                        FrOffshoreSystem *system,
@@ -331,7 +331,7 @@ namespace frydom {
                        double unstrainedLength,
                        FLUID_TYPE fluid) {
 
-      auto CatenaryLine = std::make_shared<FrCatenaryLine>(std::move(name),
+      auto CatenaryLine = std::make_shared<FrCatenaryLine>(name,
                                                            startingNode, endingNode, properties, elastic,
                                                            unstrainedLength, fluid);
       system->Add(CatenaryLine);

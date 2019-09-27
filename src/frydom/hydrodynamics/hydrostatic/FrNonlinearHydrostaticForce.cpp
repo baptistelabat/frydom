@@ -24,9 +24,9 @@
 
 namespace frydom {
 
-  FrNonlinearHydrostaticForce::FrNonlinearHydrostaticForce(const std::string &&name,
+  FrNonlinearHydrostaticForce::FrNonlinearHydrostaticForce(const std::string& name,
                                                            const std::shared_ptr<FrHydroMesh> &hydroMesh) :
-      FrForce(std::move(name)),
+      FrForce(name),
       m_hydroMesh(hydroMesh) {}
 
   void FrNonlinearHydrostaticForce::AddFields() {
@@ -184,14 +184,14 @@ namespace frydom {
   }
 
   std::shared_ptr<FrNonlinearHydrostaticForce>
-  make_nonlinear_hydrostatic_force(const std::string &&name,
+  make_nonlinear_hydrostatic_force(const std::string& name,
                                    const std::shared_ptr<FrBody> &body,
                                    const std::shared_ptr<FrHydroMesh> &HydroMesh) {
 
     // This function creates a (fully or weakly) nonlinear hydrostatic force object.
 
     // Construction of the (fully or weakly) nonlinear hydrostatic force object.
-    auto forceHst = std::make_shared<FrNonlinearHydrostaticForce>(std::move(name), HydroMesh);
+    auto forceHst = std::make_shared<FrNonlinearHydrostaticForce>(name, HydroMesh);
 
     // Add the (fully or weakly) nonlinear hydrostatic force object as an external force to the body.
     body->AddExternalForce(forceHst);

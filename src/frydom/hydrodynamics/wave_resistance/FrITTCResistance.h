@@ -49,7 +49,7 @@ namespace frydom {
     /// \param ca Surface roughness coefficient
     /// \param caa Air resistance coefficient
     /// \param capp Appendage resistance coefficient
-    FrITTCResistance(const std::string &&name,
+    FrITTCResistance(const std::string& name,
                      double Lpp,
                      double hullWetSurface,
                      double cr,

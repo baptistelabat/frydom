@@ -39,7 +39,7 @@ namespace frydom {
 
       /// Constructor of the flow force with polar coeffients from json table
       /// \param jsonFile Name of the json file containing the polar coefficients
-      explicit FrFlowForce(const std::string &&name, const std::string &jsonFile);
+      explicit FrFlowForce(const std::string& name, const std::string &jsonFile);
 
       /// Get the type name of this object
       /// \return type name of this object
@@ -71,7 +71,7 @@ namespace frydom {
       /// \return type name of this object
       std::string GetTypeName() const override { return "CurrentForce"; }
 
-      FrCurrentForce(const std::string &&name, const std::string &jsonFile);
+      FrCurrentForce(const std::string& name, const std::string &jsonFile);
 
      private:
 
@@ -92,7 +92,7 @@ namespace frydom {
       /// \return type name of this object
       std::string GetTypeName() const override { return "WindForce"; }
 
-      explicit FrWindForce(const std::string &&name, const std::string &jsonFile);
+      explicit FrWindForce(const std::string& name, const std::string &jsonFile);
 
 
      private:
@@ -103,11 +103,11 @@ namespace frydom {
 
     };
 
-    std::shared_ptr<FrCurrentForce> make_current_force(const std::string &&name,
+    std::shared_ptr<FrCurrentForce> make_current_force(const std::string& name,
                                                        const std::string &jsonFile,
                                                        std::shared_ptr<FrBody> body);
 
-    std::shared_ptr<FrWindForce> make_wind_force(const std::string &&name,
+    std::shared_ptr<FrWindForce> make_wind_force(const std::string& name,
                                                  const std::string &jsonFile,
                                                  std::shared_ptr<FrBody> body);
 

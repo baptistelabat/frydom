@@ -11,11 +11,11 @@
 namespace frydom {
 
 
-    FrConstraint::FrConstraint(const std::string &&name,
+    FrConstraint::FrConstraint(const std::string& name,
                                const std::shared_ptr<FrNode> &node1,
                                const std::shared_ptr<FrNode> &node2,
                                FrOffshoreSystem *system) :
-        FrLinkBase(std::move(name), node1, node2, system) {
+        FrLinkBase(name, node1, node2, system) {
 //        SetLogged(true);
     }
 
@@ -113,11 +113,11 @@ namespace frydom {
 
     //------------------------------------------------------------------------------------------------------------------
 
-    FrConstraintParallel::FrConstraintParallel(const std::string &&name,
+    FrConstraintParallel::FrConstraintParallel(const std::string& name,
                                                const std::shared_ptr<FrCAxis> &axis1,
                                                const std::shared_ptr<FrCAxis> &axis2,
                                                FrOffshoreSystem *system) :
-        FrConstraint(std::move(name), axis1->GetNode(), axis2->GetNode(), system),
+        FrConstraint(name, axis1->GetNode(), axis2->GetNode(), system),
         m_axis1(axis1), m_axis2(axis2) {
 
       m_chronoConstraint = std::make_shared<chrono::ChLinkMateParallel>();
@@ -135,12 +135,12 @@ namespace frydom {
     }
 
     std::shared_ptr<FrConstraintParallel>
-    make_constraint_parallel(const std::string &&name,
+    make_constraint_parallel(const std::string& name,
                              const std::shared_ptr<FrCAxis> &axis1,
                              const std::shared_ptr<FrCAxis> &axis2,
                              FrOffshoreSystem *system) {
 
-      auto constraint = std::make_shared<FrConstraintParallel>(std::move(name), axis1, axis2, system);
+      auto constraint = std::make_shared<FrConstraintParallel>(name, axis1, axis2, system);
       system->AddLink(constraint);
 
       return constraint;
@@ -149,11 +149,11 @@ namespace frydom {
 
     //------------------------------------------------------------------------------------------------------------------
 
-    FrConstraintPerpendicular::FrConstraintPerpendicular(const std::string &&name,
+    FrConstraintPerpendicular::FrConstraintPerpendicular(const std::string& name,
                                                          const std::shared_ptr<FrCAxis> &axis1,
                                                          const std::shared_ptr<FrCAxis> &axis2,
                                                          FrOffshoreSystem *system) :
-        FrConstraint(std::move(name), axis1->GetNode(), axis2->GetNode(), system),
+        FrConstraint(name, axis1->GetNode(), axis2->GetNode(), system),
         m_axis1(axis1), m_axis2(axis2) {
 
       m_chronoConstraint = std::make_shared<chrono::ChLinkMateOrthogonal>();
@@ -171,12 +171,12 @@ namespace frydom {
     }
 
     std::shared_ptr<FrConstraintPerpendicular>
-    make_constraint_perpendicular(const std::string &&name,
+    make_constraint_perpendicular(const std::string& name,
                                   const std::shared_ptr<FrCAxis> &axis1,
                                   const std::shared_ptr<FrCAxis> &axis2,
                                   FrOffshoreSystem *system) {
 
-      auto constraint = std::make_shared<FrConstraintPerpendicular>(std::move(name), axis1, axis2, system);
+      auto constraint = std::make_shared<FrConstraintPerpendicular>(name, axis1, axis2, system);
       system->AddLink(constraint);
 
       return constraint;
@@ -184,13 +184,13 @@ namespace frydom {
 
     //------------------------------------------------------------------------------------------------------------------
 
-    FrConstraintPlaneOnPlane::FrConstraintPlaneOnPlane(const std::string &&name,
+    FrConstraintPlaneOnPlane::FrConstraintPlaneOnPlane(const std::string& name,
                                                        const std::shared_ptr<FrCPlane> &plane1,
                                                        const std::shared_ptr<FrCPlane> &plane2,
                                                        FrOffshoreSystem *system,
                                                        bool flipped,
                                                        double distance) :
-        FrConstraint(std::move(name), plane1->GetNode(), plane2->GetNode(), system),
+        FrConstraint(name, plane1->GetNode(), plane2->GetNode(), system),
         m_plane1(plane1), m_plane2(plane2) {
 
       m_chronoConstraint = std::make_shared<chrono::ChLinkMatePlane>();
@@ -218,14 +218,14 @@ namespace frydom {
     }
 
     std::shared_ptr<FrConstraintPlaneOnPlane>
-    make_constraint_plane_on_plane(const std::string &&name,
+    make_constraint_plane_on_plane(const std::string& name,
                                    const std::shared_ptr<FrCPlane> &plane1,
                                    const std::shared_ptr<FrCPlane> &plane2,
                                    FrOffshoreSystem *system,
                                    bool flipped,
                                    double distance) {
 
-      auto constraint = std::make_shared<FrConstraintPlaneOnPlane>(std::move(name), plane1, plane2, system, flipped,
+      auto constraint = std::make_shared<FrConstraintPlaneOnPlane>(name, plane1, plane2, system, flipped,
                                                                    distance);
       system->AddLink(constraint);
 
@@ -234,12 +234,12 @@ namespace frydom {
 
     //------------------------------------------------------------------------------------------------------------------
 
-    FrConstraintPointOnPlane::FrConstraintPointOnPlane(const std::string &&name,
+    FrConstraintPointOnPlane::FrConstraintPointOnPlane(const std::string& name,
                                                        const std::shared_ptr<FrCPlane> &plane,
                                                        const std::shared_ptr<FrCPoint> &point,
                                                        FrOffshoreSystem *system,
                                                        double distance) :
-        FrConstraint(std::move(name), plane->GetNode(), point->GetNode(), system),
+        FrConstraint(name, plane->GetNode(), point->GetNode(), system),
         m_plane(plane), m_point(point) {
 
       m_chronoConstraint = std::make_shared<chrono::ChLinkMateXdistance>();
@@ -260,13 +260,13 @@ namespace frydom {
     }
 
     std::shared_ptr<FrConstraintPointOnPlane>
-    make_constraint_point_on_plane(const std::string &&name,
+    make_constraint_point_on_plane(const std::string& name,
                                    const std::shared_ptr<FrCPlane> &plane,
                                    const std::shared_ptr<FrCPoint> &point,
                                    FrOffshoreSystem *system,
                                    double distance) {
 
-      auto constraint = std::make_shared<FrConstraintPointOnPlane>(std::move(name), plane, point, system, distance);
+      auto constraint = std::make_shared<FrConstraintPointOnPlane>(name, plane, point, system, distance);
       system->AddLink(constraint);
 
       return constraint;
@@ -275,12 +275,12 @@ namespace frydom {
 
     //------------------------------------------------------------------------------------------------------------------
 
-    FrConstraintPointOnLine::FrConstraintPointOnLine(const std::string &&name,
+    FrConstraintPointOnLine::FrConstraintPointOnLine(const std::string& name,
                                                      const std::shared_ptr<FrCAxis> &line,
                                                      const std::shared_ptr<FrCPoint> &point,
                                                      FrOffshoreSystem *system,
                                                      double distance) :
-        FrConstraint(std::move(name), line->GetNode(), point->GetNode(), system),
+        FrConstraint(name, line->GetNode(), point->GetNode(), system),
         m_point(point), m_axis(line) {
 
       m_chronoConstraint = std::make_shared<chrono::ChLinkLockPointLine>();
@@ -305,12 +305,12 @@ namespace frydom {
     }
 
     std::shared_ptr<FrConstraintPointOnLine>
-    make_constraint_point_on_line(const std::string &&name,
+    make_constraint_point_on_line(const std::string& name,
                                   const std::shared_ptr<FrCAxis> &line,
                                   const std::shared_ptr<FrCPoint> &point,
                                   FrOffshoreSystem *system) {
 
-      auto constraint = std::make_shared<FrConstraintPointOnLine>(std::move(name), line, point, system);
+      auto constraint = std::make_shared<FrConstraintPointOnLine>(name, line, point, system);
       system->AddLink(constraint);
 
       return constraint;
@@ -320,13 +320,13 @@ namespace frydom {
 
     //------------------------------------------------------------------------------------------------------------------
 
-    FrConstraintDistanceToAxis::FrConstraintDistanceToAxis(const std::string &&name,
+    FrConstraintDistanceToAxis::FrConstraintDistanceToAxis(const std::string& name,
                                                            const std::shared_ptr<FrCAxis> &axis,
                                                            const std::shared_ptr<FrCPoint> &point,
                                                            FrOffshoreSystem *system,
                                                            bool autoDistance,
                                                            double distance) :
-        FrConstraint(std::move(name), axis->GetNode(), point->GetNode(), system),
+        FrConstraint(name, axis->GetNode(), point->GetNode(), system),
         m_point(point), m_axis(axis),
         m_autoDistance(autoDistance) {
 
@@ -354,14 +354,14 @@ namespace frydom {
     }
 
     std::shared_ptr<FrConstraintDistanceToAxis>
-    make_constraint_distance_to_axis(const std::string &&name,
+    make_constraint_distance_to_axis(const std::string& name,
                                      const std::shared_ptr<FrCAxis> &axis,
                                      const std::shared_ptr<FrCPoint> &point,
                                      FrOffshoreSystem *system,
                                      bool autoDistance,
                                      double distance) {
 
-      auto constraint = std::make_shared<FrConstraintDistanceToAxis>(std::move(name), axis, point, system, autoDistance,
+      auto constraint = std::make_shared<FrConstraintDistanceToAxis>(name, axis, point, system, autoDistance,
                                                                      distance);
       system->AddLink(constraint);
 
@@ -371,13 +371,13 @@ namespace frydom {
 
     //------------------------------------------------------------------------------------------------------------------
 
-    FrConstraintDistanceBetweenPoints::FrConstraintDistanceBetweenPoints(const std::string &&name,
+    FrConstraintDistanceBetweenPoints::FrConstraintDistanceBetweenPoints(const std::string& name,
                                                                          const std::shared_ptr<FrCPoint> &point1,
                                                                          const std::shared_ptr<FrCPoint> &point2,
                                                                          FrOffshoreSystem *system,
                                                                          bool autoDistance,
                                                                          double distance) :
-        FrConstraint(std::move(name), point1->GetNode(), point2->GetNode(), system),
+        FrConstraint(name, point1->GetNode(), point2->GetNode(), system),
         m_point1(point1), m_point2(point2), m_autoDistance(autoDistance) {
 
       m_chronoConstraint = std::make_shared<chrono::ChLinkDistance>();
@@ -403,14 +403,14 @@ namespace frydom {
     }
 
     std::shared_ptr<FrConstraintDistanceBetweenPoints>
-    make_constraint_distance_between_points(const std::string &&name,
+    make_constraint_distance_between_points(const std::string& name,
                                             const std::shared_ptr<FrCPoint> &point1,
                                             const std::shared_ptr<FrCPoint> &point2,
                                             FrOffshoreSystem *system,
                                             bool autoDistance,
                                             double distance) {
 
-      auto constraint = std::make_shared<FrConstraintDistanceBetweenPoints>(std::move(name), point1, point2, system,
+      auto constraint = std::make_shared<FrConstraintDistanceBetweenPoints>(name, point1, point2, system,
                                                                             autoDistance,
                                                                             distance);
       system->AddLink(constraint);

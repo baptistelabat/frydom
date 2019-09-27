@@ -52,7 +52,7 @@ namespace frydom {
     m_environment = GetSystem()->GetEnvironment(); // To reduce the number of indirections during update
   }
 
-  FrITTCResistance::FrITTCResistance(const std::string &&name,
+  FrITTCResistance::FrITTCResistance(const std::string& name,
                                      double Lpp,
                                      double hullWetSurface,
                                      double cr,
@@ -60,7 +60,7 @@ namespace frydom {
                                      double ca,
                                      double caa,
                                      double capp) :
-      FrForce(std::move(name)),
+      FrForce(name),
       m_Lpp(Lpp),
       m_hullWetSurface(hullWetSurface),
       m_k(k),

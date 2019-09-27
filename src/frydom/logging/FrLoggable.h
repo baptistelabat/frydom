@@ -22,7 +22,7 @@ namespace frydom {
 
      public:
 
-      explicit FrLoggable(const std::string &&name);
+      explicit FrLoggable(const std::string &name);
 
       const std::string& GetName() const;
 
@@ -79,7 +79,7 @@ namespace frydom {
 //    std::shared_ptr<FrPathManager> m_pathManager;   ///< pointer to the path manager, in charge of building the path
 //                                                    ///< to the log file of this object
      protected:
-      std::string m_name;
+      const std::string& m_name;
 
     };
 

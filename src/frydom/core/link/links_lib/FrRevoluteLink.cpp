@@ -21,11 +21,11 @@
 
 namespace frydom {
 
-    FrRevoluteLink::FrRevoluteLink(const std::string &&name,
+    FrRevoluteLink::FrRevoluteLink(const std::string& name,
                                    const std::shared_ptr<FrNode> &node1,
                                    const std::shared_ptr<FrNode> &node2,
                                    FrOffshoreSystem *system) :
-        FrLink(std::move(name), node1, node2, system) {
+        FrLink(name, node1, node2, system) {
       m_chronoLink->SetLinkType(REVOLUTE);
     }
 
@@ -129,8 +129,8 @@ namespace frydom {
       SetLinkForceTorqueOnBody2InFrame2AtOrigin2(force, torque);
     }
 
-    FrAngularActuator *FrRevoluteLink::Motorize(const std::string &&name, ACTUATOR_CONTROL control) {
-      m_actuator = std::make_shared<FrAngularActuator>(std::move(name), this, control);
+    FrAngularActuator *FrRevoluteLink::Motorize(const std::string& name, ACTUATOR_CONTROL control) {
+      m_actuator = std::make_shared<FrAngularActuator>(name, this, control);
       GetSystem()->Add(m_actuator);
       return dynamic_cast<FrAngularActuator *>(m_actuator.get());
     }
@@ -149,21 +149,21 @@ namespace frydom {
     }
 
     std::shared_ptr<FrRevoluteLink>
-    make_revolute_link(const std::string &&name,
+    make_revolute_link(const std::string& name,
                        std::shared_ptr<FrNode> node1,
                        std::shared_ptr<FrNode> node2,
                        FrOffshoreSystem *system) {
-      auto link = std::make_shared<FrRevoluteLink>(std::move(name), node1, node2, system);
+      auto link = std::make_shared<FrRevoluteLink>(name, node1, node2, system);
       system->AddLink(link);
       return link;
     }
 
-    void FrRevoluteLink::Clamp(const std::string &&name) {
+    void FrRevoluteLink::Clamp(const std::string& name) {
 
       if (IsMotorized()) GetSystem()->RemoveLink(m_actuator);
 
       // brake motorization instantiation
-      m_actuator = std::make_shared<FrAngularActuator>(std::move(name), this, POSITION);
+      m_actuator = std::make_shared<FrAngularActuator>(name, this, POSITION);
       m_actuator->Initialize();
       GetSystem()->Add(m_actuator);
 

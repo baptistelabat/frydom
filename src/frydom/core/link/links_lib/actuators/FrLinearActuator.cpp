@@ -14,8 +14,8 @@
 namespace frydom {
 
 
-    FrLinearActuator::FrLinearActuator(const std::string &&name, FrLink *actuatedLink, ACTUATOR_CONTROL control)
-        : FrActuator(std::move(name), actuatedLink) {
+    FrLinearActuator::FrLinearActuator(const std::string& name, FrLink *actuatedLink, ACTUATOR_CONTROL control)
+        : FrActuator(name, actuatedLink) {
 
       switch (control) {
         case POSITION :

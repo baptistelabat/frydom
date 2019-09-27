@@ -202,7 +202,7 @@ namespace frydom {
 
     }  // end namespace frydom::internal
 
-    FrBody::FrBody(const std::string &&name) : FrLoggable(std::move(name)) {
+    FrBody::FrBody(const std::string& name) : FrLoggable(name) {
 
 //        SetLogged(true);
 
@@ -508,8 +508,8 @@ namespace frydom {
 
     // Nodes
 
-    std::shared_ptr<FrNode> FrBody::NewNode(const std::string &&name) {
-      auto node = std::make_shared<FrNode>(std::move(name), this);
+    std::shared_ptr<FrNode> FrBody::NewNode(const std::string& name) {
+      auto node = std::make_shared<FrNode>(name, this);
       m_nodes.push_back(node);
       return node;
     }

@@ -28,7 +28,7 @@ namespace frydom {
 
       /// Constructor from two nodes and a pointer to the system.
       /// It automatically adds the link to the system
-      FrCylindricalLink(const std::string &&name,
+      FrCylindricalLink(const std::string& name,
                         const std::shared_ptr<FrNode> &node1,
                         const std::shared_ptr<FrNode> &node2,
                         FrOffshoreSystem *system);
@@ -41,7 +41,7 @@ namespace frydom {
 
     /// Helper function to make it easy to link two nodes by a cylindrical link
     std::shared_ptr<FrCylindricalLink>
-    make_cylindrical_link(const std::string &&name,
+    make_cylindrical_link(const std::string& name,
                           const std::shared_ptr<FrNode> &node1,
                           const std::shared_ptr<FrNode> &node2,
                           FrOffshoreSystem *system);

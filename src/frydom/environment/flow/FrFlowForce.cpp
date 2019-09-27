@@ -20,7 +20,7 @@
 
 namespace frydom {
 
-  FrFlowForce::FrFlowForce(const std::string &&name, const std::string &jsonFile) : FrForce(std::move(name)) {
+  FrFlowForce::FrFlowForce(const std::string& name, const std::string &jsonFile) : FrForce(name) {
     this->ReadTable(jsonFile);
   }
 
@@ -138,8 +138,8 @@ namespace frydom {
     FrFlowForce::Compute(time);
   }
 
-  FrCurrentForce::FrCurrentForce(const std::string &&name, const std::string &jsonFile) :
-      FrFlowForce(std::move(name), jsonFile) {}
+  FrCurrentForce::FrCurrentForce(const std::string& name, const std::string &jsonFile) :
+      FrFlowForce(name, jsonFile) {}
 
   void FrWindForce::Compute(double time) {
 
@@ -154,21 +154,21 @@ namespace frydom {
     FrFlowForce::Compute(time);
   }
 
-  FrWindForce::FrWindForce(const std::string &&name, const std::string &jsonFile) :
-      FrFlowForce(std::move(name), jsonFile) {}
+  FrWindForce::FrWindForce(const std::string& name, const std::string &jsonFile) :
+      FrFlowForce(name, jsonFile) {}
 
-  std::shared_ptr<FrCurrentForce> make_current_force(const std::string &&name,
+  std::shared_ptr<FrCurrentForce> make_current_force(const std::string& name,
                                                      const std::string &jsonFile,
                                                      std::shared_ptr<FrBody> body) {
-    auto currentForce = std::make_shared<FrCurrentForce>(std::move(name), jsonFile);
+    auto currentForce = std::make_shared<FrCurrentForce>(name, jsonFile);
     body->AddExternalForce(currentForce);
     return currentForce;
   }
 
-  std::shared_ptr<FrWindForce> make_wind_force(const std::string &&name,
+  std::shared_ptr<FrWindForce> make_wind_force(const std::string& name,
                                                const std::string &jsonFile,
                                                std::shared_ptr<FrBody> body) {
-    auto windForce = std::make_shared<FrWindForce>(std::move(name), jsonFile);
+    auto windForce = std::make_shared<FrWindForce>(name, jsonFile);
     body->AddExternalForce(windForce);
     return windForce;
   }

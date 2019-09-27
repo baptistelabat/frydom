@@ -42,7 +42,7 @@ namespace frydom {
      public:
       /// Constructor from two nodes and a pointer to the system.
       /// It automatically adds the link to the system
-      FrPrismaticLink(const std::string &&name,
+      FrPrismaticLink(const std::string& name,
                       std::shared_ptr<FrNode> node1,
                       std::shared_ptr<FrNode> node2,
                       FrOffshoreSystem *system);
@@ -86,10 +86,10 @@ namespace frydom {
       void UpdateForces(double time);
 
       /// Motorize the link to make it driven
-      FrLinearActuator *Motorize(const std::string &&name, ACTUATOR_CONTROL control);
+      FrLinearActuator *Motorize(const std::string& name, ACTUATOR_CONTROL control);
 
       /// Lock the link to its current position
-      void Clamp(const std::string &&name);
+      void Clamp(const std::string& name);
 
      private:
 
@@ -100,7 +100,7 @@ namespace frydom {
 
     /// Helper function to make it easy to link two nodes by a prismatic link
     std::shared_ptr<FrPrismaticLink>
-    make_prismatic_link(const std::string &&name,
+    make_prismatic_link(const std::string& name,
                         std::shared_ptr<FrNode> node1,
                         std::shared_ptr<FrNode> node2,
                         FrOffshoreSystem *system);

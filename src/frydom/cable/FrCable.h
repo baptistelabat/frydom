@@ -140,12 +140,12 @@ namespace frydom {
       //--------------------------------------------------------------------------------------------------------------
       // Constructor - destructor
       /// Default constructor
-      explicit FrCable(const std::string &&name);
+      explicit FrCable(const std::string& name);
 
       /// FrCable constructor, using two nodes
       /// \param startingNode starting node
       /// \param endingNode ending node
-      FrCable(const std::string &&name,
+      FrCable(const std::string& name,
               const std::shared_ptr<FrNode> &startingNode,
               const std::shared_ptr<FrNode> &endingNode);
 
@@ -154,7 +154,7 @@ namespace frydom {
       /// \param endingNode ending node
       /// \param properties cable properties
       /// \param unstrainedLength unstrained length, in m
-      FrCable(const std::string &&name,
+      FrCable(const std::string& name,
               const std::shared_ptr<FrNode> &startingNode,
               const std::shared_ptr<FrNode> &endingNode,
               const std::shared_ptr<FrCableProperties> &properties,

@@ -285,12 +285,12 @@ namespace frydom {
     }
 
 
-    FrDynamicCable::FrDynamicCable(const std::string &&name,
+    FrDynamicCable::FrDynamicCable(const std::string& name,
                                    const std::shared_ptr<frydom::FrNode> &startingNode,
                                    const std::shared_ptr<frydom::FrNode> &endingNode,
                                    const std::shared_ptr<FrCableProperties> &properties,
                                    double unstrainedLength, double rayleighDamping, unsigned int nbElements) :
-        FrCable(std::move(name), startingNode, endingNode, properties, unstrainedLength),
+        FrCable(name, startingNode, endingNode, properties, unstrainedLength),
         m_rayleighDamping(rayleighDamping), m_nbElements(nbElements) {
 
       m_chronoCable = std::make_shared<internal::FrDynamicCableBase>(this);
@@ -456,7 +456,7 @@ namespace frydom {
     }
 
     std::shared_ptr<FrDynamicCable>
-    make_dynamic_cable(const std::string &&name,
+    make_dynamic_cable(const std::string& name,
                        const std::shared_ptr<FrNode> &startingNode,
                        const std::shared_ptr<FrNode> &endingNode,
                        FrOffshoreSystem *system,
@@ -465,7 +465,7 @@ namespace frydom {
                        double rayleighDamping,
                        unsigned int nbElements) {
 
-      auto Cable = std::make_shared<FrDynamicCable>(std::move(name),
+      auto Cable = std::make_shared<FrDynamicCable>(name,
                                                     startingNode, endingNode, properties, unstrainedLength,
                                                     rayleighDamping, nbElements);
 

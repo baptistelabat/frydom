@@ -35,7 +35,7 @@ namespace frydom {
 
      public:
 
-      explicit FrWindStandardForce(const std::string &&name);
+      explicit FrWindStandardForce(const std::string& name);
 
       /// Get the type name of this object
       /// \return type name of this object

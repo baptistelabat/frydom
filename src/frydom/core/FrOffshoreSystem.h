@@ -685,7 +685,7 @@ namespace frydom {
         /// Create a new body, managed by the offshore system. The body characteristics can then be setted using the
         /// shared pointer returned by this method.
         /// \return new body
-        std::shared_ptr<FrBody> NewBody(const std::string &&name);
+        std::shared_ptr<FrBody> NewBody(const std::string& name);
 
         /// Removes all bodies/marker/forces/links/contacts, also resets timers and events.
         void Clear();

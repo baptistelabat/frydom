@@ -18,9 +18,9 @@
 
 namespace frydom {
 
-    FrLinkBase::FrLinkBase(const std::string &&name, const std::shared_ptr<FrNode> &node1,
+    FrLinkBase::FrLinkBase(const std::string& name, const std::shared_ptr<FrNode> &node1,
                            const std::shared_ptr<FrNode> &node2, FrOffshoreSystem *system) :
-        FrLoggable(std::move(name)), m_node1(node1), m_node2(node2), m_system(system) {
+        FrLoggable(name), m_node1(node1), m_node2(node2), m_system(system) {
     }
 
     std::shared_ptr<FrNode> FrLinkBase::GetNode1() {

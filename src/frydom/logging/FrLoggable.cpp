@@ -8,7 +8,7 @@
 namespace frydom {
 
   template<class ParentType>
-  FrLoggable<ParentType>::FrLoggable(const std::string &&name) : m_name(name) {  // TODO : Faire un FrNameManager::NewName(name)
+  FrLoggable<ParentType>::FrLoggable(const std::string &name) : m_name(name) {  // TODO : Faire un FrNameManager::NewName(name)
     // Testing if the name is not already used !!! // TODO : l'unicite ne se fait pas sur les noms mais sur les path !!!!
   }
 

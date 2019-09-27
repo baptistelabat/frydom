@@ -46,7 +46,7 @@ namespace frydom {
 
       /// Constructor from two nodes and a pointer to the system.
       /// It automatically adds the link to the system
-      FrRevoluteLink(const std::string &&name,
+      FrRevoluteLink(const std::string& name,
                      const std::shared_ptr<FrNode> &node1,
                      const std::shared_ptr<FrNode> &node2,
                      FrOffshoreSystem *system);
@@ -99,10 +99,10 @@ namespace frydom {
       /// Compute the link force. Here this is essentially a torque with a default spring damper.
       void UpdateForces(double time); // TODO : mettre en abstrait dans FrLink pour que toutes les classes possedent ca
 
-      FrAngularActuator *Motorize(const std::string &&name, ACTUATOR_CONTROL control);
+      FrAngularActuator *Motorize(const std::string& name, ACTUATOR_CONTROL control);
 
       /// Lock the link to its current orientation
-      void Clamp(const std::string &&name);
+      void Clamp(const std::string& name);
 
 
      private:
@@ -116,7 +116,7 @@ namespace frydom {
 
     /// Helper function to make it easy to link two nodes by a revolute link
     std::shared_ptr<FrRevoluteLink>
-    make_revolute_link(const std::string &&name,
+    make_revolute_link(const std::string& name,
                        std::shared_ptr<FrNode> node1,
                        std::shared_ptr<FrNode> node2,
                        FrOffshoreSystem *system);

@@ -16,20 +16,20 @@
 namespace frydom {
 
 
-    FrSphericalLink::FrSphericalLink(const std::string &&name,
+    FrSphericalLink::FrSphericalLink(const std::string& name,
                                      const std::shared_ptr<FrNode> &node1,
                                      const std::shared_ptr<FrNode> &node2,
                                      FrOffshoreSystem *system) :
-        FrLink(std::move(name), node1, node2, system) {
+        FrLink(name, node1, node2, system) {
       m_chronoLink->SetLinkType(SPHERICAL);
     }
 
 
-    std::shared_ptr<FrSphericalLink> make_spherical_link(const std::string &&name,
+    std::shared_ptr<FrSphericalLink> make_spherical_link(const std::string& name,
                                                          const std::shared_ptr<FrNode> &node1,
                                                          const std::shared_ptr<FrNode> &node2,
                                                          FrOffshoreSystem *system) {
-      auto link = std::make_shared<FrSphericalLink>(std::move(name), node1, node2, system);
+      auto link = std::make_shared<FrSphericalLink>(name, node1, node2, system);
       system->AddLink(link);
       return link;
     }

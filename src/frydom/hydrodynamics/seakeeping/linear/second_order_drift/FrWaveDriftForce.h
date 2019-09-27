@@ -40,7 +40,7 @@ namespace frydom {
 
         /// Constructor of the wave drift force with specified hydrodynamic database
         /// \param hdb Hydrodynamic database
-        FrWaveDriftForce(const std::string &&name, std::shared_ptr<FrHydroDB> hdb);
+        FrWaveDriftForce(const std::string& name, std::shared_ptr<FrHydroDB> hdb);
 
         /// Get the type name of this object
         /// \return type name of this object

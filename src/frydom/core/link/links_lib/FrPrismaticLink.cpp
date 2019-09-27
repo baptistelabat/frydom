@@ -21,11 +21,11 @@
 
 namespace frydom {
 
-    FrPrismaticLink::FrPrismaticLink(const std::string &&name,
+    FrPrismaticLink::FrPrismaticLink(const std::string& name,
                                      std::shared_ptr<frydom::FrNode> node1,
                                      std::shared_ptr<frydom::FrNode> node2,
                                      frydom::FrOffshoreSystem *system) :
-        FrLink(std::move(name), node1, node2, system) {
+        FrLink(name, node1, node2, system) {
       m_chronoLink->SetLinkType(PRISMATIC);
     }
 
@@ -95,20 +95,20 @@ namespace frydom {
       // FIXME : attention si la liaison n'est pas resolue !!! Ca ne fonctionne pas
     }
 
-    FrLinearActuator *FrPrismaticLink::Motorize(const std::string &&name, ACTUATOR_CONTROL control) {
+    FrLinearActuator *FrPrismaticLink::Motorize(const std::string& name, ACTUATOR_CONTROL control) {
 
-      m_actuator = std::make_shared<FrLinearActuator>(std::move(name), this, control);
+      m_actuator = std::make_shared<FrLinearActuator>(name, this, control);
       GetSystem()->Add(m_actuator);
       return dynamic_cast<FrLinearActuator *>(m_actuator.get());
 
     }
 
-    void FrPrismaticLink::Clamp(const std::string &&name) {
+    void FrPrismaticLink::Clamp(const std::string& name) {
 
       if (IsMotorized()) GetSystem()->RemoveLink(m_actuator);
 
       // brake motorization instantiation
-      m_actuator = std::make_shared<FrLinearActuator>(std::move(name), this, POSITION);
+      m_actuator = std::make_shared<FrLinearActuator>(name, this, POSITION);
       m_actuator->Initialize();
       GetSystem()->Add(m_actuator);
 
@@ -117,11 +117,11 @@ namespace frydom {
     }
 
     std::shared_ptr<FrPrismaticLink>
-    make_prismatic_link(const std::string &&name,
+    make_prismatic_link(const std::string& name,
                         std::shared_ptr<FrNode> node1,
                         std::shared_ptr<FrNode> node2,
                         FrOffshoreSystem *system) {
-      auto link = std::make_shared<FrPrismaticLink>(std::move(name), node1, node2, system);
+      auto link = std::make_shared<FrPrismaticLink>(name, node1, node2, system);
       system->AddLink(link);
 
 

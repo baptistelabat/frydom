@@ -23,9 +23,9 @@
 
 namespace frydom {
 
-    FrNonLinearFroudeKrylovForce::FrNonLinearFroudeKrylovForce(const std::string &&name,
+    FrNonLinearFroudeKrylovForce::FrNonLinearFroudeKrylovForce(const std::string& name,
                                                                const std::shared_ptr<FrHydroMesh> &HydroMesh) :
-        FrForce(std::move(name)) {
+        FrForce(name) {
       m_hydroMesh = HydroMesh;
     }
 
@@ -82,14 +82,14 @@ namespace frydom {
     }
 
     std::shared_ptr<FrNonLinearFroudeKrylovForce>
-    make_nonlinear_froude_krylov_force(const std::string &&name,
+    make_nonlinear_froude_krylov_force(const std::string& name,
                                        std::shared_ptr<FrBody> body,
                                        std::shared_ptr<FrHydroMesh> HydroMesh) {
 
       // This function creates a fully or weakly nonlinear Froude-Krylov force object.
 
       // Construction of the fully or weakly Froude-Krylov force object from the HDB.
-      auto NonlinFKForce = std::make_shared<FrNonLinearFroudeKrylovForce>(std::move(name), HydroMesh);
+      auto NonlinFKForce = std::make_shared<FrNonLinearFroudeKrylovForce>(name, HydroMesh);
 
       // Add the Froude-Krylov force object as an external force to the body.
       body->AddExternalForce(NonlinFKForce); // Initialization of m_body.

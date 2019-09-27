@@ -56,7 +56,7 @@ namespace frydom {
 
       /// Constructor of a new equilibrium frame with default position and no velocity
       /// \param body Body to which the equilibrium frame is linked
-      explicit FrEquilibriumFrame(const std::string &&name, FrBody *body);
+      explicit FrEquilibriumFrame(const std::string& name, FrBody *body);
 
       /// Get the type name of this object
       /// \return type name of this object
@@ -188,7 +188,7 @@ namespace frydom {
     };
 
     std::shared_ptr<FrEquilibriumFrame>
-    make_equilibrium_frame(const std::string&& name, const std::shared_ptr<FrBody> &body, FrOffshoreSystem *system);
+    make_equilibrium_frame(const std::string& name, const std::shared_ptr<FrBody> &body, FrOffshoreSystem *system);
 
 
     /**
@@ -215,7 +215,7 @@ namespace frydom {
       /// \param cutoffTime Cutoff time period
       /// \param dampingRatio Damping ratio
       /// \param initPos If true the frame is initialized with the position of the body
-      FrEqFrameSpringDamping(const std::string &&name, FrBody *body, double cutoffTime, double dampingRatio);
+      FrEqFrameSpringDamping(const std::string& name, FrBody *body, double cutoffTime, double dampingRatio);
 
       /// Get the type name of this object
       /// \return type name of this object
@@ -250,7 +250,7 @@ namespace frydom {
     };
 
     std::shared_ptr<FrEqFrameSpringDamping>
-    make_spring_damping_equilibrium_frame(const std::string &&name,
+    make_spring_damping_equilibrium_frame(const std::string& name,
                                           const std::shared_ptr<FrBody> &body,
                                           FrOffshoreSystem *system,
                                           double cutoffTime,
@@ -289,7 +289,7 @@ namespace frydom {
       /// \param timePersistence Time windows for the mean velocity computation
       /// \param timeStep Time step of the recorder
       /// \param initPos If true the frame is initialized with the position of the body
-      FrEqFrameMeanMotion(const std::string &&name, FrBody *body, double timePersistence, double timeStep);
+      FrEqFrameMeanMotion(const std::string& name, FrBody *body, double timePersistence, double timeStep);
 
       /// Get the type name of this object
       /// \return type name of this object
@@ -311,7 +311,7 @@ namespace frydom {
     };
 
     std::shared_ptr<FrEqFrameMeanMotion>
-    make_mean_motion_equilibrium_frame(const std::string &&name, const std::shared_ptr<FrBody> &body,
+    make_mean_motion_equilibrium_frame(const std::string& name, const std::shared_ptr<FrBody> &body,
                                        FrOffshoreSystem *system,
                                        double timePersistence,
                                        double timeStep);

@@ -46,7 +46,7 @@ namespace frydom {
    public:
 
     /// Constructor.
-    FrNonlinearHydrostaticForce(const std::string &&name, const std::shared_ptr<FrHydroMesh> &hydroMesh);
+    FrNonlinearHydrostaticForce(const std::string& name, const std::shared_ptr<FrHydroMesh> &hydroMesh);
 
     /// Get the type name of this object
     /// \return type name of this object
@@ -106,7 +106,7 @@ namespace frydom {
 
   /// This function creates a (fully or weakly) nonlinear hydrostatic force object.
   std::shared_ptr<FrNonlinearHydrostaticForce>
-  make_nonlinear_hydrostatic_force(const std::string &&name,
+  make_nonlinear_hydrostatic_force(const std::string& name,
                                    const std::shared_ptr<FrBody> &body,
                                    const std::shared_ptr<FrHydroMesh> &HydroMesh);
 

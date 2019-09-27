@@ -22,8 +22,8 @@
 
 namespace frydom {
 
-    FrWaveDriftForce::FrWaveDriftForce(const std::string &&name, std::shared_ptr<FrHydroDB> hdb)
-        : FrForce(std::move(name)), m_hdb(hdb) {}
+    FrWaveDriftForce::FrWaveDriftForce(const std::string& name, std::shared_ptr<FrHydroDB> hdb)
+        : FrForce(name), m_hdb(hdb) {}
 
     void FrWaveDriftForce::Compute(double time) {
 

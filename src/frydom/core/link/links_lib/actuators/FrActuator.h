@@ -38,7 +38,7 @@ namespace frydom {
 
     public:
 
-        FrActuator(const std::string &&name, FrLink* actuatedLink);
+        FrActuator(const std::string& name, FrLink* actuatedLink);
 
 
         /// Tells if all constraints of this link are currently turned on or off by the user.

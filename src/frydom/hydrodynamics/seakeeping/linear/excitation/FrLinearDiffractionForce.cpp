@@ -35,19 +35,19 @@ namespace frydom {
 
     }
 
-    FrLinearDiffractionForce::FrLinearDiffractionForce(const std::string &&name,
+    FrLinearDiffractionForce::FrLinearDiffractionForce(const std::string& name,
                                                        const std::shared_ptr<FrHydroDB> &HDB)
-        : FrLinearHDBForce(std::move(name), HDB) {}
+        : FrLinearHDBForce(name, HDB) {}
 
     std::shared_ptr<FrLinearDiffractionForce>
-    make_linear_diffraction_force(const std::string &&name,
+    make_linear_diffraction_force(const std::string& name,
                                   std::shared_ptr<FrHydroDB> HDB,
                                   std::shared_ptr<FrBody> body) {
 
       // This function creates the linear excitation force object.
 
       // Construction of the excitation force object from the HDB.
-      auto diffractionForce = std::make_shared<FrLinearDiffractionForce>(std::move(name), HDB);
+      auto diffractionForce = std::make_shared<FrLinearDiffractionForce>(name, HDB);
 
       // Add the excitation force object as an external force to the body.
       body->AddExternalForce(diffractionForce); // Initialization of m_body.

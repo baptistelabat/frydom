@@ -41,8 +41,8 @@ namespace frydom {
       /// FrCatenaryForce constructor, from a catenary line, and the description of the side of this line
       /// \param line catenary line applying a tension
       /// \param side side of the line (starting or ending)
-      FrCatenaryForce(const std::string &&name, FrCatenaryLine *line, FrCatenaryLine::LINE_SIDE side) :
-          FrForce(std::move(name)), m_line(line), m_line_side(side) {};
+      FrCatenaryForce(const std::string& name, FrCatenaryLine *line, FrCatenaryLine::LINE_SIDE side) :
+          FrForce(name), m_line(line), m_line_side(side) {};
 
       /// Return true if the force is included in the static analysis
       bool IncludedInStaticAnalysis() const override { return true; }
