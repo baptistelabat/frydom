@@ -24,15 +24,15 @@ namespace frydom {
     // ---------------------------------------------------------------------
 
     FrEquilibriumFrame::FrEquilibriumFrame(const std::string &name, FrBody *body)
-        : FrLoggable(name), FrPrePhysicsItem() {
-      m_velocity.SetNull();
-      m_angularVelocity = 0.;
-      m_frame = FrFrame();
-      m_body = body;
-      c_prevTime = 0.;
-      m_initSpeedFromBody = false;
-      m_initPositionFromBody = true;
-    }
+        : FrLoggable(name),
+          FrPrePhysicsItem(),
+          m_velocity(),
+          m_angularVelocity(0.),
+          m_frame(),
+          m_body(body),
+          c_prevTime(0.),
+          m_initPositionFromBody(true),
+          m_initSpeedFromBody(false) {}
 
     void FrEquilibriumFrame::SetBody(FrBody *body, bool initPos) {
       m_body = body;

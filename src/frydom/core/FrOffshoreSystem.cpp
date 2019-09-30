@@ -57,7 +57,7 @@ namespace frydom {
           // Bodies updates  // FIXME : appeler les updates directement des objets frydom !
           for (auto &body : bodylist) {
             body->Update(ChTime, update_assets);
-            body->Update(ChTime, update_assets);
+//            body->Update(ChTime, update_assets);  // FIXME : Appel redondant
           }
 
           // Physics items that have to be updated between bodies and links

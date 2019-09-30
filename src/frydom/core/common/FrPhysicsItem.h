@@ -67,7 +67,7 @@ namespace frydom {
 
         /// Get the shared pointer to the chrono related physics item
         /// \return Chrono related physics item
-        virtual std::shared_ptr<internal::FrPhysicsItemBase> GetChronoPhysicsItem() const ;
+        virtual std::shared_ptr<internal::FrPhysicsItemBase> GetChronoPhysicsItem() const;
 
         friend void FrOffshoreSystem::RemovePhysicsItem(std::shared_ptr<FrPhysicsItem>);
 

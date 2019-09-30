@@ -37,7 +37,7 @@ namespace frydom {
      * during the initialization stage.
      *
      */
-    class FrEquilibriumFrame : public FrTreeNode<FrBody>, public FrPrePhysicsItem, public FrLoggable {
+    class FrEquilibriumFrame : public FrPrePhysicsItem, public FrLoggable {
 
      protected:
 

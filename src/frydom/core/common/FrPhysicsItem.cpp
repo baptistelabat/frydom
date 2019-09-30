@@ -29,42 +29,40 @@ namespace frydom {
         }
 
         void FrPhysicsItemBase::Update(double time, bool update_assets) {
-            m_frydomPhysicsItem->Update(time);
-            ChPhysicsItem::Update(time, update_assets);
+          m_frydomPhysicsItem->Update(time);
+          ChPhysicsItem::Update(time, update_assets);
         }
 
     }  // end namespace frydom::internal
 
 
 
-    FrPhysicsItem::FrPhysicsItem() {
-        m_chronoPhysicsItem = std::make_shared<internal::FrPhysicsItemBase>(this);
-    };
+    FrPhysicsItem::FrPhysicsItem() : m_chronoPhysicsItem(std::make_shared<internal::FrPhysicsItemBase>(this)) {}
 
-    FrOffshoreSystem* FrPhysicsItem::GetSystem() {
-        return GetParent();
+    FrOffshoreSystem *FrPhysicsItem::GetSystem() {
+      return GetParent();
     }
 
     bool FrPhysicsItem::IsActive() const {
-        return m_isActive;
+      return m_isActive;
     }
 
     void FrPhysicsItem::SetActive(bool active) {
-        m_isActive = active;
+      m_isActive = active;
     }
 
     std::shared_ptr<internal::FrPhysicsItemBase> FrPhysicsItem::GetChronoPhysicsItem() const {
-        return m_chronoPhysicsItem;
+      return m_chronoPhysicsItem;
     }
 
     void FrPhysicsItem::SetupInitial() {
-        m_chronoPhysicsItem->SetupInitial();
-        Initialize();
+      m_chronoPhysicsItem->SetupInitial();
+      Initialize();
     }
 
     void FrPhysicsItem::Update(double time) {
-        if(IsActive())
-            Compute(time);
+      if (IsActive())
+        Compute(time);
     }
 
 }  // end namespace frydom
