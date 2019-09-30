@@ -9,8 +9,8 @@
 //
 // ==========================================================================
 
-#ifndef FRYDOM_FRLOGMANAGER_H
-#define FRYDOM_FRLOGMANAGER_H
+#ifndef FRYDOM_FRPATHMANAGER_H
+#define FRYDOM_FRPATHMANAGER_H
 
 #include <cppfs/fs.h>
 #include <cppfs/FileHandle.h>
@@ -28,28 +28,16 @@ namespace frydom {
 
     class FrPathManager {
 
+     public:
+      FrPathManager() : m_i(1) {}
+
+      ~FrPathManager() = default;
 
      private:
-      int i = 1;
+      int m_i = 1;
 
     };
 
-//
-//  class FrPathManager {
-//
-//   public:
-//    static FrPathManager* instance() {
-//      return m_instance.get();
-//    }
-//
-//
-//   private:
-//    std::unique_ptr<FrPathManager> m_instance;
-//
-//
-//  };
-//
-//
 
 
 
@@ -124,4 +112,4 @@ namespace frydom {
 
 } // end namespace frydom
 
-#endif //FRYDOM_FRLOGMANAGER_H
+#endif //FRYDOM_FRPATHMANAGER_H

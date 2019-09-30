@@ -27,7 +27,6 @@
 #include "frydom/core/statics/FrStaticAnalysis.h"
 
 #include "frydom/core/math/functions/ramp/FrCosRampFunction.h"
-//#include "frydom/utils/FrSerializerFactory.h"
 
 #include "frydom/logging/FrLogManager.h"
 #include "frydom/logging/FrPathManager.h"
@@ -169,19 +168,19 @@ namespace frydom {
       // Check compatibility between system contact model, time stepper and constraint solver
       CheckCompatibility();
 
-      // Creating a fixed world body to be able to attach anything to it (anchors...) // TODO: mettre dans une methode privee
+      // Creating a fixed world body to be able to attach anything to it (anchors...)
       CreateWorldBody();
 
       // Creating the environment
-      m_environment = std::make_unique<FrEnvironment>(
-          this); // FIXME: voir bug dans FrEnvironment pour le reglage du systeme
+      m_environment = std::make_unique<FrEnvironment>(this);
 
       // Creating the log manager service
       m_LogManager = std::make_unique<FrLogManager>();
 
+      // Creating the path manager service
       m_pathManager = std::make_unique<FrPathManager>();
 
-      // Create the static analysis
+      // Creating the static analysis
       m_statics = std::make_unique<FrStaticAnalysis>(this);
 
 //        m_message = std::make_unique<hermes::Message>();
@@ -890,7 +889,6 @@ namespace frydom {
         if (!AdvanceTo(nextTime))
           return false;
       }
-      return true;
     }
 
     void FrOffshoreSystem::CreateWorldBody() {
@@ -1024,6 +1022,10 @@ namespace frydom {
 
     FrLogManager* FrOffshoreSystem::GetLogManager() const {
       return m_LogManager.get();
+    }
+
+    FrPathManager* FrOffshoreSystem::GetPathManager() const {
+      return m_pathManager.get();
     }
 
     void FrOffshoreSystem::IsInitialized() {

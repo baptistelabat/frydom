@@ -746,6 +746,9 @@ namespace frydom {
       /// Get a pointer to the log manager
       FrLogManager *GetLogManager() const;
 
+      /// Get a pointer to the path manager
+      FrPathManager* GetPathManager() const;
+
 
      private:
 
