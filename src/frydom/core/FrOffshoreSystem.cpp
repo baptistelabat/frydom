@@ -41,6 +41,8 @@ namespace frydom {
 
         void FrSystemBaseSMC::Update(bool update_assets) {
 
+          // Note : there is no ChAssembly::Update() as it is better expanded here...
+
           CH_PROFILE("Update");
 
           timer_update.start();  // Timer for profiling
@@ -238,7 +240,7 @@ namespace frydom {
 
     }
 
-    FrOffshoreSystem::BodyContainer FrOffshoreSystem::GetBodyList() {
+    FrOffshoreSystem::BodyContainer& FrOffshoreSystem::GetBodyList() {
       return m_bodyList;
     }
 
@@ -291,7 +293,7 @@ namespace frydom {
 
     void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem> otherPhysics) {
       m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
-      otherPhysics->SetParent(this);
+//      otherPhysics->SetParent(this);
       m_PrePhysicsList.push_back(otherPhysics);
     }
 
@@ -301,7 +303,7 @@ namespace frydom {
 
     void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem> otherPhysics) {
       m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
-      otherPhysics->SetParent(this);
+//      otherPhysics->SetParent(this);
       m_MidPhysicsList.push_back(otherPhysics);
     }
 
@@ -311,7 +313,7 @@ namespace frydom {
 
     void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem> otherPhysics) {
       m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
-      otherPhysics->SetParent(this);
+//      otherPhysics->SetParent(this);
       m_PostPhysicsList.push_back(otherPhysics);
     }
 
@@ -340,7 +342,7 @@ namespace frydom {
         }
       }
 
-      item->SetParent(nullptr);
+//      item->SetParent(nullptr);
 
     }
 
@@ -363,7 +365,7 @@ namespace frydom {
     void FrOffshoreSystem::AddFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh) {
       m_chronoSystem->AddMesh(feaMesh->GetChronoMesh());  // Authorized because this method is a friend of FrFEAMesh
 
-      feaMesh->m_system = this;
+//      feaMesh->m_system = this;
       m_feaMeshList.push_back(feaMesh);
     }
 
@@ -389,7 +391,7 @@ namespace frydom {
       auto it = std::find(m_feaMeshList.begin(), m_feaMeshList.end(), feamesh);
       assert(it != m_feaMeshList.end());
       m_feaMeshList.erase(it);
-      feamesh->m_system = nullptr;
+//      feamesh->m_system = nullptr;
 
     }
 

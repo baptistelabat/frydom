@@ -16,6 +16,7 @@
 #include "frydom/core/common/FrFrame.h"
 #include "frydom/core/math/FrVector.h"
 #include "frydom/core/common/FrPhysicsItem.h"
+#include "frydom/core/common/FrTreeNode.h"
 #include "frydom/logging/FrLoggable.h"
 
 
@@ -37,7 +38,7 @@ namespace frydom {
      * during the initialization stage.
      *
      */
-    class FrEquilibriumFrame : public FrPrePhysicsItem, public FrLoggable {
+    class FrEquilibriumFrame : public FrTreeNode<FrOffshoreSystem>, public FrPrePhysicsItem, public FrLoggable {
 
      protected:
 
@@ -171,6 +172,8 @@ namespace frydom {
 
       /// Method to be applied after each time steps
       void StepFinalize() override;
+
+      FrOffshoreSystem* GetSystem() const;
 
       // Logging
 

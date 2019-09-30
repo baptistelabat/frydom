@@ -25,7 +25,7 @@ namespace frydom {
         m_body(body),
         m_clippingSupport(support) {
 
-      SetParent(system);
+//      SetParent(system);
       m_clipper = std::make_unique<mesh::FrMeshClipper>();
 
       m_clippedMesh = mesh::FrMesh();
@@ -40,7 +40,7 @@ namespace frydom {
         m_body(body),
         m_clippingSupport(support) {
 
-      SetParent(system);
+//      SetParent(system);
 
       // Import and transform the initial mesh, into the body reference frame
       ImportMesh(meshFile, meshOffset);
@@ -74,7 +74,7 @@ namespace frydom {
         }
         case ClippingSupport::WAVESURFACE: {
           auto clippingSurface = std::make_shared<mesh::FrClippingWaveSurface>(
-              GetParent()->GetEnvironment()->GetOcean()->GetFreeSurface()); // FIXME : c'est ClippingWaveSurface qui doit avoir une ref a systeme !!! couplage inutile !
+              m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()); // FIXME : c'est ClippingWaveSurface qui doit avoir une ref a systeme !!! couplage inutile !
           m_clipper->SetClippingSurface(clippingSurface);
           break;
         }

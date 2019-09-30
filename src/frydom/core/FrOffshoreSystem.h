@@ -271,8 +271,7 @@ namespace frydom {
 
       /// Add an item (body, link, etc.) to the offshore sytem
       /// \param item item to be added to the offshore system
-      void
-      Add(std::shared_ptr<FrObject> item); // TODO : faire des dynamic_pointer_cast sur les classes pouvant etre ajoutees...
+      void Add(std::shared_ptr<FrObject> item); // FIXME : en vrai, ce sont des FrTreeNode qui doivent etre passe
 
 
       // ***** Body *****
@@ -283,7 +282,7 @@ namespace frydom {
 
       /// Get the list of bodies added to the system
       /// \return List of the bodies added to the system
-      BodyContainer GetBodyList();
+      BodyContainer& GetBodyList();
 
       /// Remove a body from the system
       /// \param body Body removed from the system

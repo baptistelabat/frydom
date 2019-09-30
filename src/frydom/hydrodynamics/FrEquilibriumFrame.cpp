@@ -235,6 +235,10 @@ namespace frydom {
 
     }
 
+    FrOffshoreSystem* FrEquilibriumFrame::GetSystem() const {
+      return GetParent();
+    }
+
 
     void FrEquilibriumFrame::InitSpeedFromBody(bool is_init) {
       m_initSpeedFromBody = is_init;

@@ -249,6 +249,8 @@ namespace frydom {
       /// Update the length of the cable if unrolling speed is defined.
       virtual void UpdateState();
 
+      FrOffshoreSystem* GetSystem() const;
+
     };
 
 

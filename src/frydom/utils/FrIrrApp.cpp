@@ -23,7 +23,8 @@
 namespace frydom {
 
     FrIrrApp::FrIrrApp(FrOffshoreSystem *frSystem, chrono::ChSystem *system, double dist)
-        : chrono::irrlicht::ChIrrApp(system,
+        : m_system(frSystem),
+          chrono::irrlicht::ChIrrApp(system,
                                      L"FRyDoM viewer",
                                      irr::core::dimension2d<irr::u32>(800, 600),
                                      false,
@@ -32,7 +33,6 @@ namespace frydom {
                                      irr::video::EDT_OPENGL) {
 
 
-      SetParent(frSystem);
       SetSkyBox();
       AddCustomLights();
 
@@ -105,7 +105,7 @@ namespace frydom {
 
       // Temporal loop.
       while (GetDevice()->run()) {
-        std::cout << "Time : " << GetParent()->GetTime() << std::endl;
+        std::cout << "Time : " << GetSystem()->GetTime() << std::endl;
         BeginScene();
         DrawAll();
         // Time-stepping.
@@ -113,7 +113,7 @@ namespace frydom {
         EndScene();
 
         // Condition to stop the time-domain simulation using the time after time-stepping.
-        if (endTime > 0. && GetParent()->GetTime() > endTime)
+        if (endTime > 0. && GetSystem()->GetTime() > endTime)
           break; // If the endTime given is negative or null, the loop is infinite :)
 
 
@@ -141,12 +141,16 @@ namespace frydom {
         BeginScene();
         DrawAll();
 
-        GetParent()->GetStaticAnalysis()->SetNbIteration(2);
-        GetParent()->SolveStaticWithRelaxation();
+        GetSystem()->GetStaticAnalysis()->SetNbIteration(2);
+        GetSystem()->SolveStaticWithRelaxation();
 
         EndScene();
       }
 
+    }
+
+    FrOffshoreSystem* FrIrrApp::GetSystem() const {
+      return m_system;
     }
 
 }  // end namespace frydom

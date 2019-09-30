@@ -25,7 +25,7 @@ namespace frydom {
      protected:
       ParentType *m_parent;
 
-         };
+    };
 
 }  // end namespace frydom
 

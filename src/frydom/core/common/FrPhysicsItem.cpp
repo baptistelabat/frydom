@@ -39,9 +39,9 @@ namespace frydom {
 
     FrPhysicsItem::FrPhysicsItem() : m_chronoPhysicsItem(std::make_shared<internal::FrPhysicsItemBase>(this)) {}
 
-    FrOffshoreSystem *FrPhysicsItem::GetSystem() {
-      return GetParent();
-    }
+//    FrOffshoreSystem *FrPhysicsItem::GetSystem() {
+//      return GetParent();
+//    }
 
     bool FrPhysicsItem::IsActive() const {
       return m_isActive;

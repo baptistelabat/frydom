@@ -55,7 +55,7 @@ namespace frydom {
      * \class FrPhysicsItem
      * \brief Class for defining objects which are neither bodies nor links, for instance caterany lines.
      */
-    class FrPhysicsItem: public FrTreeNode<FrOffshoreSystem>, public FrObject {
+    class FrPhysicsItem: public FrObject {
 
     protected:
 
@@ -75,7 +75,7 @@ namespace frydom {
 
         FrPhysicsItem();
 
-        FrOffshoreSystem* GetSystem();
+//        FrOffshoreSystem* GetSystem();
 
         /// Check if the force is active
         bool IsActive() const;

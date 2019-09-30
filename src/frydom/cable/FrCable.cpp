@@ -195,4 +195,8 @@ namespace frydom {
         return cl;
     }
 
+    FrOffshoreSystem* FrCable::GetSystem() const {
+      return GetParent();
+    }
+
 }  // end namespace frydom

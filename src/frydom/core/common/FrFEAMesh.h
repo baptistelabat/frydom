@@ -24,13 +24,13 @@ namespace frydom {
 
     protected:
 
-        FrOffshoreSystem * m_system;
+//        FrOffshoreSystem * m_system;
 
         virtual std::shared_ptr<chrono::fea::ChMesh> GetChronoMesh() = 0;
 
     public:
 
-        FrOffshoreSystem* GetSystem() { return m_system; };
+//        FrOffshoreSystem* GetSystem() { return m_system; };
 
         FrFEAMesh() = default;
 

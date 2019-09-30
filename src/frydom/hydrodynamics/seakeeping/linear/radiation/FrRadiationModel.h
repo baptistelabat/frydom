@@ -38,7 +38,7 @@ namespace frydom {
      * \class FrRadiationModel
      * \brief Class for computing the radiation loads.
      */
-    class FrRadiationModel : public FrPrePhysicsItem {
+    class FrRadiationModel : public FrTreeNode<FrOffshoreSystem>, public FrPrePhysicsItem {
 
     protected:
 
@@ -91,6 +91,8 @@ namespace frydom {
         /// Return the mapper between body and BEM body database
         /// \return Mapper
         FrHydroMapper* GetMapper() const;
+
+        FrOffshoreSystem* GetSystem() const;
 
     private:
 

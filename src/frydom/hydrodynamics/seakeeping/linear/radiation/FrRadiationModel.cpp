@@ -79,6 +79,10 @@ namespace frydom {
         return m_HDB->GetMapper();
     }
 
+    FrOffshoreSystem* FrRadiationModel::GetSystem() const {
+      return GetParent();
+    }
+
     Force FrRadiationModel::GetRadiationForce(FrBEMBody *BEMBody) const {
         return m_radiationForce.at(BEMBody).GetForce();
     }
