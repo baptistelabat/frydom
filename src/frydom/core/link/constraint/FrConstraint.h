@@ -97,8 +97,8 @@ namespace frydom {
 
      protected:
 
-      /// Add the fields to the Hermes message
-      void AddFields() override;
+//      /// Add the fields to the Hermes message
+//      void AddFields() override;
 
       /// Get the embedded Chrono object
       std::shared_ptr<chrono::ChLink> GetChronoLink() override;

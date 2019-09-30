@@ -25,9 +25,9 @@ namespace frydom {
 
       const std::string GetLogFolder() const;
 
-      void Add(FrLoggable* obj);
+      void Add(FrLoggableBase* obj);
 
-      void Remove(FrLoggable* obj);
+      void Remove(FrLoggableBase* obj);
 
       void Initialize();
 
@@ -43,7 +43,7 @@ namespace frydom {
      private:
       std::string m_log_folder;
 
-      std::list<FrLoggable*> m_loggable_list;
+      std::list<FrLoggableBase*> m_loggable_list;
 
 
 

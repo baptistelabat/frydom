@@ -248,8 +248,8 @@ namespace frydom {
       /// \param time time of the simulation
       void Update(double time) override {};
 
-      /// Initialize the log for the dynamic cable
-      void AddFields() override;
+//      /// Initialize the log for the dynamic cable
+//      void AddFields() override;
 
       double GetStaticResidual() override;
 
@@ -275,4 +275,6 @@ namespace frydom {
                        unsigned int nbElements);
 
 } // end namespace frydom
+
+
 #endif //FRYDOM_FRDYNAMICCABLE_H

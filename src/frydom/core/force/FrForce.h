@@ -72,7 +72,7 @@ namespace frydom {
      * \class FrForce
      * \brief  Class defining an effort with force and torque vector
      */
-    class FrForce : public FrObject, public FrTreeNode<FrBody>, public FrLoggable {
+    class FrForce : public FrObject, public FrLoggable<FrBody> {
 
      protected:
 
@@ -126,10 +126,10 @@ namespace frydom {
       /// Return true if the force is included in the static analysis
       virtual bool IncludedInStaticAnalysis() const { return false; }
 
-      // Logging
-
-      /// Initialize the log
-      void AddFields() override;
+//      // Logging
+//
+//      /// Initialize the log
+//      void AddFields() override;
 
       // Force Asset
       /// Inquire if a ForceAsset is displayed
@@ -419,7 +419,7 @@ namespace frydom {
 
      protected:
 
-      std::string BuildPath(const std::string &rootPath) override;
+//      std::string BuildPath(const std::string &rootPath) override;
 
 
       friend class FrBody;

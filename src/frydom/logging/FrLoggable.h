@@ -18,18 +18,70 @@
 
 #include "hermes/hermes.h"
 
+#include "frydom/core/common/FrTreeNode.h"
+
+
 namespace frydom {
 
-
-//    class FrPathManager;
-
-    class FrLoggable {
+    class FrLoggableBase {
 
      public:
 
-      explicit FrLoggable(const std::string &name);
+      explicit FrLoggableBase(const std::string &name) : m_log_this(true), m_name(name) {}
 
-      const std::string &GetName() const;
+      const std::string &GetName() const { return m_name; }
+
+      void LogThis(bool log) { m_log_this = log; }
+
+//      virtual std::string& GetPath() const = 0;
+
+      virtual void InitializeLog() {}
+
+      virtual void UpdateLog() {}
+
+      virtual void FinalizeLog() {}
+
+     protected:
+
+      virtual void InitializePath() = 0; // FIXME : NON, la gestion du path doit se faire dans les tree nodes !!!
+
+
+     private:
+      std::string m_name;
+
+      bool m_log_this;
+
+    };
+
+
+    template<class ParentType>
+    class FrLoggable : public FrLoggableBase, public FrTreeNode<ParentType> {
+
+     public:
+
+      explicit FrLoggable(const std::string &name) : FrLoggableBase(name), FrTreeNode<ParentType>() {}
+
+
+     private:
+
+      void InitializePath() override {
+//        m_path =
+      }
+
+
+
+    };
+
+
+
+
+
+
+
+
+
+
+
 
 //    /// Check if the object is logged
 //    /// \return true if the object is logged
@@ -39,19 +91,19 @@ namespace frydom {
 //    /// \param isLogged true if the object is to be logged
 //    void SetLogged(bool isLogged);
 
-      void LogThis(bool log);
 
-      /// Initialize the logging of the object : build the path, create the directory, add the fields to be logged, etc.
-      /// \param path path of the parent object, to build the path of the present object
-      void InitializeLog();
 
-      void UpdateLog();
-
-      void FinalizeLog();
-
-      /// Initialize the logging of the dependencies (attributes of the present object)
-      /// \param path path of the present object, to give to the InitializeLog of the dependencies to build their log path
-      virtual void InitializeLog_Dependencies(const std::string &path) {};
+//      /// Initialize the logging of the object : build the path, create the directory, add the fields to be logged, etc.
+//      /// \param path path of the parent object, to build the path of the present object
+//      void InitializeLog();
+//
+//      void UpdateLog();
+//
+//      void FinalizeLog();
+//
+//      /// Initialize the logging of the dependencies (attributes of the present object)
+//      /// \param path path of the present object, to give to the InitializeLog of the dependencies to build their log path
+//      virtual void InitializeLog_Dependencies(const std::string &path) {};
 
 //    /// Set the pointer to the path manager service, in charge of building the path of every object to be logged
 //    /// \param manager shared pointer to the path manager service
@@ -65,39 +117,39 @@ namespace frydom {
 //    /// \return Frame convention used in logging (NED/NWU)
 //    FRAME_CONVENTION GetLogFrameConvention() const;
 
-      /// Clear the Hermes message, from all fields and serializer
-      void ClearMessage();
+//      /// Clear the Hermes message, from all fields and serializer
+//      void ClearMessage();
+//
+//     protected:
+//
+////      /// Serialize and send the message
+////      void Update();
+//
+//      /// Build the path to the log file, create the directory and add a csv serializer
+//      /// \param rootPath path of the parent directory
+//      /// \return path of the present log directory
+//      virtual std::string BuildPath(const std::string &rootPath);
+//
+//      /// Add the fields to the Hermes message
+//      virtual void AddFields() {};
+//
+//
+//     protected:
+////    bool m_is_logged;
+//
+//      std::unique_ptr<hermes::Message> m_message;     ///< Hermes message, containing the fields to be logged
+//
+////    std::shared_ptr<FrPathManager> m_pathManager;   ///< pointer to the path manager, in charge of building the path
+////                                                    ///< to the log file of this object
+//     protected:
 
-     protected:
-
-//      /// Serialize and send the message
-//      void Update();
-
-      /// Build the path to the log file, create the directory and add a csv serializer
-      /// \param rootPath path of the parent directory
-      /// \return path of the present log directory
-      virtual std::string BuildPath(const std::string &rootPath);
-
-      /// Add the fields to the Hermes message
-      virtual void AddFields() {};
 
 
-     protected:
-//    bool m_is_logged;
-
-      std::unique_ptr<hermes::Message> m_message;     ///< Hermes message, containing the fields to be logged
-
-//    std::shared_ptr<FrPathManager> m_pathManager;   ///< pointer to the path manager, in charge of building the path
-//                                                    ///< to the log file of this object
-     protected:
-      std::string m_name;
-
-      bool m_log_this;
-
-    };
 
 }  // end namespace frydom
 
+
+//#include "FrLoggable.cpp"
 
 
 #endif //FRYDOM_FRLOGGABLE_H

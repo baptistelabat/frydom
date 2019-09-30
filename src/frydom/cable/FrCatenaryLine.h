@@ -208,8 +208,8 @@ namespace frydom {
       /// Catenary line initialization method
       void Initialize() override;
 
-      /// Initialize the log
-      void AddFields() override;
+//      /// Initialize the log
+//      void AddFields() override;
 
       /// Update the length of the cable if unrolling speed is defined.
       void UpdateState() override;

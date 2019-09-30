@@ -254,13 +254,13 @@ namespace frydom {
 
       // Building the catenary forces and adding them to bodies
       if (!m_startingForce) {
-        m_startingForce = std::make_shared<FrCatenaryForce>(m_name + "_start_force", this, LINE_START);
+        m_startingForce = std::make_shared<FrCatenaryForce>(GetName() + "_start_force", this, LINE_START);
         auto starting_body = m_startingNode->GetBody();
         starting_body->AddExternalForce(m_startingForce);
       }
 
       if (!m_endingForce) {
-        m_endingForce = std::make_shared<FrCatenaryForce>(m_name + "_end_force", this, LINE_END);
+        m_endingForce = std::make_shared<FrCatenaryForce>(GetName() + "_end_force", this, LINE_END);
         auto ending_body = m_endingNode->GetBody();
         ending_body->AddExternalForce(m_endingForce);
       }
@@ -284,30 +284,30 @@ namespace frydom {
 
     }
 
-    void FrCatenaryLine::AddFields() {
-
-////        if (IsLogged()) {
+//    void FrCatenaryLine::AddFields() {
 //
-//            // Add the fields to be logged here
-//            m_message->AddField<double>("time", "s", "Current time of the simulation",
-//                                        [this]() { return m_system->GetTime(); });
+//////        if (IsLogged()) {
+////
+////            // Add the fields to be logged here
+////            m_message->AddField<double>("time", "s", "Current time of the simulation",
+////                                        [this]() { return m_system->GetTime(); });
+////
+////            m_message->AddField<double>("StrainedLength", "m", "Strained length of the catenary line",
+////                                        [this]() { return GetStrainedLength(); });
+////
+////            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+////            ("StartingNodeTension","N", fmt::format("Starting node tension in world reference frame in {}",GetLogFrameConvention()),
+////                    [this]() {return GetStartingNodeTension(GetLogFrameConvention());});
+////
+////            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+////            ("EndingNodeTension","N", fmt::format("Ending node tension in world reference frame in {}",GetLogFrameConvention()),
+////                    [this]() {return GetEndingNodeTension(GetLogFrameConvention());});
+////
+////            //TODO : logger la position de la ligne pour un ensemble d'abscisses curvilignes?
+////
+//////        }
 //
-//            m_message->AddField<double>("StrainedLength", "m", "Strained length of the catenary line",
-//                                        [this]() { return GetStrainedLength(); });
-//
-//            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-//            ("StartingNodeTension","N", fmt::format("Starting node tension in world reference frame in {}",GetLogFrameConvention()),
-//                    [this]() {return GetStartingNodeTension(GetLogFrameConvention());});
-//
-//            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-//            ("EndingNodeTension","N", fmt::format("Ending node tension in world reference frame in {}",GetLogFrameConvention()),
-//                    [this]() {return GetEndingNodeTension(GetLogFrameConvention());});
-//
-//            //TODO : logger la position de la ligne pour un ensemble d'abscisses curvilignes?
-//
-////        }
-
-    }
+//    }
 
     void FrCatenaryLine::StepFinalize() {
 

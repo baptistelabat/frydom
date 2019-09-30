@@ -366,8 +366,8 @@ namespace frydom {
       /// Update the cached values
       virtual void UpdateCache();
 
-      /// Add the fields to the Hermes message
-      void AddFields() override;
+//      /// Add the fields to the Hermes message
+//      void AddFields() override;
 
     };
 

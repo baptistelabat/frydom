@@ -55,8 +55,8 @@ namespace frydom {
     /// Return true if the force is included in the static analysis
     bool IncludedInStaticAnalysis() const override { return true; }
 
-    /// Initialize the log
-    void AddFields() override;
+//    /// Initialize the log
+//    void AddFields() override;
 
     /// Get the center of buoyancy position of the clipped mesh in the body reference frame
     /// Be careful that the center of buoyancy definition is not valid for a mesh clipped by the incident wave

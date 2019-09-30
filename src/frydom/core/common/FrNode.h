@@ -51,7 +51,7 @@ namespace frydom {
      * \class FrNode
      * \brief Class for defining nodes (in order to add links).
      */
-    class FrNode : public FrObject, public FrTreeNode<FrBody>, public FrLoggable {
+    class FrNode : public FrObject, public FrLoggable<FrBody> {
 
     private:
 
@@ -202,9 +202,9 @@ namespace frydom {
         /// Initialize method not implemented yet
         void Initialize() override;
 
-        // Logging
-
-        void AddFields() override;
+//        // Logging
+//
+//        void AddFields() override;
 
 
         // =============================================================================================================
@@ -255,9 +255,9 @@ namespace frydom {
             return worldVector;
         }
 
-    protected:
-
-        std::string BuildPath(const std::string& rootPath) override;
+//    protected:
+//
+//        std::string BuildPath(const std::string& rootPath) override;
 
     private:
 

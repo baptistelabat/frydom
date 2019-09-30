@@ -116,8 +116,8 @@ namespace frydom {
 
         chrono::ChLinkBase* GetChronoItem_ptr() const override = 0;
 
-        /// Add the fields to be logged
-        void AddFields() override;
+//        /// Add the fields to be logged
+//        void AddFields() override;
 
     };
 

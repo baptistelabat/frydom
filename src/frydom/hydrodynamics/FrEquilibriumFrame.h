@@ -38,7 +38,7 @@ namespace frydom {
      * during the initialization stage.
      *
      */
-    class FrEquilibriumFrame : public FrTreeNode<FrOffshoreSystem>, public FrPrePhysicsItem, public FrLoggable {
+    class FrEquilibriumFrame : public FrPrePhysicsItem, public FrLoggable<FrOffshoreSystem> {
 
      protected:
 
@@ -173,12 +173,13 @@ namespace frydom {
       /// Method to be applied after each time steps
       void StepFinalize() override;
 
+      /// Get a pointer to the parent system
       FrOffshoreSystem* GetSystem() const;
 
-      // Logging
-
-      // Initialize the log
-      void AddFields() override;
+//      // Logging
+//
+//      // Initialize the log
+//      void AddFields() override;
 
      protected:
 

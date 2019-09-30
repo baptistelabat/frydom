@@ -145,7 +145,7 @@ namespace frydom {
      * \class FrBody
      * \brief Class for defining a body.
      */
-    class FrBody : public FrObject, public FrTreeNode<FrOffshoreSystem>, public FrAssetOwner, public FrLoggable {
+    class FrBody : public FrObject, public FrAssetOwner, public FrLoggable<FrOffshoreSystem> {
 
      protected:
 
@@ -209,15 +209,15 @@ namespace frydom {
       /// \return type name of this object
       std::string GetTypeName() const override { return "Body"; }
 
-      // =============================================================================================================
-      // LOGGING
-      // =============================================================================================================
-
-      void InitializeLog_Dependencies(const std::string &bodyPath) override;
-
-     protected:
-
-      void AddFields() override;
+//      // =============================================================================================================
+//      // LOGGING
+//      // =============================================================================================================
+//
+//      void InitializeLog_Dependencies(const std::string &bodyPath) override;
+//
+//     protected:
+//
+//      void AddFields() override;
 
      public:
 

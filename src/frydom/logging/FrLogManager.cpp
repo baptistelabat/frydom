@@ -19,7 +19,7 @@ namespace frydom {
       return m_log_folder;
     }
 
-    void FrLogManager::Add(FrLoggable* obj){
+    void FrLogManager::Add(FrLoggableBase* obj){
       auto it = std::find(m_loggable_list.begin(), m_loggable_list.end(), obj);
 
       // Don't add if already present !
@@ -28,7 +28,7 @@ namespace frydom {
       }
     }
 
-    void FrLogManager::Remove(FrLoggable* obj) {
+    void FrLogManager::Remove(FrLoggableBase* obj) {
       auto it = std::find(m_loggable_list.begin(), m_loggable_list.end(), obj);
 
       // Remove if present
