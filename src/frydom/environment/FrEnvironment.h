@@ -36,6 +36,7 @@ namespace frydom {
     class Velocity;
     class FrFrame;
     class FrCosRampFunction;
+    class Position;
 
 
     /**
@@ -107,7 +108,10 @@ namespace frydom {
         /// Get the fluid density
         /// \param ft fluid type (AIR/WATER)
         /// \return fluid density
-        double GetFluidDensity(FLUID_TYPE ft) const;;
+        double GetFluidDensity(FLUID_TYPE ft) const;
+
+        FLUID_TYPE GetFluidTypeAtPointInWorld(const Position& worldPos, FRAME_CONVENTION fc,
+                bool waveDeformation = true);
 
         //---------------------------- Environment elements Getters ----------------------------//
 
