@@ -112,16 +112,12 @@ namespace frydom {
         void BuildTwelfthRuleTable();
 
     public:
+	
+	~FrTidal() = default;
 
         explicit FrTidal(FrFreeSurface* freeSurface);
 
         FrTidal(FrFreeSurface* freeSurface, const FrUTCTime t1, const double h1, TIDAL_LEVEL level1, const FrUTCTime t2, const double h2, TIDAL_LEVEL level2);
-
-        ~FrTidal();
-
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "Tidal"; }
 
         void SetNoTidal();
 

@@ -121,8 +121,6 @@ namespace frydom {
 
     }
 
-    FrTidal::~FrTidal() = default;
-
     void FrTidal::Update(const double time) {
         double waterHeight = 0.;
 

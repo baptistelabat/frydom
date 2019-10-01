@@ -76,8 +76,6 @@ namespace frydom {
 
    protected:
 
-//        FrBody* m_body;                ///< Pointer to the body to which the force is applied
-
     std::shared_ptr<internal::FrForceBase> m_chronoForce;     ///< Pointer to the force chrono object
 
     bool m_isActive = true;         ///< boolean to check if the force is active
@@ -115,7 +113,7 @@ namespace frydom {
 
     /// Get the type name of this object
     /// \return type name of this object
-    std::string GetTypeName() const override { return "Force"; }
+    const std::string& GetTypeName() const override { return "Force"; }
 
     /// Check if the force is active
     bool IsActive() const;

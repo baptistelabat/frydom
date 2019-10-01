@@ -41,10 +41,6 @@ namespace frydom {
         /// \param ocean ocean containing this current model
         explicit FrCurrent(FrOcean* ocean) : FrFlowBase() { m_ocean = ocean;}
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "Current"; }
-
         /// Get the ocean containing this current model
         /// \return ocean containing this current model
         FrOcean* GetOcean() const {return m_ocean;}

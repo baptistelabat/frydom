@@ -61,8 +61,6 @@ namespace frydom{
 
         explicit FrStaticAnalysis(FrOffshoreSystem* system);;
 
-        std::string GetTypeName() const override { return "StaticAnalysis"; }
-
         FrOffshoreSystem* GetSystem();
 
         /// Set the number of steps between two relaxations, during static iterations

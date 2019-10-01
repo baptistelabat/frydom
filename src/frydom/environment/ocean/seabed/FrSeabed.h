@@ -41,10 +41,6 @@ namespace frydom {
         /// Default destructor
         ~FrSeabed() = default;
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "Seabed"; }
-
         //---------------------------- Asset ----------------------------//
 
         /// Get the seabed grid asset

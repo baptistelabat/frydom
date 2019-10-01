@@ -49,10 +49,6 @@ namespace frydom {
         /// Constructor.
         FrHydroMesh(FrOffshoreSystem* system, const std::shared_ptr<FrBody>& body, const std::string& meshFile, FrFrame meshOffsset, FrHydroMesh::ClippingSupport support);
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "HydroMesh"; }
-
         /// Initialize the hydromesh
         void Initialize() override;
 

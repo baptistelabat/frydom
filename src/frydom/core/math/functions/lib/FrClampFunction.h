@@ -40,8 +40,6 @@ namespace frydom {
         FrClampAfterFunction* Clone() const override;
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "ClampAfterFunction"; }
-
     protected:
         void Eval(double x) const override;
 
@@ -54,8 +52,6 @@ namespace frydom {
         FrClampBeforeFunction(const FrClampBeforeFunction& other);
         FrClampBeforeFunction* Clone() const override;
         std::string GetRepr() const override;
-
-        std::string GetTypeName() const override { return "ClampBeforeFunction"; }
 
     protected:
         void Eval(double x) const override;

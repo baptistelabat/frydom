@@ -158,7 +158,7 @@ namespace frydom {
 
       /// Get the type name of this object
       /// \return type name of this object
-      std::string GetTypeName() const override { return "DynamicCable"; }
+      static const std::string& GetTypeName() override { return "DynamicCable"; }
 
       /// Set the Rayleigh damping coefficient (only stiffness related coefficient is included in chrono model, as in: R = r * K )
       /// \param damping Raleigh damping

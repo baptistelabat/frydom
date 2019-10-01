@@ -23,7 +23,7 @@
 
 namespace frydom{
 
-    FrOcean::FrOcean(FrEnvironment* environment) :m_environment(environment) {
+    FrOcean::FrOcean(FrEnvironment* environment) : m_environment(environment) {
 
         m_seabed        = std::make_unique<FrMeanSeabed>(this);
         m_freeSurface   = std::make_unique<FrFreeSurface>(this);

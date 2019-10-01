@@ -27,12 +27,14 @@ int main() {
 
   auto body2 = system.NewBody("myBody2");
 
-
   auto force1 = make_manoeuvring_model("man_model_body2", body2);
 
 
-  auto system_path = path_manager->GetPath(&system);
-  auto body1_path = path_manager->GetPath(body1.get());
+
+  std::cout << path_manager->GetPath(&system) << std::endl;
+  std::cout << path_manager->GetPath(body1.get()) << std::endl;
+  std::cout << path_manager->GetPath(force1.get()) << std::endl;
+  std::cout << path_manager->GetPath(node2.get()) << std::endl;
 
 
   return 0;

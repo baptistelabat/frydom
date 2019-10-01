@@ -32,7 +32,7 @@ namespace frydom {
         m_system = system;
 
         m_geographicServices    = std::make_unique<FrGeographicServices>();
-        m_timeServices              = std::make_unique<FrTimeServices>();
+        m_timeServices          = std::make_unique<FrTimeServices>();
         m_ocean                 = std::make_unique<FrOcean>(this);
         m_atmosphere            = std::make_unique<FrAtmosphere>(this);
 

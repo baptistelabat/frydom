@@ -16,16 +16,15 @@ namespace frydom {
 
    public:
 
-    explicit FrTreeNodeBase(const std::string &name) : m_name() {}
+    explicit FrTreeNodeBase(const std::string &name) : m_name(name) {}
 
-//    virtual FrTreeNodeBase* GetParent() const = 0;
-
-//    const std::string &GetPath() const {
-//
-//    }
     const std::string &GetName() const {
       return m_name;
     }
+
+    /// Get the type name of the object
+    /// \return type name of the object
+    virtual const std::string& GetTypeName() const = 0;
 
    private:
     std::string m_name;

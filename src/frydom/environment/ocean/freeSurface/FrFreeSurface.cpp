@@ -20,16 +20,16 @@
 
 namespace frydom {
 
-    FrFreeSurface::~FrFreeSurface() = default;
-
     FrFreeSurface::FrFreeSurface(FrOcean* ocean) : m_ocean(ocean) {
 
         // Creating a waveField and a tidal model
-        m_waveField         = std::make_unique<FrNullWaveField>(this);
-        m_tidal             = std::make_unique<FrTidal>(this);
+        m_waveField               = std::make_unique<FrNullWaveField>(this);
+        m_tidal                   = std::make_unique<FrTidal>(this);
         m_freeSurfaceGridAsset    = std::make_shared<FrFreeSurfaceGridAsset>(this);
 
     }
+
+    FrFreeSurface::~FrFreeSurface() = default;
 
     FrAtmosphere *FrFreeSurface::GetAtmosphere() const { return m_ocean->GetEnvironment()->GetAtmosphere(); }
 
@@ -64,9 +64,7 @@ namespace frydom {
     }
 
     double FrFreeSurface::GetPressure(double x, double y, double z, FRAME_CONVENTION fc) const {
-
         // This function computes the pressure.
-
         return m_waveField->GetPressure(x,y,z,fc);
 
     }

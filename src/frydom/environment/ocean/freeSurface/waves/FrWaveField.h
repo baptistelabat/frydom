@@ -196,10 +196,6 @@ namespace frydom {
     public:
         explicit FrNullWaveField(FrFreeSurface* freeSurface);
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "NullWaveField"; }
-
         /// Get the wave elevation on the horizontal position (x,y)
         /// \param x x position
         /// \param y y position

@@ -23,10 +23,6 @@ namespace frydom {
 
     public:
 
-        /// Get the type name of the object
-        /// \return type name of the object
-        std::string GetTypeName() const override { return "Assembly"; };
-        
         void Initialize() override {};
 
         void Clear() {

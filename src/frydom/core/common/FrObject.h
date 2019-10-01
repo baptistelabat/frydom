@@ -130,9 +130,6 @@ namespace frydom {
 
      public:
 
-      /// Get the type name of the object
-      /// \return type name of the object
-      virtual std::string GetTypeName() const = 0;
 
       /// Base method for Initialization of FryDoM objects
       ///

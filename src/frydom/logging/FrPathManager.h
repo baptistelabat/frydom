@@ -40,6 +40,7 @@ namespace frydom {
     template<class ParentType>
     std::string GetPath(const FrTreeNode <ParentType> *node) const {
 
+      if (!node) return "";
 
       return this->GetPath(node->GetParent()) + "/" + node->GetName();
 
