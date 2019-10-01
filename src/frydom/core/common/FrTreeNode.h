@@ -16,14 +16,14 @@ namespace frydom {
 
    public:
 
-    explicit FrTreeNodeBase(const std::string& name) : m_name() {}
+    explicit FrTreeNodeBase(const std::string &name) : m_name() {}
 
 //    virtual FrTreeNodeBase* GetParent() const = 0;
 
 //    const std::string &GetPath() const {
 //
 //    }
-    const std::string& GetName() const {
+    const std::string &GetName() const {
       return m_name;
     }
 
@@ -33,15 +33,12 @@ namespace frydom {
   };
 
 
-
   template<class ParentType>
   class FrTreeNode : public FrTreeNodeBase {
 
    public:
 
-    FrTreeNode(const std::string& name, ParentType *parent);
-
-    void SetParent(ParentType *parent);
+    FrTreeNode(const std::string &name, ParentType *parent);
 
     virtual ParentType *GetParent() const;
 

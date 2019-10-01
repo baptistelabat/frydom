@@ -19,52 +19,52 @@
 #include "frydom/core/force/FrForce.h"
 
 
-
 namespace frydom {
 
-    // forward declarations
-    class FrHydroDB;
-    class FrWaveDriftPolarData;
+  // forward declarations
+  class FrHydroDB;
 
-    /**
-    * \class FrWaveDriftForce
-    * \brief Class for computing the wave drift force.
-    */
-    class FrWaveDriftForce : public FrForce {
+  class FrWaveDriftPolarData;
 
-    private:
-        std::shared_ptr<FrHydroDB> m_hdb;               ///< Hydrodynamic database
-        std::shared_ptr<FrWaveDriftPolarData> m_table;  ///< Wave drift coefficient polar table
+  /**
+  * \class FrWaveDriftForce
+  * \brief Class for computing the wave drift force.
+  */
+  class FrWaveDriftForce : public FrForce {
 
-    public:
+   private:
+    std::shared_ptr<FrHydroDB> m_hdb;               ///< Hydrodynamic database
+    std::shared_ptr<FrWaveDriftPolarData> m_table;  ///< Wave drift coefficient polar table
 
-        /// Constructor of the wave drift force with specified hydrodynamic database
-        /// \param hdb Hydrodynamic database
-        FrWaveDriftForce(const std::string &name, std::shared_ptr<FrHydroDB> hdb);
+   public:
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "WaveDriftForce"; }
+    /// Constructor of the wave drift force with specified hydrodynamic database
+    /// \param hdb Hydrodynamic database
+    FrWaveDriftForce(const std::string &name, FrBody *body, std::shared_ptr<FrHydroDB> hdb);
 
-        /// Method to initialize the wave drift model
-        void Initialize() override;
+    /// Get the type name of this object
+    /// \return type name of this object
+    std::string GetTypeName() const override { return "WaveDriftForce"; }
 
-        /// Method to be applied at the end of each time steps
-        //void StepFinalize() override;
+    /// Method to initialize the wave drift model
+    void Initialize() override;
 
-    private:
+    /// Method to be applied at the end of each time steps
+    //void StepFinalize() override;
 
-        /// Compute the wave drift force
-        /// \param time Current time of the simulation from beginning, in seconds
-        void Compute(double time) override;
+   private:
 
-    protected:
+    /// Compute the wave drift force
+    /// \param time Current time of the simulation from beginning, in seconds
+    void Compute(double time) override;
 
-        std::vector<double> GetRelativeWaveDir() const;
+   protected:
 
-        std::vector<std::vector<double>> GetEncounterWaveFrequencies(Velocity speed) const;
+    std::vector<double> GetRelativeWaveDir() const;
 
-    };
+    std::vector<std::vector<double>> GetEncounterWaveFrequencies(Velocity speed) const;
+
+  };
 
 }  // end namespace frydom
 

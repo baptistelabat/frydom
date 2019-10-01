@@ -22,40 +22,41 @@
 
 namespace frydom {
 
-    // Forward declaration
-    class FrHydroDB;
+  // Forward declaration
+  class FrHydroDB;
 
-    class FrBody;
+  class FrBody;
 
-    class FrEquilibriumFrame;
+  class FrEquilibriumFrame;
 
-    /**
-     * \class FrLinearExcitationForce
-     * \brief Class for computing the linear excitation loads.
-     */
+  /**
+   * \class FrLinearExcitationForce
+   * \brief Class for computing the linear excitation loads.
+   */
 
-    class FrLinearExcitationForce : public FrLinearHDBForce {
+  class FrLinearExcitationForce : public FrLinearHDBForce {
 
-     public:
+   public:
 
-      /// Constructor.
-      explicit FrLinearExcitationForce(const std::string &name,
-                                       const std::shared_ptr<FrHydroDB> &HDB);;
+    /// Constructor.
+    explicit FrLinearExcitationForce(const std::string &name,
+                                     FrBody *body,
+                                     const std::shared_ptr<FrHydroDB> &HDB);;
 
-      /// Get the type name of this object
-      /// \return type name of this object
-      std::string GetTypeName() const override { return "LinearExcitationForce"; }
+    /// Get the type name of this object
+    /// \return type name of this object
+    std::string GetTypeName() const override { return "LinearExcitationForce"; }
 
-      Eigen::MatrixXcd GetHDBData(unsigned int iangle) const override;
+    Eigen::MatrixXcd GetHDBData(unsigned int iangle) const override;
 
-      Eigen::VectorXcd GetHDBData(unsigned int iangle, unsigned int iforce) const override;
+    Eigen::VectorXcd GetHDBData(unsigned int iangle, unsigned int iforce) const override;
 
-    };
+  };
 
-    std::shared_ptr<FrLinearExcitationForce>
-    make_linear_excitation_force(const std::string &name,
-                                 std::shared_ptr<FrHydroDB> HDB,
-                                 std::shared_ptr<FrBody> body);
+  std::shared_ptr<FrLinearExcitationForce>
+  make_linear_excitation_force(const std::string &name,
+                               std::shared_ptr<FrBody> body,
+                               std::shared_ptr<FrHydroDB> HDB);
 
 
 }  // end namespace frydom

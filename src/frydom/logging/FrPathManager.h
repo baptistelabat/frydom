@@ -30,30 +30,26 @@
 namespace frydom {
 
 
+  class FrPathManager {
 
-    class FrPathManager {
+   public:
+    FrPathManager() {}
 
-     public:
-      FrPathManager() {}
+    ~FrPathManager() = default;
 
-      ~FrPathManager() = default;
-
-      template <class ParentType>
-      std::string GetPath(const FrTreeNode<ParentType>* node) const {
-
-        return this->GetPath(node->GetParent()) + "/" + node->GetName();
-
-      }
+    template<class ParentType>
+    std::string GetPath(const FrTreeNode <ParentType> *node) const {
 
 
+      return this->GetPath(node->GetParent()) + "/" + node->GetName();
+
+    }
 
 
+   private:
+    std::unordered_set<std::string> m_used_paths;
 
-
-     private:
-      std::unordered_set<std::string> m_used_paths;
-
-    };
+  };
 
 
 

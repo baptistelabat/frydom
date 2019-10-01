@@ -19,198 +19,201 @@
 
 namespace frydom {
 
-    void FrLinearHDBForce::Initialize() {
+  void FrLinearHDBForce::Initialize() {
 
-      auto body = GetBody();
+    auto body = GetBody();
 
-      // Wave field.
-      auto waveField = body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
+    // Wave field.
+    auto waveField = body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
 
-      // BEMBody.
-      auto BEMBody = m_HDB->GetBody(body);
+    // BEMBody.
+    auto BEMBody = m_HDB->GetBody(body);
 
-      // Interpolation of the excitation loads with respect to the wave direction.
-      BuildHDBInterpolators();
+    // Interpolation of the excitation loads with respect to the wave direction.
+    BuildHDBInterpolators();
 
-      // Frequency and wave direction discretization.
-      auto freqs = waveField->GetWaveFrequencies(RADS);
-      auto directions = waveField->GetWaveDirections(RAD, NWU, GOTO);
+    // Frequency and wave direction discretization.
+    auto freqs = waveField->GetWaveFrequencies(RADS);
+    auto directions = waveField->GetWaveDirections(RAD, NWU, GOTO);
 
-      // Interpolation of the exciting loads if not already done.
-      if (m_Fhdb.empty()) {
-        m_Fhdb = GetHDBInterp(freqs, directions);
-      }
-
-      // Initialization of the parent class.
-      FrForce::Initialize();
-
+    // Interpolation of the exciting loads if not already done.
+    if (m_Fhdb.empty()) {
+      m_Fhdb = GetHDBInterp(freqs, directions);
     }
 
-    std::vector<Eigen::MatrixXcd>
-    FrLinearHDBForce::GetHDBInterp(std::vector<double> waveFrequencies,
-                                   std::vector<double> waveDirections) {
+    // Initialization of the parent class.
+    FrForce::Initialize();
 
-      // This function return the excitation force (linear excitation) or the diffraction force (nonlinear excitation) form the interpolator.
+  }
 
-      // BEMBody.
-      auto BEMBody = m_HDB->GetBody(GetBody());
+  std::vector<Eigen::MatrixXcd>
+  FrLinearHDBForce::GetHDBInterp(std::vector<double> waveFrequencies,
+                                 std::vector<double> waveDirections) {
 
-      // --> Getting sizes
+    // This function return the excitation force (linear excitation) or the diffraction force (nonlinear excitation) form the interpolator.
 
-      auto nbFreqInterp = waveFrequencies.size();
-      auto nbFreqBDD = BEMBody->GetNbFrequencies();
-      auto nbDirInterp = waveDirections.size();
-      auto nbForceMode = BEMBody->GetNbForceMode();
+    // BEMBody.
+    auto BEMBody = m_HDB->GetBody(GetBody());
 
-      // Wave direction is expressed between 0 and 2*pi.
-      for (auto &dir : waveDirections) dir = mathutils::Normalize_0_2PI(dir);
+    // --> Getting sizes
 
-      std::vector<Eigen::MatrixXcd> Fexc;
-      Fexc.reserve(nbDirInterp);
+    auto nbFreqInterp = waveFrequencies.size();
+    auto nbFreqBDD = BEMBody->GetNbFrequencies();
+    auto nbDirInterp = waveDirections.size();
+    auto nbForceMode = BEMBody->GetNbForceMode();
 
-      // -> Building interpolator and return vector
+    // Wave direction is expressed between 0 and 2*pi.
+    for (auto &dir : waveDirections) dir = mathutils::Normalize_0_2PI(dir);
 
-      auto freqsBDD = std::make_shared<std::vector<double>>(BEMBody->GetFrequencies());
+    std::vector<Eigen::MatrixXcd> Fexc;
+    Fexc.reserve(nbDirInterp);
 
-      auto freqCoeffs = std::make_shared<std::vector<std::complex<double>>>();
-      freqCoeffs->reserve(nbFreqBDD);
+    // -> Building interpolator and return vector
 
-      for (auto direction: waveDirections) {
+    auto freqsBDD = std::make_shared<std::vector<double>>(BEMBody->GetFrequencies());
 
-        auto excitationForceDir = Eigen::MatrixXcd(nbForceMode, nbFreqInterp);
+    auto freqCoeffs = std::make_shared<std::vector<std::complex<double>>>();
+    freqCoeffs->reserve(nbFreqBDD);
 
-        for (unsigned int imode = 0; imode < nbForceMode; ++imode) {
+    for (auto direction: waveDirections) {
 
-          freqCoeffs->clear();
-          for (unsigned int ifreq = 0; ifreq < nbFreqBDD; ++ifreq) {
-            freqCoeffs->push_back(m_waveDirInterpolators[imode][ifreq](direction));
-          }
+      auto excitationForceDir = Eigen::MatrixXcd(nbForceMode, nbFreqInterp);
 
-          auto freqInterpolator = mathutils::Interp1dLinear<double, std::complex<double>>();
-          freqInterpolator.Initialize(freqsBDD, freqCoeffs);
+      for (unsigned int imode = 0; imode < nbForceMode; ++imode) {
 
-          auto freqCoeffsInterp = freqInterpolator(waveFrequencies);
-          for (unsigned int ifreq = 0; ifreq < nbFreqInterp; ++ifreq) {
-            excitationForceDir(imode, ifreq) = freqCoeffsInterp[ifreq];
-          }
+        freqCoeffs->clear();
+        for (unsigned int ifreq = 0; ifreq < nbFreqBDD; ++ifreq) {
+          freqCoeffs->push_back(m_waveDirInterpolators[imode][ifreq](direction));
         }
-        Fexc.push_back(excitationForceDir);
-      }
-      return Fexc;
-    }
 
-    void FrLinearHDBForce::BuildHDBInterpolators() {
+        auto freqInterpolator = mathutils::Interp1dLinear<double, std::complex<double>>();
+        freqInterpolator.Initialize(freqsBDD, freqCoeffs);
 
-      // This function creates the interpolator for the excitation loads (linear excitation) or the diffraction loads (nonlinear excitation) with respect to the wave frequencies and directions.
-
-      // BEMBody.
-      auto BEMBody = m_HDB->GetBody(GetBody());
-
-      auto nbWaveDirections = BEMBody->GetNbWaveDirections();
-      auto nbFreq = BEMBody->GetNbFrequencies();
-      auto nbForceModes = BEMBody->GetNbForceMode();
-
-      m_waveDirInterpolators.clear();
-      m_waveDirInterpolators.reserve(nbForceModes);
-
-      auto angles = std::make_shared<std::vector<double>>(BEMBody->GetWaveDirections(mathutils::RAD, NWU));
-
-      auto interpolators = std::vector<mathutils::Interp1dLinear<double, std::complex<double>>>();
-      interpolators.reserve(nbFreq);
-
-      for (unsigned int imode = 0; imode < nbForceModes; ++imode) {
-
-        interpolators.clear();
-
-        for (unsigned int ifreq = 0; ifreq < nbFreq; ++ifreq) {
-
-          auto coeffs = std::make_shared<std::vector<std::complex<double>>>();
-          coeffs->reserve(nbWaveDirections);
-
-          for (unsigned int iangle = 0; iangle < nbWaveDirections; ++iangle) {
-            auto data = GetHDBData(iangle);
-            coeffs->push_back(data(imode, ifreq));
-          }
-
-          auto interpolator = mathutils::Interp1dLinear<double, std::complex<double>>();
-          interpolator.Initialize(angles, coeffs);
-          interpolators.push_back(interpolator);
-        }
-        m_waveDirInterpolators.push_back(interpolators);
-      }
-    }
-
-    void FrLinearHDBForce::Compute_F_HDB() {
-
-      auto body = GetBody();
-
-      // This function computes the excitation loads (linear excitation) or the diffraction loads (nonlinear excitation).
-
-      auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(body);
-
-      // Wave field structure.
-      auto waveField = body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
-
-      // Wave elevation.
-      auto complexElevations = waveField->GetComplexElevation(eqFrame->GetFrameInWorld().GetX(NWU),
-                                                              eqFrame->GetFrameInWorld().GetY(NWU),
-                                                              NWU);
-
-      // DOF.
-      auto nbMode = m_HDB->GetBody(body)->GetNbForceMode();
-
-      // Number of wave frequencies.
-      auto nbFreq = waveField->GetWaveFrequencies(RADS).size();
-
-      // Number of wave directions.
-      auto nbWaveDir = waveField->GetWaveDirections(RAD, NWU, GOTO).size();
-
-      // Fexc(t) = eta*Fexc(Nemoh).
-      Eigen::VectorXd forceMode(nbMode);
-      forceMode.setZero(); // Initialization.
-      for (unsigned int imode = 0; imode < nbMode; ++imode) {
-        for (unsigned int ifreq = 0; ifreq < nbFreq; ++ifreq) {
-          for (unsigned int idir = 0; idir < nbWaveDir; ++idir) {
-            forceMode(imode) += std::imag(complexElevations[idir][ifreq] * m_Fhdb[idir](imode, ifreq));
-          }
+        auto freqCoeffsInterp = freqInterpolator(waveFrequencies);
+        for (unsigned int ifreq = 0; ifreq < nbFreqInterp; ++ifreq) {
+          excitationForceDir(imode, ifreq) = freqCoeffsInterp[ifreq];
         }
       }
+      Fexc.push_back(excitationForceDir);
+    }
+    return Fexc;
+  }
 
-      // From vector to force and torque structures.
-      Force force;
-      force.SetNull();
-      Torque torque;
-      torque.SetNull();
+  void FrLinearHDBForce::BuildHDBInterpolators() {
 
-      for (unsigned int imode = 0; imode < nbMode; ++imode) {
+    // This function creates the interpolator for the excitation loads (linear excitation) or the diffraction loads (nonlinear excitation) with respect to the wave frequencies and directions.
 
-        auto mode = m_HDB->GetBody(body)->GetForceMode(imode);
-        Direction direction = mode->GetDirection(); // Unit vector for the force direction.
-        switch (mode->GetType()) {
-          case FrBEMMode::LINEAR:
-            force += direction * forceMode(imode);
-            break;
-          case FrBEMMode::ANGULAR:
-            torque += direction * forceMode(imode);
-            break;
+    // BEMBody.
+    auto BEMBody = m_HDB->GetBody(GetBody());
+
+    auto nbWaveDirections = BEMBody->GetNbWaveDirections();
+    auto nbFreq = BEMBody->GetNbFrequencies();
+    auto nbForceModes = BEMBody->GetNbForceMode();
+
+    m_waveDirInterpolators.clear();
+    m_waveDirInterpolators.reserve(nbForceModes);
+
+    auto angles = std::make_shared<std::vector<double>>(BEMBody->GetWaveDirections(mathutils::RAD, NWU));
+
+    auto interpolators = std::vector<mathutils::Interp1dLinear<double, std::complex<double>>>();
+    interpolators.reserve(nbFreq);
+
+    for (unsigned int imode = 0; imode < nbForceModes; ++imode) {
+
+      interpolators.clear();
+
+      for (unsigned int ifreq = 0; ifreq < nbFreq; ++ifreq) {
+
+        auto coeffs = std::make_shared<std::vector<std::complex<double>>>();
+        coeffs->reserve(nbWaveDirections);
+
+        for (unsigned int iangle = 0; iangle < nbWaveDirections; ++iangle) {
+          auto data = GetHDBData(iangle);
+          coeffs->push_back(data(imode, ifreq));
+        }
+
+        auto interpolator = mathutils::Interp1dLinear<double, std::complex<double>>();
+        interpolator.Initialize(angles, coeffs);
+        interpolators.push_back(interpolator);
+      }
+      m_waveDirInterpolators.push_back(interpolators);
+    }
+  }
+
+  void FrLinearHDBForce::Compute_F_HDB() {
+
+    auto body = GetBody();
+
+    // This function computes the excitation loads (linear excitation) or the diffraction loads (nonlinear excitation).
+
+    auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(body);
+
+    // Wave field structure.
+    auto waveField = body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
+
+    // Wave elevation.
+    auto complexElevations = waveField->GetComplexElevation(eqFrame->GetFrameInWorld().GetX(NWU),
+                                                            eqFrame->GetFrameInWorld().GetY(NWU),
+                                                            NWU);
+
+    // DOF.
+    auto nbMode = m_HDB->GetBody(body)->GetNbForceMode();
+
+    // Number of wave frequencies.
+    auto nbFreq = waveField->GetWaveFrequencies(RADS).size();
+
+    // Number of wave directions.
+    auto nbWaveDir = waveField->GetWaveDirections(RAD, NWU, GOTO).size();
+
+    // Fexc(t) = eta*Fexc(Nemoh).
+    Eigen::VectorXd forceMode(nbMode);
+    forceMode.setZero(); // Initialization.
+    for (unsigned int imode = 0; imode < nbMode; ++imode) {
+      for (unsigned int ifreq = 0; ifreq < nbFreq; ++ifreq) {
+        for (unsigned int idir = 0; idir < nbWaveDir; ++idir) {
+          forceMode(imode) += std::imag(complexElevations[idir][ifreq] * m_Fhdb[idir](imode, ifreq));
         }
       }
-
-      // Projection of the loads in the equilibrium frame.
-      auto forceInWorld = eqFrame->GetFrameInWorld().ProjectVectorFrameInParent(force, NWU);
-      auto torqueInWorldAtCOG = eqFrame->GetFrameInWorld().ProjectVectorFrameInParent(torque, NWU);
-
-      // Setting the nonlinear excitation loads in world at the CoG in world.
-      SetForceTorqueInWorldAtCOG(forceInWorld, torqueInWorldAtCOG, NWU);
-
     }
 
-    void FrLinearHDBForce::Compute(double time) {
-      Compute_F_HDB();
+    // From vector to force and torque structures.
+    Force force;
+    force.SetNull();
+    Torque torque;
+    torque.SetNull();
+
+    for (unsigned int imode = 0; imode < nbMode; ++imode) {
+
+      auto mode = m_HDB->GetBody(body)->GetForceMode(imode);
+      Direction direction = mode->GetDirection(); // Unit vector for the force direction.
+      switch (mode->GetType()) {
+        case FrBEMMode::LINEAR:
+          force += direction * forceMode(imode);
+          break;
+        case FrBEMMode::ANGULAR:
+          torque += direction * forceMode(imode);
+          break;
+      }
     }
 
-    FrLinearHDBForce::FrLinearHDBForce(const std::string &name, const std::shared_ptr<FrHydroDB> &HDB) :
-        FrForce(name), m_HDB(HDB) {}
+    // Projection of the loads in the equilibrium frame.
+    auto forceInWorld = eqFrame->GetFrameInWorld().ProjectVectorFrameInParent(force, NWU);
+    auto torqueInWorldAtCOG = eqFrame->GetFrameInWorld().ProjectVectorFrameInParent(torque, NWU);
+
+    // Setting the nonlinear excitation loads in world at the CoG in world.
+    SetForceTorqueInWorldAtCOG(forceInWorld, torqueInWorldAtCOG, NWU);
+
+  }
+
+  void FrLinearHDBForce::Compute(double time) {
+    Compute_F_HDB();
+  }
+
+  FrLinearHDBForce::FrLinearHDBForce(const std::string &name,
+                                     FrBody *body,
+                                     const std::shared_ptr<FrHydroDB> &HDB) :
+      FrForce(name, body),
+      m_HDB(HDB) {}
 
 
 } // end namespace frydom

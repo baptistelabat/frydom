@@ -39,6 +39,7 @@ namespace frydom {
 
       /// Constructor.
       FrLinearFroudeKrylovForce(const std::string &name,
+                                FrBody* body,
                                 const std::shared_ptr<FrHydroDB> &HDB);;
 
       /// Get the type name of this object
@@ -53,8 +54,8 @@ namespace frydom {
 
     std::shared_ptr<FrLinearFroudeKrylovForce>
     make_linear_froude_krylov_force(const std::string &name,
-                                    std::shared_ptr<FrHydroDB> HDB,
-                                    std::shared_ptr<FrBody> body);
+                                    std::shared_ptr<FrBody> body,
+                                    std::shared_ptr<FrHydroDB> HDB);
 
 
 }  // end namespace frydom

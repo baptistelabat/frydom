@@ -59,7 +59,7 @@ namespace frydom {
      public:
 
       /// Default constructor
-      explicit FrManDampingTaylorExpansion(const std::string &name);
+      explicit FrManDampingTaylorExpansion(const std::string &name, FrBody* body);
 
       /// Get the type name of this object
       /// \return type name of this object

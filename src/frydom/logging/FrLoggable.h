@@ -23,34 +23,35 @@
 
 namespace frydom {
 
-    class FrLoggableBase {
+  class FrLoggableBase {
 
 
-     public:
+   public:
 
-      explicit FrLoggableBase() : m_log_this(true) {}
+    explicit FrLoggableBase() : m_log_this(true) {}
 
-      void LogThis(bool log) { m_log_this = log; }
+    void LogThis(bool log) { m_log_this = log; }
 
-      virtual void InitializeLog() {}
+    virtual void InitializeLog() {}
 
-      virtual void UpdateLog() {}
+    virtual void UpdateLog() {}
 
-      virtual void FinalizeLog() {}
+    virtual void FinalizeLog() {}
 
-      // FIXME : a-t-on besoin d'un GetName ??? Le nom vient de TreeNode !!
-     private:
-      bool m_log_this;
+    // FIXME : a-t-on besoin d'un GetName ??? Le nom vient de TreeNode !!
+   private:
+    bool m_log_this;
 
-    };
+  };
 
 
-    template<class ParentType>
-    class FrLoggable : public FrLoggableBase, public FrTreeNode<ParentType> {
+  template<class ParentType>
+  class FrLoggable : public FrLoggableBase, public FrTreeNode<ParentType> {
 
-     public:
+   public:
 
-      explicit FrLoggable(const std::string& name, ParentType* parent) : FrLoggableBase(), FrTreeNode<ParentType>(name, parent) {}
+    explicit FrLoggable(const std::string &name, ParentType *parent)
+        : FrLoggableBase(), FrTreeNode<ParentType>(name, parent) {}
 
 
 //     private:
@@ -59,7 +60,7 @@ namespace frydom {
 //
 //      }
 
-    };
+  };
 
 
 

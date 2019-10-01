@@ -35,8 +35,5 @@ int main() {
   auto body1_path = path_manager->GetPath(body1.get());
 
 
-
-
-
   return 0;
 }

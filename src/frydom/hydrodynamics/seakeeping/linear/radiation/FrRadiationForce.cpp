@@ -18,24 +18,28 @@
 
 namespace frydom {
 
-    // --------------------------------------------------
-    // FrRadiationForce
-    // --------------------------------------------------
+  // --------------------------------------------------
+  // FrRadiationForce
+  // --------------------------------------------------
 
-    FrRadiationForce::FrRadiationForce(const std::string &name, FrRadiationModel *radiationModel)
-        : FrForce(name), m_radiationModel(radiationModel) {}
+  FrRadiationForce::FrRadiationForce(const std::string &name,
+                                     FrBody *body,
+                                     FrRadiationModel *radiationModel)
+      : FrForce(name, body),
+        m_radiationModel(radiationModel) {}
 
-    void FrRadiationForce::SetRadiationModel(FrRadiationModel *radiationModel) {
-      m_radiationModel = radiationModel;
-    }
+  void FrRadiationForce::SetRadiationModel(FrRadiationModel *radiationModel) {
+    m_radiationModel = radiationModel;
+  }
 
-    // --------------------------------------------------
-    // FrRadiationConvolutionForce
-    // --------------------------------------------------
+  // --------------------------------------------------
+  // FrRadiationConvolutionForce
+  // --------------------------------------------------
 
-    FrRadiationConvolutionForce::FrRadiationConvolutionForce(const std::string &name,
-                                                             FrRadiationConvolutionModel *radiationModel)
-        : FrRadiationForce(name, radiationModel) {}
+  FrRadiationConvolutionForce::FrRadiationConvolutionForce(const std::string &name,
+                                                           FrBody *body,
+                                                           FrRadiationConvolutionModel *radiationModel)
+      : FrRadiationForce(name, body, radiationModel) {}
 
 //    void FrRadiationConvolutionForce::AddFields() {
 //
@@ -99,55 +103,55 @@ namespace frydom {
 //
 //    }
 
-    void FrRadiationConvolutionForce::Initialize() {
-      FrRadiationForce::Initialize();
-    }
+  void FrRadiationConvolutionForce::Initialize() {
+    FrRadiationForce::Initialize();
+  }
 
-    void FrRadiationConvolutionForce::StepFinalize() {
-      this->UpdateForceInertiaPart();
-      FrRadiationForce::StepFinalize();
-    }
+  void FrRadiationConvolutionForce::StepFinalize() {
+    this->UpdateForceInertiaPart();
+    FrRadiationForce::StepFinalize();
+  }
 
-    void FrRadiationConvolutionForce::Compute(double time) {
+  void FrRadiationConvolutionForce::Compute(double time) {
 
-      auto body = GetBody();
+    auto body = GetBody();
 
-      auto force = m_radiationModel->GetRadiationForce(body);
-      auto torque = m_radiationModel->GetRadiationTorque(body);
+    auto force = m_radiationModel->GetRadiationForce(body);
+    auto torque = m_radiationModel->GetRadiationTorque(body);
 
-      SetForceTorqueInWorldAtCOG(force, torque, NWU);
+    SetForceTorqueInWorldAtCOG(force, torque, NWU);
 
-      this->UpdateForceInertiaPart();
-    }
+    this->UpdateForceInertiaPart();
+  }
 
-    void FrRadiationConvolutionForce::UpdateForceInertiaPart() {
+  void FrRadiationConvolutionForce::UpdateForceInertiaPart() {
 
-      auto radiationModel = dynamic_cast<FrRadiationConvolutionModel *>(m_radiationModel);
-      auto forceInertiaPart = radiationModel->GetRadiationInertiaPart(GetBody());
-      c_forceInertiaPart = forceInertiaPart.GetForce();
-      c_torqueInertiaPart = forceInertiaPart.GetTorque();
-    }
+    auto radiationModel = dynamic_cast<FrRadiationConvolutionModel *>(m_radiationModel);
+    auto forceInertiaPart = radiationModel->GetRadiationInertiaPart(GetBody());
+    c_forceInertiaPart = forceInertiaPart.GetForce();
+    c_torqueInertiaPart = forceInertiaPart.GetTorque();
+  }
 
-    Force FrRadiationConvolutionForce::GetForceInertiaPartInBody(FRAME_CONVENTION fc) const {
-      auto force = c_forceInertiaPart;
-      if (IsNED(fc)) { internal::SwapFrameConvention<Force>(force); }
-      return force;
-    }
+  Force FrRadiationConvolutionForce::GetForceInertiaPartInBody(FRAME_CONVENTION fc) const {
+    auto force = c_forceInertiaPart;
+    if (IsNED(fc)) { internal::SwapFrameConvention<Force>(force); }
+    return force;
+  }
 
-    Torque FrRadiationConvolutionForce::GetTorqueInertiaPartInBody(FRAME_CONVENTION fc) const {
-      auto torque = c_torqueInertiaPart;
-      if (IsNED(fc)) { internal::SwapFrameConvention<Torque>(torque); }
-      return torque;
-    }
+  Torque FrRadiationConvolutionForce::GetTorqueInertiaPartInBody(FRAME_CONVENTION fc) const {
+    auto torque = c_torqueInertiaPart;
+    if (IsNED(fc)) { internal::SwapFrameConvention<Torque>(torque); }
+    return torque;
+  }
 
-    Force FrRadiationConvolutionForce::GetForceInertiaPartInWorld(FRAME_CONVENTION fc) const {
-      auto force = GetBody()->ProjectVectorInWorld<Force>(c_forceInertiaPart, fc);
-      return force;
-    }
+  Force FrRadiationConvolutionForce::GetForceInertiaPartInWorld(FRAME_CONVENTION fc) const {
+    auto force = GetBody()->ProjectVectorInWorld<Force>(c_forceInertiaPart, fc);
+    return force;
+  }
 
-    Torque FrRadiationConvolutionForce::GetTorqueInertiaPartInWorld(FRAME_CONVENTION fc) const {
-      auto torque = GetBody()->ProjectVectorInWorld(c_torqueInertiaPart, fc);
-      return torque;
-    }
+  Torque FrRadiationConvolutionForce::GetTorqueInertiaPartInWorld(FRAME_CONVENTION fc) const {
+    auto torque = GetBody()->ProjectVectorInWorld(c_torqueInertiaPart, fc);
+    return torque;
+  }
 
 }  // end namespace frydom

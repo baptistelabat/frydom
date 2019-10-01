@@ -23,160 +23,167 @@
 
 namespace frydom {
 
-    // Forward declarations
-    class FrHydroDB;
-    class FrBEMBody;
-    class FrHydroMapper;
-    class FrBody;
-    class FrOffshoreSystem;
+  // Forward declarations
+  class FrHydroDB;
 
-    namespace internal {
-        class FrRadiationModelBase;
-    }
+  class FrBEMBody;
 
-    /**
-     * \class FrRadiationModel
-     * \brief Class for computing the radiation loads.
-     */
-    class FrRadiationModel : public FrTreeNode<FrOffshoreSystem>, public FrPrePhysicsItem {
+  class FrHydroMapper;
 
-    protected:
+  class FrBody;
 
-        std::shared_ptr<FrHydroDB> m_HDB;
-        std::unordered_map<FrBEMBody*, GeneralizedForce> m_radiationForce;
+  class FrOffshoreSystem;
 
-    public:
+  namespace internal {
+    class FrRadiationModelBase;
+  }
 
-        /// Default constructor
-        FrRadiationModel();
+  /**
+   * \class FrRadiationModel
+   * \brief Class for computing the radiation loads.
+   */
+  class FrRadiationModel : public FrTreeNode<FrOffshoreSystem>, public FrPrePhysicsItem {
 
-        /// Constructor with specified hydrodynamic database
-        /// \param HDB Hydrodynamic database
-        explicit FrRadiationModel(std::shared_ptr<FrHydroDB> HDB);
+   protected:
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "RadiationModel"; }
+    std::shared_ptr<FrHydroDB> m_HDB;
+    std::unordered_map<FrBEMBody *, GeneralizedForce> m_radiationForce;
 
-        /// Return true if the radiation model is included in the static analysis
-        bool IncludedInStaticAnalysis() const override {return false;}
+   public:
 
-        /// Return the hydrodynamic database linked with the radiation model
-        /// \return Hydrodynamic database
-        FrHydroDB* GetHydroDB() const { return m_HDB.get(); }
+    /// Constructor with specified hydrodynamic database
+    /// \param HDB Hydrodynamic database
+    explicit FrRadiationModel(const std::string &name,
+                              FrOffshoreSystem *system,
+                              std::shared_ptr<FrHydroDB> HDB);
 
-        /// Return the radiation force applied on a body
-        /// \param BEMBody BEM body database
-        /// \return Radiation force
-        Force GetRadiationForce(FrBEMBody* BEMBody) const;
+    /// Get the type name of this object
+    /// \return type name of this object
+    std::string GetTypeName() const override { return "RadiationModel"; }
 
-        /// Return the radiation force applied on a body
-        /// \param body body (frydom object)
-        /// \return Radiation force
-        Force GetRadiationForce(FrBody* body) const;
+    /// Return true if the radiation model is included in the static analysis
+    bool IncludedInStaticAnalysis() const override { return false; }
 
-        /// Return the radiation torque applied on a body
-        /// \param BEMBody BEM body database
-        /// \return Radiation torque
-        Torque GetRadiationTorque(FrBEMBody* BEMBody) const;
+    /// Return the hydrodynamic database linked with the radiation model
+    /// \return Hydrodynamic database
+    FrHydroDB *GetHydroDB() const { return m_HDB.get(); }
 
-        /// Return the radiation torque applied on a body
-        /// \param body body (frydom object)
-        /// \return Radiation torque
-        Torque GetRadiationTorque(FrBody* body) const;
+    /// Return the radiation force applied on a body
+    /// \param BEMBody BEM body database
+    /// \return Radiation force
+    Force GetRadiationForce(FrBEMBody *BEMBody) const;
 
-        /// Method to initialize the radiation model
-        void Initialize() override;
+    /// Return the radiation force applied on a body
+    /// \param body body (frydom object)
+    /// \return Radiation force
+    Force GetRadiationForce(FrBody *body) const;
 
-        /// Return the mapper between body and BEM body database
-        /// \return Mapper
-        FrHydroMapper* GetMapper() const;
+    /// Return the radiation torque applied on a body
+    /// \param BEMBody BEM body database
+    /// \return Radiation torque
+    Torque GetRadiationTorque(FrBEMBody *BEMBody) const;
 
-        FrOffshoreSystem* GetSystem() const;
+    /// Return the radiation torque applied on a body
+    /// \param body body (frydom object)
+    /// \return Radiation torque
+    Torque GetRadiationTorque(FrBody *body) const;
 
-    private:
+    /// Method to initialize the radiation model
+    void Initialize() override;
 
-        /// Compute the internal states of the Radiation model
-        /// \param time Current time of the simulation from beginning, in seconds
-        void Compute(double time) override;
+    /// Return the mapper between body and BEM body database
+    /// \return Mapper
+    FrHydroMapper *GetMapper() const;
 
-    };
+    FrOffshoreSystem *GetSystem() const;
+
+   private:
+
+    /// Compute the internal states of the Radiation model
+    /// \param time Current time of the simulation from beginning, in seconds
+    void Compute(double time) override;
+
+  };
 
 
-    // -------------------------------------------------------------------------
-    // Radiation model with convolution
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // Radiation model with convolution
+  // -------------------------------------------------------------------------
 
-    /**
-     * \class FrRadiationConvolutionModel
-     * \brief Class for computing the convolution integrals.
-     */
-    class FrRadiationConvolutionModel : public FrRadiationModel {
+  /**
+   * \class FrRadiationConvolutionModel
+   * \brief Class for computing the convolution integrals.
+   */
+  class FrRadiationConvolutionModel : public FrRadiationModel {
 
-    private:
-        std::unordered_map<FrBEMBody*, FrTimeRecorder<GeneralizedVelocity> > m_recorder;    ///< Recorder of the perturbation velocity of the body at COG
-        double m_Te = -9.;      ///< Persistence time of the recorder
-        double m_dt = -9.;      ///< Time step of the recorder
+   private:
+    std::unordered_map<FrBEMBody *, FrTimeRecorder<GeneralizedVelocity> > m_recorder;    ///< Recorder of the perturbation velocity of the body at COG
+    double m_Te = -9.;      ///< Persistence time of the recorder
+    double m_dt = -9.;      ///< Time step of the recorder
 
-    public:
-        /// Default constructor
-        FrRadiationConvolutionModel(std::shared_ptr<FrHydroDB> HDB);
+   public:
+    /// Default constructor
+    FrRadiationConvolutionModel(const std::string &name,
+                                FrOffshoreSystem *system,
+                                std::shared_ptr<FrHydroDB> HDB);
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "RadiationConvolutionModel"; }
+    /// Get the type name of this object
+    /// \return type name of this object
+    std::string GetTypeName() const override { return "RadiationConvolutionModel"; }
 
-        /// Method to initialize the radiation model
-        void Initialize() override;
+    /// Method to initialize the radiation model
+    void Initialize() override;
 
-        /// Clear the recorder
-        void Clear();
+    /// Clear the recorder
+    void Clear();
 
-        /// Method to be applied at the end of each time step
-        void StepFinalize() override;
+    /// Method to be applied at the end of each time step
+    void StepFinalize() override;
 
-        /// Set the impulse response function size
-        /// \param BEMBody BEM body database corresponding to the body to which the radiation force is applied
-        /// \param Te Time length
-        /// \param dt Time step
-        void SetImpulseResponseSize(FrBEMBody* BEMBody, double Te, double dt);
+    /// Set the impulse response function size
+    /// \param BEMBody BEM body database corresponding to the body to which the radiation force is applied
+    /// \param Te Time length
+    /// \param dt Time step
+    void SetImpulseResponseSize(FrBEMBody *BEMBody, double Te, double dt);
 
-        /// Set the impulse response function size
-        /// \param body Body to which the radiation force is applied
-        /// \param Te Time length
-        /// \param dt Time step
-        void SetImpulseResponseSize(FrBody* body, double Te, double dt);
+    /// Set the impulse response function size
+    /// \param body Body to which the radiation force is applied
+    /// \param Te Time length
+    /// \param dt Time step
+    void SetImpulseResponseSize(FrBody *body, double Te, double dt);
 
-        /// Set the impulse response function size
-        /// \param Te Time length
-        /// \param dt Time step
-        void SetImpulseResponseSize(double Te, double dt);
+    /// Set the impulse response function size
+    /// \param Te Time length
+    /// \param dt Time step
+    void SetImpulseResponseSize(double Te, double dt);
 
-        /// Return the generalized force part relative to the added mass term
-        /// \param body Body for which the motion is considered
-        /// \return Part the the radiation force linked with the acceleration of the body
-        GeneralizedForce GetRadiationInertiaPart(FrBody* body) const;
+    /// Return the generalized force part relative to the added mass term
+    /// \param body Body for which the motion is considered
+    /// \return Part the the radiation force linked with the acceleration of the body
+    GeneralizedForce GetRadiationInertiaPart(FrBody *body) const;
 
-    private:
+   private:
 
-        /// Compute the radiation convolution.
-        /// \param time Current time of the simulation from beginning, in seconds
-        void Compute(double time) override;
+    /// Compute the radiation convolution.
+    /// \param time Current time of the simulation from beginning, in seconds
+    void Compute(double time) override;
 
-        /// Return the impulse response function size
-        /// \param Te Time length
-        /// \param dt Time step
-        /// \param N Number of time step
-        void GetImpulseResponseSize(double& Te, double &dt, unsigned int& N) const;
+    /// Return the impulse response function size
+    /// \param Te Time length
+    /// \param dt Time step
+    /// \param N Number of time step
+    void GetImpulseResponseSize(double &Te, double &dt, unsigned int &N) const;
 
-        /// Compute the the convolution part of the radiation force linked with steady speed
-        /// \param meanSpeed Steady speed of the body
-        /// \return Generalized force
-        GeneralizedForce ConvolutionKu(double meanSpeed) const;
-    };
+    /// Compute the the convolution part of the radiation force linked with steady speed
+    /// \param meanSpeed Steady speed of the body
+    /// \return Generalized force
+    GeneralizedForce ConvolutionKu(double meanSpeed) const;
+  };
 
-    std::shared_ptr<FrRadiationConvolutionModel>
-    make_radiation_convolution_model(std::shared_ptr<FrHydroDB> HDB, FrOffshoreSystem* system);
+  std::shared_ptr<FrRadiationConvolutionModel>
+  make_radiation_convolution_model(const std::string &name,
+                                   FrOffshoreSystem *system,
+                                   std::shared_ptr<FrHydroDB> HDB);
 
 }  // end namespace frydom
 

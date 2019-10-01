@@ -108,9 +108,6 @@ namespace frydom {
 
     public:
 
-        /// Constructor of the hydrodynamic database HDB
-        FrHydroDB() = default;
-
         /// Constructor of the hydrodynamic database with specified HDF5 filename
         explicit FrHydroDB(std::string h5file);
 

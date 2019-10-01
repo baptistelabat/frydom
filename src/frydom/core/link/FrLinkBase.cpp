@@ -24,10 +24,7 @@ namespace frydom {
                          const std::shared_ptr<FrNode> &node2) :
       FrLoggable(name, system),
       m_node1(node1),
-      m_node2(node2) {
-
-    SetParent(system);
-  }
+      m_node2(node2) {}
 
   std::shared_ptr<FrNode> FrLinkBase::GetNode1() {
     return m_node1;

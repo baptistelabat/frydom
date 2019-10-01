@@ -167,7 +167,7 @@ namespace frydom {
   std::shared_ptr<FrCurrentForce> make_current_force(const std::string &name,
                                                      std::shared_ptr<FrBody> body,
                                                      const std::string &jsonFile) {
-    auto currentForce = std::make_shared<FrCurrentForce>(name, body, jsonFile);
+    auto currentForce = std::make_shared<FrCurrentForce>(name, body.get(), jsonFile);
     body->AddExternalForce(currentForce);
     return currentForce;
   }
@@ -175,7 +175,7 @@ namespace frydom {
   std::shared_ptr<FrWindForce> make_wind_force(const std::string &name,
                                                std::shared_ptr<FrBody> body,
                                                const std::string &jsonFile) {
-    auto windForce = std::make_shared<FrWindForce>(name, body, jsonFile);
+    auto windForce = std::make_shared<FrWindForce>(name, body.get(), jsonFile);
     body->AddExternalForce(windForce);
     return windForce;
   }

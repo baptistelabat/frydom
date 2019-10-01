@@ -15,7 +15,7 @@ int main() {
   auto body = system.NewBody("body1");
 
 
-  auto body2 = std::make_shared<FrBody>("body2");
+  auto body2 = std::make_shared<FrBody>("body2", &system);
 
   system.AddBody(body2);
 

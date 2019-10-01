@@ -25,8 +25,9 @@
 namespace frydom {
 
     FrLinearHydrostaticForce::FrLinearHydrostaticForce(const std::string &name,
+                                                       FrBody* body,
                                                        const std::shared_ptr<FrEquilibriumFrame> &eqFrame) :
-        FrForce(name),
+        FrForce(name, body),
         m_equilibriumFrame(eqFrame) {}
 
     void FrLinearHydrostaticForce::Initialize() {
@@ -95,11 +96,11 @@ namespace frydom {
 
     std::shared_ptr<FrLinearHydrostaticForce>
     make_linear_hydrostatic_force(const std::string &name,
-                                  const std::shared_ptr<FrEquilibriumFrame> &eqFrame,
-                                  const std::shared_ptr<FrBody> &body) {
+                                  const std::shared_ptr<FrBody> body,
+                                  const std::shared_ptr<FrEquilibriumFrame> eqFrame) {
 
       // Construction of the hydrostatic force object from the HDB.
-      auto forceHst = std::make_shared<FrLinearHydrostaticForce>(name, eqFrame);
+      auto forceHst = std::make_shared<FrLinearHydrostaticForce>(name, body.get(), eqFrame);
 
       // Add the hydrostatic force object as an external force to the body.
       body->AddExternalForce(forceHst);
@@ -110,15 +111,16 @@ namespace frydom {
 
     std::shared_ptr<FrLinearHydrostaticForce>
     make_linear_hydrostatic_force(const std::string &name,
-                                  const std::shared_ptr<FrHydroDB> &HDB,
-                                  const std::shared_ptr<FrBody> &body) {
+                                  std::shared_ptr<FrBody> body,
+                                  std::shared_ptr<FrHydroDB> HDB) {
 
       // This function creates the linear hydrostatic force object for computing the linear hydrostatic loads with a
       // hydrostatic stiffness matrix given by the hdb.
 
       // Construction of the hydrostatic force object from the HDB.
       auto forceHst = make_linear_hydrostatic_force(name,
-                                                    HDB->GetMapper()->GetSharedEquilibriumFrame(body.get()), body);
+                                                    body,
+                                                    HDB->GetMapper()->GetSharedEquilibriumFrame(body.get()));
 
       forceHst->SetStiffnessMatrix(HDB->GetBody(body)->GetHydrostaticStiffnessMatrix());
 
@@ -127,14 +129,14 @@ namespace frydom {
 
     std::shared_ptr<FrLinearHydrostaticForce>
     make_linear_hydrostatic_force(const std::string &name,
-                                  const std::shared_ptr<FrEquilibriumFrame> &eqFrame,
-                                  const std::shared_ptr<FrBody> &body,
+                                  std::shared_ptr<FrBody> body,
+                                  std::shared_ptr<FrEquilibriumFrame> eqFrame,
                                   const std::string &meshFile,
                                   FrFrame meshOffset) {
 
       // This function creates the linear hydrostatic force object for computing the linear hydrostatic loads with a
       // hydrostatic stiffness matrix computed by FrMesh.
-      auto forceHst = make_linear_hydrostatic_force(name, eqFrame, body);
+      auto forceHst = make_linear_hydrostatic_force(name, body, eqFrame);
 
       // Create a hydroMesh, to set up the mesh in the body frame and then clip it
       auto hydroMesh = make_hydro_mesh(body, meshFile, meshOffset, FrHydroMesh::ClippingSupport::PLANESURFACE);
@@ -152,7 +154,7 @@ namespace frydom {
       hsp.Process();
 
       // For visualizing the report, uncomment the following line
-      std::cout << hsp.GetReport() << std::endl;
+//      std::cout << hsp.GetReport() << std::endl;
 
       // Set the stiffness matrix
       forceHst->SetStiffnessMatrix(hsp.GetHydrostaticMatrix());

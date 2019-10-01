@@ -43,6 +43,7 @@ namespace frydom {
 
       /// Constructor.
       FrLinearHydrostaticForce(const std::string &name,
+                               FrBody* body,
                                const std::shared_ptr<FrEquilibriumFrame> &eqFrame);
 
       /// Get the type name of this object
@@ -80,21 +81,21 @@ namespace frydom {
     /// This function creates the linear hydrostatic force object for computing the linear hydrostatic loads with a hydrostatic sitffness matrix computed by FrMesh.
     std::shared_ptr<FrLinearHydrostaticForce>
     make_linear_hydrostatic_force(const std::string &name,
-                                  const std::shared_ptr<FrEquilibriumFrame> &eqFrame,
-                                  const std::shared_ptr<FrBody> &body);
+                                  std::shared_ptr<FrBody> body,
+                                  std::shared_ptr<FrEquilibriumFrame> eqFrame);
 
     /// This function creates the linear hydrostatic force object for computing the linear hydrostatic loads with a hydrostatic stiffness matrix given by the hdb.
     std::shared_ptr<FrLinearHydrostaticForce>
     make_linear_hydrostatic_force(const std::string &name,
-                                  const std::shared_ptr<FrHydroDB> &HDB,
-                                  const std::shared_ptr<FrBody> &body);
+                                  std::shared_ptr<FrBody> body,
+                                  std::shared_ptr<FrHydroDB> HDB);
 
     /// This function creates the linear hydrostatic force object for computing the linear hydrostatic loads with a hydrostatic sitffness matrix computed by FrMesh.
     std::shared_ptr<FrLinearHydrostaticForce>
     make_linear_hydrostatic_force(const std::string &name,
-                                  const std::shared_ptr<FrEquilibriumFrame> &eqFrame,
-                                  const std::shared_ptr<FrBody> &body,
-                                  const std::string &meshFile,
+                                  std::shared_ptr<FrBody> body,
+                                  std::shared_ptr<FrEquilibriumFrame> eqFrame,
+                                  const std::string& meshFile,
                                   FrFrame meshOffset);
 
 }  // end namespace frydom

@@ -49,7 +49,8 @@ namespace frydom {
      public:
 
       FrNonLinearFroudeKrylovForce(const std::string &name,
-                                   const std::shared_ptr<FrHydroMesh> &HydroMesh);
+                                   FrBody* body,
+                                   std::shared_ptr<FrHydroMesh> HydroMesh);
 
       /// Get the type name of this object
       /// \return type name of this object

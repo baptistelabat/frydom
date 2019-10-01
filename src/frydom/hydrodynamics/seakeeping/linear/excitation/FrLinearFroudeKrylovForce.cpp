@@ -36,18 +36,19 @@ namespace frydom {
     }
 
     FrLinearFroudeKrylovForce::FrLinearFroudeKrylovForce(const std::string &name,
+                                                         FrBody* body,
                                                          const std::shared_ptr<FrHydroDB> &HDB) :
-        FrLinearHDBForce(name, HDB) {}
+        FrLinearHDBForce(name, body, HDB) {}
 
     std::shared_ptr<FrLinearFroudeKrylovForce>
     make_linear_froude_krylov_force(const std::string &name,
-                                    std::shared_ptr<FrHydroDB> HDB,
-                                    std::shared_ptr<FrBody> body) {
+                                    std::shared_ptr<FrBody> body,
+                                    std::shared_ptr<FrHydroDB> HDB) {
 
       // This function creates the linear Froude-Krylov force object.
 
       // Construction of the excitation force object from the HDB.
-      auto LinFKForce = std::make_shared<FrLinearFroudeKrylovForce>(name, HDB);
+      auto LinFKForce = std::make_shared<FrLinearFroudeKrylovForce>(name, body.get(), HDB);
 
       // Add the excitation force object as an external force to the body.
       body->AddExternalForce(LinFKForce); // Initialization of m_body.

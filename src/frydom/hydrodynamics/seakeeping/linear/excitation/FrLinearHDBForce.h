@@ -19,58 +19,58 @@
 
 namespace frydom {
 
-    // Forward declarations.
-    class FrHydroDB;
+  // Forward declarations.
+  class FrHydroDB;
 
-    /**
-     * \class FrLinearHDBForce
-     * \brief Virtual class for defining a hydrodynamic linear model force :
-     * see FrLinearDiffractionForce, FrLinearExcitationForce, FrLinearFroudeKrylovForce, for derived implementations.
-     */
-    class FrLinearHDBForce : public FrForce {
+  /**
+   * \class FrLinearHDBForce
+   * \brief Virtual class for defining a hydrodynamic linear model force :
+   * see FrLinearDiffractionForce, FrLinearExcitationForce, FrLinearFroudeKrylovForce, for derived implementations.
+   */
+  class FrLinearHDBForce : public FrForce {
 
-    protected:
+   protected:
 
-        /// Interpolator in waves frequencies and directions.
-        std::vector<std::vector<mathutils::Interp1dLinear<double, std::complex<double>>>> m_waveDirInterpolators;
+    /// Interpolator in waves frequencies and directions.
+    std::vector<std::vector<mathutils::Interp1dLinear<double, std::complex<double>>>> m_waveDirInterpolators;
 
-        /// Hydrodynamic database.
-        std::shared_ptr<FrHydroDB> m_HDB;
+    /// Hydrodynamic database.
+    std::shared_ptr<FrHydroDB> m_HDB;
 
-        /// Hydrodynamic components.
-        std::vector<Eigen::MatrixXcd> m_Fhdb;
+    /// Hydrodynamic components.
+    std::vector<Eigen::MatrixXcd> m_Fhdb;
 
 
-    public:
+   public:
 
-        /// Constructor.
-        FrLinearHDBForce(const std::string &name, const std::shared_ptr<FrHydroDB>& HDB);
+    /// Constructor.
+    FrLinearHDBForce(const std::string &name, FrBody *body, const std::shared_ptr<FrHydroDB> &HDB);
 
-        virtual Eigen::MatrixXcd GetHDBData(unsigned int iangle) const = 0;
+    virtual Eigen::MatrixXcd GetHDBData(unsigned int iangle) const = 0;
 
-        virtual Eigen::VectorXcd GetHDBData(unsigned int iangle, unsigned iforce) const = 0;
+    virtual Eigen::VectorXcd GetHDBData(unsigned int iangle, unsigned iforce) const = 0;
 
-        /// Build the interpolators between hydrodynamic components and wave frequency and direction discretizations
-        virtual void BuildHDBInterpolators();
+    /// Build the interpolators between hydrodynamic components and wave frequency and direction discretizations
+    virtual void BuildHDBInterpolators();
 
-        /// This function return the excitation force (linear excitation) or the diffraction force (nonlinear excitation) form the interpolator.
-        /// Interpolates the hydrodynamic components with respect to the wave frequency and directions discretizations given
-        /// \param waveFrequencies wave frequency discretization
-        /// \param waveDirections wave direction discretization
-        /// \return interpolation of the hydrodynamic component
-        std::vector<Eigen::MatrixXcd> GetHDBInterp(std::vector<double> waveFrequencies,
-                                                          std::vector<double> waveDirections);
+    /// This function return the excitation force (linear excitation) or the diffraction force (nonlinear excitation) form the interpolator.
+    /// Interpolates the hydrodynamic components with respect to the wave frequency and directions discretizations given
+    /// \param waveFrequencies wave frequency discretization
+    /// \param waveDirections wave direction discretization
+    /// \return interpolation of the hydrodynamic component
+    std::vector<Eigen::MatrixXcd> GetHDBInterp(std::vector<double> waveFrequencies,
+                                               std::vector<double> waveDirections);
 
-        void Initialize() override;
+    void Initialize() override;
 
-    protected:
+   protected:
 
-        void Compute(double time) override;
+    void Compute(double time) override;
 
-        /// This function computes the excitation loads (linear excitation) or the diffraction loads (nonlinear excitation).
-        void Compute_F_HDB();
+    /// This function computes the excitation loads (linear excitation) or the diffraction loads (nonlinear excitation).
+    void Compute_F_HDB();
 
-    };
+  };
 
 
 } // end namespace frydom

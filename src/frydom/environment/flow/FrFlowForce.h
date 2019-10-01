@@ -38,7 +38,7 @@ namespace frydom {
      public:
 
       /// Default constructor
-      FrFlowForce() = default;
+//      FrFlowForce() = default;
 
       /// Constructor of the flow force with polar coeffients from json table
       /// \param jsonFile Name of the json file containing the polar coefficients

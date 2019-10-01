@@ -18,41 +18,42 @@
 
 namespace frydom {
 
-    Eigen::MatrixXcd FrLinearExcitationForce::GetHDBData(unsigned int iangle) const {
+  Eigen::MatrixXcd FrLinearExcitationForce::GetHDBData(unsigned int iangle) const {
 
-      auto BEMBody = m_HDB->GetBody(GetBody());
+    auto BEMBody = m_HDB->GetBody(GetBody());
 
-      return BEMBody->GetExcitation(iangle);
+    return BEMBody->GetExcitation(iangle);
 
-    }
+  }
 
-    Eigen::VectorXcd FrLinearExcitationForce::GetHDBData(unsigned int iangle, unsigned int iforce) const {
+  Eigen::VectorXcd FrLinearExcitationForce::GetHDBData(unsigned int iangle, unsigned int iforce) const {
 
-      auto BEMBody = m_HDB->GetBody(GetBody());
+    auto BEMBody = m_HDB->GetBody(GetBody());
 
-      return BEMBody->GetExcitation(iangle, iforce);
+    return BEMBody->GetExcitation(iangle, iforce);
 
-    }
+  }
 
-    FrLinearExcitationForce::FrLinearExcitationForce(const std::string &name,
-                                                     const std::shared_ptr<FrHydroDB> &HDB) :
-        FrLinearHDBForce(name, HDB) {}
+  FrLinearExcitationForce::FrLinearExcitationForce(const std::string &name,
+                                                   FrBody *body,
+                                                   const std::shared_ptr<FrHydroDB> &HDB) :
+      FrLinearHDBForce(name, body, HDB) {}
 
-    std::shared_ptr<FrLinearExcitationForce>
-    make_linear_excitation_force(const std::string &name,
-                                 std::shared_ptr<FrHydroDB> HDB,
-                                 std::shared_ptr<FrBody> body) {
+  std::shared_ptr<FrLinearExcitationForce>
+  make_linear_excitation_force(const std::string &name,
+                               std::shared_ptr<FrBody> body,
+                               std::shared_ptr<FrHydroDB> HDB) {
 
-      // This function creates the linear excitation force object.
+    // This function creates the linear excitation force object.
 
-      // Construction of the excitation force object from the HDB.
-      auto excitationForce = std::make_shared<FrLinearExcitationForce>(name, HDB);
+    // Construction of the excitation force object from the HDB.
+    auto excitationForce = std::make_shared<FrLinearExcitationForce>(name, body.get(), HDB);
 
-      // Add the excitation force object as an external force to the body.
-      body->AddExternalForce(excitationForce); // Initialization of m_body.
+    // Add the excitation force object as an external force to the body.
+    body->AddExternalForce(excitationForce); // Initialization of m_body.
 
-      return excitationForce;
+    return excitationForce;
 
-    }
+  }
 
 }  // end namespace frydom

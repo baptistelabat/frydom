@@ -46,7 +46,9 @@ namespace frydom {
    public:
 
     /// Constructor.
-    FrNonlinearHydrostaticForce(const std::string &name, const std::shared_ptr<FrHydroMesh> &hydroMesh);
+    FrNonlinearHydrostaticForce(const std::string &name,
+                                FrBody *body,
+                                const std::shared_ptr<FrHydroMesh> &hydroMesh);
 
     /// Get the type name of this object
     /// \return type name of this object
