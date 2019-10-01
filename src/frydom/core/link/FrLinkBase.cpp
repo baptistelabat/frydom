@@ -18,47 +18,48 @@
 
 namespace frydom {
 
-    FrLinkBase::FrLinkBase(const std::string &name,
-                           const std::shared_ptr<FrNode> &node1,
-                           const std::shared_ptr<FrNode> &node2,
-                           FrOffshoreSystem *system) :
-        FrLoggable(name),
-        m_node1(node1),
-        m_node2(node2) {
-      SetParent(system);
-    }
+  FrLinkBase::FrLinkBase(const std::string &name,
+                         FrOffshoreSystem *system,
+                         const std::shared_ptr<FrNode> &node1,
+                         const std::shared_ptr<FrNode> &node2) :
+      FrLoggable(name, system),
+      m_node1(node1),
+      m_node2(node2) {
 
-    std::shared_ptr<FrNode> FrLinkBase::GetNode1() {
-      return m_node1;
-    }
+    SetParent(system);
+  }
 
-    const std::shared_ptr<FrNode> FrLinkBase::GetNode1() const {
-      return m_node1;
-    }
+  std::shared_ptr<FrNode> FrLinkBase::GetNode1() {
+    return m_node1;
+  }
 
-    std::shared_ptr<FrNode> FrLinkBase::GetNode2() {
-      return m_node2;
-    }
+  const std::shared_ptr<FrNode> FrLinkBase::GetNode1() const {
+    return m_node1;
+  }
 
-    const std::shared_ptr<FrNode> FrLinkBase::GetNode2() const {
-      return m_node2;
-    }
+  std::shared_ptr<FrNode> FrLinkBase::GetNode2() {
+    return m_node2;
+  }
 
-    FrBody *FrLinkBase::GetBody1() {
-      return m_node1->GetBody();
-    }
+  const std::shared_ptr<FrNode> FrLinkBase::GetNode2() const {
+    return m_node2;
+  }
 
-    FrBody *FrLinkBase::GetBody2() {
-      return m_node2->GetBody();
-    }
+  FrBody *FrLinkBase::GetBody1() {
+    return m_node1->GetBody();
+  }
 
-    std::shared_ptr<chrono::ChBody> FrLinkBase::GetChronoBody1() {
-      return GetBody1()->GetChronoBody();
-    }
+  FrBody *FrLinkBase::GetBody2() {
+    return m_node2->GetBody();
+  }
 
-    std::shared_ptr<chrono::ChBody> FrLinkBase::GetChronoBody2() {
-      return GetBody2()->GetChronoBody();
-    }
+  std::shared_ptr<chrono::ChBody> FrLinkBase::GetChronoBody1() {
+    return GetBody1()->GetChronoBody();
+  }
+
+  std::shared_ptr<chrono::ChBody> FrLinkBase::GetChronoBody2() {
+    return GetBody2()->GetChronoBody();
+  }
 
 //    FrOffshoreSystem *FrLinkBase::GetSystem() {
 //      return m_system;

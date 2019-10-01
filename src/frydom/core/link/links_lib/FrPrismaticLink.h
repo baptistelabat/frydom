@@ -43,9 +43,9 @@ namespace frydom {
       /// Constructor from two nodes and a pointer to the system.
       /// It automatically adds the link to the system
       FrPrismaticLink(const std::string &name,
+                      FrOffshoreSystem *system,
                       std::shared_ptr<FrNode> node1,
-                      std::shared_ptr<FrNode> node2,
-                      FrOffshoreSystem *system);
+                      std::shared_ptr<FrNode> node2);
 
       /// Get the type name of this object
       /// \return type name of this object
@@ -101,9 +101,9 @@ namespace frydom {
     /// Helper function to make it easy to link two nodes by a prismatic link
     std::shared_ptr<FrPrismaticLink>
     make_prismatic_link(const std::string &name,
+                        FrOffshoreSystem *system,
                         std::shared_ptr<FrNode> node1,
-                        std::shared_ptr<FrNode> node2,
-                        FrOffshoreSystem *system);
+                        std::shared_ptr<FrNode> node2);
 
 
 }  // end namespace frydom

@@ -22,10 +22,11 @@
 namespace frydom {
 
     FrPrismaticLink::FrPrismaticLink(const std::string &name,
+                                     FrOffshoreSystem *system,
                                      std::shared_ptr<frydom::FrNode> node1,
-                                     std::shared_ptr<frydom::FrNode> node2,
-                                     frydom::FrOffshoreSystem *system) :
-        FrLink(name, node1, node2, system) {
+                                     std::shared_ptr<frydom::FrNode> node2) :
+        FrLink(name, system, node1, node2) {
+
       m_chronoLink->SetLinkType(PRISMATIC);
     }
 
@@ -118,12 +119,12 @@ namespace frydom {
 
     std::shared_ptr<FrPrismaticLink>
     make_prismatic_link(const std::string &name,
+                        FrOffshoreSystem *system,
                         std::shared_ptr<FrNode> node1,
-                        std::shared_ptr<FrNode> node2,
-                        FrOffshoreSystem *system) {
-      auto link = std::make_shared<FrPrismaticLink>(name, node1, node2, system);
-      system->AddLink(link);
+                        std::shared_ptr<FrNode> node2) {
 
+      auto link = std::make_shared<FrPrismaticLink>(name, system, node1, node2);
+      system->AddLink(link);
 
       return link;
     }

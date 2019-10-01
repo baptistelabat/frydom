@@ -12,15 +12,20 @@
 #ifndef FRYDOM_FRPATHMANAGER_H
 #define FRYDOM_FRPATHMANAGER_H
 
-#include <cppfs/fs.h>
-#include <cppfs/FileHandle.h>
-#include <cppfs/FilePath.h>
+#include <unordered_set>
 
-#include "frydom/core/common/FrConvention.h"
+//#include <cppfs/fs.h>
+//#include <cppfs/FileHandle.h>
+//#include <cppfs/FilePath.h>
 
-#ifndef RESOURCES_PATH
-#define RESOURCES_PATH
-#endif
+
+#include <frydom/core/common/FrTreeNode.h>
+
+
+
+//#ifndef RESOURCES_PATH
+//#define RESOURCES_PATH
+//#endif
 
 namespace frydom {
 
@@ -29,12 +34,24 @@ namespace frydom {
     class FrPathManager {
 
      public:
-      FrPathManager() : m_i(1) {}
+      FrPathManager() {}
 
       ~FrPathManager() = default;
 
+      template <class ParentType>
+      std::string GetPath(const FrTreeNode<ParentType>* node) const {
+
+        return this->GetPath(node->GetParent()) + "/" + node->GetName();
+
+      }
+
+
+
+
+
+
      private:
-      int m_i = 1;
+      std::unordered_set<std::string> m_used_paths;
 
     };
 

@@ -25,15 +25,12 @@ namespace frydom {
 
     class FrLoggableBase {
 
+
      public:
 
-      explicit FrLoggableBase(const std::string &name) : m_log_this(true), m_name(name) {}
-
-      const std::string &GetName() const { return m_name; }
+      explicit FrLoggableBase() : m_log_this(true) {}
 
       void LogThis(bool log) { m_log_this = log; }
-
-//      virtual std::string& GetPath() const = 0;
 
       virtual void InitializeLog() {}
 
@@ -41,14 +38,8 @@ namespace frydom {
 
       virtual void FinalizeLog() {}
 
-     protected:
-
-      virtual void InitializePath() = 0; // FIXME : NON, la gestion du path doit se faire dans les tree nodes !!!
-
-
+      // FIXME : a-t-on besoin d'un GetName ??? Le nom vient de TreeNode !!
      private:
-      std::string m_name;
-
       bool m_log_this;
 
     };
@@ -59,16 +50,14 @@ namespace frydom {
 
      public:
 
-      explicit FrLoggable(const std::string &name) : FrLoggableBase(name), FrTreeNode<ParentType>() {}
+      explicit FrLoggable(const std::string& name, ParentType* parent) : FrLoggableBase(), FrTreeNode<ParentType>(name, parent) {}
 
 
-     private:
-
-      void InitializePath() override {
-//        m_path =
-      }
-
-
+//     private:
+//
+//      void InitializePath() override {
+//
+//      }
 
     };
 

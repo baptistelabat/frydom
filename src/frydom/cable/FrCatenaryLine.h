@@ -100,6 +100,7 @@ namespace frydom {
       /// \param unstrainedLength Unstrained length of the catenary line
       /// \param fluid fluid type in which the catenary line is mostly in
       FrCatenaryLine(const std::string &name,
+                     FrOffshoreSystem* system,
                      const std::shared_ptr<FrNode> &startingNode,
                      const std::shared_ptr<FrNode> &endingNode,
                      const std::shared_ptr<FrCableProperties> &properties,
@@ -248,9 +249,9 @@ namespace frydom {
 
     std::shared_ptr<FrCatenaryLine>
     make_catenary_line(const std::string &name,
+                       FrOffshoreSystem *system,
                        const std::shared_ptr<FrNode> &startingNode,
                        const std::shared_ptr<FrNode> &endingNode,
-                       FrOffshoreSystem *system,
                        const std::shared_ptr<FrCableProperties> &properties,
                        bool elastic,
                        double unstrainedLength,

@@ -167,7 +167,7 @@ namespace frydom {
      public:
 
       /// Default constructor
-      FrBody(const std::string &name);
+      FrBody(const std::string &name, FrOffshoreSystem* system);
 
       /// Get the FrOffshoreSystem where the body has been registered
       inline FrOffshoreSystem *GetSystem() const {

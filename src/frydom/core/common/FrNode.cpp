@@ -32,7 +32,7 @@ namespace frydom {
 
 
     FrNode::FrNode(const std::string &name, frydom::FrBody *body) :
-        FrLoggable(name),
+        FrLoggable(name, body),
         m_showAsset(false) {
 
       SetParent(body);

@@ -43,7 +43,7 @@ namespace frydom {
 
      public:
 
-      FrLinearDamping(const std::string &name, FLUID_TYPE ft, bool relativeToFluid);
+      FrLinearDamping(const std::string &name, FrBody* body, FLUID_TYPE ft, bool relativeToFluid);
 
       /// Get the type name of this object
       /// \return type name of this object

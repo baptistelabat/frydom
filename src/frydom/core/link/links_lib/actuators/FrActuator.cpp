@@ -13,17 +13,21 @@
 namespace frydom {
 
 
-    FrActuator::FrActuator(const std::string &name, FrLink *actuatedLink) :
-        FrLinkBase(name, actuatedLink->GetNode1(), actuatedLink->GetNode2(), actuatedLink->GetSystem()),
-        m_actuatedLink(actuatedLink) {}
+  FrActuator::FrActuator(const std::string &name, FrLink *actuatedLink) :
+      FrLinkBase(name,
+                 actuatedLink->GetSystem(),
+                 actuatedLink->GetNode1(),
+                 actuatedLink->GetNode2()
+                 ),
+      m_actuatedLink(actuatedLink) {}
 
-    bool FrActuator::IsDisabled() const {
-        return GetChronoItem_ptr()->IsDisabled(); // TODO : voir si on teste aussi m_actuatedLink
-    }
+  bool FrActuator::IsDisabled() const {
+    return GetChronoItem_ptr()->IsDisabled(); // TODO : voir si on teste aussi m_actuatedLink
+  }
 
-    void FrActuator::SetDisabled(bool disabled) {
-        GetChronoItem_ptr()->SetDisabled(disabled);
-    }
+  void FrActuator::SetDisabled(bool disabled) {
+    GetChronoItem_ptr()->SetDisabled(disabled);
+  }
 
 //    bool FrActuator::IsBroken() const {
 //        return m_chronoMotor->IsBroken();
@@ -33,49 +37,49 @@ namespace frydom {
 //
 //    }
 
-    bool FrActuator::IsActive() const {
-        return true;
-    }
+  bool FrActuator::IsActive() const {
+    return true;
+  }
 
-    Force FrActuator::GetMotorForceInBody1(FRAME_CONVENTION fc) const {
-        auto nodeFrame_WRT_COG = m_node1->GetFrameWRT_COG_InBody();
-        return nodeFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetMotorForceInNode(fc), fc);
-    }
+  Force FrActuator::GetMotorForceInBody1(FRAME_CONVENTION fc) const {
+    auto nodeFrame_WRT_COG = m_node1->GetFrameWRT_COG_InBody();
+    return nodeFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetMotorForceInNode(fc), fc);
+  }
 
-    Force FrActuator::GetMotorForceInBody2(FRAME_CONVENTION fc) const {
-        auto nodeFrame_WRT_COG = m_node2->GetFrameWRT_COG_InBody();
-        return -nodeFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetMotorForceInNode(fc), fc);
-    }
+  Force FrActuator::GetMotorForceInBody2(FRAME_CONVENTION fc) const {
+    auto nodeFrame_WRT_COG = m_node2->GetFrameWRT_COG_InBody();
+    return -nodeFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetMotorForceInNode(fc), fc);
+  }
 
-    Torque FrActuator::GetMotorTorqueAtCOGInBody1(FRAME_CONVENTION fc) const {
-        auto nodeFrame_WRT_COG = m_node1->GetFrameWRT_COG_InBody();
+  Torque FrActuator::GetMotorTorqueAtCOGInBody1(FRAME_CONVENTION fc) const {
+    auto nodeFrame_WRT_COG = m_node1->GetFrameWRT_COG_InBody();
 
-        auto torqueAtNode1_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetMotorTorqueInNode(fc), fc);
-        auto COG_M1_ref = nodeFrame_WRT_COG.GetPosition(fc);
-        auto force_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetMotorForceInNode(fc), fc);
+    auto torqueAtNode1_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetMotorTorqueInNode(fc), fc);
+    auto COG_M1_ref = nodeFrame_WRT_COG.GetPosition(fc);
+    auto force_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetMotorForceInNode(fc), fc);
 
-        return torqueAtNode1_ref + COG_M1_ref.cross(force_ref);
-    }
+    return torqueAtNode1_ref + COG_M1_ref.cross(force_ref);
+  }
 
-    Torque FrActuator::GetMotorTorqueInBody1(FRAME_CONVENTION fc) const {
-        auto nodeFrame_WRT_COG = m_node1->GetFrameWRT_COG_InBody();
-        return nodeFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetMotorTorqueInNode(fc), fc);
-    }
+  Torque FrActuator::GetMotorTorqueInBody1(FRAME_CONVENTION fc) const {
+    auto nodeFrame_WRT_COG = m_node1->GetFrameWRT_COG_InBody();
+    return nodeFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetMotorTorqueInNode(fc), fc);
+  }
 
-    Torque FrActuator::GetMotorTorqueAtCOGInBody2(FRAME_CONVENTION fc) const {
-        auto nodeFrame_WRT_COG = m_node2->GetFrameWRT_COG_InBody();
+  Torque FrActuator::GetMotorTorqueAtCOGInBody2(FRAME_CONVENTION fc) const {
+    auto nodeFrame_WRT_COG = m_node2->GetFrameWRT_COG_InBody();
 
-        auto torqueAtNode2_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetMotorTorqueInNode(fc), fc);
-        auto COG_M2_ref = nodeFrame_WRT_COG.GetPosition(fc);
-        auto force_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetMotorForceInNode(fc), fc);
+    auto torqueAtNode2_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetMotorTorqueInNode(fc), fc);
+    auto COG_M2_ref = nodeFrame_WRT_COG.GetPosition(fc);
+    auto force_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetMotorForceInNode(fc), fc);
 
-        return -(torqueAtNode2_ref + COG_M2_ref.cross(force_ref));
-    }
+    return -(torqueAtNode2_ref + COG_M2_ref.cross(force_ref));
+  }
 
-    Torque FrActuator::GetMotorTorqueInBody2(FRAME_CONVENTION fc) const {
-        auto nodeFrame_WRT_COG = m_node2->GetFrameWRT_COG_InBody();
-        return nodeFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(-GetMotorTorqueInNode(fc), fc);
-    }
+  Torque FrActuator::GetMotorTorqueInBody2(FRAME_CONVENTION fc) const {
+    auto nodeFrame_WRT_COG = m_node2->GetFrameWRT_COG_InBody();
+    return nodeFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(-GetMotorTorqueInNode(fc), fc);
+  }
 
 //    void FrActuator::AddFields() {
 //

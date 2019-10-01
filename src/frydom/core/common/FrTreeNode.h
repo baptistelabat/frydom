@@ -5,27 +5,60 @@
 #ifndef FRYDOM_FRTREENODE_H
 #define FRYDOM_FRTREENODE_H
 
+#include <string>
+
 #include "FrObject.h"
+
 
 namespace frydom {
 
-    template<class ParentType>
-    class FrTreeNode {
+  class FrTreeNodeBase {
 
-     public:
+   public:
 
-      FrTreeNode() = default;
+    explicit FrTreeNodeBase(const std::string& name) : m_name() {}
 
-      explicit FrTreeNode(ParentType *parent);
+//    virtual FrTreeNodeBase* GetParent() const = 0;
 
-      void SetParent(ParentType *parent);
+//    const std::string &GetPath() const {
+//
+//    }
+    const std::string& GetName() const {
+      return m_name;
+    }
 
-      ParentType *GetParent() const;
+   private:
+    std::string m_name;
 
-     protected:
-      ParentType *m_parent;
+  };
 
-    };
+
+
+  template<class ParentType>
+  class FrTreeNode : public FrTreeNodeBase {
+
+   public:
+
+    FrTreeNode(const std::string& name, ParentType *parent);
+
+    void SetParent(ParentType *parent);
+
+    virtual ParentType *GetParent() const;
+
+   protected:
+    ParentType *m_parent = nullptr;
+
+  };
+
+  class FrRootNode : public FrTreeNode<FrRootNode> {
+
+   public:
+    FrRootNode *GetParent() const final {
+      return nullptr;
+    }
+
+  };
+
 
 }  // end namespace frydom
 

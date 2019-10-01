@@ -204,7 +204,7 @@ namespace frydom {
 
     }  // end namespace frydom::internal
 
-    FrBody::FrBody(const std::string &name) : FrLoggable(name) {
+    FrBody::FrBody(const std::string &name, FrOffshoreSystem* system) : FrLoggable(name, system) {
 
 //        SetLogged(true);
 
@@ -952,7 +952,7 @@ namespace frydom {
       worldNode->SetFrameInBody(bodyNodeFrameInWorld);
 
       // Creating the link
-      auto DOFLink = std::make_shared<FrDOFMaskLink>(GetName() + "_locking_constraint", worldNode, bodyNode, GetSystem());
+      auto DOFLink = std::make_shared<FrDOFMaskLink>(GetName() + "_locking_constraint", GetSystem(), worldNode, bodyNode);
 
       // Initializing the link with the DOFMask
       DOFLink->SetDOFMask(m_DOFMask.get());

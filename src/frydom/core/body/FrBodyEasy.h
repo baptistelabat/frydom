@@ -17,29 +17,43 @@
 
 namespace frydom {
 
-    // Forward declaration
-    class FrBody;
+  // Forward declaration
+  class FrBody;
+
+  class FrOffshoreSystem;
 
 
-    void makeItBox(std::shared_ptr<FrBody> body, double xSize, double ySize, double zSize, double mass);
+  void makeItBox(std::shared_ptr<FrBody> body, double xSize, double ySize, double zSize, double mass);
 
-    void makeItCylinder(std::shared_ptr<FrBody> body, double radius, double height, double mass);
+  void makeItCylinder(std::shared_ptr<FrBody> body, double radius, double height, double mass);
 
-    void makeItSphere(std::shared_ptr<FrBody> body, double radius, double mass);
-
-
-    std::shared_ptr<FrBody> make_BoxBody(const std::string &name, double xSize, double ySize, double zSize, double mass);
-
-    std::shared_ptr<FrBody> make_CylinderBody(const std::string &name, double radius, double height, double mass);
-
-    std::shared_ptr<FrBody> make_SphereBody(const std::string &name, double radius, double mass);
+  void makeItSphere(std::shared_ptr<FrBody> body, double radius, double mass);
 
 
-    // TODO : faire le make_ConeBody ---> mat d'eolienne...
+  std::shared_ptr<FrBody> make_BoxBody(const std::string &name,
+                                       FrOffshoreSystem *system,
+                                       double xSize,
+                                       double ySize,
+                                       double zSize,
+                                       double mass);
 
-    // TODO : porter le python FRyDoM pour les calculs d'inertie...
+  std::shared_ptr<FrBody> make_CylinderBody(const std::string &name,
+                                            FrOffshoreSystem *system,
+                                            double radius,
+                                            double height,
+                                            double mass);
 
-    // TODO : renommer ce fichier en FrStandardBodies
+  std::shared_ptr<FrBody> make_SphereBody(const std::string &name,
+                                          FrOffshoreSystem *system,
+                                          double radius,
+                                          double mass);
+
+
+  // TODO : faire le make_ConeBody ---> mat d'eolienne...
+
+  // TODO : porter le python FRyDoM pour les calculs d'inertie...
+
+  // TODO : renommer ce fichier en FrStandardBodies
 
 
 }  // end namespace frydom

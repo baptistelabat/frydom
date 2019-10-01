@@ -24,7 +24,7 @@ namespace frydom {
     // ---------------------------------------------------------------------
 
     FrEquilibriumFrame::FrEquilibriumFrame(const std::string &name, FrBody *body)
-        : FrLoggable(name),
+        : FrLoggable(name, body->GetSystem()),
           FrPrePhysicsItem(),
           m_velocity(),
           m_angularVelocity(0.),
