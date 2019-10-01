@@ -61,9 +61,9 @@ namespace frydom {
         /// \return internal item, related to chrono::ChPhysicsItem
         virtual chrono::ChPhysicsItem* GetChronoItem_ptr() const = 0;
 
-        virtual void RemoveChronoAsset(std::shared_ptr<chrono::ChAsset> asset);
+        virtual std::shared_ptr<chrono::ChPhysicsItem*> GetChronoItem_shared() const { return nullptr; }
 
-        virtual FrPhysicsItem* GetPhysicsItem_ptr() const { return nullptr; }
+        virtual void RemoveChronoAsset(std::shared_ptr<chrono::ChAsset> asset);
 
     public:
 

@@ -20,6 +20,8 @@
 #include "shape/FrTriangleMeshShape.h"
 
 #include "frydom/core/common/FrPhysicsItem.h"
+#include "frydom/core/FrOffshoreSystem.h"
+#include "frydom/utils/FrIrrApp.h"
 
 #include "FrAssetOwner.h"
 
@@ -78,7 +80,6 @@ namespace frydom{
 
         m_assets.erase(std::find<std::vector<std::shared_ptr<FrAsset>>::iterator>(m_assets.begin(), m_assets.end(), asset));
 
-
         RemoveChronoAsset(asset->GetChronoAsset());
     }
 
@@ -94,6 +95,7 @@ namespace frydom{
         assets.erase(it0);
 
         // Remove irrlicht node asset
+
         std::shared_ptr<chrono::irrlicht::ChIrrNodeAsset> myirrasset;
 
         for (unsigned int k =0; k < assets.size(); k++) {
@@ -102,10 +104,14 @@ namespace frydom{
         }
 
         if (myirrasset) {
-            auto it = std::find(assets.begin(), assets.end(), myirrasset);
-            if (it != assets.end())
-                assets.erase(it);
+            //auto it = std::find(assets.begin(), assets.end(), myirrasset);
+            //if (it != assets.end())
+            //    assets.erase(it);
+            //dynamic_cast<chrono::irrlicht::ChIrrNode*>(myirrasset->GetIrrlichtNode())->UpdateAssetsProxies();
+            //myirrasset->GetIrrlichtNode()->removeAll();
+            //myirrasset->Update(GetChronoItem_ptr(), GetChronoItem_ptr()->GetAssetsFrame().GetCoord());
         }
+
 
     }
 
