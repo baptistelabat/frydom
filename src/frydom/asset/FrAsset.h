@@ -16,6 +16,7 @@
 #include "chrono/assets/ChAssetLevel.h"
 
 #include "frydom/asset/FrAssetOwner.h"
+#include "frydom/core/common/FrPhysicsItem.h"
 
 
 namespace frydom {
@@ -62,8 +63,8 @@ namespace frydom {
 
 
         friend void FrAssetOwner::AddAsset(std::shared_ptr<FrAsset>);
-
         friend void FrAssetOwner::RemoveAsset(std::shared_ptr<FrAsset>);
+        friend void FrPhysicsItem::RemoveAsset(std::shared_ptr<FrAsset>);
     };
 
 

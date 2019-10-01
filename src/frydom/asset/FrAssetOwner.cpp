@@ -85,10 +85,13 @@ namespace frydom{
     void FrAssetOwner::RemoveChronoAsset(std::shared_ptr<chrono::ChAsset> asset) {
 
         // Remove asset
-        auto assets = GetChronoItem_ptr()->GetAssets();
+        auto& assets = GetChronoItem_ptr()->GetAssets();
 
         assert(std::find<std::vector<std::shared_ptr<chrono::ChAsset>>::iterator>(assets.begin(), assets.end(),
                 asset) != assets.end());
+
+        auto it0 = std::find(assets.begin(), assets.end(), asset);
+        assets.erase(it0);
 
         // Remove irrlicht node asset
         std::shared_ptr<chrono::irrlicht::ChIrrNodeAsset> myirrasset;
