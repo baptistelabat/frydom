@@ -101,19 +101,9 @@ namespace frydom {
     /// \param time Current time of the simulation from beginning, in seconds
     void Update(double time);
 
-//      /// Return the system to which the force is linked
-//      /// \return Offshore system object pointer
-//      inline FrOffshoreSystem *GetSystem() const {
-//        return GetParent()->GetSystem();
-//      }
-
     inline FrBody *GetBody() const {
       return GetParent();
     }
-
-    /// Get the type name of this object
-    /// \return type name of this object
-    const std::string& GetTypeName() const override { return "Force"; }
 
     /// Check if the force is active
     bool IsActive() const;

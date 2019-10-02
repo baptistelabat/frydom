@@ -19,7 +19,7 @@
 
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/logging/FrLogManager.h"
-
+#include "frydom/logging/FrClassTypes.h"
 
 namespace frydom {
 
@@ -30,6 +30,7 @@ namespace frydom {
 
   }  // end namespace frydom::internal
 
+  const std::string FrNode::s_type = NODE_TYPE;
 
   FrNode::FrNode(const std::string &name, frydom::FrBody *body) :
       FrLoggable(name, body),

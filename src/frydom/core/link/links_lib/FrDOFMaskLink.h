@@ -128,10 +128,6 @@ namespace frydom {
                     const std::shared_ptr<FrNode> &node1,
                     const std::shared_ptr<FrNode> &node2);
 
-      /// Get the type name of this object
-      /// \return type name of this object
-      std::string GetTypeName() const override { return "DOFMaskLink"; }
-
       /// Set the FrDOFMask. Essentially used by the DOF restricting mechanism of bodies
       /// Users should not use this method to make links between bodies but directly use the specialized classes
       /// (FrPrismaticLink, FrRevoluteLink...)

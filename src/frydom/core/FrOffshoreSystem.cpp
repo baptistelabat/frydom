@@ -155,7 +155,7 @@ namespace frydom {
   /// \param timeStepper time stepper type
   /// \param solver solver type
   FrOffshoreSystem::FrOffshoreSystem(SYSTEM_TYPE systemType, TIME_STEPPER timeStepper, SOLVER solver) :
-      FrTreeNode("frydom", nullptr) { // TODO : voir si on met le TreeRoot au lieu de nullptr
+      FrTreeNode("frydom", nullptr) {
 
 //        SetLogged(true);
 

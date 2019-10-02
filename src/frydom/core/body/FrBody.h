@@ -205,10 +205,6 @@ namespace frydom {
     /// Return true if the body is included in the static analysis
     bool IncludedInStaticAnalysis() const { return true; }
 
-    /// Get the type name of this object
-    /// \return type name of this object
-    std::string GetTypeName() const override { return "Body"; }
-
 //      // =============================================================================================================
 //      // LOGGING
 //      // =============================================================================================================

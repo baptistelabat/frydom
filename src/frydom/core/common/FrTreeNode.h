@@ -22,10 +22,6 @@ namespace frydom {
       return m_name;
     }
 
-    /// Get the type name of the object
-    /// \return type name of the object
-    virtual const std::string& GetTypeName() const = 0;
-
    private:
     std::string m_name;
 
