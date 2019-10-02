@@ -1,0 +1,42 @@
+<...>frydom_[ID]/
+
+<...>frydom_[ID]/BODIES/
+
+<...>frydom_[ID]/BODIES/BODY_[Name]/
+<...>frydom_[ID]/BODIES/BODY_[Name]/<frydom_msg.Body[MsgType] ou Body[MsgType].csv>
+
+<...>frydom_[ID]/BODIES/BODY_[Name]/FORCES/
+<...>frydom_[ID]/BODIES/BODY_[Name]/FORCES/FORCE_[Name]/
+<...>frydom_[ID]/BODIES/BODY_[Name]/FORCES/FORCE_[Name]/<frydom_msg.[ForceType][MsgType] ou [ForceType][MsgType].csv>
+
+<...>frydom_[ID]/BODIES/BODY_[Name]/NODES/
+<...>frydom_[ID]/BODIES/BODY_[Name]/NODES/NODE_[Name]/
+<...>frydom_[ID]/BODIES/BODY_[Name]/NODES/NODE_[Name]/<frydom_msg.Node[MsgType] ou Node[MsgType].csv>
+
+<...>frydom_[ID]/BODIES/BODY_[Name]/NODES/NODE_[Name]/SENSORS/
+<...>frydom_[ID]/BODIES/BODY_[Name]/NODES/NODE_[Name]/SENSORS/SENSOR_[Name]/
+<...>frydom_[ID]/BODIES/BODY_[Name]/NODES/NODE_[Name]/SENSORS/SENSOR_[Name]/<frydom_msg.[SensorType][MsgType] ou  [SensorType][MsgType].csv>
+
+<...>frydom_[ID]/BODIES/BODY_[Name]/EQUILIBRIUM_FRAME/
+<...>frydom_[ID]/BODIES/BODY_[Name]/EQUILIBRIUM_FRAME/EQUILIBRIUM_FRAME_[Name]/
+<...>frydom_[ID]/BODIES/BODY_[Name]/EQUILIBRIUM_FRAME/EQUILIBRIUM_FRAME_[Name]/<frydom_msg.[EquilibriumFrameType][MsgType] ou [EquilibriumFrameType][MsgType].csv>
+
+<...>frydom_[ID]/CABLES/
+<...>frydom_[ID]/CABLES/CABLE_[Name]/
+<...>frydom_[ID]/CABLES/CABLE_[Name]/<frydom_msg.[CableType][MsgType] ou [CableType][MsgType].csv>
+
+<...>frydom_[ID]/SENSORS/
+<...>frydom_[ID]/SENSORS/SENSOR_[Name]
+<...>frydom_[ID]/SENSORS/SENSOR_[Name]/<frydom_msg.[SensorType][MsgType] ou [SensorType][MsgType].csv>
+
+<...>frydom_[ID]/LINKS/
+<...>frydom_[ID]/LINKS/LINK_[Name]/
+<...>frydom_[ID]/LINKS/LINK_[Name]/<frydom_msg.[LinkType][MsgType] ou [LinkType][Msgtype].csv>
+
+<...>frydom_[ID]/CONSTRAINTS/
+<...>frydom_[ID]/CONSTRAINTS/CONSTRAINT_[Name]/
+<...>frydom_[ID]/CONSTRAINTS/CONSTRAINT_[Name]/<frydom_msg.[ConstraintType][MsgType] ou [ConstraintType][MsgType].csv>
+
+<...>frydom_[ID]/SIMULATION/
+<...>frydom_[ID]/SIMULATION/<frydom_msg.SimulationData ou SimulationData.csv>
+

@@ -32,9 +32,9 @@ int main() {
 
 
   std::cout << path_manager->GetPath(&system) << std::endl;
-  std::cout << path_manager->GetPath(body1.get()) << std::endl;
-  std::cout << path_manager->GetPath(force1.get()) << std::endl;
-  std::cout << path_manager->GetPath(node2.get()) << std::endl;
+//  std::cout << path_manager->GetPath(body1.get()) << std::endl;
+//  std::cout << path_manager->GetPath(force1.get()) << std::endl;
+//  std::cout << path_manager->GetPath(node2.get()) << std::endl;
 
 
   return 0;

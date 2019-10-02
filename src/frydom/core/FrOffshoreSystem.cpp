@@ -154,10 +154,11 @@ namespace frydom {
   /// \param systemType contact method system (SMOOTH_CONTACT/NONSMOOTH_CONTACT)
   /// \param timeStepper time stepper type
   /// \param solver solver type
-  FrOffshoreSystem::FrOffshoreSystem(SYSTEM_TYPE systemType, TIME_STEPPER timeStepper, SOLVER solver) :
-      FrTreeNode("frydom", nullptr) {
-
-//        SetLogged(true);
+  FrOffshoreSystem::FrOffshoreSystem(const std::string &name,
+                                     SYSTEM_TYPE systemType,
+                                     TIME_STEPPER timeStepper,
+                                     SOLVER solver) :
+      FrLoggable(name, nullptr) {
 
     // Creating the chrono System backend. It drives the way contact are modelled
     SetSystemType(systemType, false);

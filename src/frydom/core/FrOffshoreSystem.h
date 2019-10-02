@@ -15,6 +15,7 @@
 
 
 #include <map>
+#include <frydom/logging/FrLoggable.h>
 
 
 #include "chrono/physics/ChSystemSMC.h"
@@ -107,7 +108,7 @@ namespace frydom {
   /// This object will be responsible of performing the entire physical simulation (dynamics, kinematics, statics, etc.),
   /// so you need at least one FrOffshoreSystem_ object in your program, in order to perform simulations
   /// (you'll insert rigid bodies and links into it..).
-  class FrOffshoreSystem : public FrTreeNode<FrRootNode> {
+  class FrOffshoreSystem : public FrLoggable<FrRootNode> {
 
    public:
 
@@ -269,7 +270,8 @@ namespace frydom {
     /// \param timeStepper time stepper type
     /// \param solver solver type
     explicit
-    FrOffshoreSystem(SYSTEM_TYPE systemType = SMOOTH_CONTACT,
+    FrOffshoreSystem(const std::string &name,
+                     SYSTEM_TYPE systemType = SMOOTH_CONTACT,
                      TIME_STEPPER timeStepper = EULER_IMPLICIT_LINEARIZED,
                      SOLVER solver = BARZILAIBORWEIN);
 
