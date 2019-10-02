@@ -38,11 +38,11 @@ namespace frydom {
      * during the initialization stage.
      *
      */
-    class FrEquilibriumFrame : public FrPrePhysicsItem, public FrLoggable<FrOffshoreSystem> {
+    class FrEquilibriumFrame : public FrPrePhysicsItem, public FrLoggable<FrBody> {
 
      protected:
 
-      FrBody *m_body;                ///< Link to the body to which the equilibrium frame if applied
+//      FrBody *m_body;                ///< Link to the body to which the equilibrium frame if applied
 
       FrFrame m_frame;
       Velocity m_velocity;                     ///< translational velocity of the frame in world coordinates
@@ -59,10 +59,13 @@ namespace frydom {
       /// \param body Body to which the equilibrium frame is linked
       explicit FrEquilibriumFrame(const std::string &name, FrBody *body);
 
-      /// Define the body to which the equilibrium frame is linked
-      /// \param body Body link
-      /// \param initPos Boolean, if true the position of the frame is equal to the position of the body during initialization
-      void SetBody(FrBody *body, bool initPos = true);
+//      /// Define the body to which the equilibrium frame is linked
+//      /// \param body Body link
+//      /// \param initPos Boolean, if true the position of the frame is equal to the position of the body during initialization
+//      void SetBody(FrBody *body, bool initPos = true);
+
+      /// Get a pointer to the body to which this frame is attached
+      inline FrBody* GetBody() const;
 
       /// The velocity of the frame is initialized from the body velocity
       /// \param is_init Boolean True/Flase
