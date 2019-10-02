@@ -20,6 +20,7 @@
 
 
 #include <frydom/core/common/FrTreeNode.h>
+#include "frydom/core/body/FrBody.h"
 
 
 
@@ -42,8 +43,37 @@ namespace frydom {
 
       if (!node) return "";
 
-      return this->GetPath(node->GetParent()) + "/" + node->GetName();
+      return this->GetPath(node->GetParent()) + GetNormalizedPathName(node);
 
+    }
+
+
+
+    
+   private:
+
+    /// Gives the normalized path of the node given a hard coded policy concerning the naming scheme.
+    template <class ParentType>
+    std::string GetNormalizedPathName(const FrTreeNode<ParentType> *node) const {
+
+      std::string path_name;
+
+      if (dynamic_cast<const FrOffshoreSystem*>(node)) {
+        path_name = "frydom_";
+
+      } else if (dynamic_cast<const FrBody*>(node)) {
+        path_name = "BODY/BODY_";
+
+      } else if (dynamic_cast<const FrForce*>(node)) {
+        path_name = "FORCE/FORCE_";
+
+      } else if (dynamic_cast<const FrNode*>(node)) {
+        path_name = "NODE/NODE_";
+
+      }
+
+
+      return path_name + node->GetName() + "/";
     }
 
 

@@ -14,7 +14,7 @@ using namespace frydom;
 
 int main() {
 
-  FrOffshoreSystem system;
+  FrOffshoreSystem system("TestPathBuilding");
 
   auto path_manager = system.GetPathManager();
 
@@ -27,14 +27,14 @@ int main() {
 
   auto body2 = system.NewBody("myBody2");
 
-  auto force1 = make_manoeuvring_model("man_model_body2", body2);
+  auto force1 = make_manoeuvring_model("man_model", body2); // TODO : changer en maneuvring force...
 
 
 
   std::cout << path_manager->GetPath(&system) << std::endl;
-//  std::cout << path_manager->GetPath(body1.get()) << std::endl;
-//  std::cout << path_manager->GetPath(force1.get()) << std::endl;
-//  std::cout << path_manager->GetPath(node2.get()) << std::endl;
+  std::cout << path_manager->GetPath(body1.get()) << std::endl;
+  std::cout << path_manager->GetPath(force1.get()) << std::endl;
+  std::cout << path_manager->GetPath(node2.get()) << std::endl;
 
 
   return 0;
