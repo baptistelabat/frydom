@@ -59,10 +59,6 @@ namespace frydom {
       /// \param body Body to which the equilibrium frame is linked
       explicit FrEquilibriumFrame(const std::string &name, FrBody *body);
 
-      /// Get the type name of this object
-      /// \return type name of this object
-      std::string GetTypeName() const override { return "EquilibriumFrame"; }
-
       /// Define the body to which the equilibrium frame is linked
       /// \param body Body link
       /// \param initPos Boolean, if true the position of the frame is equal to the position of the body during initialization
@@ -221,10 +217,6 @@ namespace frydom {
       /// \param initPos If true the frame is initialized with the position of the body
       FrEqFrameSpringDamping(const std::string &name, FrBody *body, double cutoffTime, double dampingRatio);
 
-      /// Get the type name of this object
-      /// \return type name of this object
-      std::string GetTypeName() const override { return "EqFrameSpringDamping"; }
-
       /// Set the spring-damping parameters
       /// \param cutoffTime Cutoff time period
       /// \param dampingRatio Damping ratio
@@ -294,10 +286,6 @@ namespace frydom {
       /// \param timeStep Time step of the recorder
       /// \param initPos If true the frame is initialized with the position of the body
       FrEqFrameMeanMotion(const std::string &name, FrBody *body, double timePersistence, double timeStep);
-
-      /// Get the type name of this object
-      /// \return type name of this object
-      std::string GetTypeName() const override { return "EqFrameMeanMotion"; }
 
       void SetPositionCorrection(double timePersistence, double timeStep, double posCoeff, double angleCoeff);
 

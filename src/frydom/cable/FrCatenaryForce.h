@@ -34,10 +34,6 @@ namespace frydom {
 
    public:
 
-    /// Get the type name of this object
-    /// \return type name of this object
-    std::string GetTypeName() const override { return "CatenaryForce"; }
-
     /// FrCatenaryForce constructor, from a catenary line, and the description of the side of this line
     /// \param line catenary line applying a tension
     /// \param side side of the line (starting or ending)

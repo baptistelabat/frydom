@@ -75,10 +75,10 @@ namespace frydom {
       //--------------------------------------------------------------------------------------------------------------
       // Data for Newton-Raphson solver
       //TODO: Complete the missing doc (FR)
-      const double Lmin = 1e-10;     ///<
-      double m_tolerance = 1e-6;      ///<
-      unsigned int m_itermax = 100;       ///<
-      double m_relax = 0.1;       ///<
+      const double Lmin = 1e-10;
+      double m_tolerance = 1e-6;
+      unsigned int m_itermax = 100;
+      double m_relax = 0.1;
       //--------------------------------------------------------------------------------------------------------------
 
       //--------------------------------------------------------------------------------------------------------------
@@ -108,10 +108,6 @@ namespace frydom {
                      double unstrainedLength,
                      FLUID_TYPE fluid  // FIXME : on ne devrait pas specifier le fluide !!! on doit le recuperer de l'environnement...
       );
-
-      /// Get the type name of this object
-      /// \return type name of this object
-      std::string GetTypeName() const override { return "CatenaryLine"; }
 
      public:
 

@@ -45,10 +45,6 @@ namespace frydom {
 
       FrLinearDamping(const std::string &name, FrBody* body, FLUID_TYPE ft, bool relativeToFluid);
 
-      /// Get the type name of this object
-      /// \return type name of this object
-      std::string GetTypeName() const override { return "LinearDamping"; }
-
       /// Return true if the force is included in the static analysis
       bool IncludedInStaticAnalysis() const override { return true; }
 

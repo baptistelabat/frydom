@@ -139,10 +139,6 @@ namespace frydom {
                          const std::shared_ptr<FrCAxis> &axis1,
                          const std::shared_ptr<FrCAxis> &axis2);
 
-    /// Get the type name of this object
-    /// \return type name of this object
-    std::string GetTypeName() const override { return "ConstraintParallel"; }
-
     /// Initialize the constraint
     void Initialize() override;
 
@@ -191,10 +187,6 @@ namespace frydom {
                               FrOffshoreSystem *system,
                               const std::shared_ptr<FrCAxis> &axis1,
                               const std::shared_ptr<FrCAxis> &axis2);
-
-    /// Get the type name of this object
-    /// \return type name of this object
-    std::string GetTypeName() const override { return "ConstraintPerpendicular"; }
 
     /// Initialize the constraint
     void Initialize() override;
@@ -248,10 +240,6 @@ namespace frydom {
                              const std::shared_ptr<FrCPlane> &plane2,
                              bool flipped = false,
                              double distance = 0.);
-
-    /// Get the type name of this object
-    /// \return type name of this object
-    std::string GetTypeName() const override { return "ConstraintPlaneOnPlane"; }
 
     /// Initialize the constraint
     void Initialize() override;
@@ -316,10 +304,6 @@ namespace frydom {
                              const std::shared_ptr<FrCPoint> &point,
                              double distance = 0.);
 
-    /// Get the type name of this object
-    /// \return type name of this object
-    std::string GetTypeName() const override { return "ConstraintPointOnPlane"; }
-
     /// Initialize the constraint
     void Initialize() override;
 
@@ -375,10 +359,6 @@ namespace frydom {
                             const std::shared_ptr<FrCAxis> &line,
                             const std::shared_ptr<FrCPoint> &point,
                             double distance = 0.);
-
-    /// Get the type name of this object
-    /// \return type name of this object
-    std::string GetTypeName() const override { return "ConstraintPointOnLine"; }
 
     /// Initialize the constraint
     void Initialize() override;
@@ -436,10 +416,6 @@ namespace frydom {
                                const std::shared_ptr<FrCPoint> &point,
                                bool autoDistance,
                                double distance = 0.);
-
-    /// Get the type name of this object
-    /// \return type name of this object
-    std::string GetTypeName() const override { return "ConstraintDistanceToAxis"; }
 
     /// Initialize the constraint
     void Initialize() override;
@@ -509,10 +485,6 @@ namespace frydom {
                                       const std::shared_ptr<FrCPoint> &point2,
                                       bool autoDistance = false,
                                       double distance = 0.);
-
-    /// Get the type name of this object
-    /// \return type name of this object
-    std::string GetTypeName() const override { return "ConstraintDistanceBetweenPoints"; }
 
     /// Initialize the constraint
     void Initialize() override;

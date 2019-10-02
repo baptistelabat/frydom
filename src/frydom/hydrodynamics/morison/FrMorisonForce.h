@@ -44,10 +44,6 @@ namespace frydom {
     /// \param model Morison model
     FrMorisonForce(const std::string &name, FrBody *body, std::shared_ptr<FrMorisonElement> model);
 
-    /// Get the type name of this object
-    /// \return type name of this object
-    std::string GetTypeName() const override { return "MorisonForce"; }
-
     /// Define a single element morison model
     /// \param body Body to which the morison model is applied
     /// \return Single element morison model

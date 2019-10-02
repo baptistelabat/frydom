@@ -22,12 +22,11 @@
 #define CABLE_TYPE    "CABLE"
 
 
-//namespace frydom {
-//
-//
-//
-//
-//}
+namespace frydom {
+
+
+
+}
 
 
 

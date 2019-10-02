@@ -33,10 +33,6 @@ namespace frydom {
                         const std::shared_ptr<FrNode> &node1,
                         const std::shared_ptr<FrNode> &node2);
 
-      /// Get the type name of this object
-      /// \return type name of this object
-      std::string GetTypeName() const override { return "CylindricalLink"; }
-
     };
 
     /// Helper function to make it easy to link two nodes by a cylindrical link

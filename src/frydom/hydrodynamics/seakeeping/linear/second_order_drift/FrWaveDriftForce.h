@@ -42,10 +42,6 @@ namespace frydom {
     /// \param hdb Hydrodynamic database
     FrWaveDriftForce(const std::string &name, FrBody *body, std::shared_ptr<FrHydroDB> hdb);
 
-    /// Get the type name of this object
-    /// \return type name of this object
-    std::string GetTypeName() const override { return "WaveDriftForce"; }
-
     /// Method to initialize the wave drift model
     void Initialize() override;
 

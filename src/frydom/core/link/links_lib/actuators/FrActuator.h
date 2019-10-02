@@ -59,8 +59,6 @@ namespace frydom {
         /// be not active either because disabled, or broken, or not valid)
         bool IsActive() const override;
 
-        std::string GetTypeName() const override { return "Actuator"; }
-
         /// Set the motor function, to control the motion, velocity or force depending on the control case selected
         /// \param function motor function
         virtual void SetMotorFunction(const FrFunctionBase& function) = 0;

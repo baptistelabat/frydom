@@ -47,10 +47,6 @@ namespace frydom {
                       std::shared_ptr<FrNode> node1,
                       std::shared_ptr<FrNode> node2);
 
-      /// Get the type name of this object
-      /// \return type name of this object
-      std::string GetTypeName() const override { return "PrismaticLink"; }
-
       /// Set the spring and damper coefficients
       void SetSpringDamper(double stiffness, double damping);
 

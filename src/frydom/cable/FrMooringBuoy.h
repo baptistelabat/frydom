@@ -31,10 +31,6 @@ namespace frydom {
       explicit FrSphereNonLinearHydrostaticForce(const std::string &name, FrBody *body) :
           FrForce(name, body) {}
 
-      /// Get the type name of this object
-      /// \return type name of this object
-      std::string GetTypeName() const override { return "SphereNonLinearHydrostaticForce"; }
-
       /// Return true if the force is included in the static analysis
       bool IncludedInStaticAnalysis() const override { return true; }
 
@@ -59,10 +55,6 @@ namespace frydom {
                   double mass,
                   bool visual_asset = true,
                   double damping = 0);
-
-    /// Get the type name of this object
-    /// \return type name of this object
-    std::string GetTypeName() const override { return "MooringBuoy"; }
 
     double GetVolume() { return c_volume; }
 

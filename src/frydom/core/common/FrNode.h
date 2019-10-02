@@ -71,10 +71,6 @@ namespace frydom {
     /// Destructor
 //        ~FrNode() = default;
 
-    /// Get the type name of this object
-    /// \return type name of this object
-    const std::string &GetTypeName() const override { return s_type; }
-
     /// Set if an asset is to be displayed
     /// \param showAsset true if a ForceAsset is to be displayed
     void ShowAsset(bool showAsset);;

@@ -61,10 +61,6 @@ namespace frydom {
       /// Default constructor
       explicit FrManDampingTaylorExpansion(const std::string &name, FrBody* body);
 
-      /// Get the type name of this object
-      /// \return type name of this object
-      std::string GetTypeName() const override { return "ManDampingTaylorExpansion"; }
-
       /// Definition of a manoeuvring force component from string definition and scalar value
       /// \param tag : shape definition (ex: "Xuuv")
       /// \param val : coefficient value

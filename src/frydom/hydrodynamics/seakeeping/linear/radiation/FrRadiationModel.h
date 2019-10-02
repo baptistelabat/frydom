@@ -57,10 +57,6 @@ namespace frydom {
                               FrOffshoreSystem *system,
                               std::shared_ptr<FrHydroDB> HDB);
 
-    /// Get the type name of this object
-    /// \return type name of this object
-    std::string GetTypeName() const override { return "RadiationModel"; }
-
     /// Return true if the radiation model is included in the static analysis
     bool IncludedInStaticAnalysis() const override { return false; }
 
@@ -126,10 +122,6 @@ namespace frydom {
     FrRadiationConvolutionModel(const std::string &name,
                                 FrOffshoreSystem *system,
                                 std::shared_ptr<FrHydroDB> HDB);
-
-    /// Get the type name of this object
-    /// \return type name of this object
-    std::string GetTypeName() const override { return "RadiationConvolutionModel"; }
 
     /// Method to initialize the radiation model
     void Initialize() override;

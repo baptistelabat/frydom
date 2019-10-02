@@ -50,10 +50,6 @@ namespace frydom {
                                 FrBody *body,
                                 const std::shared_ptr<FrHydroMesh> &hydroMesh);
 
-    /// Get the type name of this object
-    /// \return type name of this object
-    std::string GetTypeName() const override { return "NonlinearHydrostaticForce"; }
-
     /// Return true if the force is included in the static analysis
     bool IncludedInStaticAnalysis() const override { return true; }
 

@@ -44,10 +44,6 @@ namespace frydom {
       /// \param jsonFile Name of the json file containing the polar coefficients
       explicit FrFlowForce(const std::string &name, FrBody* body, const std::string &jsonFile);
 
-      /// Get the type name of this object
-      /// \return type name of this object
-      std::string GetTypeName() const override { return "FlowForce"; }
-
       /// Extract polar coeffients from json table
       /// \param jsonFile Name of the json file containing the polar coefficients
       void ReadTable(const std::string &jsonFile);
@@ -70,10 +66,6 @@ namespace frydom {
 
      public:
 
-      /// Get the type name of this object
-      /// \return type name of this object
-      std::string GetTypeName() const override { return "CurrentForce"; }
-
       FrCurrentForce(const std::string &name, FrBody* body, const std::string &jsonFile);
 
      private:
@@ -90,10 +82,6 @@ namespace frydom {
     class FrWindForce : public FrFlowForce {
 
      public:
-
-      /// Get the type name of this object
-      /// \return type name of this object
-      std::string GetTypeName() const override { return "WindForce"; }
 
       explicit FrWindForce(const std::string &name, FrBody* body, const std::string &jsonFile);
 

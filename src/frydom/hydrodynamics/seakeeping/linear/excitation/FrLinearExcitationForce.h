@@ -43,10 +43,6 @@ namespace frydom {
                                      FrBody *body,
                                      const std::shared_ptr<FrHydroDB> &HDB);;
 
-    /// Get the type name of this object
-    /// \return type name of this object
-    std::string GetTypeName() const override { return "LinearExcitationForce"; }
-
     Eigen::MatrixXcd GetHDBData(unsigned int iangle) const override;
 
     Eigen::VectorXcd GetHDBData(unsigned int iangle, unsigned int iforce) const override;

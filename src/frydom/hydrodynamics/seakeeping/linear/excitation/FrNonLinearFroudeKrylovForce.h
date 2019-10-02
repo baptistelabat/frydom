@@ -52,10 +52,6 @@ namespace frydom {
                                    FrBody* body,
                                    std::shared_ptr<FrHydroMesh> HydroMesh);
 
-      /// Get the type name of this object
-      /// \return type name of this object
-      std::string GetTypeName() const override { return "NonLinearFroudeKrylovForce"; }
-
      private:
 
       void Compute(double time) override;

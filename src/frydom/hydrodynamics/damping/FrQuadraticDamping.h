@@ -50,10 +50,6 @@ namespace frydom {
                        FLUID_TYPE ft,
                        bool relativeToFluid);
 
-    /// Get the type name of this object
-    /// \return type name of this object
-    std::string GetTypeName() const override { return "QuadraticDamping"; }
-
     /// Return true if the force is included in the static analysis
     bool IncludedInStaticAnalysis() const override { return true; }
 

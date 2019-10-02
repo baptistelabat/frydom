@@ -70,10 +70,6 @@ namespace frydom {
                                 FrBody *body,
                                 FrRadiationConvolutionModel *radiationModel);
 
-    /// Get the type name of this object
-    /// \return type name of this object
-    std::string GetTypeName() const override { return "RadiationConvolutionForce"; }
-
 //        void AddFields() override;
 
     /// Method to initialize the radiation convolution force
