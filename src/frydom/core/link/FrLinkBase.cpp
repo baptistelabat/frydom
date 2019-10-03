@@ -24,7 +24,9 @@ namespace frydom {
                          const std::shared_ptr<FrNode> &node2) :
       FrLoggable(name, system),
       m_node1(node1),
-      m_node2(node2) {}
+      m_node2(node2),
+      c_chrono_body_1(node1->GetBody()->GetChronoBody()),
+      c_chrono_body_2(node2->GetBody()->GetChronoBody()) {}
 
   std::shared_ptr<FrNode> FrLinkBase::GetNode1() {
     return m_node1;
@@ -51,11 +53,11 @@ namespace frydom {
   }
 
   std::shared_ptr<chrono::ChBody> FrLinkBase::GetChronoBody1() {
-    return GetBody1()->GetChronoBody();
+    return c_chrono_body_1;
   }
 
   std::shared_ptr<chrono::ChBody> FrLinkBase::GetChronoBody2() {
-    return GetBody2()->GetChronoBody();
+    return c_chrono_body_2;
   }
 
 //    FrOffshoreSystem *FrLinkBase::GetSystem() {

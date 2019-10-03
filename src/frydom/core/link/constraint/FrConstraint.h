@@ -364,7 +364,7 @@ namespace frydom {
     void Initialize() override;
 
    protected:
-    friend class FrNode; // To make possible to declare SetMarkers friend in FrNode
+//    friend class FrNode; // To make possible to declare SetMarkers friend in FrNode
 
     /// Get the pointer to the chrono constraint
     /// \return pointer to the chrono constraint

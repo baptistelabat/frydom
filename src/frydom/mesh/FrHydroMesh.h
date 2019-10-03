@@ -25,79 +25,93 @@
 
 namespace frydom {
 
-    // Forward declarations
-    class FrOffshoreSystem;
-    class FrBody;
-    namespace geom { class FrPlane; }
+  // Forward declarations
+//    class FrOffshoreSystem;
+  class FrBody;
+  namespace geom { class FrPlane; }
 
-    /**
-     * \class FrHydroMesh
-     * \brief Class for managing the meshes used for computing the nonlinear hydrostatic and Froude-Krylov loads.
-     */
-    class FrHydroMesh : public FrPrePhysicsItem {
+  /**
+   * \class FrHydroMesh
+   * \brief Class for managing the meshes used for computing the nonlinear hydrostatic and Froude-Krylov loads.
+   */
+  class FrHydroMesh : public FrTreeNode<FrOffshoreSystem>, public FrPrePhysicsItem {
 
-    public:
+   public:
 
-        enum class ClippingSupport {    ///< Support for the clipping procedure : can be a horizontal plan
-            PLANESURFACE,                ///< horizontal plan, defined by its elevation corresponding to the tidal height
-            WAVESURFACE                 ///< wave surface, defined by the free surface position at a given (x,y) position
-        };
-
-        /// Constructor.
-        FrHydroMesh(FrOffshoreSystem* system, const std::shared_ptr<FrBody>& body, FrHydroMesh::ClippingSupport support);
-
-        /// Constructor.
-        FrHydroMesh(FrOffshoreSystem* system, const std::shared_ptr<FrBody>& body, const std::string& meshFile, FrFrame meshOffsset, FrHydroMesh::ClippingSupport support);
-
-        /// Initialize the hydromesh
-        void Initialize() override;
-
-        /// Import a mesh and apply the mesh frame offset transformation, so that the mesh can be expressed in the body reference frame
-        /// \param meshFile mesh file name
-        /// \param meshOffset mesh frame offset, relatively to the body reference frame
-        /// \return imported mesh, in body reference frame
-        mesh::FrMesh& ImportMesh(const std::string& meshFile, FrFrame meshOffset);
-
-        /// Get a reference to the clipped mesh (its frame is adjusted to the body's motions)
-        /// \return reference to the clipped mesh
-        mesh::FrMesh& GetClippedMesh();
-
-        /// Get a reference to the initial mesh (as defined and read from the input file)
-        /// \return reference to the initial mesh
-        mesh::FrMesh& GetInitialMesh();
-
-        /// Get the clipping support (PLANESUPPORT/WAVESUPPORT)
-        /// \return clipping support
-        ClippingSupport GetClippingSupport() const;
-
-
-    private:
-
-        /// Update nonlinear hydrostatic force.
-        /// \param time Current time of the simulation from beginning.
-        void Compute(double time) override;
-
-    private:
-
-//        FrOffshoreSystem* m_system;                     ///< reference to the offshore system  // FIXME : cette reference ne devrait pas exister !
-        std::shared_ptr<FrBody> m_body;                 ///< reference to the body related to this FrHydroMesh
-
-        std::unique_ptr<mesh::FrMeshClipper> m_clipper; ///< mesh clipper service
-
-        mesh::FrMesh m_initMesh;                        ///< Input mesh file (as defined and read from the input file)
-        mesh::FrMesh m_clippedMesh;                     ///< Clipped mesh (its frame follows the body frame in its motions)
-
-        ClippingSupport m_clippingSupport;              ///< Support for the clipping procedure
-
-        std::shared_ptr<geom::FrPlane> c_clippingPlane; ///< plane for the FrClippingPane
-
+    enum class ClippingSupport {    ///< Support for the clipping procedure : can be a horizontal plan
+      PLANESURFACE,                ///< horizontal plan, defined by its elevation corresponding to the tidal height
+      WAVESURFACE                 ///< wave surface, defined by the free surface position at a given (x,y) position
     };
 
-    /// This function creates a hydrodynamic mesh for using in the computation of the nonlinear hydrostatic and/or Froude-Krylov loads.
-    std::shared_ptr<FrHydroMesh> make_hydro_mesh(const std::shared_ptr<FrBody>& body, FrHydroMesh::ClippingSupport support);
+    /// Constructor.
+    FrHydroMesh(const std::string &name,
+                FrOffshoreSystem *system,
+                const std::shared_ptr<FrBody> &body,
+                FrHydroMesh::ClippingSupport support);
 
-    std::shared_ptr<FrHydroMesh> make_hydro_mesh(const std::shared_ptr<FrBody>& body, const std::string& meshFile,
-                                                 FrFrame meshOffset, FrHydroMesh::ClippingSupport support);
+    /// Constructor.
+    FrHydroMesh(const std::string &name,
+                FrOffshoreSystem *system,
+                const std::shared_ptr<FrBody> &body,
+                const std::string &meshFile,
+                FrFrame meshOffsset,
+                FrHydroMesh::ClippingSupport support);
+
+    /// Initialize the hydromesh
+    void Initialize() override;
+
+    /// Import a mesh and apply the mesh frame offset transformation, so that the mesh can be expressed in the body reference frame
+    /// \param meshFile mesh file name
+    /// \param meshOffset mesh frame offset, relatively to the body reference frame
+    /// \return imported mesh, in body reference frame
+    mesh::FrMesh &ImportMesh(const std::string &meshFile, FrFrame meshOffset);
+
+    /// Get a reference to the clipped mesh (its frame is adjusted to the body's motions)
+    /// \return reference to the clipped mesh
+    mesh::FrMesh &GetClippedMesh();
+
+    /// Get a reference to the initial mesh (as defined and read from the input file)
+    /// \return reference to the initial mesh
+    mesh::FrMesh &GetInitialMesh();
+
+    /// Get the clipping support (PLANESUPPORT/WAVESUPPORT)
+    /// \return clipping support
+    ClippingSupport GetClippingSupport() const;
+
+
+   private:
+
+    /// Update nonlinear hydrostatic force.
+    /// \param time Current time of the simulation from beginning.
+    void Compute(double time) override;
+
+   private:
+
+//        FrOffshoreSystem* m_system;                     ///< reference to the offshore system  // FIXME : cette reference ne devrait pas exister !
+    std::shared_ptr<FrBody> m_body;                 ///< reference to the body related to this FrHydroMesh
+
+    std::unique_ptr<mesh::FrMeshClipper> m_clipper; ///< mesh clipper service
+
+    mesh::FrMesh m_initMesh;                        ///< Input mesh file (as defined and read from the input file)
+    mesh::FrMesh m_clippedMesh;                     ///< Clipped mesh (its frame follows the body frame in its motions)
+
+    ClippingSupport m_clippingSupport;              ///< Support for the clipping procedure
+
+    std::shared_ptr<geom::FrPlane> c_clippingPlane; ///< plane for the FrClippingPane
+
+  };
+
+  /// This function creates a hydrodynamic mesh for using in the computation of the nonlinear hydrostatic and/or Froude-Krylov loads.
+  std::shared_ptr<FrHydroMesh>
+  make_hydro_mesh(const std::string &name,
+                  const std::shared_ptr<FrBody> &body,
+                  FrHydroMesh::ClippingSupport support);
+
+  std::shared_ptr<FrHydroMesh> make_hydro_mesh(const std::string &name,
+                                               const std::shared_ptr<FrBody> &body,
+                                               const std::string &meshFile,
+                                               FrFrame meshOffset,
+                                               FrHydroMesh::ClippingSupport support);
 
 
 //    /// This function creates a hydrodynamic mesh for using in the computation of the nonlinear hydrostatic and/or Froude-Krylov loads.
@@ -106,6 +120,6 @@ namespace frydom {
 //    /// This function creates a hydrodynamic mesh for using in the computation of the weakly nonlinear hydrostatic and/or Froude-Krylov loads.
 //    std::shared_ptr<FrHydroMesh> make_hydro_mesh_weakly_nonlinear(const std::shared_ptr<FrBody>& body, const std::string& meshfile);
 
-    }  // end namespace frydom
+}  // end namespace frydom
 
 #endif //FRYDOM_FRHYDROMESH_H

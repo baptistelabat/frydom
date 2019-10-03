@@ -110,15 +110,20 @@ namespace frydom {
    protected:  // TODO : voir si on rend cela private
 
 
-    friend void FrOffshoreSystem::AddLink(std::shared_ptr<FrLinkBase> link);
+    friend void FrOffshoreSystem::Add(std::shared_ptr<FrTreeNodeBase>);
+    friend void FrOffshoreSystem::Remove(std::shared_ptr<FrTreeNodeBase>);
 
-    friend void FrOffshoreSystem::RemoveLink(std::shared_ptr<FrLinkBase> link);
 
     virtual std::shared_ptr<chrono::ChLink> GetChronoLink() = 0;
 
     std::shared_ptr<chrono::ChBody> GetChronoBody1();
 
     std::shared_ptr<chrono::ChBody> GetChronoBody2();
+
+
+    std::shared_ptr<chrono::ChBody> c_chrono_body_1;
+    std::shared_ptr<chrono::ChBody> c_chrono_body_2;
+
   };
 
 

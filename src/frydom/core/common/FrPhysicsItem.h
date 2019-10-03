@@ -24,88 +24,88 @@
 
 namespace frydom {
 
-    class FrPhysicsItem;
+  class FrPhysicsItem;
 
 
-    namespace internal {
+  namespace internal {
 
-        struct FrPhysicsItemBase : public chrono::ChPhysicsItem {
+    struct FrPhysicsItemBase : public chrono::ChPhysicsItem {
 
-            FrPhysicsItem *m_frydomPhysicsItem;
+      FrPhysicsItem *m_frydomPhysicsItem;
 
-            /// Constructor.
-            explicit FrPhysicsItemBase(FrPhysicsItem *item);
+      /// Constructor.
+      explicit FrPhysicsItemBase(FrPhysicsItem *item);
 
-            void SetupInitial() override;
+      void SetupInitial() override;
 
-            void Update(double time, bool update_assets) override;
+      void Update(double time, bool update_assets) override;
 
-            friend class FrPhysicsItem_;
-
-        };
-
-    }  // end namespace frydom::internal
-
-
-    class FrOffshoreSystem;
-    class FrTriangleMeshConnected;
-    class FrAsset;
-
-    /**
-     * \class FrPhysicsItem
-     * \brief Class for defining objects which are neither bodies nor links, for instance caterany lines.
-     */
-    class FrPhysicsItem: public FrObject {
-
-    protected:
-
-        std::shared_ptr<internal::FrPhysicsItemBase>
-                m_chronoPhysicsItem;     ///> pointer to the related chrono physics item
-
-        bool m_isActive = true;         ///< boolean to check if the physics item is active
-                                        ///< if it's not the case, it is not updated during the simulation
-
-        /// Get the shared pointer to the chrono related physics item
-        /// \return Chrono related physics item
-        virtual std::shared_ptr<internal::FrPhysicsItemBase> GetChronoPhysicsItem() const;
-
-        friend void FrOffshoreSystem::RemovePhysicsItem(std::shared_ptr<FrPhysicsItem>);
-
-    public:
-
-        FrPhysicsItem();
-
-        /// Check if the force is active
-        bool IsActive() const;
-
-        /// Activate or deactivate the force
-        void SetActive(bool active);
-
-        /// Return true if the physics item is included in the static analysis
-        virtual bool IncludedInStaticAnalysis() const {return true;}
-
-        void Update(double time);
-
-        virtual void SetupInitial();
-
-        void Initialize() override {};
-
-    private:
-
-        /// Virtual function to allow updating the child object from the solver
-        /// \param time Current time of the simulation from beginning, in seconds
-        virtual void Compute(double time) = 0;
+//            friend class FrPhysicsItem_;
 
     };
 
-    /**
-     * \class FrPrePhysicsItem
-     * \brief Class for defining physics items updated before bodies.
-     */
-    class FrPrePhysicsItem : public FrPhysicsItem {
-    protected:
-        friend void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem>);
-    };
+  }  // end namespace frydom::internal
+
+
+  class FrOffshoreSystem;
+
+  class FrTriangleMeshConnected;
+
+  class FrAsset;
+
+  /**
+   * \class FrPhysicsItem
+   * \brief Class for defining objects which are neither bodies nor links, for instance caterany lines.
+   */
+  class FrPhysicsItem : public FrObject {
+
+   protected:
+
+    std::shared_ptr<internal::FrPhysicsItemBase>
+        m_chronoPhysicsItem;     ///> pointer to the related chrono physics item
+
+    bool m_isActive = true;         ///< boolean to check if the physics item is active
+    ///< if it's not the case, it is not updated during the simulation
+
+    /// Get the shared pointer to the chrono related physics item
+    /// \return Chrono related physics item
+    virtual std::shared_ptr<internal::FrPhysicsItemBase> GetChronoPhysicsItem() const;
+
+   public:
+
+    FrPhysicsItem();
+
+    /// Check if the force is active
+    bool IsActive() const;
+
+    /// Activate or deactivate the force
+    void SetActive(bool active);
+
+    /// Return true if the physics item is included in the static analysis
+    virtual bool IncludedInStaticAnalysis() const { return true; }
+
+    void Update(double time);
+
+    virtual void SetupInitial();
+
+    void Initialize() override {};
+
+   private:
+
+    /// Virtual function to allow updating the child object from the solver
+    /// \param time Current time of the simulation from beginning, in seconds
+    virtual void Compute(double time) = 0;
+
+  };
+
+  /**
+   * \class FrPrePhysicsItem
+   * \brief Class for defining physics items updated before bodies.
+   */
+  class FrPrePhysicsItem : public FrPhysicsItem {
+    friend void FrOffshoreSystem::Add(std::shared_ptr<FrTreeNodeBase>);
+    friend void FrOffshoreSystem::Remove(std::shared_ptr<FrTreeNodeBase>);
+  };
 
 //    /**
 //     * \class FrMidPhysicsItem

@@ -21,6 +21,7 @@ namespace frydom {
                              const std::shared_ptr<FrNode> &node1,
                              const std::shared_ptr<FrNode> &node2)
         : FrLink(name, system, node1, node2) {
+
       m_chronoLink->SetLinkType(FIXED_LINK);
     }
 
@@ -29,8 +30,9 @@ namespace frydom {
                     FrOffshoreSystem *system,
                     const std::shared_ptr<FrNode> &node1,
                     const std::shared_ptr<FrNode> &node2) {
+
       auto link = std::make_shared<FrFixedLink>(name, system, node1, node2);
-      system->AddLink(link);
+      system->Add(link);
       return link;
     }
 

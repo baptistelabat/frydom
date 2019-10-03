@@ -76,6 +76,12 @@ namespace frydom {
 
 
   // Forward declarations
+  namespace internal {
+    class FrBodyBase;
+
+    class FrPhysicsItemBase;
+  }
+
   class FrBody;
 
   class FrLinkBase;
@@ -247,7 +253,11 @@ namespace frydom {
 
     /// Add an item (body, link, etc.) to the offshore sytem
     /// \param item item to be added to the offshore system
-    void Add(std::shared_ptr<FrObject> item); // FIXME : en vrai, ce sont des FrTreeNode qui doivent etre passe
+    void Add(std::shared_ptr<FrTreeNodeBase> item);
+
+    /// Remove an item (body, link, etc.) from the offshore sytem
+    /// \param item item to be added to the offshore system
+    void Remove(std::shared_ptr<FrTreeNodeBase> item);
 
 
     // ***** Body *****
@@ -255,10 +265,6 @@ namespace frydom {
     /// Get the list of bodies added to the system
     /// \return List of the bodies added to the system
     BodyContainer &GetBodyList();
-
-    /// Remove a body from the system
-    /// \param body Body removed from the system
-    void RemoveBody(std::shared_ptr<FrBody> body);
 
     /// Remove all bodies from the system
     void RemoveAllBodies();
@@ -270,10 +276,6 @@ namespace frydom {
     /// \return List of the links added to the system
     LinkContainer GetLinkList() { return m_linkList; }
 
-    /// Remove a link from the system
-    /// \param link Link removed from the system
-    void RemoveLink(std::shared_ptr<FrLinkBase> link);
-
     /// Remove all bodies from the system
     void RemoveAllLinks();
 
@@ -284,12 +286,8 @@ namespace frydom {
     /// \return List of the pre physics items added to the system
     PrePhysicsContainer GetPrePhysicsItemList();
 
-    /// Remove a Physics items from the system
-    /// \param item Physics items removed from the system
-    void RemovePhysicsItem(std::shared_ptr<FrPhysicsItem> item);
-
-    /// Remove all physics items from the system
-    void RemoveAllPhysicsItem();
+//    /// Remove all physics items from the system
+//    void RemoveAllPhysicsItem();
 
 
     // ***** FEAMesh *****
@@ -297,10 +295,6 @@ namespace frydom {
     /// Get the list of fea meshes added to the system
     /// \return List of the fea meshes added to the system
     FEAMeshContainer GetFEAMeshList();
-
-    void RemoveFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh);
-
-    void Remove(std::shared_ptr<FrDynamicCable> cable);
 
 
     // ***** Environment *****
@@ -679,27 +673,53 @@ namespace frydom {
     FrPathManager *GetPathManager() const;
 
 
-   public:
+   private:
 
     /// Add a body to the offshore system
     /// \param body body to add
-    void AddBody(std::shared_ptr<FrBody> body);
+    void AddBody(std::shared_ptr<FrBody> body, std::shared_ptr<internal::FrBodyBase> chrono_body);
+
+    /// Remove a body from the system
+    /// \param body Body removed from the system
+    void RemoveBody(std::shared_ptr<FrBody> body, std::shared_ptr<internal::FrBodyBase> chrono_body);
 
     /// Add a link between bodies to the offshore system
     /// \param link link to be added
-    void AddLink(std::shared_ptr<FrLinkBase> link);
+    void AddLink(std::shared_ptr<FrLinkBase> link, std::shared_ptr<chrono::ChLink> chrono_link);
+
+    /// Remove a link from the system
+    /// \param link Link removed from the system
+    void RemoveLink(std::shared_ptr<FrLinkBase> link, std::shared_ptr<chrono::ChLink> chrono_link);
 
     /// Add other physics item to the offshore system
     /// \param otherPhysics other physic item to be added
-    void AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem> otherPhysics);
+    void AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem> otherPhysics,
+                        std::shared_ptr<internal::FrPhysicsItemBase> chrono_physics_item);
+
+    /// Remove a Physics items from the system
+    /// \param item Physics items removed from the system
+    void RemovePhysicsItem(std::shared_ptr<FrPhysicsItem> item,
+                           std::shared_ptr<internal::FrPhysicsItemBase> chrono_physics_item);
 
     /// Add a FEA mesh to the offshore system
     /// \param feaMesh FEA mesh to be added
-    void AddFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh);
+    void AddFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh,
+                    std::shared_ptr<chrono::fea::ChMesh> chrono_mesh);
+
+    /// Remove a FEA mesh from the offshore system
+    /// \param feaMesh FEA mesh to be added
+    void RemoveFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh,
+                       std::shared_ptr<chrono::fea::ChMesh> chrono_mesh);
 
     /// Add a Dynamic Cable to the offshore system
     /// \param cable dynamic cable to be added
-    void AddDynamicCable(std::shared_ptr<FrDynamicCable> cable);
+    void AddDynamicCable(std::shared_ptr<FrDynamicCable> cable,
+                         std::shared_ptr<chrono::fea::ChMesh> chrono_mesh);
+
+    /// Remove a Dynamic Cable from the offshore system
+    /// \param cable dynamic cable to be added
+    void RemoveDynamicCable(std::shared_ptr<FrDynamicCable> cable,
+                            std::shared_ptr<chrono::fea::ChMesh> chrono_mesh);
 
    private:
 
@@ -713,9 +733,9 @@ namespace frydom {
     /// Check the compatibility between the system contact method and the specified body contact type
     bool CheckBodyContactMethod(std::shared_ptr<FrBody> body);
 
-    /// Get the systemBase, embedded in the offshore system
-    /// \return systemBase
-    chrono::ChSystem *GetChronoSystem();
+//    /// Get the systemBase, embedded in the offshore system
+//    /// \return systemBase
+//    chrono::ChSystem *GetChronoSystem();
 
 
     void IsInitialized();

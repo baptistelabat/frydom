@@ -240,7 +240,7 @@ namespace frydom {
 
         if (!elastic) {
           // Remove the catenary line used for initialization
-          m_frydomCable->GetSystem()->RemovePhysicsItem(catenaryLine);
+          m_frydomCable->GetSystem()->Remove(catenaryLine);
           m_frydomCable->GetStartingNode()->GetBody()->RemoveExternalForce(catenaryLine->GetStartingForce());
           m_frydomCable->GetEndingNode()->GetBody()->RemoveExternalForce(catenaryLine->GetEndingForce());
         }

@@ -34,7 +34,7 @@ namespace frydom {
 
 
     // Collision
-    auto collisionModel = body->m_chronoBody->GetCollisionModel();
+    auto collisionModel = body->GetChronoBody()->GetCollisionModel();
     collisionModel->ClearModel();
     collisionModel->AddBox(xSize * 0.5, ySize * 0.5, zSize * 0.5,
                            chrono::ChVector<double>()); // TODO: permettre de specifier une position relative (et orientation ?)

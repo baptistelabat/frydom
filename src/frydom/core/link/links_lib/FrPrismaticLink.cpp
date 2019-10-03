@@ -106,7 +106,7 @@ namespace frydom {
 
     void FrPrismaticLink::Clamp(const std::string &name) {
 
-      if (IsMotorized()) GetSystem()->RemoveLink(m_actuator);
+      if (IsMotorized()) GetSystem()->Remove(m_actuator);
 
       // brake motorization instantiation
       m_actuator = std::make_shared<FrLinearActuator>(name, this, POSITION);
@@ -124,7 +124,7 @@ namespace frydom {
                         std::shared_ptr<FrNode> node2) {
 
       auto link = std::make_shared<FrPrismaticLink>(name, system, node1, node2);
-      system->AddLink(link);
+      system->Add(link);
 
       return link;
     }

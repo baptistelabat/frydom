@@ -191,39 +191,39 @@ namespace frydom {
   FrOffshoreSystem::~FrOffshoreSystem() = default;
 
 
-  void FrOffshoreSystem::Add(std::shared_ptr<FrObject> newItem) {
-    assert(std::dynamic_pointer_cast<FrBody>(newItem) ||
-           std::dynamic_pointer_cast<FrLinkBase>(newItem) ||
-           std::dynamic_pointer_cast<FrPhysicsItem>(newItem));
-
-    if (auto item = std::dynamic_pointer_cast<FrBody>(newItem)) {
-      AddBody(item);
-      return;
-    }
-
-    if (auto item = std::dynamic_pointer_cast<FrLinkBase>(newItem)) {
-      AddLink(item);
-      return;
-    }
-
-    if (auto item = std::dynamic_pointer_cast<FrPrePhysicsItem>(newItem)) {
-      AddPhysicsItem(item);
-      return;
-    }
-
-  }
+//  void FrOffshoreSystem::Add(std::shared_ptr<FrObject> newItem) {
+//    assert(std::dynamic_pointer_cast<FrBody>(newItem) ||
+//           std::dynamic_pointer_cast<FrLinkBase>(newItem) ||
+//           std::dynamic_pointer_cast<FrPhysicsItem>(newItem));
+//
+//    if (auto item = std::dynamic_pointer_cast<FrBody>(newItem)) {
+//      AddBody(item);
+//      return;
+//    }
+//
+//    if (auto item = std::dynamic_pointer_cast<FrLinkBase>(newItem)) {
+//      AddLink(item);
+//      return;
+//    }
+//
+//    if (auto item = std::dynamic_pointer_cast<FrPrePhysicsItem>(newItem)) {
+//      AddPhysicsItem(item);
+//      return;
+//    }
+//
+//  }
 
 
 // ***** Body *****
 
-  void FrOffshoreSystem::AddBody(std::shared_ptr<FrBody> body) {
+  void FrOffshoreSystem::AddBody(std::shared_ptr<FrBody> body, std::shared_ptr<internal::FrBodyBase> chrono_body) {
 
-    if (!CheckBodyContactMethod(
-        body)) { // TODO : voir si on set pas d'autorite le mode de contact a celui du systeme plutot que de faire un if...
+    // TODO : voir si on set pas d'autorite le mode de contact a celui du systeme plutot que de faire un if...
+    if (!CheckBodyContactMethod(body)) {
       body->SetContactMethod(m_systemType);
     }
 
-    m_chronoSystem->AddBody(body->GetChronoBody());  // Authorized because this method is a friend of FrBody
+    m_chronoSystem->AddBody(chrono_body);  // Authorized because this method is a friend of FrBody
     m_bodyList.push_back(body);
   }
 
@@ -231,9 +231,9 @@ namespace frydom {
     return m_bodyList;
   }
 
-  void FrOffshoreSystem::RemoveBody(std::shared_ptr<FrBody> body) {
+  void FrOffshoreSystem::RemoveBody(std::shared_ptr<FrBody> body, std::shared_ptr<internal::FrBodyBase> chrono_body) {
 
-    m_chronoSystem->RemoveBody(body->GetChronoBody());
+    m_chronoSystem->RemoveBody(chrono_body);
 
     auto it = std::find(body_begin(), body_end(), body);
     assert(it != body_end());
@@ -243,21 +243,21 @@ namespace frydom {
   void FrOffshoreSystem::RemoveAllBodies() {
 
     for (auto &body: m_bodyList)
-      RemoveBody(body);
+      Remove(body);
 
   }
 
 
 // ***** Link *****
 
-  void FrOffshoreSystem::AddLink(std::shared_ptr<FrLinkBase> link) {
-    m_chronoSystem->AddLink(link->GetChronoLink());
+  void FrOffshoreSystem::AddLink(std::shared_ptr<FrLinkBase> link, std::shared_ptr<chrono::ChLink> chrono_link) {
+    m_chronoSystem->AddLink(chrono_link);
     m_linkList.push_back(link);
   }
 
-  void FrOffshoreSystem::RemoveLink(std::shared_ptr<FrLinkBase> link) {
+  void FrOffshoreSystem::RemoveLink(std::shared_ptr<FrLinkBase> link, std::shared_ptr<chrono::ChLink> chrono_link) {
 
-    m_chronoSystem->RemoveLink(link->GetChronoLink());
+    m_chronoSystem->RemoveLink(chrono_link);
 
     auto it = std::find(link_begin(), link_end(), link);
     assert(it != link_end());
@@ -267,15 +267,16 @@ namespace frydom {
   void FrOffshoreSystem::RemoveAllLinks() {
 
     for (auto &link: m_linkList)
-      RemoveLink(link);
-
+      Remove(link);
   }
 
 
 // ***** Physics Item *****
 
-  void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem> otherPhysics) {
-    m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
+  void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem> otherPhysics,
+                                        std::shared_ptr<internal::FrPhysicsItemBase> chrono_physics_item) {
+
+    m_chronoSystem->AddOtherPhysicsItem(chrono_physics_item);
     m_PrePhysicsList.push_back(otherPhysics);
   }
 
@@ -283,40 +284,44 @@ namespace frydom {
     return m_PrePhysicsList;
   }
 
-  void FrOffshoreSystem::RemovePhysicsItem(std::shared_ptr<FrPhysicsItem> item) {
+  void FrOffshoreSystem::RemovePhysicsItem(std::shared_ptr<FrPhysicsItem> item,
+                                           std::shared_ptr<internal::FrPhysicsItemBase> chrono_physics_item) {
 
-    m_chronoSystem->RemoveOtherPhysicsItem(item->GetChronoPhysicsItem());
+    m_chronoSystem->RemoveOtherPhysicsItem(chrono_physics_item);
 
     auto it = std::find(m_PrePhysicsList.begin(), m_PrePhysicsList.end(), item);
     if (it != m_PrePhysicsList.end())
       m_PrePhysicsList.erase(it);
   }
 
-  void FrOffshoreSystem::RemoveAllPhysicsItem() {
-
-    for (auto &item: m_PrePhysicsList)
-      RemovePhysicsItem(item);
-
-  }
+//  void FrOffshoreSystem::RemoveAllPhysicsItem() {
+//
+//    for (auto &item: m_PrePhysicsList)
+//      Remove(item);
+//
+//  }
 
 
 // ***** FEAMesh *****
 
-  void FrOffshoreSystem::AddFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh) {
-    m_chronoSystem->AddMesh(feaMesh->GetChronoMesh());  // Authorized because this method is a friend of FrFEAMesh
+  void FrOffshoreSystem::AddFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh,
+                                    std::shared_ptr<chrono::fea::ChMesh> chrono_mesh) {
+
+    m_chronoSystem->AddMesh(chrono_mesh);  // Authorized because this method is a friend of FrFEAMesh
 
 //      feaMesh->m_system = this;
     m_feaMeshList.push_back(feaMesh);
   }
 
-  void FrOffshoreSystem::AddDynamicCable(std::shared_ptr<FrDynamicCable> cable) {
+  void FrOffshoreSystem::AddDynamicCable(std::shared_ptr<FrDynamicCable> cable,
+                                         std::shared_ptr<chrono::fea::ChMesh> chrono_mesh) {
 
     // Add the FEA mesh
-    AddFEAMesh(cable);
+    AddFEAMesh(cable, chrono_mesh);
 
     // Add the hinges
-    m_chronoSystem->Add(dynamic_cast<internal::FrDynamicCableBase *>(cable->GetChronoMesh().get())->m_startingHinge);
-    m_chronoSystem->Add(dynamic_cast<internal::FrDynamicCableBase *>(cable->GetChronoMesh().get())->m_endingHinge);
+    m_chronoSystem->Add(dynamic_cast<internal::FrDynamicCableBase *>(chrono_mesh.get())->m_startingHinge);
+    m_chronoSystem->Add(dynamic_cast<internal::FrDynamicCableBase *>(chrono_mesh.get())->m_endingHinge);
 
   }
 
@@ -324,9 +329,10 @@ namespace frydom {
     return m_feaMeshList;
   }
 
-  void FrOffshoreSystem::RemoveFEAMesh(std::shared_ptr<FrFEAMesh> feamesh) {
+  void FrOffshoreSystem::RemoveFEAMesh(std::shared_ptr<FrFEAMesh> feamesh,
+                                       std::shared_ptr<chrono::fea::ChMesh> chrono_mesh) {
 
-    m_chronoSystem->RemoveMesh(feamesh->GetChronoMesh());
+    m_chronoSystem->RemoveMesh(chrono_mesh);
 
     auto it = std::find(m_feaMeshList.begin(), m_feaMeshList.end(), feamesh);
     assert(it != m_feaMeshList.end());
@@ -335,14 +341,15 @@ namespace frydom {
 
   }
 
-  void FrOffshoreSystem::Remove(std::shared_ptr<FrDynamicCable> cable) {
+  void FrOffshoreSystem::RemoveDynamicCable(std::shared_ptr<FrDynamicCable> cable,
+                                            std::shared_ptr<chrono::fea::ChMesh> chrono_mesh) {
 
-    RemoveFEAMesh(cable);
+    Remove(cable);
 
     m_chronoSystem->RemoveOtherPhysicsItem(
-        dynamic_cast<internal::FrDynamicCableBase *>(cable->GetChronoMesh().get())->m_startingHinge);
+        dynamic_cast<internal::FrDynamicCableBase *>(chrono_mesh.get())->m_startingHinge);
     m_chronoSystem->RemoveOtherPhysicsItem(
-        dynamic_cast<internal::FrDynamicCableBase *>(cable->GetChronoMesh().get())->m_endingHinge);
+        dynamic_cast<internal::FrDynamicCableBase *>(chrono_mesh.get())->m_endingHinge);
 
   }
 
@@ -818,7 +825,7 @@ namespace frydom {
         m_worldBody->SetNonSmoothContact();
         break;
     }
-    AddBody(m_worldBody);
+    Add(m_worldBody);
     m_worldBody->LogThis(false);  // No log for the world body
   }
 
@@ -835,7 +842,7 @@ namespace frydom {
         break;
     }
 
-    AddBody(body);
+    Add(body);
     return body;
   }
 
@@ -850,9 +857,9 @@ namespace frydom {
     m_isInitialized = false;
   }
 
-  chrono::ChSystem *FrOffshoreSystem::GetChronoSystem() {
-    return m_chronoSystem.get();
-  }
+//  chrono::ChSystem *FrOffshoreSystem::GetChronoSystem() {
+//    return m_chronoSystem.get();
+//  }
 
 
 // Irrlicht visualization
@@ -1073,6 +1080,67 @@ namespace frydom {
   void FrOffshoreSystem::SetSolverVerbose(bool verbose) {
     m_chronoSystem->GetSolver()->SetVerbose(verbose);
     dynamic_cast<chrono::ChIterativeSolver *>(m_chronoSystem->GetSolver().get())->SetRecordViolation(verbose);
+  }
+
+
+  void FrOffshoreSystem::Add(std::shared_ptr<FrTreeNodeBase> item) {
+
+    // BODY
+    if (auto body = std::dynamic_pointer_cast<FrBody>(item)) {
+      AddBody(body, body->GetChronoBody());
+
+      // LINK
+    } else if (auto link = std::dynamic_pointer_cast<FrLinkBase>(item)) {
+      AddLink(link, link->GetChronoLink());
+
+      //PHYSICS ITEM
+    } else if (auto physics_item = std::dynamic_pointer_cast<FrPrePhysicsItem>(item)) {
+      AddPhysicsItem(physics_item, physics_item->GetChronoPhysicsItem());
+
+      // FEA MESH
+    } else if (auto fea_mesh = std::dynamic_pointer_cast<FrFEAMesh>(item)) {
+      AddFEAMesh(fea_mesh, fea_mesh->GetChronoMesh());
+
+      // DYNAMIC CABLE
+    } else if (auto dynamic_cable = std::dynamic_pointer_cast<FrDynamicCable>(item)) {
+      AddDynamicCable(dynamic_cable, dynamic_cable->GetChronoMesh());
+
+      // UNKNOWN
+    } else {
+      std::cerr << "Unknown object type " << std::endl;
+      exit(EXIT_FAILURE);
+    }
+
+  }
+
+  void FrOffshoreSystem::Remove(std::shared_ptr<FrTreeNodeBase> item) {
+
+    // BODY
+    if (auto body = std::dynamic_pointer_cast<FrBody>(item)) {
+      RemoveBody(body, body->GetChronoBody());
+
+      // LINK
+    } else if (auto link = std::dynamic_pointer_cast<FrLinkBase>(item)) {
+      RemoveLink(link, link->GetChronoLink());
+
+      //PHYSICS ITEM
+    } else if (auto physics_item = std::dynamic_pointer_cast<FrPrePhysicsItem>(item)) {
+      RemovePhysicsItem(physics_item, physics_item->GetChronoPhysicsItem());
+
+      // FEA MESH
+    } else if (auto fea_mesh = std::dynamic_pointer_cast<FrFEAMesh>(item)) {
+      RemoveFEAMesh(fea_mesh, fea_mesh->GetChronoMesh());
+
+      // DYNAMIC CABLE
+    } else if (auto dynamic_cable = std::dynamic_pointer_cast<FrDynamicCable>(item)) {
+      RemoveDynamicCable(dynamic_cable, dynamic_cable->GetChronoMesh());
+
+      // UNKNOWN
+    } else {
+      std::cerr << "Unknown object type " << std::endl;
+      exit(EXIT_FAILURE);
+    }
+
   }
 
 

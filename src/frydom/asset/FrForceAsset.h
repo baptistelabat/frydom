@@ -24,41 +24,41 @@
 
 namespace frydom {
 
-    // Forward declaration
-    class FrForce;
+  // Forward declaration
+  class FrForce;
 
 
-    /**
-     * \class FrForceAsset
-     * \brief Class to display the loads.
-     */
-    class FrForceAsset : public FrAsset {
+  /**
+   * \class FrForceAsset
+   * \brief Class to display the loads.
+   */
+  class FrForceAsset : public FrAsset {
 
-    private:
+   private:
 
-        FrForce* m_force;  //< The force that this asset represents
-        double OrderOfMagnitude;
-        bool adaptive_OOM;
+    FrForce *m_force;  //< The force that this asset represents
+    double OrderOfMagnitude;
+    bool adaptive_OOM;
 
-        double m_CharacteristicLength;
-        chrono::ChColor m_symbolscolor;
-        bool inverse_direction;
+    double m_CharacteristicLength;
+    chrono::ChColor m_symbolscolor;
+    bool inverse_direction;
 
-        // TODO ajouter flag pour dire si on affiche la force qui s'applique ou la force delivree pour la visu (propulseurs...)
+    // TODO ajouter flag pour dire si on affiche la force qui s'applique ou la force delivree pour la visu (propulseurs...)
 
-    public:
+   public:
 
-        explicit FrForceAsset(FrForce* force);
+    explicit FrForceAsset(FrForce *force);
 
-        void SetSize(double size);
+    void SetSize(double size);
 
-        void Initialize() override;
+    void Initialize() override;
 
-        void StepFinalize() override;
+    void StepFinalize() override;
 
-        friend void FrBody::RemoveExternalForce(std::shared_ptr<frydom::FrForce>);
+    friend void FrBody::RemoveExternalForce(std::shared_ptr<frydom::FrForce>);
 
-    };
+  };
 
 }  // end namespace frydom
 

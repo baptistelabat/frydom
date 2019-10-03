@@ -23,7 +23,7 @@ namespace frydom {
                                const std::shared_ptr<FrNode> &node2) {
 
     auto link = std::make_shared<FrPrismaticRevoluteLink>(name, system, node1, node2);
-    system->AddLink(link);
+    system->Add(link);
     return link;
   }
 

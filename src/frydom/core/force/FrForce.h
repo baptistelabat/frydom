@@ -21,6 +21,8 @@
 #include "frydom/core/common/FrTreeNode.h"
 #include "frydom/logging/FrLoggable.h"
 
+#include "frydom/core/body/FrBody.h"
+
 
 namespace frydom {
 
@@ -53,7 +55,7 @@ namespace frydom {
 
       void SetTorqueInBodyNWU(const Torque &body_torque);
 
-      friend class FrForce;
+//      friend class FrForce;
 
     };
 
@@ -62,7 +64,7 @@ namespace frydom {
   // Forward declaration;
   class FrOffshoreSystem;
 
-  class FrBody;
+//  class FrBody;
 
   class FrNode;
 
@@ -409,8 +411,10 @@ namespace frydom {
 
 //      std::string BuildPath(const std::string &rootPath) override;
 
+//    friend class FrBody;
+    friend void FrBody::AddExternalForce(std::shared_ptr<frydom::FrForce>);
+    friend void FrBody::RemoveExternalForce(std::shared_ptr<frydom::FrForce>);
 
-    friend class FrBody;
 
   };
 

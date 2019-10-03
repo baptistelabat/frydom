@@ -20,49 +20,49 @@
 
 namespace frydom {
 
-    namespace internal {
+  namespace internal {
 
 
-        FrPhysicsItemBase::FrPhysicsItemBase(FrPhysicsItem *item) : m_frydomPhysicsItem(item) {}
+    FrPhysicsItemBase::FrPhysicsItemBase(FrPhysicsItem *item) : m_frydomPhysicsItem(item) {}
 
-        void FrPhysicsItemBase::SetupInitial() {
-        }
+    void FrPhysicsItemBase::SetupInitial() {
+    }
 
-        void FrPhysicsItemBase::Update(double time, bool update_assets) {
-          m_frydomPhysicsItem->Update(time);
-          ChPhysicsItem::Update(time, update_assets);
-        }
+    void FrPhysicsItemBase::Update(double time, bool update_assets) {
+      m_frydomPhysicsItem->Update(time);
+      ChPhysicsItem::Update(time, update_assets);
+    }
 
-    }  // end namespace frydom::internal
+  }  // end namespace frydom::internal
 
 
 
-    FrPhysicsItem::FrPhysicsItem() : m_chronoPhysicsItem(std::make_shared<internal::FrPhysicsItemBase>(this)) {}
+  FrPhysicsItem::FrPhysicsItem() : m_chronoPhysicsItem(std::make_shared<internal::FrPhysicsItemBase>(this)) {}
 
 //    FrOffshoreSystem *FrPhysicsItem::GetSystem() {
 //      return GetParent();
 //    }
 
-    bool FrPhysicsItem::IsActive() const {
-      return m_isActive;
-    }
+  bool FrPhysicsItem::IsActive() const {
+    return m_isActive;
+  }
 
-    void FrPhysicsItem::SetActive(bool active) {
-      m_isActive = active;
-    }
+  void FrPhysicsItem::SetActive(bool active) {
+    m_isActive = active;
+  }
 
-    std::shared_ptr<internal::FrPhysicsItemBase> FrPhysicsItem::GetChronoPhysicsItem() const {
-      return m_chronoPhysicsItem;
-    }
+  std::shared_ptr<internal::FrPhysicsItemBase> FrPhysicsItem::GetChronoPhysicsItem() const {
+    return m_chronoPhysicsItem;
+  }
 
-    void FrPhysicsItem::SetupInitial() {
-      m_chronoPhysicsItem->SetupInitial();
-      Initialize();
-    }
+  void FrPhysicsItem::SetupInitial() {
+    m_chronoPhysicsItem->SetupInitial();
+    Initialize();
+  }
 
-    void FrPhysicsItem::Update(double time) {
-      if (IsActive())
-        Compute(time);
-    }
+  void FrPhysicsItem::Update(double time) {
+    if (IsActive())
+      Compute(time);
+  }
 
 }  // end namespace frydom

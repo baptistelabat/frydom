@@ -21,6 +21,8 @@ namespace frydom {
 
     explicit FrTreeNodeBase(const std::string &name) : m_name(name) {}
 
+    virtual ~FrTreeNodeBase() = default; // To make the class polymorphic
+
     const std::string &GetName() const {
       return m_name;
     }

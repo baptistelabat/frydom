@@ -156,13 +156,13 @@ namespace frydom {
                      std::shared_ptr<FrNode> node2) {
 
     auto link = std::make_shared<FrRevoluteLink>(name, system, node1, node2);
-    system->AddLink(link);
+    system->Add(link);
     return link;
   }
 
   void FrRevoluteLink::Clamp(const std::string &name) {
 
-    if (IsMotorized()) GetSystem()->RemoveLink(m_actuator);
+    if (IsMotorized()) GetSystem()->Remove(m_actuator);
 
     // brake motorization instantiation
     m_actuator = std::make_shared<FrAngularActuator>(name, this, POSITION);

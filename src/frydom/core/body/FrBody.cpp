@@ -37,8 +37,7 @@ namespace frydom {
     // FrBodyBase
     //
 
-    FrBodyBase::FrBodyBase(FrBody *body) : chrono::ChBodyAuxRef(), m_frydomBody(body) {
-    }
+    FrBodyBase::FrBodyBase(FrBody *body) : chrono::ChBodyAuxRef(), m_frydomBody(body) {}
 
     FrBodyBase::FrBodyBase(const FrBodyBase &other) : chrono::ChBodyAuxRef(other) {
       m_frydomBody = other.m_frydomBody;
@@ -952,7 +951,7 @@ namespace frydom {
     DOFLink->SetDOFMask(m_DOFMask.get());
 
     // Adding the link to the system
-    GetSystem()->AddLink(DOFLink);
+    GetSystem()->Add(DOFLink);
 
   }
 

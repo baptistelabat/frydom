@@ -15,39 +15,46 @@
 
 #include <memory>
 
-#include <Eigen/Core>
+#include "MathUtils/Vector3d.h"
 
 #include "frydom/asset/FrAssetOwner.h"
 
 namespace chrono {
-    class ChAsset;
-    class ChTriangleMeshShape;
+  class ChAsset;
+
+  class ChTriangleMeshShape;
 }  // end namespace chrono
 
 
 namespace frydom {
-    class FrTriangleMeshConnected;
+  class FrTriangleMeshConnected;
 
-    class FrTriangleMeshShape {
-      public:
-        using Vertex = Eigen::Matrix<double, 3, 1>;
-        using Normal = Eigen::Matrix<double, 3, 1>;
-        using FaceVertexIndex = Eigen::Matrix<int, 3, 1>;
-        using FaceNormalIndex = Eigen::Matrix<int, 3, 1>;
-        FrTriangleMeshShape(std::shared_ptr<FrTriangleMeshConnected> mesh);
+  class FrTriangleMeshShape {
+   public:
 
-        std::vector<Vertex> vertices() const;
-        std::vector<Normal> normals() const;
-        std::vector<FaceVertexIndex> faceVertexIndices() const;
-        std::vector<FaceNormalIndex> faceNormalIndices() const;
+    using Normal =          mathutils::Vector3d<double>;
+    using Vertex =          mathutils::Vector3d<double>;
+    using FaceVertexIndex = mathutils::Vector3d<int>;
+    using FaceNormalIndex = mathutils::Vector3d<int>;
 
-      protected:
-        std::shared_ptr<chrono::ChAsset> GetChronoAsset();
+    explicit FrTriangleMeshShape(std::shared_ptr<FrTriangleMeshConnected> mesh);
 
-      private:
-        friend void FrAssetOwner::AddMeshAsset(std::shared_ptr<frydom::FrTriangleMeshConnected>);
-        std::shared_ptr<chrono::ChTriangleMeshShape> m_mesh;
-    };
+    std::vector<Vertex> vertices() const;
+
+    std::vector<Normal> normals() const;
+
+    std::vector<FaceVertexIndex> faceVertexIndices() const;
+
+    std::vector<FaceNormalIndex> faceNormalIndices() const;
+
+   protected:
+    std::shared_ptr<chrono::ChAsset> GetChronoAsset();
+
+   private:
+    friend void FrAssetOwner::AddMeshAsset(std::shared_ptr<frydom::FrTriangleMeshConnected>);
+
+    std::shared_ptr<chrono::ChTriangleMeshShape> m_mesh;
+  };
 
 }  // end namespace frydom
 

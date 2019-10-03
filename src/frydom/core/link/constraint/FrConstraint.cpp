@@ -144,7 +144,7 @@ namespace frydom {
                            const std::shared_ptr<FrCAxis> &axis2) {
 
     auto constraint = std::make_shared<FrConstraintParallel>(name, system, axis1, axis2);
-    system->AddLink(constraint);
+    system->Add(constraint);
 
     return constraint;
 
@@ -180,7 +180,7 @@ namespace frydom {
                                 const std::shared_ptr<FrCAxis> &axis2) {
 
     auto constraint = std::make_shared<FrConstraintPerpendicular>(name, system, axis1, axis2);
-    system->AddLink(constraint);
+    system->Add(constraint);
 
     return constraint;
   }
@@ -229,7 +229,7 @@ namespace frydom {
                                  double distance) {
 
     auto constraint = std::make_shared<FrConstraintPlaneOnPlane>(name, system, plane1, plane2, flipped, distance);
-    system->AddLink(constraint);
+    system->Add(constraint);
 
     return constraint;
   }
@@ -269,7 +269,7 @@ namespace frydom {
                                  double distance) {
 
     auto constraint = std::make_shared<FrConstraintPointOnPlane>(name, system, plane, point, distance);
-    system->AddLink(constraint);
+    system->Add(constraint);
 
     return constraint;
 
@@ -313,7 +313,7 @@ namespace frydom {
                                 const std::shared_ptr<FrCPoint> &point) {
 
     auto constraint = std::make_shared<FrConstraintPointOnLine>(name, system, line, point);
-    system->AddLink(constraint);
+    system->Add(constraint);
 
     return constraint;
 
@@ -364,7 +364,7 @@ namespace frydom {
                                    double distance) {
 
     auto constraint = std::make_shared<FrConstraintDistanceToAxis>(name, system, axis, point, autoDistance, distance);
-    system->AddLink(constraint);
+    system->Add(constraint);
 
     return constraint;
 
@@ -419,7 +419,7 @@ namespace frydom {
                                                                           point2,
                                                                           autoDistance,
                                                                           distance);
-    system->AddLink(constraint);
+    system->Add(constraint);
 
     return constraint;
 

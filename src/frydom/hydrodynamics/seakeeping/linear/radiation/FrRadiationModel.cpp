@@ -293,7 +293,7 @@ namespace frydom {
     auto radiationModel = std::make_shared<FrRadiationConvolutionModel>(name, system, HDB);
 
     // Addition to the system.
-    system->AddPhysicsItem(radiationModel);
+    system->Add(radiationModel);
 
     return radiationModel;
   }

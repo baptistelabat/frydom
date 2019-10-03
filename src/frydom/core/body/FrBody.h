@@ -43,6 +43,8 @@ namespace frydom {
 
   class FrBody;
 
+  class FrForce;
+
 
   namespace internal {
 
@@ -960,7 +962,7 @@ namespace frydom {
     /// \return cartPos cartesian position
     Position GeoToCart(const FrGeographicCoord &geoCoord, FRAME_CONVENTION fc);
 
-   public:
+   private:
     /// Get the shared pointer to the chronoBody attribute
     /// \return shared pointer to the chronoBody attribute
     std::shared_ptr<internal::FrBodyBase> GetChronoBody();
@@ -972,19 +974,6 @@ namespace frydom {
     internal::FrBodyBase *GetChronoItem_ptr() const override;
 
     void InitializeLockedDOF();
-
-    // Friends of FrBody : they can have access to chrono internals
-    friend void makeItBox(std::shared_ptr<FrBody>, double, double, double, double);
-
-    friend void makeItCylinder(std::shared_ptr<FrBody>, double, double, double);
-
-    friend void makeItSphere(std::shared_ptr<FrBody>, double, double);
-
-
-    friend FrNode::FrNode(const std::string &name, FrBody *);
-
-    friend class FrLinkBase;
-
 
    public:
 
@@ -1025,20 +1014,39 @@ namespace frydom {
     ConstNodeIter node_end() const;
 
 
+    // ===================================================================================================
     // friend declarations
-    // This one is made for the FrOffshoreSystem to be able to add the embedded chrono object into the embedded
-    // chrono system (ChSystem)
-    friend void FrOffshoreSystem::AddBody(std::shared_ptr<frydom::FrBody>);
+    // ===================================================================================================
+
+    friend void makeItBox(std::shared_ptr<FrBody>, double, double, double, double);
+
+    friend void makeItCylinder(std::shared_ptr<FrBody>, double, double, double);
+
+    friend void makeItSphere(std::shared_ptr<FrBody>, double, double);
+
+
+    friend FrNode::FrNode(const std::string &name, FrBody *);
+
+    friend FrLinkBase::FrLinkBase(const std::string &,
+                                  FrOffshoreSystem *,
+                                  const std::shared_ptr<FrNode> &,
+                                  const std::shared_ptr<FrNode> &);
+
+
+    friend void FrOffshoreSystem::Add(std::shared_ptr<FrTreeNodeBase>);
+
+    friend void FrOffshoreSystem::Remove(std::shared_ptr<FrTreeNodeBase>);
 
     friend void internal::FrDynamicCableBase::InitializeLinks();
 
-    friend void FrOffshoreSystem::RemoveBody(std::shared_ptr<frydom::FrBody>);
 
+    // For radiation model purpose
     friend int internal::FrRadiationModelBase::GetBodyOffset(FrBody *body) const;
 
     friend void internal::FrRadiationModelBase::InjectVariablesToBody();
 
     friend chrono::ChMatrix<double> internal::FrVariablesBEMBodyBase::GetVariablesFb(FrBody *body) const;
+    friend chrono::ChMatrix<double> internal::FrVariablesBEMBodyBase::GetVariablesQb(frydom::FrBody *) const;
 
   };
 
