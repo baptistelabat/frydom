@@ -31,6 +31,8 @@ namespace frydom {
 
     void Remove(std::shared_ptr<FrLoggableBase> obj);
 
+    int GetNumberOfLoggables() const;
+
     void Initialize();
 
     void Update();

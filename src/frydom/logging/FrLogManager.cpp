@@ -82,4 +82,8 @@ namespace frydom {
     }
   }
 
+  int FrLogManager::GetNumberOfLoggables() const {
+    return m_loggable_list.size();
+  }
+
 }  // end namespace frydom

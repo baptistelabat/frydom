@@ -238,6 +238,12 @@ namespace frydom {
     auto it = std::find(body_begin(), body_end(), body);
     assert(it != body_end());
     m_bodyList.erase(it);
+
+    body->RemoveAllForces();
+    body->RemoveAllNodes();
+
+    // FIXME : we should launch removal of FrNode and FrForce objects attached to this body from the logManager...
+
   }
 
   void FrOffshoreSystem::RemoveAllBodies() {
@@ -1150,6 +1156,10 @@ namespace frydom {
     } else {
       std::cerr << "Unknown object type " << std::endl;
       exit(EXIT_FAILURE);
+    }
+
+    if (auto loggable = std::dynamic_pointer_cast<FrLoggableBase>(item)) {
+      m_LogManager->Remove(loggable);
     }
 
   }

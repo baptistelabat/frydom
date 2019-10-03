@@ -3,10 +3,12 @@
 //
 
 #include "frydom/frydom.h"
+#include "frydom/logging/FrLogManager.h"
+#include "gtest/gtest.h"
 
 using namespace frydom;
 
-int main() {
+TEST(FrLogManager, registering) {
 
   FrOffshoreSystem system("test_FrLoggable");
 
@@ -15,20 +17,14 @@ int main() {
   auto body1 = system.NewBody("myBody1");
 
   auto node1 = body1->NewNode("myNode1");
-//  auto node2 = body1->NewNode("myNode2");
-
-
-//  auto body2 = system.NewBody("myBody2");
-//  auto node3 = body2->NewNode("myNode3");
 
   auto force1 = make_manoeuvring_model("man_model", body1);
 
+  ASSERT_TRUE(system.GetLogManager()->GetNumberOfLoggables() == 4); // The 3 loggables created above + world body
+
+  system.Remove(body1);
+
+  ASSERT_TRUE(system.GetLogManager()->GetNumberOfLoggables() == 1); // It only remains the world body
 
 
-
-
-
-
-
-  return 0;
 }

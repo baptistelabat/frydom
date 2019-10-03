@@ -321,6 +321,9 @@ namespace frydom {
     /// Remove all forces from the body
     void RemoveAllForces();
 
+    /// Remove all forces from the body
+    void RemoveAllNodes();
+
     /// Get the list of all external forces
     /// \return List of all external forces
     ForceContainer GetForceList() const;

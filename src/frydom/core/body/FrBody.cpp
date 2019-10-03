@@ -478,7 +478,22 @@ namespace frydom {
 
   void FrBody::RemoveAllForces() {
     m_chronoBody->RemoveAllForces();
+
+    auto logManager = GetSystem()->GetLogManager();
+    for (auto& force : m_externalForces) {
+      logManager->Remove(force);
+    }
     m_externalForces.clear();
+  }
+
+  void FrBody::RemoveAllNodes() {
+    m_chronoBody->RemoveAllMarkers();
+
+    auto logManager = GetSystem()->GetLogManager();
+    for (auto& node : m_nodes) {
+      logManager->Remove(node);
+    }
+    m_nodes.clear();
   }
 
   Force FrBody::GetTotalExtForceInWorld(FRAME_CONVENTION fc) const {
