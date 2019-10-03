@@ -12,9 +12,9 @@
 
 using namespace frydom;
 
-//TEST(FrPathManager, FrOffshoreSystem) {
+TEST(FrPathManager, path) {
 
-int main() {
+//int main() {
 
   FrOffshoreSystem system("TestPathBuilding");
 
@@ -32,21 +32,15 @@ int main() {
 
   auto force1 = make_manoeuvring_model("man_model", body1); // TODO : changer en maneuvring force...
 
-
   auto revolute_link = make_revolute_link("revolute_link", &system, node1, node3);
 
-  std::string base("");
 
-//  std::cout << FrFileSystem::mkdir("/home/frongere/tmp/essai/creation/repertoire") << std::endl;
+  ASSERT_TRUE(path_manager->GetPath(system) == "FRYDOM_TestPathBuilding/");
+  ASSERT_TRUE(path_manager->GetPath(body1.get()) == "FRYDOM_TestPathBuilding/BODY/BODY_myBody1/");
+  ASSERT_TRUE(path_manager->GetPath(node1.get()) == "FRYDOM_TestPathBuilding/BODY/BODY_myBody1/NODE/NODE_myNode1/");
+  ASSERT_TRUE(path_manager->GetPath(node2.get()) == "FRYDOM_TestPathBuilding/BODY/BODY_myBody1/NODE/NODE_myNode2/");
+  ASSERT_TRUE(path_manager->GetPath(body2.get()) == "FRYDOM_TestPathBuilding/BODY/BODY_myBody2/");
+  ASSERT_TRUE(path_manager->GetPath(node3.get()) == "FRYDOM_TestPathBuilding/BODY/BODY_myBody2/NODE/NODE_myNode3/");
+  ASSERT_TRUE(path_manager->GetPath(revolute_link.get()) == "FRYDOM_TestPathBuilding/LINK/LINK_revolute_link/");
 
-  FrFileSystem::mkdir(base + path_manager->GetPath(system));
-  FrFileSystem::mkdir(base + path_manager->GetPath(force1.get()));
-  FrFileSystem::mkdir(base + path_manager->GetPath(force1.get()));
-  FrFileSystem::mkdir(base + path_manager->GetPath(node3.get()));
-  FrFileSystem::mkdir(base + path_manager->GetPath(node1.get()));
-  FrFileSystem::mkdir(base + path_manager->GetPath(node2.get()));
-  FrFileSystem::mkdir(base + path_manager->GetPath(revolute_link.get()));
-
-
-  return 0;
 }
