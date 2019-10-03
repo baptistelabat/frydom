@@ -41,6 +41,7 @@ namespace frydom {
   class FrNode;
 
 
+  // TODO : renommer en TreeManager ??
   class FrPathManager {
 
    public:

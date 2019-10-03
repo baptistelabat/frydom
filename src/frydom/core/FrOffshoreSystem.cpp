@@ -1085,6 +1085,8 @@ namespace frydom {
 
   void FrOffshoreSystem::Add(std::shared_ptr<FrTreeNodeBase> item) {
 
+    // FIXME : mettre des gardes au cas ou RegisterTreeNode renvoie false !!!
+
     // BODY
     if (auto body = std::dynamic_pointer_cast<FrBody>(item)) {
       AddBody(body, body->GetChronoBody());
@@ -1116,17 +1118,8 @@ namespace frydom {
       exit(EXIT_FAILURE);
     }
 
-    // Registering the node into the PathManager to ensure unicity of the naming
-
-
-
-    if (auto loggable = std::dynamic_pointer_cast<FrLoggable>(item)) {
-//      loggable->m_tree_path = m_pathManager->GetPath(loggable.get());
-
-
-
-      // Adding item to FrLogManager
-
+    if (auto loggable = std::dynamic_pointer_cast<FrLoggableBase>(item)) {
+      m_LogManager->Add(loggable);
     }
 
   }

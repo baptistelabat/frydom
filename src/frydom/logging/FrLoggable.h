@@ -32,11 +32,11 @@ namespace frydom {
 
     void LogThis(bool log) { m_log_this = log; }
 
-    virtual void InitializeLog() {}
+    virtual void InitializeLog() = 0;
 
-    virtual void UpdateLog() {}
+    virtual void UpdateLog() = 0;
 
-    virtual void FinalizeLog() {}
+    virtual void FinalizeLog() = 0;
 
     // FIXME : a-t-on besoin d'un GetName ??? Le nom vient de TreeNode !!
    private:
@@ -53,6 +53,18 @@ namespace frydom {
     explicit FrLoggable(const std::string &name, ParentType *parent) :
         FrLoggableBase(),
         FrTreeNode<ParentType>(name, parent) {}
+
+    void InitializeLog() override {
+      std::cout << this->GetName() << " is a loggable" << std::endl;
+    }
+
+    void UpdateLog() override {
+
+    }
+
+    void FinalizeLog() override {
+
+    }
 
   };
 

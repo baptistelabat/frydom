@@ -449,6 +449,8 @@ namespace frydom {
     m_externalForces.push_back(force);
     GetSystem()->GetPathManager()->RegisterTreeNode(force.get());
 
+    GetSystem()->GetLogManager()->Add(force);
+
   }
 
   void FrBody::RemoveExternalForce(std::shared_ptr<FrForce> force) {
@@ -507,6 +509,9 @@ namespace frydom {
     auto node = std::make_shared<FrNode>(name, this);
     m_nodes.push_back(node);
     GetSystem()->GetPathManager()->RegisterTreeNode(node.get());
+
+    GetSystem()->GetLogManager()->Add(node);
+
     return node;
   }
 

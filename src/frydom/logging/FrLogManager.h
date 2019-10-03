@@ -5,6 +5,7 @@
 #ifndef FRYDOM_FRLOGMANAGER_H
 #define FRYDOM_FRLOGMANAGER_H
 
+#include <memory>
 
 #include <string>
 #include <list>
@@ -26,9 +27,9 @@ namespace frydom {
 
     const std::string GetLogFolder() const;
 
-    void Add(FrLoggableBase *obj);
+    void Add(std::shared_ptr<FrLoggableBase> obj);
 
-    void Remove(FrLoggableBase *obj);
+    void Remove(std::shared_ptr<FrLoggableBase> obj);
 
     void Initialize();
 
@@ -38,13 +39,15 @@ namespace frydom {
 
 
    private:
+    bool Has(std::shared_ptr<FrLoggableBase> obj) const;
+
     std::string InitializeLogFolder();
 
 
    private:
     std::string m_log_folder;
 
-    std::list<FrLoggableBase *> m_loggable_list;
+    std::list<std::shared_ptr<FrLoggableBase>> m_loggable_list;
 
 
   };

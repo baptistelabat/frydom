@@ -22,22 +22,23 @@ namespace frydom {
     return m_log_folder;
   }
 
-  void FrLogManager::Add(FrLoggableBase *obj) {
-    auto it = std::find(m_loggable_list.begin(), m_loggable_list.end(), obj);
-
-    // Don't add if already present !
-    if (it == m_loggable_list.end()) {
+  void FrLogManager::Add(std::shared_ptr<FrLoggableBase> obj) {
+    if (!Has(obj)) {
       m_loggable_list.push_back(obj);
     }
   }
 
-  void FrLogManager::Remove(FrLoggableBase *obj) {
+  void FrLogManager::Remove(std::shared_ptr<FrLoggableBase> obj) {
     auto it = std::find(m_loggable_list.begin(), m_loggable_list.end(), obj);
 
     // Remove if present
     if (it != m_loggable_list.end()) {
       m_loggable_list.erase(it);
     }
+  }
+
+  bool FrLogManager::Has(std::shared_ptr<FrLoggableBase> obj) const {
+    return (std::find(m_loggable_list.begin(), m_loggable_list.end(), obj) != m_loggable_list.end());
   }
 
   std::string FrLogManager::InitializeLogFolder() {
