@@ -27,17 +27,32 @@ namespace frydom {
 
   };
 
+  class FrOffshoreSystem;
+
 
   template<class ParentType>
   class FrTreeNode : public FrTreeNodeBase {
 
    public:
 
+    /// Constructor
     FrTreeNode(const std::string &name, ParentType *parent);
 
+    /// Get a pointer to the Parent TreeNode
     virtual ParentType *GetParent() const;
 
-   protected:
+    /// Returns a pointer to the root FrOffshoreSystem for any TreeNode by a recursive run time procedure.
+    const FrOffshoreSystem *GetSystem() const {
+
+      if (dynamic_cast<const FrOffshoreSystem *>(this)) {
+        return dynamic_cast<const FrOffshoreSystem * >(this);
+      } else {
+        return m_parent->GetSystem();
+      }
+
+    }
+
+   private:
     ParentType *m_parent = nullptr;
 
   };

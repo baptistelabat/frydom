@@ -13,11 +13,7 @@
 #define FRYDOM_FRPATHMANAGER_H
 
 #include <unordered_set>
-
-//#include <cppfs/fs.h>
-//#include <cppfs/FileHandle.h>
-//#include <cppfs/FilePath.h>
-
+#include <typeinfo>
 
 #include <frydom/core/common/FrTreeNode.h>
 #include "frydom/core/body/FrBody.h"
@@ -34,46 +30,64 @@ namespace frydom {
   class FrPathManager {
 
    public:
-    FrPathManager() {}
+    FrPathManager() = default;
 
     ~FrPathManager() = default;
 
     template<class ParentType>
-    std::string GetPath(const FrTreeNode <ParentType> *node) const {
-
+    static std::string GetPath(const FrTreeNode <ParentType> *node) {
       if (!node) return "";
 
-      return this->GetPath(node->GetParent()) + GetNormalizedPathName(node);
+      return GetPath(node->GetParent()) + GetNormalizedPathName(node);
+    }
 
+    template<class ParentType>
+    static std::string GetPath(const FrTreeNode <ParentType> &node) {
+      return GetPath(&node);
+    }
+
+    bool RegisterPath(const std::string &path) {
+      if (HasPath(path)) return false;
+
+      m_used_paths.insert(path);
+      return true;
     }
 
 
-
-    
    private:
 
+    bool HasPath(const std::string &path) {
+      return m_used_paths.find(path) != m_used_paths.end();
+    }
+
     /// Gives the normalized path of the node given a hard coded policy concerning the naming scheme.
-    template <class ParentType>
-    std::string GetNormalizedPathName(const FrTreeNode<ParentType> *node) const {
+    template<class ParentType>
+    static std::string GetNormalizedPathName(const FrTreeNode <ParentType> *node) {
 
-      std::string path_name;
+      std::string path_name_prefix;
 
-      if (dynamic_cast<const FrOffshoreSystem*>(node)) {
-        path_name = "frydom_";
+      if (dynamic_cast<const FrOffshoreSystem *>(node)) {
+        path_name_prefix = "FRYDOM_";
 
-      } else if (dynamic_cast<const FrBody*>(node)) {
-        path_name = "BODY/BODY_";
+      } else if (dynamic_cast<const FrBody *>(node)) {
+        path_name_prefix = "BODY/BODY_";
 
-      } else if (dynamic_cast<const FrForce*>(node)) {
-        path_name = "FORCE/FORCE_";
+      } else if (dynamic_cast<const FrForce *>(node)) {
+        path_name_prefix = "FORCE/FORCE_";
 
-      } else if (dynamic_cast<const FrNode*>(node)) {
-        path_name = "NODE/NODE_";
+      } else if (dynamic_cast<const FrNode *>(node)) {
+        path_name_prefix = "NODE/NODE_";
 
+      } else if (dynamic_cast<const FrLink *>(node)) {
+        path_name_prefix = "LINK/LINK_";
+
+      } else {
+        std::cerr << "No known policy for building normalized path name of " << typeid(node).name() << std::endl;
+        exit(EXIT_FAILURE);
       }
 
 
-      return path_name + node->GetName() + "/";
+      return path_name_prefix + node->GetName() + "/";
     }
 
 
@@ -81,7 +95,6 @@ namespace frydom {
     std::unordered_set<std::string> m_used_paths;
 
   };
-
 
 
 
