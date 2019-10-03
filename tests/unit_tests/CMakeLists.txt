@@ -3,6 +3,7 @@ message(STATUS "    ...UNIT TESTS :")
 
 set(UNIT_TESTS
         # include test source files here (without .cpp)
+        test_FrLoggable
         test_FrPathManager
         test_FrForce
         test_internal

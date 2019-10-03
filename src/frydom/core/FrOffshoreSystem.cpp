@@ -37,7 +37,7 @@ namespace frydom {
   namespace internal {
 
     FrSystemBaseSMC::FrSystemBaseSMC(frydom::FrOffshoreSystem *offshoreSystem) :
-        chrono::ChSystemSMC(), m_offshoreSystem_(offshoreSystem) {}
+        chrono::ChSystemSMC(), m_offshoreSystem(offshoreSystem) {}
 
     void FrSystemBaseSMC::Update(bool update_assets) {
 
@@ -48,22 +48,19 @@ namespace frydom {
       timer_update.start();  // Timer for profiling
 
       // Pre updates that are not about multibody dynamics
-      m_offshoreSystem_->PreUpdate();
+      m_offshoreSystem->PreUpdate();
 
       // Executes the "forUpdate" in all controls of controlslist
       ExecuteControlsForUpdate();
 
       // Physics item that have to be updated before all
-      m_offshoreSystem_->PrePhysicsUpdate(ChTime, update_assets);
+      m_offshoreSystem->PrePhysicsUpdate(ChTime, update_assets);
 
       // Bodies updates  // FIXME : appeler les updates directement des objets frydom !
       for (auto &body : bodylist) {
         body->Update(ChTime, update_assets);
 //            body->Update(ChTime, update_assets);  // FIXME : Appel redondant
       }
-
-      // Physics items that have to be updated between bodies and links
-      m_offshoreSystem_->MidPhysicsUpdate(ChTime, update_assets);
 
       // Links updates  // FIXME : appeler les updates directement des objets frydom !
       for (auto &link : linklist) {
@@ -74,21 +71,18 @@ namespace frydom {
         mesh->Update(ChTime, update_assets);
       }
 
-      // Physics items that have to be updated after all
-      m_offshoreSystem_->PostPhysicsUpdate(ChTime, update_assets);
-
       // Update all contacts, if any
       contact_container->Update(ChTime, update_assets);
 
       // Post updates that are not about multibody dynamics
-      m_offshoreSystem_->PostUpdate();
+      m_offshoreSystem->PostUpdate();
 
       timer_update.stop();
 
     }
 
     void FrSystemBaseSMC::CustomEndOfStep() {
-      m_offshoreSystem_->StepFinalize();
+      m_offshoreSystem->StepFinalize();
     }
 
 //        // -----------------------------------------------------------------------------
@@ -161,13 +155,16 @@ namespace frydom {
       FrLoggable(name, nullptr) {
 
     // Creating the chrono System backend. It drives the way contact are modelled
-    SetSystemType(systemType, false);
+    SetSystemType(systemType,
+                  false);
 
     // Setting the time stepper
-    SetTimeStepper(timeStepper, false);
+    SetTimeStepper(timeStepper,
+                   false);
 
     // Setting the constraints solver
-    SetSolver(solver, false);
+    SetSolver(solver,
+              false);
 
     // Check compatibility between system contact model, time stepper and constraint solver
     CheckCompatibility();
@@ -214,20 +211,10 @@ namespace frydom {
       return;
     }
 
-    if (auto item = std::dynamic_pointer_cast<FrMidPhysicsItem>(newItem)) {
-      AddPhysicsItem(item);
-      return;
-    }
-
-    if (auto item = std::dynamic_pointer_cast<FrPostPhysicsItem>(newItem)) {
-      AddPhysicsItem(item);
-      return;
-    }
-
   }
 
 
-  // ***** Body *****
+// ***** Body *****
 
   void FrOffshoreSystem::AddBody(std::shared_ptr<FrBody> body) {
 
@@ -261,7 +248,7 @@ namespace frydom {
   }
 
 
-  // ***** Link *****
+// ***** Link *****
 
   void FrOffshoreSystem::AddLink(std::shared_ptr<FrLinkBase> link) {
     m_chronoSystem->AddLink(link->GetChronoLink());
@@ -285,7 +272,7 @@ namespace frydom {
   }
 
 
-  // ***** Physics Item *****
+// ***** Physics Item *****
 
   void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem> otherPhysics) {
     m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
@@ -296,24 +283,6 @@ namespace frydom {
     return m_PrePhysicsList;
   }
 
-  void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem> otherPhysics) {
-    m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
-    m_MidPhysicsList.push_back(otherPhysics);
-  }
-
-  FrOffshoreSystem::MidPhysicsContainer FrOffshoreSystem::GetMidPhysicsItemList() {
-    return m_MidPhysicsList;
-  }
-
-  void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem> otherPhysics) {
-    m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
-    m_PostPhysicsList.push_back(otherPhysics);
-  }
-
-  FrOffshoreSystem::PostPhysicsContainer FrOffshoreSystem::GetPostPhysicsItemList() {
-    return m_PostPhysicsList;
-  }
-
   void FrOffshoreSystem::RemovePhysicsItem(std::shared_ptr<FrPhysicsItem> item) {
 
     m_chronoSystem->RemoveOtherPhysicsItem(item->GetChronoPhysicsItem());
@@ -321,19 +290,6 @@ namespace frydom {
     auto it = std::find(m_PrePhysicsList.begin(), m_PrePhysicsList.end(), item);
     if (it != m_PrePhysicsList.end())
       m_PrePhysicsList.erase(it);
-    else {
-      auto it = std::find(m_MidPhysicsList.begin(), m_MidPhysicsList.end(), item);
-      if (it != m_MidPhysicsList.end())
-        m_MidPhysicsList.erase(it);
-      else {
-        auto it = std::find(m_PostPhysicsList.begin(), m_PostPhysicsList.end(), item);
-        if (it != m_PostPhysicsList.end())
-          m_PostPhysicsList.erase(it);
-        else {
-          assert(("physics item can't be found in the list : ", it != m_PostPhysicsList.end()));
-        }
-      }
-    }
   }
 
   void FrOffshoreSystem::RemoveAllPhysicsItem() {
@@ -341,16 +297,10 @@ namespace frydom {
     for (auto &item: m_PrePhysicsList)
       RemovePhysicsItem(item);
 
-    for (auto &item: m_MidPhysicsList)
-      RemovePhysicsItem(item);
-
-    for (auto &item: m_PostPhysicsList)
-      RemovePhysicsItem(item);
-
   }
 
 
-  // ***** FEAMesh *****
+// ***** FEAMesh *****
 
   void FrOffshoreSystem::AddFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh) {
     m_chronoSystem->AddMesh(feaMesh->GetChronoMesh());  // Authorized because this method is a friend of FrFEAMesh
@@ -397,7 +347,7 @@ namespace frydom {
   }
 
 
-  // ***** Environment *****
+// ***** Environment *****
 
   FrEnvironment *FrOffshoreSystem::GetEnvironment() const {
     return m_environment.get();
@@ -422,18 +372,6 @@ namespace frydom {
     }
   }
 
-  void FrOffshoreSystem::MidPhysicsUpdate(double time, bool update_assets) {
-    for (auto &item : m_MidPhysicsList) {
-      item->Update(time);
-    }
-  }
-
-  void FrOffshoreSystem::PostPhysicsUpdate(double time, bool update_assets) {
-    for (auto &item : m_PostPhysicsList) {
-      item->Update(time);
-    }
-  }
-
   void FrOffshoreSystem::Initialize() {
 
 
@@ -448,19 +386,11 @@ namespace frydom {
       item->Initialize();
     }
 
-    for (auto &item : m_MidPhysicsList) {
-      item->Initialize();
-    }
-
     for (auto &item : m_linkList) {
       item->Initialize();
     }
 
     for (auto &item : m_feaMeshList) {
-      item->Initialize();
-    }
-
-    for (auto &item : m_PostPhysicsList) {
       item->Initialize();
     }
 
@@ -489,19 +419,11 @@ namespace frydom {
       item->StepFinalize();
     }
 
-    for (auto &item : m_MidPhysicsList) {
-      item->StepFinalize();
-    }
-
     for (auto &item : m_linkList) {
       item->StepFinalize();
     }
 
     for (auto &item : m_feaMeshList) {
-      item->StepFinalize();
-    }
-
-    for (auto &item : m_PostPhysicsList) {
       item->StepFinalize();
     }
 
@@ -924,8 +846,6 @@ namespace frydom {
     m_linkList.clear();
     m_feaMeshList.clear();
     m_PrePhysicsList.clear();
-    m_MidPhysicsList.clear();
-    m_PostPhysicsList.clear();
 
     m_isInitialized = false;
   }
@@ -935,7 +855,7 @@ namespace frydom {
   }
 
 
-  // Irrlicht visualization
+// Irrlicht visualization
 
   void FrOffshoreSystem::RunInViewer(double endTime, double dist, bool recordVideo, int videoFrameSaveInterval) {
 
@@ -1024,7 +944,7 @@ namespace frydom {
     if (!m_isInitialized) Initialize();
   }
 
-  // Iterators
+// Iterators
 
   FrOffshoreSystem::BodyIter FrOffshoreSystem::body_begin() {
     return m_bodyList.begin();
@@ -1075,22 +995,12 @@ namespace frydom {
 //                item->InitializeLog(systemPath);
 //            }
 //
-//            for (auto &item : m_MidPhysicsList) {
-//                item->SetPathManager(GetPathManager());
-//                item->InitializeLog(systemPath);
-//            }
-//
 //            for (auto &item : m_linkList) {
 //                item->SetPathManager(GetPathManager());
 //                item->InitializeLog(systemPath);
 //            }
 //
 //            for (auto &item : m_feaMeshList) {
-//                item->SetPathManager(GetPathManager());
-//                item->InitializeLog(systemPath);
-//            }
-//
-//            for (auto &item : m_PostPhysicsList) {
 //                item->SetPathManager(GetPathManager());
 //                item->InitializeLog(systemPath);
 //            }
@@ -1116,15 +1026,7 @@ namespace frydom {
 //            }
 //        }
 //
-//        for (auto &item : m_MidPhysicsList) {
-//            item->ClearMessage();
-//        }
-//
 //        for (auto &item : m_linkList) {
-//            item->ClearMessage();
-//        }
-//
-//        for (auto &item : m_PostPhysicsList) {
 //            item->ClearMessage();
 //        }
 //

@@ -168,7 +168,7 @@ namespace frydom {
     c_prevTime = 0.;
 
     // Declare this object to the log manager
-    GetSystem()->GetLogManager()->Add(this);
+//    GetSystem()->GetLogManager()->Add(this);
   }
 
   void FrEquilibriumFrame::Compute(double time) {

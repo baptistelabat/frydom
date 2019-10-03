@@ -75,8 +75,6 @@ namespace frydom {
 
         FrPhysicsItem();
 
-//        FrOffshoreSystem* GetSystem();
-
         /// Check if the force is active
         bool IsActive() const;
 
@@ -109,23 +107,23 @@ namespace frydom {
         friend void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem>);
     };
 
-    /**
-     * \class FrMidPhysicsItem
-     * \brief Class for defining physics items updated after bodies but before links.
-     */
-    class FrMidPhysicsItem : public FrPhysicsItem {
-    protected:
-        friend void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem>);
-    };
-
-    /**
-     * \class FrPostPhysicsItem
-     * \brief Class for defining physics items updated after links.
-     */
-    class FrPostPhysicsItem : public FrPhysicsItem {
-    protected:
-        friend void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem>);
-    };
+//    /**
+//     * \class FrMidPhysicsItem
+//     * \brief Class for defining physics items updated after bodies but before links.
+//     */
+//    class FrMidPhysicsItem : public FrPhysicsItem {
+//    protected:
+//        friend void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem>);
+//    };
+//
+//    /**
+//     * \class FrPostPhysicsItem
+//     * \brief Class for defining physics items updated after links.
+//     */
+//    class FrPostPhysicsItem : public FrPhysicsItem {
+//    protected:
+//        friend void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem>);
+//    };
 
 }  // end namespace frydom
 

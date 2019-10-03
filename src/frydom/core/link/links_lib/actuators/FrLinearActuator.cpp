@@ -61,7 +61,7 @@ namespace frydom {
       m_chronoActuator->Initialize(GetChronoBody2(), GetChronoBody1(), true,
                                    internal::FrFrame2ChFrame(frame2), internal::FrFrame2ChFrame(frame1));
 
-      GetSystem()->GetLogManager()->Add(this);
+//      GetSystem()->GetLogManager()->Add(this);
     }
 
     double FrLinearActuator::GetMotorPower() const {

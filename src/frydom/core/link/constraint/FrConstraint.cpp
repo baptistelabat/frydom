@@ -133,7 +133,7 @@ namespace frydom {
 
     GetChronoItem_ptr()->Initialize(GetChronoBody2(), GetChronoBody1(), false, chPos2, chPos1, chDir2, chDir1);
 
-    GetSystem()->GetLogManager()->Add(this);
+//    GetSystem()->GetLogManager()->Add(this);
 
   }
 

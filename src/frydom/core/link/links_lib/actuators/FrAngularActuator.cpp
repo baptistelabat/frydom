@@ -57,7 +57,7 @@ namespace frydom {
                                    internal::FrFrame2ChFrame(GetNode2()->GetFrameWRT_COG_InBody()),
                                    internal::FrFrame2ChFrame(GetNode1()->GetFrameWRT_COG_InBody()));
 
-      GetSystem()->GetLogManager()->Add(this);
+//      GetSystem()->GetLogManager()->Add(this);
 
     }
 

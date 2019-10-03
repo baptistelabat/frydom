@@ -86,7 +86,7 @@ namespace frydom {
         GetBody()->AddAsset(m_asset);
       }
 
-      GetBody()->GetSystem()->GetLogManager()->Add(this);
+//      GetBody()->GetSystem()->GetLogManager()->Add(this);
 
     }
 

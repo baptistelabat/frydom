@@ -92,17 +92,17 @@ namespace frydom{
 //            pi->SetLogged(pi->IncludedInStaticAnalysis() && pi->IsLogged());
         }
 
-        for (auto& pi : m_system->GetMidPhysicsItemList()) {
-//            m_map.emplace(pi.get(),std::make_pair(pi->IsActive(),pi->IsLogged()));
-            pi->SetActive(pi->IncludedInStaticAnalysis());
-//            pi->SetLogged(pi->IncludedInStaticAnalysis() && pi->IsLogged());
-        }
-
-        for (auto& pi : m_system->GetPostPhysicsItemList()) {
-//            m_map.emplace(pi.get(),std::make_pair(pi->IsActive(),pi->IsLogged()));
-            pi->SetActive(pi->IncludedInStaticAnalysis());
-//            pi->SetLogged(pi->IncludedInStaticAnalysis() && pi->IsLogged());
-        }
+//        for (auto& pi : m_system->GetMidPhysicsItemList()) {
+////            m_map.emplace(pi.get(),std::make_pair(pi->IsActive(),pi->IsLogged()));
+//            pi->SetActive(pi->IncludedInStaticAnalysis());
+////            pi->SetLogged(pi->IncludedInStaticAnalysis() && pi->IsLogged());
+//        }
+//
+//        for (auto& pi : m_system->GetPostPhysicsItemList()) {
+////            m_map.emplace(pi.get(),std::make_pair(pi->IsActive(),pi->IsLogged()));
+//            pi->SetActive(pi->IncludedInStaticAnalysis());
+////            pi->SetLogged(pi->IncludedInStaticAnalysis() && pi->IsLogged());
+//        }
 
         // Logging
 //        m_system->GetPathManager()->SetRunPath("Static");
@@ -151,19 +151,19 @@ namespace frydom{
 
         }
 
-        for (auto& pi : m_system->GetMidPhysicsItemList()) {
-
-            pi->SetActive(m_map.find(pi.get())->second.first);
-//            pi->SetLogged(m_map.find(pi.get())->second.second);
-
-        }
-
-        for (auto& pi : m_system->GetPostPhysicsItemList()) {
-
-            pi->SetActive(m_map.find(pi.get())->second.first);
-//            pi->SetLogged(m_map.find(pi.get())->second.second);
-
-        }
+//        for (auto& pi : m_system->GetMidPhysicsItemList()) {
+//
+//            pi->SetActive(m_map.find(pi.get())->second.first);
+////            pi->SetLogged(m_map.find(pi.get())->second.second);
+//
+//        }
+//
+//        for (auto& pi : m_system->GetPostPhysicsItemList()) {
+//
+//            pi->SetActive(m_map.find(pi.get())->second.first);
+////            pi->SetLogged(m_map.find(pi.get())->second.second);
+//
+//        }
 
         // Set no speed and accel. on bodies, meshes and other physics items
         m_system->Relax(m_relax);

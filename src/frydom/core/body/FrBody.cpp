@@ -275,7 +275,7 @@ namespace frydom {
       InitializeLockedDOF();
     }
 
-    GetSystem()->GetLogManager()->Add(this);
+//    GetSystem()->GetLogManager()->Add(this);
 
   }
 

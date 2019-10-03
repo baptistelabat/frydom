@@ -2,7 +2,10 @@
 // Created by frongere on 25/09/19.
 //
 
+#include <algorithm>
+
 #include "FrLogManager.h"
+#include "FrLoggable.h"
 
 
 namespace frydom {

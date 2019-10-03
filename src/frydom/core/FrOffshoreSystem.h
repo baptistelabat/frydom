@@ -39,7 +39,7 @@ namespace frydom {
     class FrSystemBaseSMC : public chrono::ChSystemSMC {
 
      private:
-      FrOffshoreSystem *m_offshoreSystem_;   ///< pointer to the offshore system
+      FrOffshoreSystem *m_offshoreSystem;   ///< pointer to the offshore system
 
      public:
       /// Constructor of the systemBase
@@ -83,10 +83,6 @@ namespace frydom {
   class FrPhysicsItem;
 
   class FrPrePhysicsItem;
-
-  class FrMidPhysicsItem;
-
-  class FrPostPhysicsItem;
 
   class FrFEAMesh;
 
@@ -220,8 +216,6 @@ namespace frydom {
     using LinkContainer = std::vector<std::shared_ptr<FrLinkBase>>;
 
     using PrePhysicsContainer = std::vector<std::shared_ptr<FrPrePhysicsItem>>;
-    using MidPhysicsContainer = std::vector<std::shared_ptr<FrMidPhysicsItem>>;
-    using PostPhysicsContainer = std::vector<std::shared_ptr<FrPostPhysicsItem>>;
 
     using FEAMeshContainer = std::vector<std::shared_ptr<FrFEAMesh>>;
 
@@ -236,12 +230,6 @@ namespace frydom {
     using PrePhysicsIter = PrePhysicsContainer::iterator;
     using ConstPrePhysicsIter = PrePhysicsContainer::const_iterator;
 
-    using MidPhysicsIter = MidPhysicsContainer::iterator;
-    using ConstMidPhysicsIter = MidPhysicsContainer::const_iterator;
-
-    using PostPhysicsIter = PostPhysicsContainer::iterator;
-    using ConstPostPhysicsIter = PostPhysicsContainer::const_iterator;
-
     using FEAMestIter = FEAMeshContainer::iterator;
     using ConstFEAMestIter = FEAMeshContainer::const_iterator;
 
@@ -249,12 +237,7 @@ namespace frydom {
     BodyContainer m_bodyList;   ///< list of bodies managed by this offshore system
     LinkContainer m_linkList;   ///< list of links between bodies managed by this offhsore system
     PrePhysicsContainer m_PrePhysicsList;   ///< list of physics items, updated before the bodies
-    MidPhysicsContainer m_MidPhysicsList;   ///< list of physics items, updated between the bodies and links
-    PostPhysicsContainer m_PostPhysicsList; ///< list of physics items, updated after the links
     FEAMeshContainer m_feaMeshList;         ///< list of FEA mesh items, managed by this offshore system
-
-//        using CatenaryCableContainer = std::vector<std::shared_ptr<FrCatway>>;
-//        CatenaryCableContainer m_catenaryCables;
 
     bool m_isInitialized = false;
 
@@ -277,10 +260,6 @@ namespace frydom {
 
     /// Destructor
     ~FrOffshoreSystem();
-
-//        /// Get the type name of this object
-//        /// \return type name of this object
-//        std::string GetTypeName() const override { return "OffshoreSystem"; }
 
     /// Add an item (body, link, etc.) to the offshore sytem
     /// \param item item to be added to the offshore system
@@ -333,27 +312,6 @@ namespace frydom {
     /// \return List of the pre physics items added to the system
     PrePhysicsContainer GetPrePhysicsItemList();
 
-    // ***** Mid Physics Item *****
-
-    /// Add other physics item to the offshore system
-    /// \param otherPhysics other physic item to be added
-    void AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem> otherPhysics);
-
-    /// Get the list of mid physics items added to the system
-    /// \return List of the mid physics items added to the system
-    MidPhysicsContainer GetMidPhysicsItemList();
-
-    // ***** Post Physics Item *****
-
-    /// Add other physics item to the offshore system
-    /// \param otherPhysics other physic item to be added
-    void AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem> otherPhysics);
-
-    /// Get the list of post physics items added to the system
-    /// \return List of the post physics items added to the system
-    PostPhysicsContainer GetPostPhysicsItemList();
-
-
     /// Remove a Physics items from the system
     /// \param item Physics items removed from the system
     void RemovePhysicsItem(std::shared_ptr<FrPhysicsItem> item);
@@ -403,11 +361,6 @@ namespace frydom {
 
 
     void PrePhysicsUpdate(double time, bool update_assets);
-
-    void MidPhysicsUpdate(double time, bool update_assets);
-
-    void PostPhysicsUpdate(double time, bool update_assets);
-
 
     // FIXME: Get sure Initialize is not called twice !!
     /// Initialize the state of the offshore system and its components (Environment, systemBase)

@@ -9,46 +9,45 @@
 #include <string>
 #include <list>
 
-//#include "frydom/core/common/FrObject.h"
-#include "FrLoggable.h"
-
 
 namespace frydom {
 
-    class FrLogManager {
-
-     public:
-
-      FrLogManager();
-
-      explicit FrLogManager(const std::string &log_folder);
-
-      const std::string GetLogFolder() const;
-
-      void Add(FrLoggableBase* obj);
-
-      void Remove(FrLoggableBase* obj);
-
-      void Initialize();
-
-      void Update();
-
-      void Finalize();
+  // Forward declaration
+  class FrLoggableBase;
 
 
-     private:
-      std::string InitializeLogFolder();
+  class FrLogManager {
+
+   public:
+
+    FrLogManager();
+
+    explicit FrLogManager(const std::string &log_folder);
+
+    const std::string GetLogFolder() const;
+
+    void Add(FrLoggableBase *obj);
+
+    void Remove(FrLoggableBase *obj);
+
+    void Initialize();
+
+    void Update();
+
+    void Finalize();
 
 
-     private:
-      std::string m_log_folder;
-
-      std::list<FrLoggableBase*> m_loggable_list;
+   private:
+    std::string InitializeLogFolder();
 
 
+   private:
+    std::string m_log_folder;
+
+    std::list<FrLoggableBase *> m_loggable_list;
 
 
-    };
+  };
 
 }  // end namespace frydom
 

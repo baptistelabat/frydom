@@ -88,7 +88,7 @@ namespace frydom {
 //    FrCable::~FrCable() = default;
 
   void FrCable::Initialize() {
-    GetParent()->GetLogManager()->Add(this);
+//    GetParent()->GetLogManager()->Add(this);
   }
 
   FrCable::FrCable(const std::string &name,

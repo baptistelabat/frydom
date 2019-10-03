@@ -33,7 +33,9 @@ namespace chrono {
 namespace frydom {
 
   enum ACTUATOR_CONTROL {
-    POSITION, VELOCITY, FORCE
+    POSITION,
+    VELOCITY,
+    FORCE
   };
 
   // Forward declarations

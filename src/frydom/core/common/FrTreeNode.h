@@ -10,6 +10,9 @@
 #include "FrObject.h"
 
 
+//#include "frydom/core/FrOffshoreSystem.h"
+
+
 namespace frydom {
 
   class FrTreeNodeBase {
@@ -42,6 +45,16 @@ namespace frydom {
     virtual ParentType *GetParent() const;
 
     /// Returns a pointer to the root FrOffshoreSystem for any TreeNode by a recursive run time procedure.
+    FrOffshoreSystem *GetSystem() {
+
+      if (dynamic_cast<FrOffshoreSystem *>(this)) {
+        return dynamic_cast<FrOffshoreSystem * >(this);
+      } else {
+        return m_parent->GetSystem();
+      }
+
+    }
+
     const FrOffshoreSystem *GetSystem() const {
 
       if (dynamic_cast<const FrOffshoreSystem *>(this)) {

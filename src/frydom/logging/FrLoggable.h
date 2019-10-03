@@ -19,16 +19,16 @@
 #include "hermes/hermes.h"
 
 #include "frydom/core/common/FrTreeNode.h"
-
+//#include "FrLoggableBase.h"
 
 namespace frydom {
 
-  class FrLoggableBase {
 
+  class FrLoggableBase {
 
    public:
 
-    explicit FrLoggableBase() : m_log_this(true) {}
+    explicit FrLoggableBase() : m_log_this(true), m_path("") {}
 
     void LogThis(bool log) { m_log_this = log; }
 
@@ -42,6 +42,9 @@ namespace frydom {
    private:
     bool m_log_this;
 
+   protected:
+    std::string m_path;
+
   };
 
 
@@ -50,20 +53,17 @@ namespace frydom {
 
    public:
 
-    explicit FrLoggable(const std::string &name, ParentType *parent)
-        : FrLoggableBase(), FrTreeNode<ParentType>(name, parent) {}
-
-
-//     private:
-//
-//      void InitializePath() override {
-//
-//      }
+    explicit FrLoggable(const std::string &name, ParentType *parent) :
+        FrLoggableBase(),
+        FrTreeNode<ParentType>(name, parent) {}
 
   };
 
 
+}  // end namespace frydom
 
+
+//#include "FrLoggable.cpp"
 
 
 
@@ -136,10 +136,7 @@ namespace frydom {
 
 
 
-}  // end namespace frydom
 
-
-//#include "FrLoggable.cpp"
 
 
 #endif //FRYDOM_FRLOGGABLE_H

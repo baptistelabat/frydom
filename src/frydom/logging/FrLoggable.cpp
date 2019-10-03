@@ -8,6 +8,16 @@
 
 namespace frydom {
 
+//  FrLoggableBase::FrLoggableBase() :
+//      m_log_this(true) {}
+
+
+}  // end namespace frydom
+
+
+
+//namespace frydom {
+
 
 
 //    FrLoggableBase::FrLoggableBase(const std::string &name) : m_name(name), m_log_this(true) {}
@@ -118,4 +128,4 @@ namespace frydom {
 
 
 
-}  // end namespace frydom
+//}  // end namespace frydom

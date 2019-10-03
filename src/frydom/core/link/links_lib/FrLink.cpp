@@ -455,7 +455,7 @@ namespace frydom {
     SetNodes(m_node1.get(), m_node2.get());
     m_chronoLink->SetupInitial();
 
-    GetSystem()->GetLogManager()->Add(this);
+//    GetSystem()->GetLogManager()->Add(this);
   }
 
   void FrLink::Update(double time) {
