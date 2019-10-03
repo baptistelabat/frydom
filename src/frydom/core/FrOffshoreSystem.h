@@ -86,6 +86,8 @@ namespace frydom {
 
   class FrLinkBase;
 
+  class FrNode;
+
   class FrPhysicsItem;
 
   class FrPrePhysicsItem;
@@ -306,6 +308,8 @@ namespace frydom {
     /// Get the world body embedded in the offshore system
     /// \return world body embedded in the offshore system
     std::shared_ptr<FrBody> GetWorldBody() const;
+
+    std::shared_ptr<FrNode> NewWorldFixedNode(const std::string& name);
 
     // TODO: voir si les 3 methodes ci-dessous doivent etre privees (pas Initialize)
 

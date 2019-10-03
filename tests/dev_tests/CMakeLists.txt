@@ -5,7 +5,6 @@ set(REFACTORING_TESTS
         test_FrLinks
         test_cylinder_interaction
         test_FrFunction
-        test_log
         )
 
 #include(Add_matplotlib-cpp)

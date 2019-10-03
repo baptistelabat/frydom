@@ -370,6 +370,10 @@ namespace frydom {
     return m_worldBody;
   }
 
+  std::shared_ptr<FrNode> FrOffshoreSystem::NewWorldFixedNode(const std::string& name) {
+    return m_worldBody->NewNode(name);
+  }
+
   void FrOffshoreSystem::PreUpdate() {
     // TODO : voir si on ne met pas l'environnement comme un physics Item update en tant que PrePhysicsItem
     m_environment->Update(m_chronoSystem->GetChTime());
