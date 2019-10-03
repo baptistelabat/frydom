@@ -309,7 +309,7 @@ namespace frydom {
     m_feaMeshList.push_back(feaMesh);
   }
 
-  void FrOffshoreSystem::Add(std::shared_ptr<FrDynamicCable> cable) {
+  void FrOffshoreSystem::AddDynamicCable(std::shared_ptr<FrDynamicCable> cable) {
 
     // Add the FEA mesh
     AddFEAMesh(cable);

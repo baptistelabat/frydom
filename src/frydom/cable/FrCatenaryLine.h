@@ -46,7 +46,7 @@ namespace frydom {
      * International Journal of Solids and Structures,pp 1521-1533, 2014
      */
     //TODO: check that the chrono_objects are deleted correctly, when the frydom objects are deleted (assets included)
-    class FrCatenaryLine : public FrCable, public FrPrePhysicsItem, public FrCatenaryAssetOwner {
+    class FrCatenaryLine : public FrLoggable<FrOffshoreSystem>, public FrCable, public FrPrePhysicsItem, public FrCatenaryAssetOwner {
 
      public:
 
@@ -109,7 +109,11 @@ namespace frydom {
                      FLUID_TYPE fluid  // FIXME : on ne devrait pas specifier le fluide !!! on doit le recuperer de l'environnement...
       );
 
-     public:
+
+      /// Get the FrOffshoreSystem
+      inline FrOffshoreSystem *GetSystem() const {
+        GetParent();
+      }
 
       //--------------------------------------------------------------------------------------------------------------
       // Accessors related to the embedded Newton-Raphson solver

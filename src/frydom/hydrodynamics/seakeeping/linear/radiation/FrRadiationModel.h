@@ -57,6 +57,11 @@ namespace frydom {
                               FrOffshoreSystem *system,
                               std::shared_ptr<FrHydroDB> HDB);
 
+    /// \return Pointer to the offshore system
+    inline FrOffshoreSystem* GetSystem() const {
+      return GetParent();
+    }
+
     /// Return true if the radiation model is included in the static analysis
     bool IncludedInStaticAnalysis() const override { return false; }
 
@@ -91,7 +96,7 @@ namespace frydom {
     /// \return Mapper
     FrHydroMapper *GetMapper() const;
 
-    FrOffshoreSystem *GetSystem() const;
+//    FrOffshoreSystem *GetSystem() const;
 
    private:
 

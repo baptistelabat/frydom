@@ -83,33 +83,24 @@ namespace frydom {
   //------------------------------------------------------------------------------------------------------------------
   // FrCable
 
-  FrCable::FrCable(const std::string &name, FrOffshoreSystem *system) : FrLoggable(name, system) {}
+  void FrCable::Initialize() {}
 
-//    FrCable::~FrCable() = default;
+  FrCable::FrCable(const std::shared_ptr<FrNode> &startingNode,
+                   const std::shared_ptr<FrNode> &endingNode) :
+      m_startingNode(startingNode),
+      m_endingNode(endingNode) {
 
-  void FrCable::Initialize() {
-//    GetParent()->GetLogManager()->Add(this);
-  }
-
-  FrCable::FrCable(const std::string &name,
-                   FrOffshoreSystem *system,
-                   const std::shared_ptr<FrNode> &startingNode,
-                   const std::shared_ptr<FrNode> &endingNode)
-      : FrLoggable(name, system), m_startingNode(startingNode), m_endingNode(endingNode) {
     m_properties = std::make_shared<FrCableProperties>();
   }
 
-  FrCable::FrCable(const std::string &name,
-                   FrOffshoreSystem *system,
-                   const std::shared_ptr<FrNode> &startingNode,
+  FrCable::FrCable(const std::shared_ptr<FrNode> &startingNode,
                    const std::shared_ptr<FrNode> &endingNode,
                    const std::shared_ptr<FrCableProperties> &properties,
-                   double unstrainedLength)
-      : FrLoggable(name, system),
-        m_startingNode(startingNode),
-        m_endingNode(endingNode),
-        m_unstrainedLength(unstrainedLength),
-        m_properties(properties) {}
+                   double unstrainedLength) :
+      m_startingNode(startingNode),
+      m_endingNode(endingNode),
+      m_unstrainedLength(unstrainedLength),
+      m_properties(properties) {}
 
 
   void FrCable::SetCableProperties(const std::shared_ptr<FrCableProperties> prop) {
@@ -204,8 +195,8 @@ namespace frydom {
     return cl;
   }
 
-  FrOffshoreSystem *FrCable::GetSystem() const {
-    return GetParent();
-  }
+//  FrOffshoreSystem *FrCable::GetSystem() const {
+//    return GetParent();
+//  }
 
 }  // end namespace frydom

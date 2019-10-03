@@ -284,10 +284,7 @@ namespace frydom {
       return internal::ChVectorToVector3d<Force>(dir * Tension.x());
 
     }
-
-
   }
-
 
   FrDynamicCable::FrDynamicCable(const std::string &name,
                                  FrOffshoreSystem *system,
@@ -297,7 +294,9 @@ namespace frydom {
                                  double unstrainedLength,
                                  double rayleighDamping,
                                  unsigned int nbElements) :
-      FrCable(name, system, startingNode, endingNode, properties, unstrainedLength),
+      FrLoggable(name, system),
+      FrFEAMesh(),
+      FrCable(startingNode, endingNode, properties, unstrainedLength),
       m_rayleighDamping(rayleighDamping),
       m_nbElements(nbElements) {
 
@@ -465,7 +464,7 @@ namespace frydom {
 
   std::shared_ptr<FrDynamicCable>
   make_dynamic_cable(const std::string &name,
-                     FrOffshoreSystem* system,
+                     FrOffshoreSystem *system,
                      const std::shared_ptr<FrNode> &startingNode,
                      const std::shared_ptr<FrNode> &endingNode,
                      const std::shared_ptr<FrCableProperties> &properties,

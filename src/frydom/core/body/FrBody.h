@@ -169,10 +169,10 @@ namespace frydom {
     /// Default constructor
     FrBody(const std::string &name, FrOffshoreSystem *system);
 
-//    /// Get the FrOffshoreSystem where the body has been registered
-//    inline FrOffshoreSystem *GetSystem() const {
-//      GetParent();
-//    }
+    /// Get the FrOffshoreSystem where the body has been registered
+    inline FrOffshoreSystem *GetSystem() const {
+      GetParent();
+    }
 
     /// Make the body fixed
     /// \param state true if body is fixed, false otherwise

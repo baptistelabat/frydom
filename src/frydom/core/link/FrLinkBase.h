@@ -62,8 +62,7 @@ namespace frydom {
                const std::shared_ptr<FrNode> &node1,
                const std::shared_ptr<FrNode> &node2);
 
-    /// Get the pointer to the system containing this linkbase item
-    /// \return Pointer to the system containing this linkbase item
+    /// \return Pointer to the offshore system
     inline FrOffshoreSystem *GetSystem() const {
       return GetParent();
     }

@@ -114,7 +114,7 @@ namespace frydom {
    * \see FrCatenaryLine, FrDynamicCable, FrNode
    *
    */
-  class FrCable : public FrLoggable<FrOffshoreSystem> {
+  class FrCable {
 
    protected:
 
@@ -138,17 +138,10 @@ namespace frydom {
 
    public:
 
-    //--------------------------------------------------------------------------------------------------------------
-    // Constructor - destructor
-    /// Default constructor
-    FrCable(const std::string &name, FrOffshoreSystem *system);
-
     /// FrCable constructor, using two nodes
     /// \param startingNode starting node
     /// \param endingNode ending node
-    FrCable(const std::string &name,
-            FrOffshoreSystem *system,
-            const std::shared_ptr<FrNode> &startingNode,
+    FrCable(const std::shared_ptr<FrNode> &startingNode,
             const std::shared_ptr<FrNode> &endingNode);
 
     /// FrCable constructor, using two nodes and cable properties
@@ -156,9 +149,7 @@ namespace frydom {
     /// \param endingNode ending node
     /// \param properties cable properties
     /// \param unstrainedLength unstrained length, in m
-    FrCable(const std::string &name,
-            FrOffshoreSystem *system,
-            const std::shared_ptr<FrNode> &startingNode,
+    FrCable(const std::shared_ptr<FrNode> &startingNode,
             const std::shared_ptr<FrNode> &endingNode,
             const std::shared_ptr<FrCableProperties> &properties,
             double unstrainedLength);
@@ -248,7 +239,7 @@ namespace frydom {
     /// Update the length of the cable if unrolling speed is defined.
     virtual void UpdateState();
 
-    FrOffshoreSystem *GetSystem() const;
+//    FrOffshoreSystem *GetSystem() const;
 
   };
 

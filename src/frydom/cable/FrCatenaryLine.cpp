@@ -29,8 +29,9 @@ namespace frydom {
                                  bool elastic,
                                  double unstrainedLength,
                                  FLUID_TYPE fluid) :
+      FrLoggable(name, system),
       FrPrePhysicsItem(),
-      FrCable(name, system, startingNode, endingNode, properties, unstrainedLength),
+      FrCable(startingNode, endingNode, properties, unstrainedLength),
       m_elastic(elastic),
       c_fluid(fluid) {
 
@@ -255,13 +256,15 @@ namespace frydom {
 
     // Building the catenary forces and adding them to bodies
     if (!m_startingForce) {
-      m_startingForce = std::make_shared<FrCatenaryForce>(GetName() + "_start_force", m_startingNode->GetBody(), this, LINE_START);
+      m_startingForce = std::make_shared<FrCatenaryForce>(GetName() + "_start_force", m_startingNode->GetBody(), this,
+                                                          LINE_START);
       auto starting_body = m_startingNode->GetBody();
       starting_body->AddExternalForce(m_startingForce);
     }
 
     if (!m_endingForce) {
-      m_endingForce = std::make_shared<FrCatenaryForce>(GetName() + "_end_force", m_endingNode->GetBody(), this, LINE_END);
+      m_endingForce = std::make_shared<FrCatenaryForce>(GetName() + "_end_force", m_endingNode->GetBody(), this,
+                                                        LINE_END);
       auto ending_body = m_endingNode->GetBody();
       ending_body->AddExternalForce(m_endingForce);
     }

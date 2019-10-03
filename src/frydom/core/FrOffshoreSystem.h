@@ -214,24 +214,8 @@ namespace frydom {
     // Container: definition.
     using BodyContainer = std::vector<std::shared_ptr<FrBody>>;
     using LinkContainer = std::vector<std::shared_ptr<FrLinkBase>>;
-
     using PrePhysicsContainer = std::vector<std::shared_ptr<FrPrePhysicsItem>>;
-
     using FEAMeshContainer = std::vector<std::shared_ptr<FrFEAMesh>>;
-
-    // Iterators.
-    // TODO : bouger les iterateurs proches des methodes d'iteration...
-    using BodyIter          = BodyContainer::iterator;
-    using ConstBodyIter     = BodyContainer::const_iterator;
-
-    using LinkIter      = LinkContainer::iterator;
-    using ConstLinkIter = LinkContainer::const_iterator;
-
-    using PrePhysicsIter = PrePhysicsContainer::iterator;
-    using ConstPrePhysicsIter = PrePhysicsContainer::const_iterator;
-
-    using FEAMestIter = FEAMeshContainer::iterator;
-    using ConstFEAMestIter = FEAMeshContainer::const_iterator;
 
     // Container: list of objects.
     BodyContainer m_bodyList;   ///< list of bodies managed by this offshore system
@@ -268,10 +252,6 @@ namespace frydom {
 
     // ***** Body *****
 
-    /// Add a body to the offshore system
-    /// \param body body to add
-    void AddBody(std::shared_ptr<FrBody> body);
-
     /// Get the list of bodies added to the system
     /// \return List of the bodies added to the system
     BodyContainer &GetBodyList();
@@ -285,10 +265,6 @@ namespace frydom {
 
 
     // ***** Link *****
-
-    /// Add a link between bodies to the offshore system
-    /// \param link link to be added
-    void AddLink(std::shared_ptr<FrLinkBase> link);
 
     /// Get the list of links added to the system
     /// \return List of the links added to the system
@@ -304,10 +280,6 @@ namespace frydom {
 
     // ***** Pre Physics Item *****
 
-    /// Add other physics item to the offshore system
-    /// \param otherPhysics other physic item to be added
-    void AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem> otherPhysics);
-
     /// Get the list of pre physics items added to the system
     /// \return List of the pre physics items added to the system
     PrePhysicsContainer GetPrePhysicsItemList();
@@ -322,19 +294,11 @@ namespace frydom {
 
     // ***** FEAMesh *****
 
-    /// Add a FEA mesh to the offshore system
-    /// \param feaMesh FEA mesh to be added
-    void AddFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh);
-
     /// Get the list of fea meshes added to the system
     /// \return List of the fea meshes added to the system
     FEAMeshContainer GetFEAMeshList();
 
     void RemoveFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh);
-
-    /// Add a Dynamic Cable to the offshore system
-    /// \param cable dynamic cable to be added
-    void Add(std::shared_ptr<FrDynamicCable> cable);
 
     void Remove(std::shared_ptr<FrDynamicCable> cable);
 
@@ -715,6 +679,28 @@ namespace frydom {
     FrPathManager *GetPathManager() const;
 
 
+   public:
+
+    /// Add a body to the offshore system
+    /// \param body body to add
+    void AddBody(std::shared_ptr<FrBody> body);
+
+    /// Add a link between bodies to the offshore system
+    /// \param link link to be added
+    void AddLink(std::shared_ptr<FrLinkBase> link);
+
+    /// Add other physics item to the offshore system
+    /// \param otherPhysics other physic item to be added
+    void AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem> otherPhysics);
+
+    /// Add a FEA mesh to the offshore system
+    /// \param feaMesh FEA mesh to be added
+    void AddFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh);
+
+    /// Add a Dynamic Cable to the offshore system
+    /// \param cable dynamic cable to be added
+    void AddDynamicCable(std::shared_ptr<FrDynamicCable> cable);
+
    private:
 
     /// Create the world body (fixed body that span the world and where things may be attached) and
@@ -736,7 +722,20 @@ namespace frydom {
 
 
    public:
-    // Defining iterators
+
+    // Iterators.
+    // TODO : bouger les iterateurs proches des methodes d'iteration...
+    using BodyIter          = BodyContainer::iterator;
+    using ConstBodyIter     = BodyContainer::const_iterator;
+
+    using LinkIter      = LinkContainer::iterator;
+    using ConstLinkIter = LinkContainer::const_iterator;
+
+    using PrePhysicsIter = PrePhysicsContainer::iterator;
+    using ConstPrePhysicsIter = PrePhysicsContainer::const_iterator;
+
+    using FEAMestIter = FEAMeshContainer::iterator;
+    using ConstFEAMestIter = FEAMeshContainer::const_iterator;
 
     BodyIter body_begin();
 

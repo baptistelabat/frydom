@@ -18,7 +18,7 @@ namespace frydom {
                  actuatedLink->GetSystem(),
                  actuatedLink->GetNode1(),
                  actuatedLink->GetNode2()
-                 ),
+      ),
       m_actuatedLink(actuatedLink) {}
 
   bool FrActuator::IsDisabled() const {
@@ -28,14 +28,6 @@ namespace frydom {
   void FrActuator::SetDisabled(bool disabled) {
     GetChronoItem_ptr()->SetDisabled(disabled);
   }
-
-//    bool FrActuator::IsBroken() const {
-//        return m_chronoMotor->IsBroken();
-//    }
-//
-//    void FrActuator::SetBroken(bool broken) {
-//
-//    }
 
   bool FrActuator::IsActive() const {
     return true;
