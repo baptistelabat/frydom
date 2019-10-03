@@ -28,7 +28,7 @@ namespace frydom {
 
    public:
 
-    explicit FrLoggableBase() : m_log_this(true), m_path("") {}
+    explicit FrLoggableBase() : m_log_this(true) {}
 
     void LogThis(bool log) { m_log_this = log; }
 
@@ -41,9 +41,6 @@ namespace frydom {
     // FIXME : a-t-on besoin d'un GetName ??? Le nom vient de TreeNode !!
    private:
     bool m_log_this;
-
-   protected:
-    std::string m_path;
 
   };
 

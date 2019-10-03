@@ -28,6 +28,8 @@
 #include "frydom/core/link/links_lib/FrFixedLink.h"
 #include "frydom/logging/FrLogManager.h"
 
+#include "frydom/logging/FrPathManager.h"
+
 
 namespace frydom {
 
@@ -445,6 +447,7 @@ namespace frydom {
     /// This subroutine is used for adding the hydrodynamic loads.
     m_chronoBody->AddForce(force->GetChronoForce());  // FrBody is a friend class of FrForce
     m_externalForces.push_back(force);
+    GetSystem()->GetPathManager()->RegisterTreeNode(force.get());
 
   }
 
@@ -503,6 +506,7 @@ namespace frydom {
   std::shared_ptr<FrNode> FrBody::NewNode(const std::string &name) {
     auto node = std::make_shared<FrNode>(name, this);
     m_nodes.push_back(node);
+    GetSystem()->GetPathManager()->RegisterTreeNode(node.get());
     return node;
   }
 

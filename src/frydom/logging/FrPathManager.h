@@ -14,9 +14,10 @@
 
 #include <unordered_set>
 #include <typeinfo>
+#include <iostream>
 
-#include <frydom/core/common/FrTreeNode.h>
-#include "frydom/core/body/FrBody.h"
+//#include <frydom/core/common/FrTreeNode.h>
+//#include "frydom/core/body/FrBody.h"
 
 
 
@@ -25,6 +26,19 @@
 //#endif
 
 namespace frydom {
+
+  template<class ParentType>
+  class FrTreeNode;
+
+  class FrOffshoreSystem;
+
+  class FrBody;
+
+  class FrLink;
+
+  class FrForce;
+
+  class FrNode;
 
 
   class FrPathManager {
@@ -35,16 +49,30 @@ namespace frydom {
     ~FrPathManager() = default;
 
     template<class ParentType>
-    static std::string GetPath(const FrTreeNode <ParentType> *node) {
+    static std::string GetPath(const FrTreeNode<ParentType> *node) {
       if (!node) return "";
 
       return GetPath(node->GetParent()) + GetNormalizedPathName(node);
     }
 
     template<class ParentType>
-    static std::string GetPath(const FrTreeNode <ParentType> &node) {
+    static std::string GetPath(const FrTreeNode<ParentType> &node) {
       return GetPath(&node);
     }
+
+
+    template<class ParentType>
+    bool RegisterTreeNode(FrTreeNode<ParentType> *node) {
+      auto path = GetPath(node);
+
+      if (RegisterPath(path)) {
+        node->SetTreePath(path);
+        return true;
+      }
+      return false;
+    }
+
+   private:
 
     bool RegisterPath(const std::string &path) {
       if (HasPath(path)) return false;
@@ -54,15 +82,13 @@ namespace frydom {
     }
 
 
-   private:
-
     bool HasPath(const std::string &path) {
-      return m_used_paths.find(path) != m_used_paths.end();
+      return (m_used_paths.find(path) != m_used_paths.end());
     }
 
     /// Gives the normalized path of the node given a hard coded policy concerning the naming scheme.
     template<class ParentType>
-    static std::string GetNormalizedPathName(const FrTreeNode <ParentType> *node) {
+    static std::string GetNormalizedPathName(const FrTreeNode<ParentType> *node) {
 
       std::string path_name_prefix;
 

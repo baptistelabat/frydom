@@ -7,10 +7,9 @@
 
 #include <string>
 
+//#include "frydom/logging/FrPathManager.h"
+
 #include "FrObject.h"
-
-
-//#include "frydom/core/FrOffshoreSystem.h"
 
 
 namespace frydom {
@@ -27,8 +26,15 @@ namespace frydom {
       return m_name;
     }
 
+    void SetTreePath(const std::string &tree_path) {
+      m_tree_path = tree_path;
+    }
+
    private:
     std::string m_name;
+
+   protected:
+    std::string m_tree_path;
 
   };
 
@@ -69,6 +75,9 @@ namespace frydom {
 
    private:
     ParentType *m_parent = nullptr;
+
+
+//    friend FrPathManager::RegisterTreeNode(const FrTreeNode <ParentType> *);
 
   };
 

@@ -14,8 +14,6 @@ using namespace frydom;
 
 TEST(FrPathManager, path) {
 
-//int main() {
-
   FrOffshoreSystem system("test_FrPathManager");
 
   auto path_manager = system.GetPathManager();

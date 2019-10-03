@@ -169,9 +169,6 @@ namespace frydom {
     // Check compatibility between system contact model, time stepper and constraint solver
     CheckCompatibility();
 
-    // Creating a fixed world body to be able to attach anything to it (anchors...)
-    CreateWorldBody();
-
     // Creating the environment
     m_environment = std::make_unique<FrEnvironment>(this);
 
@@ -183,6 +180,9 @@ namespace frydom {
 
     // Creating the static analysis
     m_statics = std::make_unique<FrStaticAnalysis>(this);
+
+    // Creating a fixed world body to be able to attach anything to it (anchors...)
+    CreateWorldBody();
 
 //        m_message = std::make_unique<hermes::Message>();
 
@@ -1088,27 +1088,45 @@ namespace frydom {
     // BODY
     if (auto body = std::dynamic_pointer_cast<FrBody>(item)) {
       AddBody(body, body->GetChronoBody());
+      m_pathManager->RegisterTreeNode(body.get());
 
       // LINK
     } else if (auto link = std::dynamic_pointer_cast<FrLinkBase>(item)) {
       AddLink(link, link->GetChronoLink());
+      m_pathManager->RegisterTreeNode(link.get());
 
       //PHYSICS ITEM
     } else if (auto physics_item = std::dynamic_pointer_cast<FrPrePhysicsItem>(item)) {
       AddPhysicsItem(physics_item, physics_item->GetChronoPhysicsItem());
+//      m_pathManager->RegisterTreeNode(physics_item.get());
 
       // FEA MESH
     } else if (auto fea_mesh = std::dynamic_pointer_cast<FrFEAMesh>(item)) {
       AddFEAMesh(fea_mesh, fea_mesh->GetChronoMesh());
+//      m_pathManager->RegisterTreeNode(fea_mesh.get());
 
       // DYNAMIC CABLE
     } else if (auto dynamic_cable = std::dynamic_pointer_cast<FrDynamicCable>(item)) {
       AddDynamicCable(dynamic_cable, dynamic_cable->GetChronoMesh());
+      m_pathManager->RegisterTreeNode(dynamic_cable.get());
 
       // UNKNOWN
     } else {
       std::cerr << "Unknown object type " << std::endl;
       exit(EXIT_FAILURE);
+    }
+
+    // Registering the node into the PathManager to ensure unicity of the naming
+
+
+
+    if (auto loggable = std::dynamic_pointer_cast<FrLoggable>(item)) {
+//      loggable->m_tree_path = m_pathManager->GetPath(loggable.get());
+
+
+
+      // Adding item to FrLogManager
+
     }
 
   }
