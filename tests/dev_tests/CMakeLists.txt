@@ -10,7 +10,7 @@ set(REFACTORING_TESTS
 
 #include(Add_matplotlib-cpp)
 
-set(test_CylinderInteraction_resources_path ${CMAKE_SOURCE_DIR}/tests/data/CylinderInteraction/)
+set(test_cylinder_interaction_resources_path ${CMAKE_SOURCE_DIR}/tests/data/CylinderInteraction/)
 
 foreach(test ${REFACTORING_TESTS})
     message(STATUS "        ...add ${test}")

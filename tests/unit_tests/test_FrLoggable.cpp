@@ -12,8 +12,6 @@ TEST(FrLogManager, registering) {
 
   FrOffshoreSystem system("test_FrLoggable");
 
-//  auto path_manager = system.GetPathManager();
-
   auto body1 = system.NewBody("myBody1");
 
   auto node1 = body1->NewNode("myNode1");

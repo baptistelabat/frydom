@@ -3,6 +3,7 @@
 //
 
 #include "frydom/frydom.h"
+#include <cppfs/FilePath.h>
 
 using namespace frydom;
 
@@ -12,7 +13,7 @@ int main(int argc, char* argv[]) {
 
     // System
 
-    FrOffshoreSystem system;
+    FrOffshoreSystem system("test_cylinder_interaction");
 
     // Resources path
     cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
@@ -30,10 +31,10 @@ int main(int argc, char* argv[]) {
 
     // Bodies
 
-    auto cyl1 = system.NewBody();
+    auto cyl1 = system.NewBody("cylinder_1");
     cyl1->SetPosition(Position(0., -0.4, 0.), NWU);
 
-    auto cyl2 = system.NewBody();
+    auto cyl2 = system.NewBody("cylinder_2");
     cyl2->SetPosition(Position(0., +0.4, 0.), NWU);
 
     double mass = 12.88;
@@ -54,25 +55,25 @@ int main(int argc, char* argv[]) {
 
     auto hdb = make_hydrodynamic_database(resources_path.resolve("CylinderInteraction.hdb5").path());
 
-    auto eqFrame1 = make_equilibrium_frame(cyl1, &system);
-    auto eqFrame2 = make_equilibrium_frame(cyl2, &system);
+    auto eqFrame1 = make_equilibrium_frame("eq_frame_cylinder_1", cyl1, &system);
+    auto eqFrame2 = make_equilibrium_frame("eq_frame_cylinder_2", cyl2, &system);
 
     hdb->Map(0, cyl1.get(), eqFrame1);
     hdb->Map(1, cyl2.get(), eqFrame2);
 
-    auto radiationModel = make_radiation_convolution_model(hdb, &system);
+    auto radiationModel = make_radiation_convolution_model("HDB", &system, hdb);
     radiationModel->SetImpulseResponseSize(cyl1.get(), 8., 0.01);
     radiationModel->SetImpulseResponseSize(cyl2.get(), 8., 0.01);
 
     // Hydrostatic
 
-    auto forceHst1 = make_linear_hydrostatic_force(hdb, cyl1);
-    auto forceHst2 = make_linear_hydrostatic_force(hdb, cyl2);
+    auto forceHst1 = make_linear_hydrostatic_force("linear_hydrostatics", cyl1, hdb);
+    auto forceHst2 = make_linear_hydrostatic_force("linear_hydrostatics", cyl2, hdb);
 
     // Excitation
 
-    auto excitation1 = make_linear_excitation_force(hdb, cyl1);
-    auto excitation2 = make_linear_excitation_force(hdb, cyl2);
+    auto excitation1 = make_linear_excitation_force("linear_excitation", cyl1, hdb);
+    auto excitation2 = make_linear_excitation_force("linear_excitation", cyl2, hdb);
 
     // Simulation
 
@@ -103,8 +104,6 @@ int main(int argc, char* argv[]) {
         std::cout << "Position cyl2 : " << cyl2->GetPosition(NWU).GetX() << ";"
                                         << cyl2->GetPosition(NWU).GetY() << ";"
                                         << cyl2->GetPosition(NWU).GetZ() << std::endl;
-
-
 
     }
 
