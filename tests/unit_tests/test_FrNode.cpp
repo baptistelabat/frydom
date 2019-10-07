@@ -38,7 +38,7 @@ TEST(FrNode,Position) {
     /// Create a node from a position given in body reference frame;
     Position NodePositionInBody(6.,2.,4.);
 
-    auto node = body->NewNode();
+    auto node = body->NewNode("myNode");
     node->SetPositionInBody(NodePositionInBody, fc);
 
     /// test GetBody
@@ -108,7 +108,7 @@ TEST(FrNode,Position) {
     NodeFrame.SetPosition(NodePositionInBody,fc);
     NodeFrame.SetRotation(NodeRotation);
 
-    auto node2 = body->NewNode();
+    auto node2 = body->NewNode("myOtherNode");
     node2->SetFrameInBody(NodeFrame);
 
     /// test GetFrame

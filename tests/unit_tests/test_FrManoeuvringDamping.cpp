@@ -27,6 +27,12 @@ protected:
 
 public:
 
+  TestManDampingTaylorExpansion() :
+  system("TestManDampingTaylorExpansion"),
+  body(std::make_shared<FrBody>("Body", &system)),
+  force(std::make_shared<FrManDampingTaylorExpansion>("ManDampingForce", body.get())) {}
+
+
     void CheckForce(Force forceRef, Torque torqueRef) const {
         force->Update(0.);
         auto worldForce = force->GetForceInWorld(NWU);
@@ -42,8 +48,8 @@ public:
 };
 
 void TestManDampingTaylorExpansion::SetUp() {
-    body = system.NewBody();
-    force = std::make_shared<FrManDampingTaylorExpansion>();
+    body = system.NewBody("Body");
+    force = std::make_shared<FrManDampingTaylorExpansion>("ManDampingForce", body.get());
     body->AddExternalForce(force);
 }
 
