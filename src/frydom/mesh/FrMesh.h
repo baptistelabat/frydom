@@ -28,6 +28,7 @@ using namespace OpenMesh;
 namespace frydom {
 
     class FrInertiaTensor;
+    class FrTriangleMeshConnected;
 
     namespace mesh {
 
@@ -100,6 +101,8 @@ namespace frydom {
 
             /// Write the file in an output file, by incrementing it
             void WriteInc();
+
+            std::shared_ptr<frydom::FrTriangleMeshConnected> ConvertToTriangleMeshConnected();
 
 
             /// This function updates all properties of faces and vertices (normals, centroids, surface integrals).

@@ -18,6 +18,7 @@
 #include "frydom/core/link/constraint/FrCGeometrical.h"
 #include "FrTriangleMeshConnected.h"
 #include "frydom/asset/shape/FrTriangleMeshShape.h"
+#include "frydom/utils/FrIrrApp.h"
 
 namespace frydom {
 
@@ -133,11 +134,24 @@ namespace frydom {
         FrObject::StepFinalize();
         
         if (m_showAsset) {
-            m_clippedMesh.Write("temp_mesh.obj");
-            
+
+            // Remove former asset
             RemoveAssets();
 
-            AddMeshAsset("temp_mesh.obj");
+            // Get the clipped mesh and translate it to the horizontal body position
+            auto tempMesh = m_clippedMesh;
+            auto bodyPos = m_body->GetPosition(NWU); bodyPos.GetZ() = 0.;
+            tempMesh.Translate(mesh::Vector3dToOpenMeshPoint(bodyPos));
+
+            // Convert the clipped mesh to FrTriangleMeshConnected and add it to the asset owner
+            auto triangleMesh = tempMesh.ConvertToTriangleMeshConnected();
+            AddMeshAsset(triangleMesh);
+
+            // Bind and update the new asset
+            auto irrApp = GetSystem()->GetIrrApp();
+            irrApp->AssetBind(GetChronoPhysicsItem());
+            irrApp->AssetUpdate(GetChronoPhysicsItem());
+
         }
   }
 

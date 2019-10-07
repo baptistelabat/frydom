@@ -15,6 +15,7 @@
 #include "FrPolygon.h"
 #include "frydom/core/body/FrInertiaTensor.h"
 #include "frydom/core/link/constraint/FrCGeometrical.h"
+#include "FrTriangleMeshConnected.h"
 
 namespace frydom {
     namespace mesh {
@@ -400,6 +401,33 @@ namespace frydom {
 
         void FrMesh::WriteInc() {
             m_writer(*this);
+        }
+
+        std::shared_ptr<frydom::FrTriangleMeshConnected> FrMesh::ConvertToTriangleMeshConnected() {
+
+            auto triangleMesh = std::make_shared<FrTriangleMeshConnected>();
+
+            for (auto v_iter=vertices_begin(); v_iter!= vertices_end(); v_iter ++) {
+                auto vertex = OpenMeshPointToVector3d<Position>(point(*v_iter));
+                triangleMesh->addVertex(internal::Vector3dToChVector(vertex));
+            }
+
+            for (auto f_iter=faces_begin(); f_iter!=faces_end(); f_iter++) {
+                               
+                chrono::ChVector<> connectivity;
+                auto fv = fv_iter(*f_iter);
+
+                int i=0;
+                for (; fv.is_valid(); ++fv) {
+                    connectivity[i] = fv->idx();
+                    i++;
+                }
+
+                triangleMesh->addTriangle(connectivity);
+            }
+
+
+            return triangleMesh;
         }
 
         void FrMesh::UpdateAllProperties() {

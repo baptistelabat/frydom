@@ -103,7 +103,6 @@ int main(int argc, char* argv[]) {
     } else {
         // Nonlinear hydrostatics
         auto bodyMesh = make_hydro_mesh(body,resources_path.resolve("box_385.obj").path(),FrFrame(),FrHydroMesh::ClippingSupport::PLANESURFACE);
-        bodyMesh->ShowAsset(true);
         //bodyMesh->GetInitialMesh().Write("Mesh_Initial.obj");
         auto forceHst = make_nonlinear_hydrostatic_force(body,bodyMesh);
     }
