@@ -43,8 +43,8 @@ namespace frydom {
             POLY_X2Y,
             POLY_Y2Z,
             POLY_Z2X,
-            INFINITE_DEPTH_GREEN_FUNCTION, // TODO : en parler avec Camille et Lucas et PYW
-            FINITE_DEPTH_GREEN_FUNCTION
+//            INFINITE_DEPTH_GREEN_FUNCTION, // TODO : en parler avec Camille et Lucas et PYW
+//            FINITE_DEPTH_GREEN_FUNCTION
         };
 
         enum VertexPosition {  // N'a a priori de sens que lors de la decoupe... Mettre dans FrMeshClipper ?
@@ -167,6 +167,11 @@ namespace frydom {
                             return m_integrals.m_int_y2z;
                         case POLY_Z2X:
                             return m_integrals.m_int_z2x;
+                        case UNDEFINED_INTEGRAND:
+                            std::cerr << "Cannot return value of an UNDEFINED_INTEGRAND" << std::endl;
+                            break;
+                        default:
+                            throw std::runtime_error("Cannot return value of an UNDEFINED_INTEGRAND");
                     }
                 }
 
@@ -223,6 +228,8 @@ namespace frydom {
                         case UNDEFINED_INTEGRAND:
                             std::cerr << "Cannot return value of an UNDEFINED_INTEGRAND" << std::endl;
                             break;
+                        default:
+                            throw std::runtime_error("Cannot return value of an UNDEFINED_INTEGRAND");
                     }
                 }
 

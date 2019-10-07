@@ -61,6 +61,7 @@ namespace frydom {
                     theta_max=theta_result;
             }
         }
+        throw FrException("FrWaveDirectionalModel::dichotomySearch no convergence");
     }
 
     // FrCos2sDirectionalModel descriptions
@@ -312,6 +313,7 @@ namespace frydom {
                     wmax=wresult;
             }
         }
+        throw FrException("FrWaveSpectrum::dichotomySearch no convergence");
     }
 
     // =================================================================================================================

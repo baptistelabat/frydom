@@ -120,7 +120,7 @@ namespace frydom {
         auto eqFrame = m_hdb->GetMapper()->GetEquilibriumFrame(BEMBody);
 
         double phi, theta, psi;
-        eqFrame->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
+        eqFrame->GetFrameInWorld().GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
 
         for (auto& val: waveDir) { val -= psi; }
 

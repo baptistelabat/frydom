@@ -10,8 +10,8 @@
 // ==========================================================================
 
 
-#ifndef FRYDOM_FRLINEAREXCITATIONFORCEBASE_H
-#define FRYDOM_FRLINEAREXCITATIONFORCEBASE_H
+#ifndef FRYDOM_FRLINEARHDBFORCE_H
+#define FRYDOM_FRLINEARHDBFORCE_H
 
 #include "frydom/core/math/FrVector.h"
 #include "MathUtils/Interp1d.h"
@@ -21,13 +21,13 @@ namespace frydom {
 
     // Forward declarations.
     class FrHydroDB;
-    class FrEquilibriumFrame;
 
     /**
-     * \class FrLinearExcitationForce
-     * \brief Class for defining a linear excitation force (linear or nonlinear).
+     * \class FrLinearHDBForce
+     * \brief Virtual class for defining a hydrodynamic linear model force :
+     * see FrLinearDiffractionForce, FrLinearExcitationForce, FrLinearFroudeKrylovForce, for derived implementations.
      */
-    class FrLinearExcitationForceBase : public FrForce {
+    class FrLinearHDBForce : public FrForce {
 
     protected:
 
@@ -37,37 +37,35 @@ namespace frydom {
         /// Hydrodynamic database.
         std::shared_ptr<FrHydroDB> m_HDB;
 
-        /// Excitation loads (linear excitation) or diffraction loads (nonlinear excitation).
+        /// Hydrodynamic components.
         std::vector<Eigen::MatrixXcd> m_Fhdb;
-
-        //TODO: passed the raw to shared ptr, need some modif in the mapper.
-        FrEquilibriumFrame* m_equilibriumFrame;
-
-        /// Excitation or diffraction force.
-        Force m_WorldForce = Force();
-
-        /// Excitation or diffraction torque.
-        Torque m_WorldTorque = Torque();
 
 
     public:
 
         /// Constructor.
-        explicit FrLinearExcitationForceBase(std::shared_ptr<FrHydroDB> HDB) : m_HDB(HDB) {};
+        explicit FrLinearHDBForce(const std::shared_ptr<FrHydroDB>& HDB) : m_HDB(HDB) {};
 
-        virtual Eigen::MatrixXcd GetHDBData(const unsigned int iangle) const = 0;
+        virtual Eigen::MatrixXcd GetHDBData(unsigned int iangle) const = 0;
 
-        virtual Eigen::VectorXcd GetHDBData(const unsigned int iangle, const unsigned iforce) const = 0;
+        virtual Eigen::VectorXcd GetHDBData(unsigned int iangle, unsigned iforce) const = 0;
 
-        /// This function interpolates the excitation loads (linear excitation) or the diffraction loads (nonlinear excitation) with respect to the wave frequencies and directions.
+        /// Build the interpolators between hydrodynamic components and wave frequency and direction discretizations
         virtual void BuildHDBInterpolators();
 
         /// This function return the excitation force (linear excitation) or the diffraction force (nonlinear excitation) form the interpolator.
+        /// Interpolates the hydrodynamic components with respect to the wave frequency and directions discretizations given
+        /// \param waveFrequencies wave frequency discretization
+        /// \param waveDirections wave direction discretization
+        /// \return interpolation of the hydrodynamic component
         std::vector<Eigen::MatrixXcd> GetHDBInterp(std::vector<double> waveFrequencies,
-                                                          std::vector<double> waveDirections,
-                                                          mathutils::ANGLE_UNIT angleUnit);
+                                                          std::vector<double> waveDirections);
 
         void Initialize() override;
+
+    protected:
+
+        void Compute(double time) override;
 
         /// This function computes the excitation loads (linear excitation) or the diffraction loads (nonlinear excitation).
         void Compute_F_HDB();
@@ -77,4 +75,4 @@ namespace frydom {
 
 } // end namespace frydom
 
-#endif //FRYDOM_FRLINEAREXCITATIONFORCEBASE_H
+#endif //FRYDOM_FRLINEARHDBFORCE_H

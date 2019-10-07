@@ -159,3 +159,25 @@ TEST(FrFrame,PositionAndRotation){
     EXPECT_TRUE(testTransfInv.GetRotation() == testTransf.GetRotation());
 
 }
+
+TEST(FrFrame,ProjectVectors) {
+    // Frame Convention
+    FRAME_CONVENTION fc = NED;
+
+    // Frame to test
+    FrFrame frame;
+
+    frame.RotZ_DEGREES(90.,fc,false);
+
+    Direction north = NORTH(fc);
+    Direction west = WEST(fc);
+
+//    std::cout<<"north"<<frame.ProjectVectorFrameInParent(north,fc)<<std::endl;
+//    std::cout<<"west"<<frame.ProjectVectorFrameInParent(west,fc)<<std::endl;
+
+    Direction testDirection = frame.ProjectVectorFrameInParent(north,fc) - Direction(0.,1.,0.);
+    EXPECT_TRUE(testDirection.isZero());
+
+    testDirection = frame.ProjectVectorParentInFrame(Direction(0.,1.,0.),fc) - north;
+    EXPECT_TRUE(testDirection.isZero());
+}

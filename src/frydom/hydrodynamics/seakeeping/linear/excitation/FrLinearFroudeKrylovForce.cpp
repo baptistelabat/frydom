@@ -19,13 +19,6 @@
 
 namespace frydom {
 
-    void FrLinearFroudeKrylovForce::Initialize() {
-
-        // Initialization of the parent class.
-        FrLinearExcitationForceBase::Initialize();
-
-    }
-
     Eigen::MatrixXcd FrLinearFroudeKrylovForce::GetHDBData(unsigned int iangle) const {
 
         auto BEMBody = m_HDB->GetBody(m_body);
@@ -40,13 +33,6 @@ namespace frydom {
 
         return BEMBody->GetFroudeKrylov(iangle,iforce);
 
-    }
-
-    void FrLinearFroudeKrylovForce::Compute(double time) {
-
-        // This function computes the linear Froude-Krylov forces from Nemoh results.
-
-        Compute_F_HDB();
     }
 
     std::shared_ptr<FrLinearFroudeKrylovForce>

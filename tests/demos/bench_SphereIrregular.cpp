@@ -174,8 +174,8 @@ int main(int argc, char* argv[]) {
 
     auto hdb = make_hydrodynamic_database(system.GetDataPath("sphere_hdb.h5"));
 
-    auto eqFrame = std::make_shared<FrEquilibriumFrame>(body.get());
-    system.AddPhysicsItem(eqFrame);
+    auto eqFrame = make_equilibrium_frame(body, &system);
+
 
     hdb->Map(0, body.get(), eqFrame);
 

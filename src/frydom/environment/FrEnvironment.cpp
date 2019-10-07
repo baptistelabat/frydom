@@ -83,6 +83,8 @@ namespace frydom {
                 return m_atmosphere->GetDensity();
             case WATER:
                 return m_ocean->GetDensity();
+            default:
+                throw FrException("Fluid is not known...");
         }
     }
 

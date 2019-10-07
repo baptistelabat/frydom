@@ -7,7 +7,7 @@
 
 #include "FrLinearExcitationForce.h"
 #include "FrNonLinearFroudeKrylovForce.h"
-#include "FrLinearExcitationForceBase.h"
+#include "FrLinearHDBForce.h"
 #include "FrLinearDiffractionForce.h"
 #include "FrLinearFroudeKrylovForce.h"
 

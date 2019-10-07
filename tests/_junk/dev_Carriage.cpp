@@ -114,8 +114,8 @@ int main() {
     // Hydrodynamic Database
 //    auto hdb = make_hydrodynamic_database("DTMB5512.h5");
 
-    auto eqFrame = std::make_shared<FrEquilibriumFrame>(ship.get());
-    system.AddPhysicsItem(eqFrame);
+    auto eqFrame = make_equilibrium_frame(ship.get());
+
 
 //    hdb->Map(0,ship.get(),eqFrame);
 

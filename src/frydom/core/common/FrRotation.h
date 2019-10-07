@@ -633,9 +633,16 @@ namespace frydom {
         }
 
         /// Swap the frame convention (NED/NWU) of a ChQuaternion
-        inline chrono::ChQuaternion<double>& SwapChQuaternionFrameConvention(chrono::ChQuaternion<double>& quat) {
-            quat.e2() = quat.e2();
-            quat.e3() = quat.e3();
+        inline void SwapChQuaternionFrameConvention(chrono::ChQuaternion<double>& quat) {
+            quat.e2() = -quat.e2();
+            quat.e3() = -quat.e3();
+        }
+
+        /// Swap the frame convention (NED/NWU) of a ChQuaternion
+        inline chrono::ChQuaternion<double> SwapChQuaternionFrameConvention(const chrono::ChQuaternion<double>& quat) {
+            auto quaternion = quat;
+            SwapChQuaternionFrameConvention(quaternion);
+            return quaternion;
         }
 
     }  // end namespace frydom::internal

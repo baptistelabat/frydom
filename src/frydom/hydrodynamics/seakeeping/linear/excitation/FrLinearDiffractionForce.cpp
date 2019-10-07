@@ -19,13 +19,6 @@
 
 namespace frydom {
 
-    void FrLinearDiffractionForce::Initialize() {
-
-        // Initialization of the parent class.
-        FrLinearExcitationForceBase::Initialize();
-
-    }
-
     Eigen::MatrixXcd FrLinearDiffractionForce::GetHDBData(unsigned int iangle) const {
 
         auto BEMBody = m_HDB->GetBody(m_body);
@@ -39,14 +32,6 @@ namespace frydom {
         auto BEMBody = m_HDB->GetBody(m_body);
 
         return BEMBody->GetDiffraction(iangle,iforce);
-
-    }
-
-    void FrLinearDiffractionForce::Compute(double time) {
-
-        // This function computes the linear diffraction forces from Nemoh results.
-
-        Compute_F_HDB();
 
     }
 
