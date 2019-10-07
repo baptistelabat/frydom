@@ -370,7 +370,7 @@ namespace frydom {
     return m_worldBody;
   }
 
-  std::shared_ptr<FrNode> FrOffshoreSystem::NewWorldFixedNode(const std::string& name) {
+  std::shared_ptr<FrNode> FrOffshoreSystem::NewWorldFixedNode(const std::string &name) {
     return m_worldBody->NewNode(name);
   }
 
@@ -428,10 +428,30 @@ namespace frydom {
   }
 
   void FrOffshoreSystem::InitializeLog() {
-    // TODO : initaliser les logs de This !
 
+    // Solver related messages
 
+    auto msg = NewMessage("Solver_message", "Messages relative to the dynamic solver and constraint solvers");
 
+    msg->AddField<double>("time", "s", "Current time of the simulation", [this]() { return GetTime(); });
+
+    msg->AddField<int>("iter", "", "number of total iterations taken by the solver", [this]() {
+      return dynamic_cast<chrono::ChIterativeSolver *>(m_chronoSystem->GetSolver().get())->GetTotalIterations();
+    });
+
+    if (dynamic_cast<chrono::ChIterativeSolver *>(m_chronoSystem->GetSolver().get())->GetRecordViolation()) {
+
+      msg->AddField<double>("violationResidual", "", "constraint violation", [this]() {
+        return dynamic_cast<chrono::ChIterativeSolver *>(m_chronoSystem->GetSolver().get())->GetViolationHistory().back();
+      });
+
+      msg->AddField<double>("LagrangeResidual", "", "maximum change in Lagrange multipliers", [this]() {
+        return dynamic_cast<chrono::ChIterativeSolver *>(m_chronoSystem->GetSolver().get())->GetDeltalambdaHistory().back();
+      });
+
+    }
+
+    // Initialize the logs of the different loggable objects registered into the log manager
     if (!m_isInitialized) m_LogManager->Initialize();
   }
 
