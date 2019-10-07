@@ -413,9 +413,9 @@ namespace frydom {
 
     m_chronoSystem->Update();
 
-    m_isInitialized = true;
-
     m_LogManager->Initialize();
+
+    m_isInitialized = true;
 
   }
 
@@ -446,8 +446,6 @@ namespace frydom {
     msg->Initialize();
     msg->Send();
 
-    // Initialize the logs of the different loggable objects registered into the log manager
-    if (!m_isInitialized) m_LogManager->Initialize();
   }
 
   void FrOffshoreSystem::StepFinalize() {

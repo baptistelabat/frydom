@@ -14,24 +14,32 @@ namespace frydom {
 
 
   FrLogManager::FrLogManager(FrOffshoreSystem *system) :
-      m_log_folder(InitializeLogFolder()),
-      m_system(system) {}
+      m_log_folder(InitializeLogFolder()) {
+    Add(system);
+  }
 
   FrLogManager::FrLogManager(const std::string &log_folder, FrOffshoreSystem *system) :
-      m_system(system),
-      m_log_folder(log_folder) {}
+      m_log_folder(log_folder) {
+    Add(system);
+  }
 
   const std::string FrLogManager::GetLogFolder() const {
     return m_log_folder;
   }
 
-  void FrLogManager::Add(std::shared_ptr<FrLoggableBase> obj) {
-    if (!Has(obj)) {
-      m_loggable_list.push_back(obj);
-    }
+  void FrLogManager::Add(const std::shared_ptr<FrLoggableBase>& obj) {
+    Add(obj.get());
   }
 
-  void FrLogManager::Remove(std::shared_ptr<FrLoggableBase> obj) {
+  void FrLogManager::Add(FrLoggableBase* obj) {
+    if (!Has(obj)) m_loggable_list.push_back(obj);
+  }
+
+  void FrLogManager::Remove(const std::shared_ptr<FrLoggableBase>& obj) {
+    Remove(obj.get());
+  }
+
+  void FrLogManager::Remove(FrLoggableBase* obj) {
     auto it = std::find(m_loggable_list.begin(), m_loggable_list.end(), obj);
 
     // Remove if present
@@ -40,7 +48,7 @@ namespace frydom {
     }
   }
 
-  bool FrLogManager::Has(std::shared_ptr<FrLoggableBase> obj) const {
+  bool FrLogManager::Has(FrLoggableBase* obj) const {
     return (std::find(m_loggable_list.begin(), m_loggable_list.end(), obj) != m_loggable_list.end());
   }
 
@@ -67,8 +75,6 @@ namespace frydom {
   }
 
   void FrLogManager::Initialize() {
-    m_system->InitializeLog();
-
     for (auto &obj : m_loggable_list) {
       obj->InitializeLog();
     }
@@ -86,7 +92,7 @@ namespace frydom {
     }
   }
 
-  int FrLogManager::GetNumberOfLoggables() const {
+  unsigned int FrLogManager::GetNumberOfLoggables() const {
     return m_loggable_list.size();
   }
 

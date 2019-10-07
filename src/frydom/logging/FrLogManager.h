@@ -28,11 +28,15 @@ namespace frydom {
 
     const std::string GetLogFolder() const;
 
-    void Add(std::shared_ptr<FrLoggableBase> obj);
+    void Add(const std::shared_ptr<FrLoggableBase>& obj);
 
-    void Remove(std::shared_ptr<FrLoggableBase> obj);
+    void Add(FrLoggableBase* obj);
 
-    int GetNumberOfLoggables() const;
+    void Remove(const std::shared_ptr<FrLoggableBase>& obj);
+
+    void Remove(FrLoggableBase* obj);
+
+    unsigned int GetNumberOfLoggables() const;
 
     void Initialize();
 
@@ -42,7 +46,7 @@ namespace frydom {
 
 
    private:
-    bool Has(std::shared_ptr<FrLoggableBase> obj) const;
+    bool Has(FrLoggableBase* obj) const;
 
     std::string InitializeLogFolder();
 
@@ -50,10 +54,7 @@ namespace frydom {
    private:
     std::string m_log_folder;
 
-    std::list<std::shared_ptr<FrLoggableBase>> m_loggable_list;
-
-    FrOffshoreSystem* m_system;
-
+    std::list<FrLoggableBase*> m_loggable_list;
 
   };
 

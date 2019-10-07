@@ -18,11 +18,11 @@ TEST(FrLogManager, registering) {
 
   auto force1 = make_manoeuvring_model("man_model", body1);
 
-  ASSERT_TRUE(system.GetLogManager()->GetNumberOfLoggables() == 4); // The 3 loggables created above + world body
+  ASSERT_TRUE(system.GetLogManager()->GetNumberOfLoggables() == 5); // The 3 loggables created above + world body + system
 
   system.Remove(body1);
 
-  ASSERT_TRUE(system.GetLogManager()->GetNumberOfLoggables() == 1); // It only remains the world body
+  ASSERT_TRUE(system.GetLogManager()->GetNumberOfLoggables() == 2); // It only remains the world body + system
 
   system.InitializeLog();
 
