@@ -93,26 +93,6 @@ namespace frydom{
 
         auto it0 = std::find(assets.begin(), assets.end(), asset);
         assets.erase(it0);
-
-        // Remove irrlicht node asset
-
-        std::shared_ptr<chrono::irrlicht::ChIrrNodeAsset> myirrasset;
-
-        for (unsigned int k =0; k < assets.size(); k++) {
-            std::shared_ptr<chrono::ChAsset> k_asset = assets[k];
-            myirrasset = std::dynamic_pointer_cast<chrono::irrlicht::ChIrrNodeAsset>(k_asset);
-        }
-
-        if (myirrasset) {
-            //auto it = std::find(assets.begin(), assets.end(), myirrasset);
-            //if (it != assets.end())
-            //    assets.erase(it);
-            //dynamic_cast<chrono::irrlicht::ChIrrNode*>(myirrasset->GetIrrlichtNode())->UpdateAssetsProxies();
-            //myirrasset->GetIrrlichtNode()->removeAll();
-            //myirrasset->Update(GetChronoItem_ptr(), GetChronoItem_ptr()->GetAssetsFrame().GetCoord());
-        }
-
-
     }
 
     FrAssetOwner::BoxShapeConstContainer FrAssetOwner::GetBoxShapes() const {
