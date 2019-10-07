@@ -16,6 +16,8 @@
 
 #include "frydom/core/body/FrBody.h"
 #include "frydom/core/link/constraint/FrCGeometrical.h"
+#include "FrTriangleMeshConnected.h"
+#include "frydom/asset/shape/FrTriangleMeshShape.h"
 
 namespace frydom {
 
@@ -127,7 +129,19 @@ namespace frydom {
         return m_clippingSupport;
     }
 
-    std::shared_ptr<FrHydroMesh> make_hydro_mesh(const std::shared_ptr<FrBody>& body, FrHydroMesh::ClippingSupport support) {
+  void FrHydroMesh::StepFinalize() {
+        FrObject::StepFinalize();
+        
+        if (m_showAsset) {
+            m_clippedMesh.Write("temp_mesh.obj");
+            
+            RemoveAssets();
+
+            AddMeshAsset("temp_mesh.obj");
+        }
+  }
+
+  std::shared_ptr<FrHydroMesh> make_hydro_mesh(const std::shared_ptr<FrBody>& body, FrHydroMesh::ClippingSupport support) {
 
         auto hydroMesh = std::make_shared<FrHydroMesh>(body->GetSystem(), body, support);
 

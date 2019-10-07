@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
 
     std::cout << " ===================================================== \n"
                  " Benchmark test : Nonlinear hydrostatics on a box \n"
-                 " ===================================================== " << std::endl;
+                 " ===================================================== \n" << std::endl;
 
     cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
 
@@ -92,6 +92,8 @@ int main(int argc, char* argv[]) {
     auto mass = L * H * B * c * system.GetEnvironment()->GetFluidDensity(WATER);
     makeItBox(body,L,B,H,mass);
 
+    body->RemoveAssets();
+
     bool linear = false;
     if (linear) {
         // -- Linear hydrostatics
@@ -101,6 +103,7 @@ int main(int argc, char* argv[]) {
     } else {
         // Nonlinear hydrostatics
         auto bodyMesh = make_hydro_mesh(body,resources_path.resolve("box_385.obj").path(),FrFrame(),FrHydroMesh::ClippingSupport::PLANESURFACE);
+        bodyMesh->ShowAsset(true);
         //bodyMesh->GetInitialMesh().Write("Mesh_Initial.obj");
         auto forceHst = make_nonlinear_hydrostatic_force(body,bodyMesh);
     }
