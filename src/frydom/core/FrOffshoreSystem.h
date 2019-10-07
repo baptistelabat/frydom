@@ -333,6 +333,7 @@ namespace frydom {
 
     // Logging
 
+    void InitializeLog() override;
 //        /// Initialize the logs (log files and folders creation)
 //        void InitializeLog_Dependencies(const std::string& path); // FIXME : on a pas vraiment besoin de cette separation
 //

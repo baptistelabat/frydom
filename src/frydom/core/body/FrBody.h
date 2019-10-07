@@ -207,14 +207,16 @@ namespace frydom {
     /// Return true if the body is included in the static analysis
     bool IncludedInStaticAnalysis() const { return true; }
 
-//      // =============================================================================================================
-//      // LOGGING
-//      // =============================================================================================================
-//
+    // =============================================================================================================
+    // LOGGING
+    // =============================================================================================================
+
 //      void InitializeLog_Dependencies(const std::string &bodyPath) override;
-//
-//     protected:
-//
+
+   protected:
+
+    void InitializeLog() override;
+
 //      void AddFields() override;
 
    public:

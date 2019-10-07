@@ -19,7 +19,7 @@
 #include "hermes/hermes.h"
 
 #include "frydom/core/common/FrTreeNode.h"
-//#include "FrLoggableBase.h"
+
 
 namespace frydom {
 
@@ -38,9 +38,17 @@ namespace frydom {
 
     virtual void FinalizeLog() = 0;
 
+   protected:
+    hermes::Message* NewMessage(const std::string& name, const std::string& description) {
+      m_messages.emplace_back(std::make_unique<hermes::Message>(name, description));
+      return m_messages.back().get();
+    }
+
     // FIXME : a-t-on besoin d'un GetName ??? Le nom vient de TreeNode !!
    private:
     bool m_log_this;
+
+    std::vector<std::unique_ptr<hermes::Message>> m_messages;
 
   };
 

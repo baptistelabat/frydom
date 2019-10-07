@@ -411,6 +411,8 @@ namespace frydom {
       item->Initialize();
     }
 
+    InitializeLog();
+
     m_chronoSystem->Update();
 
 
@@ -423,6 +425,14 @@ namespace frydom {
 
     m_isInitialized = true;
 
+  }
+
+  void FrOffshoreSystem::InitializeLog() {
+    // TODO : initaliser les logs de This !
+
+
+
+    if (!m_isInitialized) m_LogManager->Initialize();
   }
 
   void FrOffshoreSystem::StepFinalize() {

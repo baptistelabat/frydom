@@ -983,85 +983,66 @@ namespace frydom {
     return m_DOFMask.get();
   }
 
-//    void FrBody::InitializeLog_Dependencies(const std::string &bodyPath) {
-//
-////        if (IsLogged()) {
-////
-////            // Initializing forces
-////            for (const auto& force : m_externalForces){
-////                force->SetPathManager(GetPathManager());
-////                force->InitializeLog(bodyPath);
-////            }
-////
-////            // Initializing nodes
-////            for (const auto &node : m_nodes) {
-////                node->SetPathManager(GetPathManager());
-////                node->InitializeLog(bodyPath);
-////            }
-////
-////        }
-//
-//    }
-//
-//    void FrBody::AddFields() {
-//
-////        m_message->AddField<double>("Time", "s", "Current time of the simulation",
-////                                    [this]() { return m_system->GetTime(); });
-////
-////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                ("Position","m", fmt::format("body position in the world reference frame in {}", GetLogFrameConvention()),
-////                 [this]() {return GetPosition(GetLogFrameConvention());});
-////
-////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                ("COGPositionInWorld","m", fmt::format("COG body position in the world reference frame in {}", GetLogFrameConvention()),
-////                 [this]() {return GetCOGPositionInWorld(GetLogFrameConvention());});
-////
-////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                ("CardanAngles","rad", fmt::format("body orientation in the world reference frame in {}", GetLogFrameConvention()),
-////                 [this]() {double phi, theta, psi ; GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, GetLogFrameConvention());
-////                     return Vector3d<double> (phi,theta,psi);});
-////
-////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                ("LinearVelocityInWorld","m/s", fmt::format("body linear velocity in the world reference frame in {}", GetLogFrameConvention()),
-////                 [this]() {return GetLinearVelocityInWorld(GetLogFrameConvention());});
-////
-////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                ("COGLinearVelocityInWorld","m/s", fmt::format("COG body linear velocity in the world reference frame in {}", GetLogFrameConvention()),
-////                 [this]() {return GetCOGLinearVelocityInWorld(GetLogFrameConvention());});
-////
-////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                ("AngularVelocityInWorld","rad/s", fmt::format("body angular velocity in the world reference frame in {}", GetLogFrameConvention()),
-////                 [this]() {return GetAngularVelocityInWorld(GetLogFrameConvention());});
-////
-////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                ("LinearAccelerationInWorld","m/s2", fmt::format("body linear acceleration in the world reference frame in {}", GetLogFrameConvention()),
-////                 [this]() {return GetLinearAccelerationInWorld(GetLogFrameConvention());});
-////
-////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                ("COGLinearAccelerationInWorld","m/s2", fmt::format("COG body linear acceleration in the world reference frame in {}", GetLogFrameConvention()),
-////                 [this]() {return GetCOGLinearAccelerationInWorld(GetLogFrameConvention());});
-////
-////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                ("AngularAccelerationInWorld","rad/s2", fmt::format("body angular acceleration in the world reference frame in {}", GetLogFrameConvention()),
-////                 [this]() {return GetAngularAccelerationInWorld(GetLogFrameConvention());});
-////
-////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                ("TotalExtForceInBody","N",fmt::format("Total external force, expressed in body reference frame in {}", GetLogFrameConvention()),
-////                 [this] () {return GetTotalExtForceInBody(GetLogFrameConvention());});
-////
-////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                ("TotalExtTorqueInBodyAtCOG","Nm",fmt::format("Total external torque at COG, expressed in body reference frame in {}", GetLogFrameConvention()),
-////                 [this] () {return GetTotalExtTorqueInBodyAtCOG(GetLogFrameConvention());});
-////
-////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                ("TotalExtForceInWorld","N",fmt::format("Total external force, expressed in world reference frame in {}", GetLogFrameConvention()),
-////                 [this] () {return GetTotalExtForceInWorld(GetLogFrameConvention());});
-////
-////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                ("TotalExtTorqueInWorldAtCOG","Nm",fmt::format("Total external torque at COG, expressed in world reference frame in {}", GetLogFrameConvention()),
-////                 [this] () {return GetTotalExtTorqueInWorldAtCOG(GetLogFrameConvention());});
-//
-//    }
+  void FrBody::InitializeLog() {
+
+    auto msg = NewMessage("BodyMsg", "Body states");
+
+    msg->AddField<double>("Time", "s", "Current time of the simulation", [this]() { return GetSystem()->GetTime(); });
+
+//////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//////                ("Position","m", fmt::format("body position in the world reference frame in {}", GetLogFrameConvention()),
+//////                 [this]() {return GetPosition(GetLogFrameConvention());});
+//////
+//////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//////                ("COGPositionInWorld","m", fmt::format("COG body position in the world reference frame in {}", GetLogFrameConvention()),
+//////                 [this]() {return GetCOGPositionInWorld(GetLogFrameConvention());});
+//////
+//////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//////                ("CardanAngles","rad", fmt::format("body orientation in the world reference frame in {}", GetLogFrameConvention()),
+//////                 [this]() {double phi, theta, psi ; GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, GetLogFrameConvention());
+//////                     return Vector3d<double> (phi,theta,psi);});
+//////
+//////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//////                ("LinearVelocityInWorld","m/s", fmt::format("body linear velocity in the world reference frame in {}", GetLogFrameConvention()),
+//////                 [this]() {return GetLinearVelocityInWorld(GetLogFrameConvention());});
+//////
+//////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//////                ("COGLinearVelocityInWorld","m/s", fmt::format("COG body linear velocity in the world reference frame in {}", GetLogFrameConvention()),
+//////                 [this]() {return GetCOGLinearVelocityInWorld(GetLogFrameConvention());});
+//////
+//////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//////                ("AngularVelocityInWorld","rad/s", fmt::format("body angular velocity in the world reference frame in {}", GetLogFrameConvention()),
+//////                 [this]() {return GetAngularVelocityInWorld(GetLogFrameConvention());});
+//////
+//////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//////                ("LinearAccelerationInWorld","m/s2", fmt::format("body linear acceleration in the world reference frame in {}", GetLogFrameConvention()),
+//////                 [this]() {return GetLinearAccelerationInWorld(GetLogFrameConvention());});
+//////
+//////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//////                ("COGLinearAccelerationInWorld","m/s2", fmt::format("COG body linear acceleration in the world reference frame in {}", GetLogFrameConvention()),
+//////                 [this]() {return GetCOGLinearAccelerationInWorld(GetLogFrameConvention());});
+//////
+//////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//////                ("AngularAccelerationInWorld","rad/s2", fmt::format("body angular acceleration in the world reference frame in {}", GetLogFrameConvention()),
+//////                 [this]() {return GetAngularAccelerationInWorld(GetLogFrameConvention());});
+//////
+//////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//////                ("TotalExtForceInBody","N",fmt::format("Total external force, expressed in body reference frame in {}", GetLogFrameConvention()),
+//////                 [this] () {return GetTotalExtForceInBody(GetLogFrameConvention());});
+//////
+//////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//////                ("TotalExtTorqueInBodyAtCOG","Nm",fmt::format("Total external torque at COG, expressed in body reference frame in {}", GetLogFrameConvention()),
+//////                 [this] () {return GetTotalExtTorqueInBodyAtCOG(GetLogFrameConvention());});
+//////
+//////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//////                ("TotalExtForceInWorld","N",fmt::format("Total external force, expressed in world reference frame in {}", GetLogFrameConvention()),
+//////                 [this] () {return GetTotalExtForceInWorld(GetLogFrameConvention());});
+//////
+//////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//////                ("TotalExtTorqueInWorldAtCOG","Nm",fmt::format("Total external torque at COG, expressed in world reference frame in {}", GetLogFrameConvention()),
+//////                 [this] () {return GetTotalExtTorqueInWorldAtCOG(GetLogFrameConvention());});n GetPosition(GetLogFrameConvention());});
+
+  }
 
   std::shared_ptr<internal::FrBodyBase> FrBody::GetChronoBody() {
     return m_chronoBody;

@@ -24,5 +24,7 @@ TEST(FrLogManager, registering) {
 
   ASSERT_TRUE(system.GetLogManager()->GetNumberOfLoggables() == 1); // It only remains the world body
 
+  system.InitializeLog();
+
 
 }
