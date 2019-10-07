@@ -86,6 +86,7 @@ namespace frydom {
     class FrCable;
     class FrDynamicCable;
     class FrPathManager;
+    class FrIrrApp;
 
     /// Main class for a FRyDoM offshore system. This class is used to represent a multibody physical system,
     /// so it acts also as a database for most items involved in simulations, most noticeably objects of FrBody and FrLink
@@ -190,6 +191,8 @@ namespace frydom {
                                                             ///< arising from QP optimization problems.
 
         std::unique_ptr<FrStaticAnalysis> m_statics;
+
+        std::unique_ptr<FrIrrApp> m_irrApp;
 
         // Container: definition.
         using BodyContainer = std::vector<std::shared_ptr<FrBody>>;
@@ -404,6 +407,10 @@ namespace frydom {
         // Resources path
 
         std::string GetDataPath(const std::string& relPath) const;
+
+        // Irrlicht Application
+
+        FrIrrApp* GetIrrApp() const;
 
     protected:
 

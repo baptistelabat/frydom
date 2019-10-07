@@ -15,7 +15,6 @@
 
 #include "chrono/physics/ChPhysicsItem.h"
 
-#include "frydom/asset/FrAssetOwner.h"
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/core/misc/FrColors.h"
 

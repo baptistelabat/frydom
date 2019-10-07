@@ -939,12 +939,12 @@ namespace frydom {
         IsInitialized();
 
         // Definition and initialization of the Irrlicht application.
-        FrIrrApp app(this, m_chronoSystem.get(), dist);
+        m_irrApp = std::make_unique<FrIrrApp>(this, m_chronoSystem.get(), dist);
 
-        app.SetTimestep(m_chronoSystem->GetStep());
-        app.SetVideoframeSave(recordVideo);
-        app.SetVideoframeSaveInterval(videoFrameSaveInterval);
-        app.Run(endTime); // The temporal loop is here.
+        m_irrApp->SetTimestep(m_chronoSystem->GetStep());
+        m_irrApp->SetVideoframeSave(recordVideo);
+        m_irrApp->SetVideoframeSaveInterval(videoFrameSaveInterval);
+        m_irrApp->Run(endTime); // The temporal loop is here.
 
     }
 
@@ -1161,5 +1161,9 @@ namespace frydom {
         dynamic_cast<chrono::ChIterativeSolver*>(m_chronoSystem->GetSolver().get())->SetRecordViolation(verbose);
     }
 
+
+    FrIrrApp* FrOffshoreSystem::GetIrrApp() const {
+        return m_irrApp.get();
+    }
 
 }  // end namespace frydom

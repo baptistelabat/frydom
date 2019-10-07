@@ -70,6 +70,15 @@ namespace frydom {
         return m_linearDensity / m_section;
     }
 
+    void FrCableProperties::SetBreakingTension(double breakingTension) {
+        assert(breakingTension > DBL_EPSILON);
+        m_breakingTension = breakingTension;
+    }
+
+    double FrCableProperties::GetBreakingTension() const {
+        return m_breakingTension;
+    }
+
     std::shared_ptr<FrCableProperties> make_cable_properties(){
         return std::make_shared<FrCableProperties>();
     }

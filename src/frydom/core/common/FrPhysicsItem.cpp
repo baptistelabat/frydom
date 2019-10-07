@@ -14,6 +14,7 @@
 
 #include "chrono/assets/ChTriangleMeshShape.h"
 #include "chrono/assets/ChColorAsset.h"
+#include "chrono_irrlicht/ChIrrNodeAsset.h"
 
 #include "frydom/asset/FrAsset.h"
 #include "frydom/mesh/FrTriangleMeshConnected.h"
@@ -66,5 +67,6 @@ namespace frydom {
         if(IsActive())
             Compute(time);
     }
+
 
 }  // end namespace frydom

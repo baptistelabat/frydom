@@ -33,7 +33,7 @@ namespace frydom {
         double m_youngModulus = 3.1416E10;          ///< Young modulus of the cable, in Pa
         double m_linearDensity = 616.538;           ///< Linear density of the cable, in kg/m
         double m_rayleighDamping = 0;               ///< Rayleigh damping of the cable (for dynamic cable only)
-//        double m_breakingTension = 0;               ///< breaking tension, in N (for visualization purpose for now)
+        double m_breakingTension = 0;               ///< breaking tension, in N (for visualization purpose for now)
 
     public:
 
@@ -93,6 +93,13 @@ namespace frydom {
         /// Get the density of the cable
         /// \return density
         double GetDensity() const;
+
+        /// Set the breeaking tension of the cable
+        /// \param breakingTension Breaking tension value
+        void SetBreakingTension(double breakingTension);
+
+        /// Return the breaking tension of the cable
+        double GetBreakingTension() const;
 
     };
 

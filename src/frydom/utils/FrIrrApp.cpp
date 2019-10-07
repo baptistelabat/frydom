@@ -100,7 +100,12 @@ namespace frydom {
 
         // Temporal loop.
         while (GetDevice()->run()) {
+
             std::cout << "Time : " << m_system->GetTime() << std::endl;
+
+            //AssetBind(GetSystem()->Get_otherphysicslist()[0]);
+            //AssetUpdate(GetSystem()->Get_otherphysicslist()[0]);
+
             BeginScene();
             DrawAll();
             // Time-stepping.
@@ -110,6 +115,8 @@ namespace frydom {
             // Condition to stop the time-domain simulation using the time after time-stepping.
             if (endTime > 0. && m_system->GetTime() > endTime) break; // If the endTime given is negative or null, the loop is infinite :)
 
+            //AssetBindAll();
+            //AssetUpdateAll();
 
         }
 
