@@ -564,11 +564,7 @@ namespace frydom {
     /// \param fc frame convention (NED/NWU)
     void RotateAroundCOG(const FrUnitQuaternion &rot, FRAME_CONVENTION fc);
 
-
-
-
     // TODO : ajouter aussi les RotateX, RotateAxisAngle, RotateEuler...
-
 
     /// Set the velocity of the body reference frame with a vector expressed in WORLD frame
     /// \param worldVel body velocity in world reference frame
@@ -803,8 +799,6 @@ namespace frydom {
     // PROJECTIONS
     // =============================================================================================================
 
-    // Projection of 3D vectors defined in FrVector.h
-
     /// Project a vector given in body reference frame, to the world reference frame
     /// \tparam Vector type of the vector defined in FrVector.h
     /// \param bodyVector vector given in body reference frame
@@ -846,10 +840,6 @@ namespace frydom {
       worldVector = GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
       return worldVector;
     }
-
-
-    // Projection of generalized vectors defined in FrVector.h
-
 
     /// Project a generalized vector given in body reference frame, to the world reference frame
     /// \tparam Vector type of the generalized vector defined in FrVector.h
@@ -902,11 +892,6 @@ namespace frydom {
     FrDOFMask *GetDOFMask();
 
    protected:
-
-//        enum FRAME {
-//            WORLD,
-//            BODY
-//        };
 
     /// Set the COG position in the body reference frame
     /// \param bodyPos COG position in the body reference frame
@@ -1045,6 +1030,7 @@ namespace frydom {
     friend void internal::FrRadiationModelBase::InjectVariablesToBody();
 
     friend chrono::ChMatrix<double> internal::FrVariablesBEMBodyBase::GetVariablesFb(FrBody *body) const;
+
     friend chrono::ChMatrix<double> internal::FrVariablesBEMBodyBase::GetVariablesQb(frydom::FrBody *) const;
 
   };

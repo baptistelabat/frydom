@@ -140,6 +140,21 @@ namespace frydom {
       return true;
     }
 
+    int FrSystemBaseSMC::DoStepDynamics(double m_step) {
+      chrono::ChSystem::DoStepDynamics(m_step);
+
+//      if (true) {
+//        double percent = (m_step - GetTimerStep()) * 100.;
+//
+//        std::string msg = (percent < 0.) ? " X slower than real time" : " X faster than real time";
+//
+////        std::cout << std::fabs(percent) << msg << std::endl;
+//        std::cout << "CPU time : " << GetTimerStep() << ";\ttime step : " << m_step << std::endl;
+//
+//      }
+
+    }
+
   }  // end namespace frydom::internal
 
 
@@ -979,6 +994,7 @@ namespace frydom {
   }
 
   void FrOffshoreSystem::IsInitialized() {
+    // FIXME : ce garde fou devrait se trouver directement dans Initialize...
     if (!m_isInitialized) Initialize();
   }
 

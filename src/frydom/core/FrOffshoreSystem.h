@@ -62,6 +62,8 @@ namespace frydom {
 
       bool DoStaticLinear() /*override*/;
 
+      int DoStepDynamics(double m_step) override;
+
     };
 
     /// Base class inheriting from chrono ChSystemNSC for physical system in which contact is modeled using a non-smooth
