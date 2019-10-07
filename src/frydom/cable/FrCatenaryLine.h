@@ -116,6 +116,8 @@ namespace frydom {
       GetParent();
     }
 
+    void InitializeLog() override;
+
     //--------------------------------------------------------------------------------------------------------------
     // Accessors related to the embedded Newton-Raphson solver
 

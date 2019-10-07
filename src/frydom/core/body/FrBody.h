@@ -211,16 +211,10 @@ namespace frydom {
     // LOGGING
     // =============================================================================================================
 
-//      void InitializeLog_Dependencies(const std::string &bodyPath) override;
-
-   protected:
-
     void InitializeLog() override;
 
-//      void AddFields() override;
 
    public:
-
 
     // =============================================================================================================
     // PRINCIPAL INERTIAL PARAMETERS

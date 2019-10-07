@@ -178,6 +178,8 @@ namespace frydom {
     /// \param ElementLength Target length of the elements
     void SetTargetElementLength(double ElementLength);
 
+    void InitializeLog() override;
+
     //--------------------------------------------------------------------------------------------------------------
     //Asset
 

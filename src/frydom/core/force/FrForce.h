@@ -116,10 +116,9 @@ namespace frydom {
     /// Return true if the force is included in the static analysis
     virtual bool IncludedInStaticAnalysis() const { return false; }
 
-//      // Logging
-//
-//      /// Initialize the log
-//      void AddFields() override;
+    void InitializeLog() override;
+
+    void StepFinalizeLog() override;
 
     // Force Asset
     /// Inquire if a ForceAsset is displayed

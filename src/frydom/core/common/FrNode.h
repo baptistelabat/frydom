@@ -86,6 +86,8 @@ namespace frydom {
     void Set(const Position &pos, const Direction &e1, const Direction &e2, const Direction &e3, FRAME_CONVENTION fc);
 
 
+    void InitializeLog() override;
+
     /*
      * Setters
      */

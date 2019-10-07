@@ -327,6 +327,10 @@ namespace frydom {
     m_nbElements = static_cast<unsigned int>(int(floor(GetUnstrainedLength() / elementLength)));
   }
 
+  void FrDynamicCable::InitializeLog() {
+    // TODO !!
+  }
+
   void FrDynamicCable::SetBreakingTension(double tension) {
     m_maxTension = tension;
   }

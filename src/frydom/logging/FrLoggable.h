@@ -18,6 +18,7 @@
 
 #include "hermes/hermes.h"
 
+#include "frydom/core/common/FrConvention.h"
 #include "frydom/core/common/FrTreeNode.h"
 
 
@@ -28,15 +29,20 @@ namespace frydom {
 
    public:
 
-    explicit FrLoggableBase() : m_log_this(true) {}
+    explicit FrLoggableBase() : m_log_this(true), m_log_frame_convention(NWU) {}
 
     void LogThis(bool log) { m_log_this = log; }
 
     virtual void InitializeLog() = 0;
 
-    virtual void UpdateLog() = 0;
+    virtual void StepFinalizeLog() {
+      for (auto& msg : m_messages) {
+        msg->Serialize();
+        msg->Send();
+      }
+    }
 
-    virtual void FinalizeLog() = 0;
+    void SetLogFrameConvention(FRAME_CONVENTION fc) { m_log_frame_convention = fc; }
 
    protected:
     hermes::Message* NewMessage(const std::string& name, const std::string& description) {
@@ -44,9 +50,13 @@ namespace frydom {
       return m_messages.back().get();
     }
 
-    // FIXME : a-t-on besoin d'un GetName ??? Le nom vient de TreeNode !!
+   protected:
+    inline FRAME_CONVENTION GetLogFC() const { return m_log_frame_convention; }
+
    private:
     bool m_log_this;
+
+    FRAME_CONVENTION m_log_frame_convention;
 
     std::vector<std::unique_ptr<hermes::Message>> m_messages;
 
@@ -62,17 +72,6 @@ namespace frydom {
         FrLoggableBase(),
         FrTreeNode<ParentType>(name, parent) {}
 
-    void InitializeLog() override {
-      std::cout << this->GetName() << " is a loggable" << std::endl;
-    }
-
-    void UpdateLog() override {
-
-    }
-
-    void FinalizeLog() override {
-
-    }
 
   };
 

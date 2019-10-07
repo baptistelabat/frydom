@@ -83,6 +83,10 @@ namespace frydom {
     return m_chronoConstraint.get();
   }
 
+  void FrConstraint::InitializeLog() {
+    // TODO
+  }
+
 //    void FrConstraint::AddFields() {
 ////        m_message->AddField<double>("time", "s", "Current time of the simulation",
 ////                                    [this]() { return m_system->GetTime(); });

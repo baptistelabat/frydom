@@ -15,15 +15,16 @@ namespace frydom {
 
   // Forward declaration
   class FrLoggableBase;
+  class FrOffshoreSystem;
 
 
   class FrLogManager {
 
    public:
 
-    FrLogManager();
+    explicit FrLogManager(FrOffshoreSystem* system);
 
-    explicit FrLogManager(const std::string &log_folder);
+    FrLogManager(const std::string &log_folder, FrOffshoreSystem* system);
 
     const std::string GetLogFolder() const;
 
@@ -35,9 +36,9 @@ namespace frydom {
 
     void Initialize();
 
-    void Update();
+    void StepFinalize();
 
-    void Finalize();
+    void SetLogFrameConvention(FRAME_CONVENTION fc);
 
 
    private:
@@ -50,6 +51,8 @@ namespace frydom {
     std::string m_log_folder;
 
     std::list<std::shared_ptr<FrLoggableBase>> m_loggable_list;
+
+    FrOffshoreSystem* m_system;
 
 
   };

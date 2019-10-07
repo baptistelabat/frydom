@@ -173,7 +173,7 @@ namespace frydom {
     m_environment = std::make_unique<FrEnvironment>(this);
 
     // Creating the log manager service
-    m_LogManager = std::make_unique<FrLogManager>();
+    m_LogManager = std::make_unique<FrLogManager>(this);
 
     // Creating the path manager service
     m_pathManager = std::make_unique<FrPathManager>();
@@ -411,23 +411,15 @@ namespace frydom {
       item->Initialize();
     }
 
-    InitializeLog();
-
     m_chronoSystem->Update();
-
-
-//        // Init the logs
-//        if (IsLogged()) {
-//            m_pathManager->Initialize(this);
-//            m_pathManager->SetRunPath("Dynamic");
-//            InitializeLog("");
-//        }
 
     m_isInitialized = true;
 
+    m_LogManager->Initialize();
+
   }
 
-  void FrOffshoreSystem::InitializeLog() {
+  void FrOffshoreSystem::InitializeLog() {  // FIXME : doit etre appele par logManager !!!
 
     // Solver related messages
 
@@ -450,6 +442,9 @@ namespace frydom {
       });
 
     }
+
+    msg->Initialize();
+    msg->Send();
 
     // Initialize the logs of the different loggable objects registered into the log manager
     if (!m_isInitialized) m_LogManager->Initialize();
@@ -474,8 +469,10 @@ namespace frydom {
       item->StepFinalize();
     }
 
-    // Serialize and send the message log
-//        FrObject::SendLog();
+    // Logging
+    StepFinalizeLog();
+
+    m_LogManager->StepFinalize();
 
   }
 
@@ -896,10 +893,6 @@ namespace frydom {
 
     m_isInitialized = false;
   }
-
-//  chrono::ChSystem *FrOffshoreSystem::GetChronoSystem() {
-//    return m_chronoSystem.get();
-//  }
 
 
 // Irrlicht visualization

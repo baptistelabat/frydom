@@ -109,6 +109,8 @@ namespace frydom {
     /// \return pointer to the chrono constraint
     chrono::ChLink *GetChronoItem_ptr() const override;
 
+    void InitializeLog() override;
+
   };
 
 

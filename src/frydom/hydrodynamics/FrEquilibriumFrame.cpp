@@ -238,6 +238,10 @@ namespace frydom {
 
   }
 
+  void FrEquilibriumFrame::InitializeLog() {
+    // TODO
+  }
+
 //  FrOffshoreSystem *FrEquilibriumFrame::GetSystem() const {
 //    return GetParent()->GetSystem();
 //  }

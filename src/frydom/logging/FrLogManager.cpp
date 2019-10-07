@@ -4,6 +4,8 @@
 
 #include <algorithm>
 
+#include "frydom/core/FrOffshoreSystem.h"
+#include "frydom/core/common/FrConvention.h"
 #include "FrLogManager.h"
 #include "FrLoggable.h"
 
@@ -11,12 +13,13 @@
 namespace frydom {
 
 
-  FrLogManager::FrLogManager() : m_log_folder(InitializeLogFolder()) {
-  }
+  FrLogManager::FrLogManager(FrOffshoreSystem *system) :
+      m_log_folder(InitializeLogFolder()),
+      m_system(system) {}
 
-  FrLogManager::FrLogManager(const std::string &log_folder) : FrLogManager() {
-    m_log_folder = log_folder;
-  }
+  FrLogManager::FrLogManager(const std::string &log_folder, FrOffshoreSystem *system) :
+      m_system(system),
+      m_log_folder(log_folder) {}
 
   const std::string FrLogManager::GetLogFolder() const {
     return m_log_folder;
@@ -59,26 +62,27 @@ namespace frydom {
      */
 
 
-
     return ".";
 
   }
 
   void FrLogManager::Initialize() {
+    m_system->InitializeLog();
+
     for (auto &obj : m_loggable_list) {
       obj->InitializeLog();
     }
   }
 
-  void FrLogManager::Update() {
+  void FrLogManager::StepFinalize() {
     for (auto &obj : m_loggable_list) {
-      obj->UpdateLog();
+      obj->StepFinalizeLog();
     }
   }
 
-  void FrLogManager::Finalize() {
+  void FrLogManager::SetLogFrameConvention(FRAME_CONVENTION fc) {
     for (auto &obj : m_loggable_list) {
-      obj->FinalizeLog();
+      obj->SetLogFrameConvention(fc);
     }
   }
 

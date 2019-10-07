@@ -22,14 +22,6 @@ namespace frydom {
 
     std::string FrObject::GetShortenUUID() const { return m_UUID.substr(0, 5); }
 
-//  const char *FrObject::GetName() const { return m_name.c_str(); }
-//
-//  void FrObject::SetName(const char *myname) { m_name = myname; }
-//
-//  std::string FrObject::GetNameString() const { return m_name; }
-//
-//  void FrObject::SetNameString(const std::string &myname) { m_name = myname; }
-
-    void FrObject::StepFinalize() {}
+//    void FrObject::StepFinalize() {}
 
 }  // end namespace frydom

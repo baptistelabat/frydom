@@ -33,6 +33,10 @@ namespace frydom {
     return true;
   }
 
+  void FrActuator::InitializeLog() {
+    // TODO
+  }
+
   Force FrActuator::GetMotorForceInBody1(FRAME_CONVENTION fc) const {
     auto nodeFrame_WRT_COG = m_node1->GetFrameWRT_COG_InBody();
     return nodeFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetMotorForceInNode(fc), fc);

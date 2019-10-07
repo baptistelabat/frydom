@@ -319,6 +319,10 @@ namespace frydom {
     UpdateCache();
   }
 
+  void FrLink::InitializeLog() {
+    //TODO
+  }
+
   // Must be reimplemented in
 //    bool FrLink::IsMotorized() const { return false; }
 

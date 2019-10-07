@@ -38,6 +38,10 @@ namespace frydom {
     m_q = properties->GetLinearDensity();
   }
 
+  void FrCatenaryLine::InitializeLog() {
+    // TODO !!
+  }
+
   void FrCatenaryLine::SetSolverTolerance(double tol) {
     m_tolerance = tol;
   }

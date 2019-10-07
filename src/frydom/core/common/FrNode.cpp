@@ -55,6 +55,10 @@ namespace frydom {
     SetFrameInBody(FrFrame(position, quaternion, fc));
   }
 
+  void FrNode::InitializeLog() {
+    // TODO
+  }
+
   FrFrame FrNode::GetFrameInWorld() const {
     return internal::ChFrame2FrFrame(m_chronoMarker->GetAbsFrame());
   }
@@ -257,8 +261,6 @@ namespace frydom {
       m_asset->Initialize();
       GetBody()->AddAsset(m_asset);
     }
-
-//    GetBody()->GetSystem()->GetLogManager()->Add(this);
 
   }
 
