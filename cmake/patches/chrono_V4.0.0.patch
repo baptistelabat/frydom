@@ -1,31 +1,31 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index eda7bbc..ce769a0 100644
+index eda7bbcb1..ce769a003 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -14,9 +14,9 @@ cmake_minimum_required(VERSION 3.0)
  # Prevent in-source builds.
  #-----------------------------------------------------------------------------
-
+ 
 -if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 +if(${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_BINARY_DIR})
      message( FATAL_ERROR  "In-source build is not possible and not recommended. Choose an empty directory for build output.")
 -endif(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 +endif(${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_BINARY_DIR})
-
+ 
  #-----------------------------------------------------------------------------
-
+ 
 @@ -77,7 +77,7 @@ set(CH_VERSION 0x00040000)
  # Location of additional CMake scripts
  #-----------------------------------------------------------------------------
-
+ 
 -list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/")
 +list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
  include(GetGitRevisionDescription)
  get_git_head_revision(GIT_REFSPEC VCS_REVISION)
-
+ 
 @@ -216,13 +216,13 @@ endif()
  #------------------------------------------------------------
-
+ 
  if(MSVC OR XCODE_VERSION)
 -    file(COPY ${CMAKE_SOURCE_DIR}/data/ DESTINATION ${CMAKE_BINARY_DIR}/bin/data/)
 +    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/bin/data/)
@@ -33,76 +33,76 @@ index eda7bbc..ce769a0 100644
 -    file(COPY ${CMAKE_SOURCE_DIR}/data/ DESTINATION ${CMAKE_BINARY_DIR}/data/)
 +    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
  endif()
-
+ 
 -install(DIRECTORY ${CMAKE_SOURCE_DIR}/data/ DESTINATION ${CH_INSTALL_DATA})
 -install(DIRECTORY ${CMAKE_SOURCE_DIR}/template_project/ DESTINATION ${CH_INSTALL_SAMPLE_PROJ})
 +install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data/ DESTINATION ${CH_INSTALL_DATA})
 +install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/template_project/ DESTINATION ${CH_INSTALL_SAMPLE_PROJ})
-
+ 
  #------------------------------------------------------------
  # Defer configuration of all Chrono libraries and programs
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index c3e9d5f..b5a049e 100644
+index c3e9d5feb..b5a049e16 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
 @@ -273,7 +273,7 @@ if(CUDA_FOUND)
      set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; --compiler-options -fPIC)
    endif()
-
+ 
 -  include(${CMAKE_SOURCE_DIR}/cmake/FindCudaArch.cmake)
 +  include(${CMAKE_CURRENT_SOURCE_DIR}/../cmake/FindCudaArch.cmake)
    SELECT_NVCC_ARCH_FLAGS(NVCC_FLAGS_EXTRA)
    list(APPEND CUDA_NVCC_FLAGS ${NVCC_FLAGS_EXTRA})
-
+ 
 diff --git a/src/chrono/fea/ChMesh.h b/src/chrono/fea/ChMesh.h
-index a1d0f90..8208fd3 100644
+index a1d0f90d0..8208fd3e2 100644
 --- a/src/chrono/fea/ChMesh.h
 +++ b/src/chrono/fea/ChMesh.h
 @@ -268,7 +268,7 @@ class ChApi ChMesh : public ChIndexedNodes {
      /// Basically does nothing, but maybe that inherited classes may specialize this.
      virtual void InjectVariables(ChSystemDescriptor& mdescriptor) override;
-
+ 
 -  private:
 +  protected:
      /// Initial setup (before analysis).
      /// This function is called from ChSystem::SetupInitial, marking a point where system
      /// construction is completed.
 diff --git a/src/chrono/physics/ChForce.h b/src/chrono/physics/ChForce.h
-index 3ae1ff0..49a9226 100644
+index 3ae1ff0e2..49a9226f6 100644
 --- a/src/chrono/physics/ChForce.h
 +++ b/src/chrono/physics/ChForce.h
 @@ -64,7 +64,7 @@ class ChApi ChForce : public ChObj {
      CH_ENUM_VAL(WORLD_DIR);
      CH_ENUM_MAPPER_END(AlignmentFrame);
-
+ 
 -  private:
 +  protected:
      ChBody* Body;  ///< object of application
-
+ 
      ForceType mode;        ///< force or torque
 @@ -103,95 +103,95 @@ class ChApi ChForce : public ChObj {
      virtual ChForce* Clone() const override { return new ChForce(*this); }
-
+ 
      /// Return the parent body (the force belongs to this rigid body)
 -    ChBody* GetBody() { return Body; }
 +    virtual ChBody* GetBody() { return Body; }
      /// Sets the parent body (the force belongs to this rigid body)
 -    void SetBody(ChBody* newRB) { Body = newRB; }
 +    virtual void SetBody(ChBody* newRB) { Body = newRB; }
-
+ 
      /// Sets the mode (force or torque)
 -    void SetMode(ForceType m_mode) { mode = m_mode; }
 -    ForceType GetMode() const { return mode; }
 +    virtual void SetMode(ForceType m_mode) { mode = m_mode; }
 +    virtual ForceType GetMode() const { return mode; }
-
+ 
      /// Sets the alignment method.
      /// The force will rotate together with this reference.
 -    void SetAlign(AlignmentFrame m_align) { align = m_align; }
 -    AlignmentFrame GetAlign() const { return align; }
 +    virtual void SetAlign(AlignmentFrame m_align) { align = m_align; }
 +    virtual AlignmentFrame GetAlign() const { return align; }
-
+ 
      /// Sets the alignment method.
      /// The force application point will follow this reference.
 -    void SetFrame(ReferenceFrame m_frame) {
@@ -112,21 +112,21 @@ index 3ae1ff0..49a9226 100644
      }
 -    ReferenceFrame GetFrame() const { return frame; }
 +    virtual ReferenceFrame GetFrame() const { return frame; }
-
+ 
      /// Gets the application point, in absolute coordinates.
 -    ChVector<> GetVpoint() const { return vpoint; }
 +    virtual ChVector<> GetVpoint() const { return vpoint; }
      /// Gets the application point, in rigid body coordinates.
 -    ChVector<> GetVrelpoint() const { return vrelpoint; }
 +    virtual ChVector<> GetVrelpoint() const { return vrelpoint; }
-
+ 
      /// Gets the application point, in absolute coordinates.
 -    void SetVpoint(ChVector<> mypoint);
 +    virtual void SetVpoint(ChVector<> mypoint);
      /// Gets the application point, in rigid body coordinates.
 -    void SetVrelpoint(ChVector<> myrelpoint);
 +    virtual void SetVrelpoint(ChVector<> myrelpoint);
-
+ 
      /// Gets the force (or torque) direction, in absolute coordinates.
 -    ChVector<> GetDir() const { return vdir; }
 +    virtual ChVector<> GetDir() const { return vdir; }
@@ -139,20 +139,20 @@ index 3ae1ff0..49a9226 100644
      /// Sets the force (or torque) direction, in rigid body coordinates.
 -    void SetRelDir(ChVector<> newf);
 +    virtual void SetRelDir(ChVector<> newf);
-
+ 
      /// Sets force (or torque) modulus.
 -    void SetMforce(double newf);
 +    virtual void SetMforce(double newf);
      /// Gets force (or torque) modulus.
 -    double GetMforce() const { return mforce; }
 +    virtual double GetMforce() const { return mforce; }
-
+ 
      /// Sets a f(t) function for time-modulation of the force.
 -    void SetModulation(std::shared_ptr<ChFunction> m_funct) { modula = m_funct; }
 -    std::shared_ptr<ChFunction> GetModulation() const { return modula; }
 +    virtual void SetModulation(std::shared_ptr<ChFunction> m_funct) { modula = m_funct; }
 +    virtual std::shared_ptr<ChFunction> GetModulation() const { return modula; }
-
+ 
      /// Sets a f(t) function for time dependency of position (on x axis)
 -    void SetMove_x(std::shared_ptr<ChFunction> m_funct) { move_x = m_funct; }
 -    std::shared_ptr<ChFunction> GetMove_x() const { return move_x; }
@@ -168,7 +168,7 @@ index 3ae1ff0..49a9226 100644
 -    std::shared_ptr<ChFunction> GetMove_z() const { return move_z; }
 +    virtual void SetMove_z(std::shared_ptr<ChFunction> m_funct) { move_z = m_funct; }
 +    virtual std::shared_ptr<ChFunction> GetMove_z() const { return move_z; }
-
+ 
      /// Sets a f(t) function for time dependency of force X component.
 -    void SetF_x(std::shared_ptr<ChFunction> m_funct) { f_x = m_funct; }
 -    std::shared_ptr<ChFunction> GetF_x() const { return f_x; }
@@ -184,7 +184,7 @@ index 3ae1ff0..49a9226 100644
 -    std::shared_ptr<ChFunction> GetF_z() const { return f_z; }
 +    virtual void SetF_z(std::shared_ptr<ChFunction> m_funct) { f_z = m_funct; }
 +    virtual std::shared_ptr<ChFunction> GetF_z() const { return f_z; }
-
+ 
      /// Gets the instant force vector -or torque vector- in absolute coordinates.
 -    ChVector<> GetForce() const { return force; }
 +    virtual ChVector<> GetForce() const { return force; }
@@ -194,7 +194,7 @@ index 3ae1ff0..49a9226 100644
      /// Gets the instant force vector -or torque vector- modulus.
 -    double GetForceMod() const { return force.Length(); }
 +    virtual double GetForceMod() const { return force.Length(); }
-
+ 
      /// Gets force-torque applied to rigid body, as lagrangian generalized force (7x1 matrix).
 -    ChMatrix<>* GetQf() { return Qf; }
 +    virtual ChMatrix<>* GetQf() { return Qf; }
@@ -202,37 +202,37 @@ index 3ae1ff0..49a9226 100644
      /// and torque vector (in body coords).
 -    void GetBodyForceTorque(ChVector<>& body_force, ChVector<>& body_torque) const;
 +    virtual void GetBodyForceTorque(ChVector<>& body_force, ChVector<>& body_torque) const;
-
+ 
      //
      // UPDATING
      //
-
+ 
 -    void UpdateTime(double mytime);
 -    void UpdateState();
 -    void Update(double mytime);
 +    virtual void UpdateTime(double mytime);
 +    virtual void UpdateState();
 +    virtual void Update(double mytime);
-
+ 
      //
      // SERIALIZATION
 diff --git a/src/chrono/physics/ChLinkLock.h b/src/chrono/physics/ChLinkLock.h
-index 01527cf..14ea640 100644
+index 01527cf0a..14ea6409a 100644
 --- a/src/chrono/physics/ChLinkLock.h
 +++ b/src/chrono/physics/ChLinkLock.h
 @@ -282,8 +282,8 @@ class ChApi ChLinkLock : public ChLinkMasked {
    protected:
      void ChangeLinkType(LinkType new_link_type);
-
+ 
 -  private:
 -    void BuildLinkType(LinkType link_type);
 +  protected:
 +    virtual void BuildLinkType(LinkType link_type);
  };
-
+ 
  CH_CLASS_VERSION(ChLinkLock,0)
 diff --git a/src/chrono/physics/ChLinkMask.h b/src/chrono/physics/ChLinkMask.h
-index 5ae3eb6..e15700a 100644
+index 5ae3eb630..e15700ab8 100644
 --- a/src/chrono/physics/ChLinkMask.h
 +++ b/src/chrono/physics/ChLinkMask.h
 @@ -62,7 +62,7 @@ class ChApi ChLinkMask {
@@ -241,40 +241,129 @@ index 5ae3eb6..e15700a 100644
      /// No action if newnconstr == nconstr
 -    void ResetNconstr(int newnconstr);
 +    virtual void ResetNconstr(int newnconstr);
-
+ 
      /// Add a ChConstraintTwoBodies to mask (NOTE: later, the constraint will
      /// be automatically deleted when the mask will be deleted)
 diff --git a/src/chrono/physics/ChPhysicsItem.h b/src/chrono/physics/ChPhysicsItem.h
-index 4e533bb..344d355 100644
+index 4e533bb49..344d355dc 100644
 --- a/src/chrono/physics/ChPhysicsItem.h
 +++ b/src/chrono/physics/ChPhysicsItem.h
 @@ -43,7 +43,6 @@ class ChApi ChPhysicsItem : public ChObj {
      unsigned int offset_w;  ///< offset in vector of state (speed part)
      unsigned int offset_L;  ///< offset in vector of lagrangian multipliers
-
+ 
 -  private:
      virtual void SetupInitial() {}
-
+ 
    public:
 diff --git a/src/chrono/physics/ChSystem.h b/src/chrono/physics/ChSystem.h
-index e61891e..2432bd2 100644
+index e61891ed9..fd86eaef7 100644
 --- a/src/chrono/physics/ChSystem.h
 +++ b/src/chrono/physics/ChSystem.h
+@@ -64,7 +64,7 @@ class ChContactContainer;
+ /// links into it..)
+ ///
+ /// Note that this is an abstract class, in your code you must
+-/// create a system from one of the concrete classes: 
++/// create a system from one of the concrete classes:
+ ///   @ref chrono::ChSystemNSC (for non-smooth contacts) or
+ ///   @ref chrono::ChSystemSMC (for smooth 'penalty' contacts).
+ ///
+@@ -234,7 +234,7 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
+     double GetSolverSharpnessParam() const;
+ 
+     /// Instead of using SetSolverType(), you can create your own custom solver (inherited from ChSolver)
+-    /// and plug it into the system using this function. 
++    /// and plug it into the system using this function.
+     virtual void SetStabSolver(std::shared_ptr<ChSolver> newsolver);
+ 
+     /// Access directly the stabilization solver, configured to be used for the stabilization
+@@ -433,7 +433,7 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
+     virtual void InjectKRMmatrices(ChSystemDescriptor& mdescriptor) override;
+     virtual void KRMmatricesLoad(double Kfactor, double Rfactor, double Mfactor) override;
+ 
+-    // Old bookkeeping system 
++    // Old bookkeeping system
+     virtual void VariablesFbReset() override;
+     virtual void VariablesFbLoadForces(double factor = 1) override;
+     virtual void VariablesQbLoadSpeed() override;
+@@ -576,7 +576,7 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
+     /// This is mostly called automatically by time integration.
+     double ComputeCollisions();
+ 
+-    /// Class to be used as a callback interface for user defined actions performed 
++    /// Class to be used as a callback interface for user defined actions performed
+     /// at each collision detection step.  For example, additional contact points can
+     /// be added to the underlying contact container.
+     class ChApi CustomCollisionCallback {
+@@ -587,7 +587,7 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
+ 
+     /// Specify a callback object to be invoked at each collision detection step.
+     /// Multiple such callback objects can be registered with a system. If present,
+-    /// their OnCustomCollision() method is invoked 
++    /// their OnCustomCollision() method is invoked
+     /// Use this if you want that some specific callback function is executed at each
+     /// collision detection step (ex. all the times that ComputeCollisions() is automatically
+     /// called by the integration method). For example some other collision engine could
+@@ -597,7 +597,7 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
+     }
+ 
+     /// For higher performance (ex. when GPU coprocessors are available) you can create your own custom
+-    /// collision engine (inherited from ChCollisionSystem) and plug it into the system using this function. 
++    /// collision engine (inherited from ChCollisionSystem) and plug it into the system using this function.
+     /// Note: use only _before_ you start adding colliding bodies to the system!
+     void SetCollisionSystem(std::shared_ptr<collision::ChCollisionSystem> newcollsystem);
+ 
+@@ -637,7 +637,7 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
+     /// This is the most important function for analysis, you
+     /// can use it, for example, once per screen refresh in VR
+     /// and interactive realtime applications, etc.
+-    int DoStepDynamics(double m_step);
++    virtual int DoStepDynamics(double m_step);
+ 
+     /// Performs integration until the m_endtime is exactly
+     /// reached, but current time step may be automatically "retouched" to
+@@ -693,13 +693,13 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
+     bool GetDumpSolverMatrices() const { return dump_matrices; }
+ 
+     /// Dump the current M mass matrix, K damping matrix, R damping matrix, Cq constraint jacobian
+-    /// matrix (at the current configuration). 
++    /// matrix (at the current configuration).
+     /// These can be later used for linearized motion, modal analysis, buckling analysis, etc.
+-    /// The name of the files will be [path]_M.dat [path]_K.dat [path]_R.dat [path]_Cq.dat 
++    /// The name of the files will be [path]_M.dat [path]_K.dat [path]_R.dat [path]_Cq.dat
+     /// Might throw ChException if file can't be saved.
+     void DumpSystemMatrices(bool save_M, bool save_K, bool save_R, bool save_Cq, const char* path);
+ 
+-    /// Compute the system-level mass matrix. 
++    /// Compute the system-level mass matrix.
+     /// This function has a small overhead, because it must assembly the
+     /// sparse matrix -which is used only for the purpose of this function.
+     void GetMassMatrix(ChSparseMatrix* M);    ///< fill this system mass matrix
+@@ -744,7 +744,7 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
+ 
+     /// Given the current time and state, attempt to satisfy all constraints, using
+     /// a Newton-Raphson iteration loop. Used iteratively in inverse kinematics.
+-    /// Action can be one of AssemblyLevel::POSITION, AssemblyLevel::VELOCITY, or 
++    /// Action can be one of AssemblyLevel::POSITION, AssemblyLevel::VELOCITY, or
+     /// AssemblyLevel::ACCELERATION (or a combination of these)
+     /// Returns true if no errors and false if an error occurred (impossible assembly?)
+     bool DoAssembly(int action);
 @@ -758,7 +758,7 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
      /// reactions). This is a one-step only approach that solves
      /// the _linear_ equilibrium. To be used mostly for FEM
      /// problems with small deformations.
 -    bool DoStaticLinear();
 +    virtual bool DoStaticLinear();
-
+ 
      /// Solve the position of static equilibrium (and the
      /// reactions). This tries to solve the equilibrium for the nonlinear
 diff --git a/src/chrono/solver/ChVariables.cpp b/src/chrono/solver/ChVariables.cpp
-index a1e71ab..89c9e13 100644
+index a1e71ab59..89c9e1397 100644
 --- a/src/chrono/solver/ChVariables.cpp
 +++ b/src/chrono/solver/ChVariables.cpp
 @@ -22,16 +22,16 @@ namespace chrono {
-
+ 
  ChVariables::ChVariables(int m_ndof) : disabled(false), ndof(m_ndof), offset(0) {
      if (Get_ndof() > 0) {
 -        qb = new ChMatrixDynamic<>(Get_ndof(), 1);
@@ -285,17 +374,17 @@ index a1e71ab..89c9e13 100644
          qb = fb = NULL;
      }
  }
-
+ 
  ChVariables::~ChVariables() {
 -    delete qb;
 -    delete fb;
 +    //delete qb;
 +    //delete fb;
  }
-
+ 
  ChVariables& ChVariables::operator=(const ChVariables& other) {
 @@ -42,19 +42,19 @@ ChVariables& ChVariables::operator=(const ChVariables& other) {
-
+ 
      if (other.qb) {
          if (qb == NULL)
 -            qb = new ChMatrixDynamic<>;
@@ -306,7 +395,7 @@ index a1e71ab..89c9e13 100644
 +        //delete qb;
          qb = NULL;
      }
-
+ 
      if (other.fb) {
          if (fb == NULL)
 -            fb = new ChMatrixDynamic<>;
@@ -317,14 +406,14 @@ index a1e71ab..89c9e13 100644
 +        //delete fb;
          fb = NULL;
      }
-
+ 
 diff --git a/src/chrono/solver/ChVariables.h b/src/chrono/solver/ChVariables.h
-index 72a152c..14e63f2 100644
+index 72a152ce6..14e63f2d9 100644
 --- a/src/chrono/solver/ChVariables.h
 +++ b/src/chrono/solver/ChVariables.h
 @@ -49,8 +49,8 @@ namespace chrono {
  class ChApi ChVariables {
-
+ 
    private:
 -    ChMatrix<>* qb;  ///< variables (accelerations, speeds, etc. depending on the problem)
 -    ChMatrix<>* fb;  ///< known vector (forces, or impulses, etc. depending on the problem)
@@ -332,11 +421,11 @@ index 72a152c..14e63f2 100644
 +    std::shared_ptr<ChMatrix<>> fb;  ///< known vector (forces, or impulses, etc. depending on the problem)
      int ndof;        ///< number of degrees of freedom (number of contained scalar variables)
      bool disabled;   ///< user activation/deactivation of variables
-
+ 
 @@ -157,4 +157,4 @@ class ChApi ChVariables {
-
+ 
  }  // end namespace chrono
-
+ 
 -#endif
 \ No newline at end of file
 +#endif

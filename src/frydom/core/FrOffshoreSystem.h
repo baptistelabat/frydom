@@ -60,7 +60,7 @@ namespace frydom {
 //            /// \return
 //            bool DoQuasiStatic(int niter = 100, int nsteps = 20);
 
-      bool DoStaticLinear() /*override*/;
+      bool DoStaticLinear() override;
 
       int DoStepDynamics(double m_step) override;
 
