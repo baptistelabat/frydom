@@ -37,7 +37,8 @@ namespace frydom {
   namespace internal {
 
     FrSystemBaseSMC::FrSystemBaseSMC(frydom::FrOffshoreSystem *offshoreSystem) :
-        chrono::ChSystemSMC(), m_offshoreSystem(offshoreSystem) {}
+        chrono::ChSystemSMC(),
+        m_offshoreSystem(offshoreSystem) {}
 
     void FrSystemBaseSMC::Update(bool update_assets) {
 
@@ -81,9 +82,9 @@ namespace frydom {
 
     }
 
-    void FrSystemBaseSMC::CustomEndOfStep() {
-      m_offshoreSystem->StepFinalize();
-    }
+//    void FrSystemBaseSMC::CustomEndOfStep() {
+//      m_offshoreSystem->StepFinalize();
+//    }
 
 //        // -----------------------------------------------------------------------------
 //        // **** PERFORM THE STATIC ANALYSIS, FINDING THE STATIC
@@ -142,17 +143,7 @@ namespace frydom {
 
     int FrSystemBaseSMC::DoStepDynamics(double m_step) {
       chrono::ChSystem::DoStepDynamics(m_step);
-
-//      if (true) {
-//        double percent = (m_step - GetTimerStep()) * 100.;
-//
-//        std::string msg = (percent < 0.) ? " X slower than real time" : " X faster than real time";
-//
-////        std::cout << std::fabs(percent) << msg << std::endl;
-//        std::cout << "CPU time : " << GetTimerStep() << ";\ttime step : " << m_step << std::endl;
-//
-//      }
-
+      m_offshoreSystem->StepFinalize();
     }
 
   }  // end namespace frydom::internal
@@ -167,7 +158,8 @@ namespace frydom {
                                      SYSTEM_TYPE systemType,
                                      TIME_STEPPER timeStepper,
                                      SOLVER solver) :
-      FrLoggable(name, nullptr) {
+      FrLoggable(name, nullptr),
+      m_monitor_real_time(false) {
 
     // Creating the chrono System backend. It drives the way contact are modelled
     SetSystemType(systemType,
@@ -374,6 +366,10 @@ namespace frydom {
 
   }
 
+  void FrOffshoreSystem::MonitorRealTimePerfs(bool val) {
+    m_monitor_real_time = val;
+  }
+
 
 // ***** Environment *****
 
@@ -464,6 +460,7 @@ namespace frydom {
   }
 
   void FrOffshoreSystem::StepFinalize() {
+
     m_environment->StepFinalize();
 
     for (auto &item : m_PrePhysicsList) {
@@ -486,6 +483,21 @@ namespace frydom {
     StepFinalizeLog();
 
     m_LogManager->StepFinalize();
+
+    if (m_monitor_real_time) {
+      double ratio = m_chronoSystem->GetTimerStep() / GetTimeStep();
+
+      std::string msg = (ratio > 1.) ? "slower that real time" : "faster than real time";
+
+      std::cout << "At time : "
+                << GetTime()
+                << ";\t"
+                << msg
+                << "(1 physical second computed in "
+                << ratio
+                << " seconds)"
+                << std::endl;
+    }
 
   }
 

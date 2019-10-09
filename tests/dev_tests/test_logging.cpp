@@ -18,13 +18,15 @@ int main() {
 //  sphere->SetFixedInWorld(true);
   sphere->SetVelocityInWorldNoRotation({0, 0, 15}, NWU);
 
-  system.SetTimeStep(0.04);
+  system.SetTimeStep(0.1);
+  system.MonitorRealTimePerfs(true);
 
-//  system.RunInViewer();
+  system.RunInViewer();
+
 
 
 //  system.RunDynamics(0.04);
-  system.
+//  system.
 
 
 

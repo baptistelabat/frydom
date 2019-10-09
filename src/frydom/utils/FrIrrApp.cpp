@@ -105,7 +105,7 @@ namespace frydom {
 
       // Temporal loop.
       while (GetDevice()->run()) {
-        std::cout << "Time : " << GetSystem()->GetTime() << std::endl;
+//        std::cout << "Time : " << GetSystem()->GetTime() << std::endl;
         BeginScene();
         DrawAll();
         // Time-stepping.

@@ -50,9 +50,9 @@ namespace frydom {
       /// \param update_assets check if the assets are updated
       void Update(bool update_assets) override;
 
-      /// This method overrides a ChSystemSMC method, called by chrono, call StepFinalize of the offshore system
-      /// at the end of each step
-      void CustomEndOfStep() override;
+//      /// This method overrides a ChSystemSMC method, called by chrono, call StepFinalize of the offshore system
+//      /// at the end of each step
+//      void CustomEndOfStep() override;
 
 //            /// Solve the static equilibrium using a relaxation method
 //            /// \param nsteps every nsteps, the velocity and acceleration are reset
@@ -63,6 +63,7 @@ namespace frydom {
       bool DoStaticLinear() override;
 
       int DoStepDynamics(double m_step) override;
+
 
     };
 
@@ -238,6 +239,8 @@ namespace frydom {
     // Logs
     std::unique_ptr<FrPathManager> m_pathManager;
     std::unique_ptr<FrLogManager> m_LogManager;
+
+    bool m_monitor_real_time;
 
 
    public:
@@ -680,6 +683,7 @@ namespace frydom {
     /// Get a pointer to the path manager
     FrPathManager *GetPathManager() const;
 
+    void MonitorRealTimePerfs(bool val);
 
    private:
 
@@ -728,6 +732,7 @@ namespace frydom {
     /// \param cable dynamic cable to be added
     void RemoveDynamicCable(std::shared_ptr<FrDynamicCable> cable,
                             std::shared_ptr<chrono::fea::ChMesh> chrono_mesh);
+
 
    private:
 
