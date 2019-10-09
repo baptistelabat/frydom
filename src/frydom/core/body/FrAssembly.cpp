@@ -61,4 +61,16 @@ namespace frydom {
 
     }
 
+  std::shared_ptr<FrBody> FrAssembly::GetMasterBody() {
+        return m_masterBody;
+    }
+
+  std::vector<std::shared_ptr<FrBody>> FrAssembly::GetBodyList() {
+        return m_bodyList;
+    }
+
+  std::shared_ptr<FrBody> FrAssembly::GetBody(int iBody) {
+        return m_bodyList[iBody];
+    }
+
 } // end namespace frydom

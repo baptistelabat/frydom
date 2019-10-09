@@ -17,31 +17,37 @@ namespace frydom {
 
     private:
 
-        std::shared_ptr<FrBody> m_masterBody;
+      std::shared_ptr<FrBody> m_masterBody;
 
-        std::vector<std::shared_ptr<FrBody>> m_bodyList;
+      std::vector<std::shared_ptr<FrBody>> m_bodyList;
 
     public:
 
-        explicit FrAssembly(const std::shared_ptr<FrBody>& masterBody);
+      explicit FrAssembly(const std::shared_ptr<FrBody>& masterBody);
 
-        /// Get the type name of the object
-        /// \return type name of the object
-        std::string GetTypeName() const override { return "Assembly"; };
-        
-        void Initialize() override {};
+      /// Get the type name of the object
+      /// \return type name of the object
+      std::string GetTypeName() const override { return "Assembly"; };
 
-        void Clear() {
-            m_bodyList.clear();
-        }
+      void Initialize() override {};
 
-        void AddToAssembly(const std::shared_ptr<FrBody>& body);
+      void Clear() {
+          m_bodyList.clear();
+      }
 
-        void RemoveFromAssembly(const std::shared_ptr<FrBody>& body);
+      void AddToAssembly(const std::shared_ptr<FrBody>& body);
 
-        FrInertiaTensor GetInertiaTensor() const;
+      void RemoveFromAssembly(const std::shared_ptr<FrBody>& body);
 
-        void DoAssembly();
+      std::shared_ptr<FrBody> GetMasterBody();
+
+      std::vector<std::shared_ptr<FrBody>> GetBodyList();
+
+      std::shared_ptr<FrBody> GetBody(int iBody);
+
+      FrInertiaTensor GetInertiaTensor() const;
+
+      void DoAssembly();
 
     };
 
