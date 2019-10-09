@@ -8,10 +8,7 @@
 
 namespace frydom {
 
-
-    void FrAssembly::SetMasterBody(const std::shared_ptr<FrBody>& body) {
-        m_masterBody = body;
-    }
+    FrAssembly::FrAssembly(const std::shared_ptr<FrBody> &masterBody) : m_masterBody(masterBody) {}
 
     void FrAssembly::AddToAssembly(const std::shared_ptr<frydom::FrBody> &body) {
         m_bodyList.push_back(body);

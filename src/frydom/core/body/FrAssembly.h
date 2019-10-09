@@ -23,6 +23,8 @@ namespace frydom {
 
     public:
 
+        explicit FrAssembly(const std::shared_ptr<FrBody>& masterBody);
+
         /// Get the type name of the object
         /// \return type name of the object
         std::string GetTypeName() const override { return "Assembly"; };
@@ -32,8 +34,6 @@ namespace frydom {
         void Clear() {
             m_bodyList.clear();
         }
-
-        void SetMasterBody(const std::shared_ptr<FrBody>& body);
 
         void AddToAssembly(const std::shared_ptr<FrBody>& body);
 
