@@ -94,7 +94,7 @@ namespace frydom {
     return m_chronoForce;
   }
 
-  void FrForce::InitializeLog() {
+  void FrForce::DefineLogMessages() {
 
     auto msg = NewMessage("Force message", "Force message");
 

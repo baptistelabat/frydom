@@ -116,8 +116,6 @@ namespace frydom {
     /// Return true if the force is included in the static analysis
     virtual bool IncludedInStaticAnalysis() const { return false; }
 
-    void InitializeLog() override;
-
     void StepFinalizeLog() override;
 
     // Force Asset
@@ -303,6 +301,8 @@ namespace frydom {
 
    protected:
 
+    void DefineLogMessages() override;
+
     // The following methods are to be used in the implementation of Update method to set the force and torque
     // of the force model used
 
@@ -412,6 +412,7 @@ namespace frydom {
 
 //    friend class FrBody;
     friend void FrBody::AddExternalForce(std::shared_ptr<frydom::FrForce>);
+
     friend void FrBody::RemoveExternalForce(std::shared_ptr<frydom::FrForce>);
 
 

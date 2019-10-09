@@ -327,7 +327,7 @@ namespace frydom {
     m_nbElements = static_cast<unsigned int>(int(floor(GetUnstrainedLength() / elementLength)));
   }
 
-  void FrDynamicCable::InitializeLog() {
+  void FrDynamicCable::DefineLogMessages() {
     // TODO !!
   }
 

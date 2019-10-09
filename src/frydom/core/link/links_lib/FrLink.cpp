@@ -319,12 +319,9 @@ namespace frydom {
     UpdateCache();
   }
 
-  void FrLink::InitializeLog() {
-    //TODO
+  void FrLink::DefineLogMessages() {
+    std::cout << "FrLink Log Messages not defined" << std::endl;
   }
-
-  // Must be reimplemented in
-//    bool FrLink::IsMotorized() const { return false; }
 
   const FrFrame FrLink::GetNode2FrameWRTNode1Frame() const {
     return m_chronoLink->c_frame2WRT1;

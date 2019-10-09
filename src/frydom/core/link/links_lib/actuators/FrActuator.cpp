@@ -33,7 +33,7 @@ namespace frydom {
     return true;
   }
 
-  void FrActuator::InitializeLog() {
+  void FrActuator::DefineLogMessages() {
     // TODO
   }
 

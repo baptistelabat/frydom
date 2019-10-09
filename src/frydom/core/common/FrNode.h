@@ -86,8 +86,6 @@ namespace frydom {
     void Set(const Position &pos, const Direction &e1, const Direction &e2, const Direction &e3, FRAME_CONVENTION fc);
 
 
-    void InitializeLog() override;
-
     /*
      * Setters
      */
@@ -264,9 +262,10 @@ namespace frydom {
       return worldVector;
     }
 
-//    protected:
-//
-//        std::string BuildPath(const std::string& rootPath) override;
+   protected:
+
+    void DefineLogMessages() override;
+
 
    private:
 

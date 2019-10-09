@@ -20,6 +20,7 @@
 
 #include "frydom/core/common/FrConvention.h"
 #include "frydom/core/common/FrTreeNode.h"
+#include "frydom/logging/FrLogManager.h"
 
 
 namespace frydom {
@@ -33,25 +34,48 @@ namespace frydom {
 
     void LogThis(bool log) { m_log_this = log; }
 
-    virtual void InitializeLog() = 0;
-
     virtual void StepFinalizeLog() {
-      for (auto& msg : m_messages) {
-        msg->Serialize();
-        msg->Send();
-      }
+      SerializeLogMessages();
+      SendLogMessages();
     }
 
     void SetLogFrameConvention(FRAME_CONVENTION fc) { m_log_frame_convention = fc; }
 
    protected:
-    hermes::Message* NewMessage(const std::string& name, const std::string& description) {
+    hermes::Message *NewMessage(const std::string &name, const std::string &description) {
       m_messages.emplace_back(std::make_unique<hermes::Message>(name, description));
       return m_messages.back().get();
     }
 
-   protected:
+    virtual void DefineLogMessages() = 0;
+
     inline FRAME_CONVENTION GetLogFC() const { return m_log_frame_convention; }
+
+    void AddSerializer(hermes::Serializer *serializer) {
+      for (auto &message : m_messages) {
+        message->AddSerializer(serializer);
+      }
+    }
+
+   private:
+    void InitializeLogMessages() {
+      for (auto &message : m_messages) {
+        message->Initialize();
+      }
+    }
+
+    void SerializeLogMessages() {
+      for (auto &message : m_messages) {
+        message->Serialize();
+      }
+    }
+
+    void SendLogMessages() {
+      for (auto &message : m_messages) {
+        message->Send();
+      }
+    }
+
 
    private:
     bool m_log_this;
@@ -59,6 +83,9 @@ namespace frydom {
     FRAME_CONVENTION m_log_frame_convention;
 
     std::vector<std::unique_ptr<hermes::Message>> m_messages;
+
+    friend void FrLogManager::Initialize();
+
 
   };
 

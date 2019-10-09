@@ -99,9 +99,6 @@ namespace frydom {
 
    protected:
 
-//      /// Add the fields to the Hermes message
-//      void AddFields() override;
-
     /// Get the embedded Chrono object
     std::shared_ptr<chrono::ChLink> GetChronoLink() override;
 
@@ -109,7 +106,7 @@ namespace frydom {
     /// \return pointer to the chrono constraint
     chrono::ChLink *GetChronoItem_ptr() const override;
 
-    void InitializeLog() override;
+    void DefineLogMessages() override;
 
   };
 

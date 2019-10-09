@@ -349,7 +349,7 @@ namespace frydom {
       /// \return internal item, as internal::FrLinkLockBase
       internal::FrLinkLockBase *GetChronoItem_ptr() const override;
 
-      void InitializeLog() override;
+      void DefineLogMessages() override;
 
       /*
        * Methods allowing child classes to access chrono link forces

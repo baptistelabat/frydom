@@ -83,7 +83,7 @@ namespace frydom {
     return m_chronoConstraint.get();
   }
 
-  void FrConstraint::InitializeLog() {
+  void FrConstraint::DefineLogMessages() {
     // TODO
   }
 

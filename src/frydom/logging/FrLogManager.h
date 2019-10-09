@@ -44,6 +44,8 @@ namespace frydom {
 
     void SetLogFrameConvention(FRAME_CONVENTION fc);
 
+//    void LogCSV(bool val);  // TODO: permettre de ne pas logger en CSV... -> perf !
+
 
    private:
     bool Has(FrLoggableBase* obj) const;
@@ -55,6 +57,8 @@ namespace frydom {
     std::string m_log_folder;
 
     std::list<FrLoggableBase*> m_loggable_list;
+
+    std::vector<std::unique_ptr<hermes::Serializer>> m_serializers;
 
   };
 

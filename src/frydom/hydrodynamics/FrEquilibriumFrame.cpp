@@ -238,7 +238,7 @@ namespace frydom {
 
   }
 
-  void FrEquilibriumFrame::InitializeLog() {
+  void FrEquilibriumFrame::DefineLogMessages() {
     // TODO
   }
 

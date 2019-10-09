@@ -983,7 +983,7 @@ namespace frydom {
     return m_DOFMask.get();
   }
 
-  void FrBody::InitializeLog() {
+  void FrBody::DefineLogMessages() {
 
 
     auto msg = NewMessage("BodyMsg", "Body states");
@@ -1055,7 +1055,6 @@ namespace frydom {
 //                 [this] () {return GetTotalExtTorqueInWorldAtCOG(GetLogFC());});n GetPosition(GetLogFC());});
 
 
-    msg->Send();
   }
 
   std::shared_ptr<internal::FrBodyBase> FrBody::GetChronoBody() {

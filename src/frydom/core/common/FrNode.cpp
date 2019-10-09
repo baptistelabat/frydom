@@ -55,7 +55,7 @@ namespace frydom {
     SetFrameInBody(FrFrame(position, quaternion, fc));
   }
 
-  void FrNode::InitializeLog() {
+  void FrNode::DefineLogMessages() {
     // TODO
   }
 

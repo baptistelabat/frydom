@@ -172,17 +172,9 @@ namespace frydom {
       /// Method to be applied after each time steps
       void StepFinalize() override;
 
-      void InitializeLog() override;
-
-//      /// Get a pointer to the parent system
-//      FrOffshoreSystem* GetSystem() const;
-
-//      // Logging
-//
-//      // Initialize the log
-//      void AddFields() override;
-
      protected:
+
+      void DefineLogMessages() override;
 
      private:
 

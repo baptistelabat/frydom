@@ -141,8 +141,13 @@ namespace frydom {
       return true;
     }
 
-    int FrSystemBaseSMC::DoStepDynamics(double m_step) {
-      chrono::ChSystem::DoStepDynamics(m_step);
+//    int FrSystemBaseSMC::DoStepDynamics(double m_step) {
+//      chrono::ChSystem::DoStepDynamics(m_step);
+//      m_offshoreSystem->StepFinalize();
+//    }
+
+    bool FrSystemBaseSMC::Integrate_Y() {
+      chrono::ChSystem::Integrate_Y();
       m_offshoreSystem->StepFinalize();
     }
 
@@ -402,6 +407,8 @@ namespace frydom {
 
   void FrOffshoreSystem::Initialize() {
 
+    if (m_isInitialized)
+      return;
 
     // Initializing environment before bodies
     m_environment->Initialize();
@@ -430,7 +437,12 @@ namespace frydom {
 
   }
 
-  void FrOffshoreSystem::InitializeLog() {  // FIXME : doit etre appele par logManager !!!
+  void FrOffshoreSystem::ForceInitialize() {
+    m_isInitialized = false;
+    Initialize();
+  }
+
+  void FrOffshoreSystem::DefineLogMessages() {  // FIXME : doit etre appele par logManager !!!
 
     // Solver related messages
 
@@ -453,9 +465,6 @@ namespace frydom {
       });
 
     }
-
-    msg->Initialize();
-    msg->Send();
 
   }
 
@@ -751,8 +760,7 @@ namespace frydom {
 
   bool FrOffshoreSystem::SolveStaticWithRelaxation() {
 
-    IsInitialized();
-
+    Initialize();
     return m_statics->SolveStatic();
 
   }
@@ -851,17 +859,17 @@ namespace frydom {
   }
 
   bool FrOffshoreSystem::AdvanceOneStep(double stepSize) {
-    IsInitialized();
+    Initialize();
     return (bool) m_chronoSystem->DoStepDynamics(stepSize);
   }
 
   bool FrOffshoreSystem::AdvanceTo(double nextTime) {
-    IsInitialized();
+    Initialize();
     return m_chronoSystem->DoFrameDynamics(nextTime);
   }
 
   bool FrOffshoreSystem::RunDynamics(double frameStep) {
-    IsInitialized();
+    Initialize();
     m_chronoSystem->Setup();
     m_chronoSystem->DoAssembly(chrono::AssemblyLevel::POSITION |
                                chrono::AssemblyLevel::VELOCITY |
@@ -925,7 +933,7 @@ namespace frydom {
   void FrOffshoreSystem::RunInViewer(double endTime, double dist, bool recordVideo, int videoFrameSaveInterval) {
 
     // Initialization of the system if not already done.
-    IsInitialized();
+    Initialize();
 
     // Definition and initialization of the Irrlicht application.
     FrIrrApp app(this, m_chronoSystem.get(), dist);
@@ -955,7 +963,7 @@ namespace frydom {
 
   void FrOffshoreSystem::Visualize(double dist, bool recordVideo) {
 
-    IsInitialized();  // So that system is automatically initialized when run in viewer mode
+    Initialize();
 
     FrIrrApp app(this, m_chronoSystem.get(), dist);
 
@@ -975,7 +983,7 @@ namespace frydom {
 
   void FrOffshoreSystem::VisualizeStaticAnalysis(double dist, bool recordVideo) {
 
-    IsInitialized();  // So that system is automatically initialized when run in viewer mode
+    Initialize();  // So that system is automatically initialized when run in viewer mode
 
     FrIrrApp app(this, m_chronoSystem.get(), dist);
 
@@ -1003,11 +1011,6 @@ namespace frydom {
 
   FrPathManager *FrOffshoreSystem::GetPathManager() const {
     return m_pathManager.get();
-  }
-
-  void FrOffshoreSystem::IsInitialized() {
-    // FIXME : ce garde fou devrait se trouver directement dans Initialize...
-    if (!m_isInitialized) Initialize();
   }
 
 // Iterators

@@ -62,8 +62,7 @@ namespace frydom {
 
       bool DoStaticLinear() override;
 
-      int DoStepDynamics(double m_step) override;
-
+      bool Integrate_Y() override;
 
     };
 
@@ -316,16 +315,11 @@ namespace frydom {
 
     std::shared_ptr<FrNode> NewWorldFixedNode(const std::string& name);
 
-    // TODO: voir si les 3 methodes ci-dessous doivent etre privees (pas Initialize)
-
-    // Updates...
-
     /// Update in priority certain components of the offshore system (Environment)
     void PreUpdate();
 
     /// Update in last certain components of the offshore system
     void PostUpdate();
-
 
     void PrePhysicsUpdate(double time, bool update_assets);
 
@@ -333,28 +327,17 @@ namespace frydom {
     /// Initialize the state of the offshore system and its components (Environment, systemBase)
     void Initialize();
 
+    /// Force the Initialization of the state of the offshore system and its components (Environment, systemBase)
+    /// Make sure you really want to do it. It may have unpredictable effects
+    void ForceInitialize();
+
     /// Method called at the send of a time step. Logging may be used here
     void StepFinalize();
 
     // Logging
 
-    void InitializeLog() override;
+    void DefineLogMessages() override;
 
-//        /// Initialize the logs (log files and folders creation)
-//        void InitializeLog_Dependencies(const std::string& path); // FIXME : on a pas vraiment besoin de cette separation
-//
-//        /// Clear the logging message of every elements
-//        void ClearLogs();
-//
-//        void AddFields();
-//
-//        // Resources path
-//
-//        std::string GetDataPath(const std::string& relPath) const;
-//
-//    protected:
-//
-//        std::string BuildPath(const std::string& rootPath);
 
    public:
 
@@ -745,13 +728,6 @@ namespace frydom {
 
     /// Check the compatibility between the system contact method and the specified body contact type
     bool CheckBodyContactMethod(std::shared_ptr<FrBody> body);
-
-//    /// Get the systemBase, embedded in the offshore system
-//    /// \return systemBase
-//    chrono::ChSystem *GetChronoSystem();
-
-
-    void IsInitialized();
 
 
    public:

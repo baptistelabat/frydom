@@ -38,7 +38,7 @@ namespace frydom {
     m_q = properties->GetLinearDensity();
   }
 
-  void FrCatenaryLine::InitializeLog() {
+  void FrCatenaryLine::DefineLogMessages() {
     // TODO !!
   }
 

@@ -133,6 +133,8 @@ namespace frydom {
 
    protected:
 
+    void DefineLogMessages() override;
+
     std::shared_ptr<chrono::fea::ChMesh> GetChronoMesh() override { return m_chronoCable; }
 
    public:
@@ -177,8 +179,6 @@ namespace frydom {
     /// Set the number of elements based on a target element length
     /// \param ElementLength Target length of the elements
     void SetTargetElementLength(double ElementLength);
-
-    void InitializeLog() override;
 
     //--------------------------------------------------------------------------------------------------------------
     //Asset

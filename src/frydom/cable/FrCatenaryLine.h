@@ -116,8 +116,6 @@ namespace frydom {
       GetParent();
     }
 
-    void InitializeLog() override;
-
     //--------------------------------------------------------------------------------------------------------------
     // Accessors related to the embedded Newton-Raphson solver
 
@@ -229,6 +227,7 @@ namespace frydom {
     /// \return Chrono related physics item
     internal::FrPhysicsItemBase *GetChronoItem_ptr() const override;
 
+    void DefineLogMessages() override;
 
    private :
 

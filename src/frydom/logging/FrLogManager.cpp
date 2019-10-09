@@ -16,6 +16,10 @@ namespace frydom {
   FrLogManager::FrLogManager(FrOffshoreSystem *system) :
       m_log_folder(InitializeLogFolder()) {
     Add(system);
+
+//    m_serializers.push_back(std::make_unique<hermes::CSVSerializer>(m_log_folder + "file.csv"));
+    // FIXME : lorsqu'on change le log_folder, il faut que ce soit vu par le serializer...
+    // FIXME : on a devoir passer en shared dans hermes non ?
   }
 
   FrLogManager::FrLogManager(const std::string &log_folder, FrOffshoreSystem *system) :
@@ -27,19 +31,19 @@ namespace frydom {
     return m_log_folder;
   }
 
-  void FrLogManager::Add(const std::shared_ptr<FrLoggableBase>& obj) {
+  void FrLogManager::Add(const std::shared_ptr<FrLoggableBase> &obj) {
     Add(obj.get());
   }
 
-  void FrLogManager::Add(FrLoggableBase* obj) {
+  void FrLogManager::Add(FrLoggableBase *obj) {
     if (!Has(obj)) m_loggable_list.push_back(obj);
   }
 
-  void FrLogManager::Remove(const std::shared_ptr<FrLoggableBase>& obj) {
+  void FrLogManager::Remove(const std::shared_ptr<FrLoggableBase> &obj) {
     Remove(obj.get());
   }
 
-  void FrLogManager::Remove(FrLoggableBase* obj) {
+  void FrLogManager::Remove(FrLoggableBase *obj) {
     auto it = std::find(m_loggable_list.begin(), m_loggable_list.end(), obj);
 
     // Remove if present
@@ -48,7 +52,7 @@ namespace frydom {
     }
   }
 
-  bool FrLogManager::Has(FrLoggableBase* obj) const {
+  bool FrLogManager::Has(FrLoggableBase *obj) const {
     return (std::find(m_loggable_list.begin(), m_loggable_list.end(), obj) != m_loggable_list.end());
   }
 
@@ -75,8 +79,27 @@ namespace frydom {
   }
 
   void FrLogManager::Initialize() {
+
+
+    /*
+     * TODO : ici, il faut initialiser les serializers de telle maniere a ce que ca se passe bien sur les targets
+     *
+     *
+     */
+
+
     for (auto &obj : m_loggable_list) {
-      obj->InitializeLog();
+
+      obj->DefineLogMessages();
+
+      for (const auto &serializer : m_serializers) {
+        obj->AddSerializer(serializer.get());
+      }
+
+      obj->InitializeLogMessages();
+
+      obj->SendLogMessages();
+
     }
   }
 
@@ -91,6 +114,10 @@ namespace frydom {
       obj->SetLogFrameConvention(fc);
     }
   }
+
+//  void FrLogManager::LogCSV(bool val) {
+//
+//  }
 
   unsigned int FrLogManager::GetNumberOfLoggables() const {
     return m_loggable_list.size();

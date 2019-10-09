@@ -207,12 +207,6 @@ namespace frydom {
     /// Return true if the body is included in the static analysis
     bool IncludedInStaticAnalysis() const { return true; }
 
-    // =============================================================================================================
-    // LOGGING
-    // =============================================================================================================
-
-    void InitializeLog() override;
-
 
    public:
 
@@ -892,6 +886,8 @@ namespace frydom {
     FrDOFMask *GetDOFMask();
 
    protected:
+
+    void DefineLogMessages() override;
 
     /// Set the COG position in the body reference frame
     /// \param bodyPos COG position in the body reference frame
