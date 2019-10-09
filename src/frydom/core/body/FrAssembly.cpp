@@ -50,14 +50,11 @@ namespace frydom {
 
         m_masterBody->SetFixedInWorld(true);
 
-        auto system = m_masterBody->GetSystem();
-
-        system->Initialize();
-        system->DoAssembly();
+        m_masterBody->GetSystem()->DoAssembly();
 
         m_masterBody->SetFixedInWorld(false);
 
-        std::cout<<GetInertiaTensor()<<std::endl;
+//        std::cout<<GetInertiaTensor()<<std::endl;
 
     }
 
