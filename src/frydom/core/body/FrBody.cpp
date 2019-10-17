@@ -514,7 +514,7 @@ namespace frydom {
     void FrBody::SetCOG(const Position& bodyPos, FRAME_CONVENTION fc) {
         FrFrame cogFrame;
         cogFrame.SetPosition(bodyPos, fc);
-        m_chronoBody->UpdateMarkerPositionToCOG(internal::Vector3dToChVector(cogFrame.GetPosition(NWU)));
+//        m_chronoBody->UpdateMarkerPositionToCOG(internal::Vector3dToChVector(cogFrame.GetPosition(NWU)));
         m_chronoBody->SetFrame_COG_to_REF(internal::FrFrame2ChFrame(cogFrame));
     }
 
