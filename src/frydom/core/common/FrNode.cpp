@@ -72,12 +72,11 @@ namespace frydom {
     }
 
     void FrNode::SetFrameInBody(const FrFrame& frameInBody) {
-//        Position localPosition_WRT_COG = frameInBody.GetPosition(NWU) - m_body->GetCOG(NWU);
-//        auto chCoord = chrono::ChCoordsys<double>(
-//                internal::Vector3dToChVector(frameInBody.GetPosition(NWU)),
-//                internal::Fr2ChQuaternion(frameInBody.GetQuaternion())
-//        );
-        auto chCoord = internal::FrFrame2ChCoordsys(frameInBody);
+        Position localPosition_WRT_COG = frameInBody.GetPosition(NWU) - m_body->GetCOG(NWU);
+        auto chCoord = chrono::ChCoordsys<double>(
+                internal::Vector3dToChVector(localPosition_WRT_COG),
+                internal::Fr2ChQuaternion(frameInBody.GetQuaternion())
+        );
         m_chronoMarker->Impose_Rel_Coord(chCoord);
     }
 
