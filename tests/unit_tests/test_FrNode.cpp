@@ -127,9 +127,52 @@ TEST(FrNode,Position) {
 //        std::cout<< node2->GetFrameInWorld().GetRotation()<<std::endl;
 //    }
 
+}
 
 
+TEST(FrNode,FrNode_COGModification_Test) {
 
+    FRAME_CONVENTION fc = NWU;
 
+    FrOffshoreSystem system;
+
+    // Body creation
+    auto body = system.NewBody();
+
+    // body position
+    Position bodyPos; bodyPos.setRandom();
+    body->SetPosition(bodyPos, fc);
+
+    // body orientation
+    Direction rotDirection; rotDirection.setRandom(); rotDirection.Normalize(); double rotAngle = 1.03654;
+    FrUnitQuaternion bodyRot; bodyRot.Set(rotDirection, rotAngle, fc);
+    body->SetRotation(bodyRot);
+
+    // body COG position
+    Position COGPosInBody; COGPosInBody.setRandom();
+    body->SetInertiaTensor(FrInertiaTensor(1,1,1,1,0,0,0,COGPosInBody, fc));
+    auto COGPosInWorld = body->GetPointPositionInWorld(COGPosInBody, fc);
+
+    // body node creation
+    auto node = body->NewNode();
+    Position nodePosInBody; nodePosInBody.setRandom();
+    node->SetPositionInBody(nodePosInBody, fc);
+
+    auto nodePosInWorld = body->GetPointPositionInWorld(nodePosInBody, fc);
+    //  body->Initialize();
+
+    Position testPos;
+    testPos = nodePosInBody - node->GetNodePositionInBody(fc);
+    EXPECT_TRUE(testPos.isZero());
+    testPos = nodePosInWorld - node->GetPositionInWorld(fc);
+    EXPECT_TRUE(testPos.isZero());
+
+    Position newCOGPosInBody; newCOGPosInBody.setRandom();
+    body->SetInertiaTensor(FrInertiaTensor(1,1,1,1,0,0,0,newCOGPosInBody, fc));
+
+    testPos = nodePosInBody - node->GetNodePositionInBody(fc);
+    EXPECT_TRUE(testPos.isZero());
+    testPos = nodePosInWorld - node->GetPositionInWorld(fc);
+    EXPECT_TRUE(testPos.isZero());
 
 }
