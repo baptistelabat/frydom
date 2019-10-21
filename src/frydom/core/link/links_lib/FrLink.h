@@ -111,7 +111,7 @@ namespace frydom {
             Force GetLinkForceOnBody1InFrame2AtOrigin1();
 
             /// Get the link torque applying on Body 1 (as external) expressed in node 2 frame and on node 1 origin
-            Torque GetLinkTorqueOnBody1InFrame2ArOrigin1();
+            Torque GetLinkTorqueOnBody1InFrame2AtOrigin1();
 
             FrFrame GetConstraintViolation();
 
@@ -194,22 +194,22 @@ namespace frydom {
          */
 
         /// Get the Marker 2 frame relatively to node 1 frame
-        const FrFrame GetNode2FrameWRTNode1Frame() const;
+        const FrFrame GetNode2FrameWRTNode1Frame() const; // tested
 
         /// Get the Marker 1 frame relatively to node 2 frame
-        const FrFrame GetNode1FrameWRTNode2Frame() const;
+        const FrFrame GetNode1FrameWRTNode2Frame() const; // tested
 
         /// Get the Marker 2 position relatively to node 1, expressed in node 1 frame
-        const Position GetNode2PositionWRTNode1(FRAME_CONVENTION fc) const;
+        const Position GetNode2PositionWRTNode1(FRAME_CONVENTION fc) const; // tested
 
         /// Get the Marker 1 position relatively to node 2, expressed in node 2 frame
-        const Position GetNode1PositionWRTNode2(FRAME_CONVENTION fc) const;
+        const Position GetNode1PositionWRTNode2(FRAME_CONVENTION fc) const; // tested
 
         /// Get the Marker 2 orientation relatively to node 1
-        const FrRotation GetNode2OrientationWRTNode1() const;
+        const FrRotation GetNode2OrientationWRTNode1() const; // tested
 
         /// Get the Marker 1 orientation relatively to node 2
-        const FrRotation GetNode1OrientationWRTNode2() const;
+        const FrRotation GetNode1OrientationWRTNode2() const; // tested
 
         /*
          * Velocity related methods
@@ -263,35 +263,35 @@ namespace frydom {
 
         /// Get the link reaction force applied at node 1, expressed in node 1 frame.
         /// Note this is the force applied on the body
-        const Force GetLinkReactionForceOnNode1(FRAME_CONVENTION fc) const;
+        const Force GetLinkReactionForceOnNode1(FRAME_CONVENTION fc) const; // tested
 
         /// Get the link reaction force applied at node 2, expressed in node 2 frame
         /// Note this is the force applied on the body
-        const Force GetLinkReactionForceOnNode2(FRAME_CONVENTION fc) const;
+        const Force GetLinkReactionForceOnNode2(FRAME_CONVENTION fc) const; // tested
 
         /// Get the link reaction force applied at node 1, expressed in body 1 frame.
         /// Note this is the force applied on the body
-        const Force GetLinkReactionForceOnBody1(FRAME_CONVENTION fc) const;
+        const Force GetLinkReactionForceOnBody1(FRAME_CONVENTION fc) const; // tested
 
         /// Get the link reaction force applied at node 2, expressed in body 2 frame
         /// Note this is the force applied on the body
-        const Force GetLinkReactionForceOnBody2(FRAME_CONVENTION fc) const;
+        const Force GetLinkReactionForceOnBody2(FRAME_CONVENTION fc) const; // tested
 
         /// Get the link reaction torque applied at node 1, expressed in node 1 frame.
         /// Note this is the torque applied on the body
-        const Torque GetLinkReactionTorqueOnNode1(FRAME_CONVENTION fc) const;
+        const Torque GetLinkReactionTorqueOnNode1(FRAME_CONVENTION fc) const; // tested
 
         /// Get the link reaction torque applied at node 2, expressed in node 2 frame.
         /// Note this is the torque applied on the body
-        const Torque GetLinkReactionTorqueOnNode2(FRAME_CONVENTION fc) const;
+        const Torque GetLinkReactionTorqueOnNode2(FRAME_CONVENTION fc) const; // tested
 
         /// Get the link reaction torque applied at body 1 COG, expressed in body 1 reference frame
         /// Note this is the torque applied on the body
-        const Torque GetLinkReactionTorqueOnBody1AtCOG(FRAME_CONVENTION fc) const;
+        const Torque GetLinkReactionTorqueOnBody1AtCOG(FRAME_CONVENTION fc) const; // tested
 
         /// Get the link reaction torque applied at body 2 COG, expressed in body 2 reference frame
         /// Note this is the torque applied on the body
-        const Torque GetLinkReactionTorqueOnBody2AtCOG(FRAME_CONVENTION fc) const;
+        const Torque GetLinkReactionTorqueOnBody2AtCOG(FRAME_CONVENTION fc) const; // tested
 
         /*
          * Link force in free degree of freedom (ie spring damping)

@@ -82,7 +82,7 @@ namespace frydom {
 
         Force force;
         Torque torque;
-        force.GetFz() = - m_stiffness * GetLinkPosition() - m_damping * GetLinkVelocity();
+        force.GetFz() = m_stiffness * GetLinkPosition() + m_damping * GetLinkVelocity();
 
         SetLinkForceTorqueOnBody2InFrame2AtOrigin2(force, torque);
     }

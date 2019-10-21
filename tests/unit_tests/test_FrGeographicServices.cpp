@@ -44,8 +44,8 @@ TEST(FrGeographicServices, GeographicServices) {
     geoServices.GeoToCart(geoCoord, returnPos, fc);
 
     Position testPosition = returnPos - cartPos;
-//    EXPECT_TRUE(testPosition.isZero());
-//    if (not(testPosition.isZero())){
+//    EXPECT_TRUE(testPosition.IsZero());
+//    if (not(testPosition.IsZero())){
 //        std::cout<<testPosition<<std::endl;
 //        std::cout<<cartPos<<std::endl;
 //        std::cout<<returnPos<<std::endl;
@@ -90,8 +90,8 @@ TEST(FrGeographicServices,FrBodyIntegration){
     body->SetGeoPosition(newGeoPos);
 
 //    Position testPosition = body->GetPosition(fc);
-//    EXPECT_TRUE(testPosition.isZero());
-//    if (not(testPosition.isZero())){
+//    EXPECT_TRUE(testPosition.IsZero());
+//    if (not(testPosition.IsZero())){
 //        std::cout<<testPosition<<std::endl;
 //    }
     EXPECT_FLOAT_EQ(-bodyPosition.GetX(), body->GetPosition(fc).GetX());

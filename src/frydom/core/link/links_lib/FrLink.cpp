@@ -170,7 +170,7 @@ namespace frydom {
             return internal::ChVectorToVector3d<Force>(C_force);
         }
 
-        Torque FrLinkLockBase::GetLinkTorqueOnBody1InFrame2ArOrigin1() {
+        Torque FrLinkLockBase::GetLinkTorqueOnBody1InFrame2AtOrigin1() {
             return internal::ChVectorToVector3d<Torque>(C_torque);
         }
 
@@ -388,41 +388,41 @@ namespace frydom {
         return m_chronoLink->c_generalizedAcceleration1WRT2.GetAngularAcceleration();
     }
 
-    const Force FrLink::GetLinkReactionForceOnNode1(FRAME_CONVENTION fc) const { // TODO : tester
+    const Force FrLink::GetLinkReactionForceOnNode1(FRAME_CONVENTION fc) const {
         auto force = m_chronoLink->c_generalizedForceOnNode1.GetForce();
         if (IsNED(fc)) internal::SwapFrameConvention<Force>(force);
         return force;
     }
 
-    const Force FrLink::GetLinkReactionForceOnNode2(FRAME_CONVENTION fc) const { // TODO : tester
+    const Force FrLink::GetLinkReactionForceOnNode2(FRAME_CONVENTION fc) const {
         auto force = m_chronoLink->c_generalizedForceOnNode2.GetForce();
         if (IsNED(fc)) internal::SwapFrameConvention<Force>(force);
         return force;
     }
 
-    const Force FrLink::GetLinkReactionForceOnBody1(FRAME_CONVENTION fc) const { // TODO : tester
+    const Force FrLink::GetLinkReactionForceOnBody1(FRAME_CONVENTION fc) const {
         auto forceOnNode1 = GetLinkReactionForceOnNode1(fc);
         return m_node1->GetFrameWRT_COG_InBody().ProjectVectorFrameInParent(forceOnNode1, fc);
     }
 
-    const Force FrLink::GetLinkReactionForceOnBody2(FRAME_CONVENTION fc) const { // TODO : tester
+    const Force FrLink::GetLinkReactionForceOnBody2(FRAME_CONVENTION fc) const {
         auto forceOnNode2 = GetLinkReactionForceOnNode2(fc);
         return m_node2->GetFrameWRT_COG_InBody().ProjectVectorFrameInParent(forceOnNode2, fc);
     }
 
-    const Torque FrLink::GetLinkReactionTorqueOnNode1(FRAME_CONVENTION fc) const { // TODO : tester
+    const Torque FrLink::GetLinkReactionTorqueOnNode1(FRAME_CONVENTION fc) const {
         auto torque = m_chronoLink->c_generalizedForceOnNode1.GetTorque();
         if (IsNED(fc)) internal::SwapFrameConvention<Torque>(torque);
         return torque;
     }
 
-    const Torque FrLink::GetLinkReactionTorqueOnNode2(FRAME_CONVENTION fc) const { // TODO : tester
+    const Torque FrLink::GetLinkReactionTorqueOnNode2(FRAME_CONVENTION fc) const {
         auto torque = m_chronoLink->c_generalizedForceOnNode2.GetTorque();
         if (IsNED(fc)) internal::SwapFrameConvention<Torque>(torque);
         return torque;
     }
 
-    const Torque FrLink::GetLinkReactionTorqueOnBody1AtCOG(FRAME_CONVENTION fc) const { // TODO : tester
+    const Torque FrLink::GetLinkReactionTorqueOnBody1AtCOG(FRAME_CONVENTION fc) const {
         auto nodeFrame_WRT_COG = m_node1->GetFrameWRT_COG_InBody();
 
         auto torqueAtNode1_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetLinkReactionTorqueOnNode1(fc), fc);
@@ -432,7 +432,7 @@ namespace frydom {
         return torqueAtNode1_ref + COG_M1_ref.cross(force_ref);
     }
 
-    const Torque FrLink::GetLinkReactionTorqueOnBody2AtCOG(FRAME_CONVENTION fc) const { // TODO : tester
+    const Torque FrLink::GetLinkReactionTorqueOnBody2AtCOG(FRAME_CONVENTION fc) const {
         auto nodeFrame_WRT_COG = m_node2->GetFrameWRT_COG_InBody();
 
         auto torqueAtNode2_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetLinkReactionTorqueOnNode2(fc), fc);
@@ -483,12 +483,12 @@ namespace frydom {
     }
 
     const Torque FrLink::GetLinkTorqueOnBody1InFrame1AtOrigin1(FRAME_CONVENTION fc) const {
-        auto torque = m_chronoLink->GetLinkTorqueOnBody1InFrame2ArOrigin1();
+        auto torque = m_chronoLink->GetLinkTorqueOnBody1InFrame2AtOrigin1();
         return m_chronoLink->c_frame2WRT1.ProjectVectorFrameInParent<Force>(torque, fc);
     }
 
     const Torque FrLink::GetLinkTorqueOnBody2InFrame2AtOrigin2(FRAME_CONVENTION fc) const {
-        auto torque_O1_2 = m_chronoLink->GetLinkTorqueOnBody1InFrame2ArOrigin1();
+        auto torque_O1_2 = m_chronoLink->GetLinkTorqueOnBody1InFrame2AtOrigin1();
         auto force_2 = m_chronoLink->GetLinkForceOnBody1InFrame2AtOrigin1();
         auto O2O1_2 = m_chronoLink->c_frame1WRT2.GetPosition(NWU);
         return -(torque_O1_2 + O2O1_2.cross(force_2));
@@ -503,7 +503,7 @@ namespace frydom {
     }
 
     const Torque FrLink::GetLinkTorqueOnBody1InFrame2AtOrigin1(FRAME_CONVENTION fc) const {
-        return m_chronoLink->GetLinkTorqueOnBody1InFrame2ArOrigin1();
+        return m_chronoLink->GetLinkTorqueOnBody1InFrame2AtOrigin1();
     }
 
     const Torque FrLink::GetLinkTorqueOnBody2InFrame1AtOrigin2(FRAME_CONVENTION fc) const {

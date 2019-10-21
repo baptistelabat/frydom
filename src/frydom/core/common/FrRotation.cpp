@@ -215,14 +215,22 @@ namespace frydom {
         return matrix * GetInverseRotationMatrix();
     }
 
+  bool FrUnitQuaternion::IsApprox(const FrUnitQuaternion &other, double prec) const {
+      GetChronoQuaternion().Equals(other.GetChronoQuaternion(), prec);
+  }
 
-    /*
-     *
-     *
-     * FrRotation
-     *
-     *
-     */
+  bool FrUnitQuaternion::IsZero(double prec) const {
+      return (*this == FrUnitQuaternion(1.,0.,0.,0., NWU));
+  }
+
+
+  /*
+   *
+   *
+   * FrRotation
+   *
+   *
+   */
 
     FrRotation::FrRotation() : m_frQuaternion() {}
 
