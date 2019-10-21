@@ -79,6 +79,9 @@ namespace frydom {
             GeneralizedForce c_generalizedForceOnNode2;
             GeneralizedForce c_generalizedForceOnNode1;
 
+//            GeneralizedForceTorsor c_generalizedForceTorsorOnNode1;
+//            GeneralizedForceTorsor c_generalizedForceTorsorOnNode2;
+
 
             /// Constructor
             explicit FrLinkLockBase(FrLink* frydomLink);
@@ -255,6 +258,8 @@ namespace frydom {
         /*
          * Force related methods
          */
+
+//        const GeneralizedForceTorsor GetLinkReactionForceOnNode1_(FRAME_CONVENTION fc) const;
 
         /// Get the link reaction force applied at node 1, expressed in node 1 frame.
         /// Note this is the force applied on the body

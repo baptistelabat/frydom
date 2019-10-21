@@ -21,7 +21,7 @@ TEST(FrTorsor, FrTorsor_FrTorsor_Test) {
   Position point;
   point.setRandom();
 
-  FrTorsor torsor(resultante, moment, point, fc);
+  Torsor torsor(resultante, moment, point, fc);
 
   Position testPos;
   testPos = point - torsor.GetPoint(fc);
@@ -40,7 +40,7 @@ TEST(FrTorsor, FrTorsor_GeneralizedForce_Test) {
   force.setRandom();
   Torque torque;
   torque.setRandom();
-  FrGeneralizedForceTorsor forceTorsor(force, torque, point, fc);
+  GeneralizedForceTorsor forceTorsor(force, torque, point, fc);
 
   Position newPoint;
   newPoint.setRandom();
@@ -60,7 +60,7 @@ TEST(FrTorsor, FrTorsor_GeneralizedVelocity_Test) {
 
   // Generalized Velocity
   Velocity velocity; velocity.setRandom(); AngularVelocity angularVelocity; angularVelocity.setRandom();
-  FrGeneralizedVelocityTorsor velocityTorsor(velocity, angularVelocity, point, fc);
+  GeneralizedVelocityTorsor velocityTorsor(velocity, angularVelocity, point, fc);
 
   Position newPoint; newPoint.setRandom();
   Velocity VelocityAtNewCOG = velocity + (point-newPoint).cross(angularVelocity);

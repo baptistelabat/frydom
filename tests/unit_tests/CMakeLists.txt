@@ -36,7 +36,7 @@ set(UNIT_TESTS
         test_FrPolygon
         test_FrMesh
         test_FrLink
-        test_FrTorsor
+        test_Torsor
         )
 
 # Set the path definition of the data resources

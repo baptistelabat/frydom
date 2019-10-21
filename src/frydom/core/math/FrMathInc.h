@@ -19,6 +19,6 @@
 #include "FrEulerAngles.h"
 #include "FrMatrix.h"
 #include "FrVector.h"
-#include "FrTorsor.h"
+#include "Torsor.h"
 
 #endif //FRYDOM_FRMATHINC_H

@@ -59,7 +59,7 @@ list(APPEND SRC_FILES
 list(APPEND SRC_FILES
         math/FrMatrix.cpp
         math/FrVector.cpp
-        math/FrTorsor.cpp
+        math/Torsor.cpp
 
         math/functions/FrFunctionBase.cpp
 

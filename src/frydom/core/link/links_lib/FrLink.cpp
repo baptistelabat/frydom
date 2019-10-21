@@ -100,37 +100,41 @@ namespace frydom {
 
         void FrLinkLockBase::GenerateCache() {
             // 1 - Relative Frames
-            c_frame1WRT2 = internal::ChCoordsys2FrFrame(GetRelM());
-            c_frame2WRT1 = c_frame1WRT2.GetInverse();
+            c_frame2WRT1 = internal::ChCoordsys2FrFrame(GetRelM());
+            c_frame1WRT2 = c_frame2WRT1.GetInverse();
 
             // 2 - Relative velocities
-            c_generalizedVelocity1WRT2.SetVelocity(internal::ChVectorToVector3d<Velocity>(GetRelM_dt().pos));
-            c_generalizedVelocity1WRT2.SetAngularVelocity(internal::ChVectorToVector3d<AngularVelocity>(GetRelWvel()));
+            c_generalizedVelocity2WRT1.SetVelocity(internal::ChVectorToVector3d<Velocity>(GetRelM_dt().pos));
+            c_generalizedVelocity2WRT1.SetAngularVelocity(internal::ChVectorToVector3d<AngularVelocity>(GetRelWvel()));
 
-            c_generalizedVelocity2WRT1.SetVelocity(
-                    - c_frame2WRT1.ProjectVectorFrameInParent<Velocity>(c_generalizedVelocity1WRT2.GetVelocity(), NWU));
-            c_generalizedVelocity2WRT1.SetAngularVelocity(
-                    - c_frame2WRT1.ProjectVectorFrameInParent<AngularVelocity>(c_generalizedVelocity1WRT2.GetAngularVelocity(), NWU));
+            c_generalizedVelocity1WRT2.SetVelocity(
+                    - c_frame1WRT2.ProjectVectorFrameInParent<Velocity>(c_generalizedVelocity2WRT1.GetVelocity(), NWU));
+            c_generalizedVelocity1WRT2.SetAngularVelocity(
+                    - c_frame1WRT2.ProjectVectorFrameInParent<AngularVelocity>(c_generalizedVelocity2WRT1.GetAngularVelocity(), NWU));
 
             // 2 - Relative accelerations
-            c_generalizedAcceleration1WRT2.SetAcceleration(internal::ChVectorToVector3d<Acceleration>(GetRelM_dtdt().pos));
-            c_generalizedAcceleration1WRT2.SetAngularAcceleration(internal::ChVectorToVector3d<AngularAcceleration>(GetRelWacc()));
+            c_generalizedAcceleration2WRT1.SetAcceleration(internal::ChVectorToVector3d<Acceleration>(GetRelM_dtdt().pos));
+            c_generalizedAcceleration2WRT1.SetAngularAcceleration(internal::ChVectorToVector3d<AngularAcceleration>(GetRelWacc()));
 
-            c_generalizedAcceleration2WRT1.SetAcceleration(
-                    - c_frame2WRT1.ProjectVectorFrameInParent<Acceleration>(c_generalizedAcceleration1WRT2.GetAcceleration(), NWU));
-            c_generalizedAcceleration2WRT1.SetAngularAcceleration(
-                    - c_frame2WRT1.ProjectVectorFrameInParent<AngularAcceleration>(c_generalizedAcceleration1WRT2.GetAngularAcceleration(), NWU));
+            c_generalizedAcceleration1WRT2.SetAcceleration(
+                    - c_frame1WRT2.ProjectVectorFrameInParent<Acceleration>(c_generalizedAcceleration2WRT1.GetAcceleration(), NWU));
+            c_generalizedAcceleration1WRT2.SetAngularAcceleration(
+                    - c_frame1WRT2.ProjectVectorFrameInParent<AngularAcceleration>(c_generalizedAcceleration2WRT1.GetAngularAcceleration(), NWU));
 
             // 3 - Link forces
-            c_generalizedForceOnNode2.SetForce(internal::ChVectorToVector3d<Force>(Get_react_force()));
-            c_generalizedForceOnNode2.SetTorque(internal::ChVectorToVector3d<Torque>(Get_react_torque()));
+            c_generalizedForceOnNode1.SetForce(internal::ChVectorToVector3d<Force>(Get_react_force()));
+            c_generalizedForceOnNode1.SetTorque(internal::ChVectorToVector3d<Torque>(Get_react_torque()));
 
-            c_generalizedForceOnNode1.SetForce(
-                    - c_frame2WRT1.ProjectVectorFrameInParent<Force>(c_generalizedForceOnNode2.GetForce(), NWU));
-            c_generalizedForceOnNode1.SetTorque(
-                    - c_frame2WRT1.ProjectVectorFrameInParent(c_generalizedForceOnNode2.GetTorque(), NWU)
-                    + c_frame2WRT1.GetPosition(NWU).cross(c_generalizedForceOnNode1.GetForce())
+            c_generalizedForceOnNode2.SetForce(
+                    - c_frame1WRT2.ProjectVectorFrameInParent<Force>(c_generalizedForceOnNode1.GetForce(), NWU));
+            c_generalizedForceOnNode2.SetTorque(
+                    - c_frame1WRT2.ProjectVectorFrameInParent(c_generalizedForceOnNode1.GetTorque(), NWU)
+                    + c_frame1WRT2.GetPosition(NWU).cross(c_generalizedForceOnNode2.GetForce())
                     );
+
+//            c_generalizedForceTorsorOnNode1.Set(internal::ChVectorToVector3d<Force>(Get_react_force()),
+//                                                internal::ChVectorToVector3d<Torque>(Get_react_torque()),
+//                                                internal::ChVectorToVector3d<Position>(GetLinkAbsoluteCoords().pos), NWU);
 
         }
 
@@ -603,6 +607,9 @@ namespace frydom {
 
     void FrLink::UpdateCache() {}
 
+//  const GeneralizedForceTorsor FrLink::GetLinkReactionForceOnNode1_(FRAME_CONVENTION fc) const {
+//      return GeneralizedForceTorsor(frydom::Force(), frydom::Torque(), frydom::Position(), NWU);
+//  }
 
 
 }  // end namespace frydom
