@@ -65,7 +65,7 @@ namespace frydom {
     }
 
     double FrRevoluteLink::GetLinkTorque() const {
-        return GetLinkTorqueOnBody2InFrame2AtOrigin2(NWU).GetMz();
+      return GetSpringDamperTorqueOnNode2(NWU).GetMz();
     }
 
     double FrRevoluteLink::GetLinkPower() const {
@@ -119,7 +119,7 @@ namespace frydom {
         Force force;
         Torque torque;
 
-        torque.GetMz() = - m_stiffness * GetLinkAngle() - m_damping * GetLinkAngularVelocity();
+        torque.GetMz() = m_stiffness * GetLinkAngle() + m_damping * GetLinkAngularVelocity();
 
         // Set the link force
         SetLinkForceTorqueOnBody2InFrame2AtOrigin2(force, torque);
