@@ -489,47 +489,10 @@ namespace frydom {
         m_chronoLink->SetLinkTorqueOnBody1InFrame2AtOrigin1(torque_M1);
     }
 
-    const Force FrLink::GetLinkForceOnBody1InFrame1AtOrigin1(FRAME_CONVENTION fc) const {
-        auto force = m_chronoLink->GetLinkForceOnBody1InFrame2AtOrigin1();
-        return m_chronoLink->c_frame2WRT1.ProjectVectorFrameInParent<Force>(force, fc);
-    }
-
-    const Force FrLink::GetLinkForceOnBody2InFrame2AtOrigin2(FRAME_CONVENTION fc) const {
-        return - m_chronoLink->GetLinkForceOnBody1InFrame2AtOrigin1();
-    }
-
-    const Torque FrLink::GetLinkTorqueOnBody1InFrame1AtOrigin1(FRAME_CONVENTION fc) const {
-        auto torque = m_chronoLink->GetLinkTorqueOnBody1InFrame2AtOrigin1();
-        return m_chronoLink->c_frame2WRT1.ProjectVectorFrameInParent<Force>(torque, fc);
-    }
-
-    const Torque FrLink::GetLinkTorqueOnBody2InFrame2AtOrigin2(FRAME_CONVENTION fc) const {
-        auto torque_O1_2 = m_chronoLink->GetLinkTorqueOnBody1InFrame2AtOrigin1();
-        auto force_2 = m_chronoLink->GetLinkForceOnBody1InFrame2AtOrigin1();
-        auto O2O1_2 = m_chronoLink->c_frame1WRT2.GetPosition(NWU);
-        return -(torque_O1_2 + O2O1_2.cross(force_2));
-    }
-
-    const Force FrLink::GetLinkForceOnBody1InFrame2AtOrigin1(FRAME_CONVENTION fc) const {
-        return m_chronoLink->GetLinkForceOnBody1InFrame2AtOrigin1();
-    }
-
-    const Force FrLink::GetLinkForceOnBody2InFrame1AtOrigin2(FRAME_CONVENTION fc) const {
-        return m_chronoLink->c_frame2WRT1.ProjectVectorFrameInParent<Force>(GetLinkForceOnBody2InFrame2AtOrigin2(fc), fc);
-    }
-
-    const Torque FrLink::GetLinkTorqueOnBody1InFrame2AtOrigin1(FRAME_CONVENTION fc) const {
-        return m_chronoLink->GetLinkTorqueOnBody1InFrame2AtOrigin1();
-    }
-
-    const Torque FrLink::GetLinkTorqueOnBody2InFrame1AtOrigin2(FRAME_CONVENTION fc) const {
-        return m_chronoLink->c_frame2WRT1.ProjectVectorFrameInParent<Torque>(GetLinkTorqueOnBody2InFrame2AtOrigin2(fc), fc);
-    }
-
 
     double FrLink::GetLinkPower() const {
-        return GetLinkForceOnBody2InFrame1AtOrigin2(NWU).dot(GetVelocityOfNode2WRTNode1(NWU))
-             + GetLinkTorqueOnBody2InFrame1AtOrigin2(NWU).dot(GetAngularVelocityOfNode2WRTNode1(NWU));
+        return GetSpringDamperForceOnNode2(NWU).dot(GetVelocityOfNode2WRTNode1(NWU))
+             + GetSpringDamperTorqueOnNode2(NWU).dot(GetAngularVelocityOfNode2WRTNode1(NWU));
     }
 
     void FrLink::AddFields() {

@@ -178,7 +178,6 @@ TEST(FrLinkTest, FrLinkTest_Prismatic_velocity_Test) {
       time += 0.01;
     }
   }
-  system.RunInViewer(20., 5.);
 
   // Tests nodes frame
   EXPECT_TRUE(link->GetNode1() == worldNode);

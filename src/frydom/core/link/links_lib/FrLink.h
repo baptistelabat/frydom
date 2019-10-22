@@ -309,54 +309,33 @@ namespace frydom {
          * Link force in free degree of freedom (ie spring damping)
          */
 
-
+      /// Get the force of the spring damper applied at node 1, expressed in node 1 reference frame
       const Force GetSpringDamperForceOnNode1(FRAME_CONVENTION fc) const; // tested
 
+      /// Get the force of the spring damper applied at node 2, expressed in node 2 reference frame
       const Force GetSpringDamperForceOnNode2(FRAME_CONVENTION fc) const; // tested
 
+      /// Get the force of the spring damper applied at body 1, expressed in body 1 reference frame
       const Force GetSpringDamperForceOnBody1(FRAME_CONVENTION fc) const; // tested
 
+      /// Get the force of the spring damper applied at body 2, expressed in body 2 reference frame
       const Force GetSpringDamperForceOnBody2(FRAME_CONVENTION fc) const; // tested
 
+      /// Get the torque of the spring damper applied at node 1, expressed in node 1 reference frame
       const Torque GetSpringDamperTorqueOnNode1(FRAME_CONVENTION fc) const; // tested
 
+      /// Get the torque of the spring damper applied at node 2, expressed in node 2 reference frame
       const Torque GetSpringDamperTorqueOnNode2(FRAME_CONVENTION fc) const; // tested
 
+      /// Get the torque of the spring damper applied at body 1 COG, expressed in body 1 reference frame
       const Torque GetSpringDamperTorqueOnBody1AtCOG(FRAME_CONVENTION fc) const; // tested
 
+      /// Get the torque of the spring damper applied at body 2 COG, expressed in body 2 reference frame
       const Torque GetSpringDamperTorqueOnBody2AtCOG(FRAME_CONVENTION fc) const; // tested
 
 
-
-
-
-        /// Get the force in link applying on body 1 at node 1 origin, expressed in frame 1
-        const Force GetLinkForceOnBody1InFrame1AtOrigin1(FRAME_CONVENTION fc) const;
-
-        /// Get the force in link applying on body 2 at node 2 origin, expressed in frame 2
-        const Force GetLinkForceOnBody2InFrame2AtOrigin2(FRAME_CONVENTION fc) const;
-
-        /// Get the torque in link applying on body 1 at node 1 origin, expressed in frame 1
-        const Torque GetLinkTorqueOnBody1InFrame1AtOrigin1(FRAME_CONVENTION fc) const;
-
-        /// Get the torque in link applying on body 2 at node 2 origin, expressed in frame 2
-        const Torque GetLinkTorqueOnBody2InFrame2AtOrigin2(FRAME_CONVENTION fc) const;
-
-        /// Get the force in link applying on body 1 at node 1 origin, expressed in frame 2
-        const Force GetLinkForceOnBody1InFrame2AtOrigin1(FRAME_CONVENTION fc) const;
-
-        /// Get the force in link applying on body 2 at node 2 origin, expressed in frame 1
-        const Force GetLinkForceOnBody2InFrame1AtOrigin2(FRAME_CONVENTION fc) const;
-
-        /// Get the torque in link applying on body 1 at node 1 origin, expressed in frame 2
-        const Torque GetLinkTorqueOnBody1InFrame2AtOrigin1(FRAME_CONVENTION fc) const;
-
-        /// Get the torque in link applying on body 2 at node 2 origin, expressed in frame 1
-        const Torque GetLinkTorqueOnBody2InFrame1AtOrigin2(FRAME_CONVENTION fc) const;
-
-
-        /// Generic computation of the power delivered in a FrLink
-        virtual double GetLinkPower() const;
+        /// Generic computation of the power delivered in a FrLink by the spring damper
+        virtual double GetLinkPower() const; // tested
 
         /// Get the constraint violation of the link (ie the
         FrFrame GetConstraintViolation() const;  // FIXME : verifier que cette violation ne prend pas en compte la position relative normale de la liaison
