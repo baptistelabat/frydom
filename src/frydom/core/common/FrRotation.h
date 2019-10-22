@@ -184,6 +184,10 @@ namespace frydom {
         /// \return true if FrUnitQuaternion are equals, false otherwise
         bool operator==(const FrUnitQuaternion& other) const;
 
+        bool IsApprox(const FrUnitQuaternion& other, double prec = 1e-8) const;
+
+        bool IsZero(double prec = 1e-8) const;
+
         /// Rotate a templated vector A, of type Vector, of a rotation,
         /// on the basis of this quaternion: res=p*[0,A]*p'
         /// \tparam Vector template of the vector argument

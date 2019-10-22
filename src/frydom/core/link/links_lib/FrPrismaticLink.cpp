@@ -57,7 +57,7 @@ namespace frydom {
     }
 
     double FrPrismaticLink::GetLinkForce() const {
-        return GetLinkForceOnBody2InFrame2AtOrigin2(NWU).GetFz();
+      return GetSpringDamperForceOnNode2(NWU).GetFz();
     }
 
     double FrPrismaticLink::GetLinkPower() const {
@@ -82,7 +82,7 @@ namespace frydom {
 
         Force force;
         Torque torque;
-        force.GetFz() = - m_stiffness * GetLinkPosition() - m_damping * GetLinkVelocity();
+        force.GetFz() = m_stiffness * GetLinkPosition() + m_damping * GetLinkVelocity();
 
         SetLinkForceTorqueOnBody2InFrame2AtOrigin2(force, torque);
     }

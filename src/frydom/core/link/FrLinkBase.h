@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "frydom/core/math/FrVector.h"
+#include "frydom/core/math/Torsor.h"
 #include "frydom/core/common/FrConvention.h"
 #include "frydom/core/common/FrFrame.h"
 #include "frydom/core/FrOffshoreSystem.h"
