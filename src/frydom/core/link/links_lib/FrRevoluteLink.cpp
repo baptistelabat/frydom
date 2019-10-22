@@ -65,6 +65,7 @@ namespace frydom {
     }
 
     double FrRevoluteLink::GetLinkTorque() const {
+      return GetSpringDamperTorqueOnNode2(NWU).GetMz();
         return GetLinkTorqueOnBody2InFrame2AtOrigin2(NWU).GetMz();
     }
 

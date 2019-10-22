@@ -57,7 +57,7 @@ namespace frydom {
     }
 
     double FrPrismaticLink::GetLinkForce() const {
-        return GetLinkForceOnBody2InFrame2AtOrigin2(NWU).GetFz();
+      return GetSpringDamperForceOnNode2(NWU).GetFz();
     }
 
     double FrPrismaticLink::GetLinkPower() const {

@@ -113,6 +113,18 @@ namespace frydom {
             /// Get the link torque applying on Body 1 (as external) expressed in node 2 frame and on node 1 origin
             Torque GetLinkTorqueOnBody1InFrame2AtOrigin1();
 
+          /// Get the link force applying on node 1 by the spring damper addon
+          Force GetLinkForceOnNode1() const;
+
+          /// Get the link torque applying on node 1 by the spring damper addon
+          Torque GetLinkTorqueOnNode1() const;
+
+          /// Get the link force applying on node 2 by the spring damper addon
+          Force GetLinkForceOnNode2() const;
+
+          /// Get the link torque applying on node 2 by the spring damper addon
+          Torque GetLinkTorqueOnNode2() const;
+
             FrFrame GetConstraintViolation();
 
             void BuildLinkType(chrono::ChLinkLock::LinkType link_type) override;
@@ -216,22 +228,22 @@ namespace frydom {
          */
 
         /// Get the Marker 2 generalized velocity with respect to node 1, expressed in node 1 frame
-        const GeneralizedVelocity GetGeneralizedVelocityOfNode2WRTNode1(FRAME_CONVENTION fc) const;
+        const GeneralizedVelocity GetGeneralizedVelocityOfNode2WRTNode1(FRAME_CONVENTION fc) const; // tested
 
         /// Get the Marker 1 generalized velocity with respect to node 2, expressed in node 2 frame
-        const GeneralizedVelocity GetGeneralizedVelocityOfNode1WRTNode2(FRAME_CONVENTION fc) const;
+        const GeneralizedVelocity GetGeneralizedVelocityOfNode1WRTNode2(FRAME_CONVENTION fc) const; // tested
 
         /// Get the Marker 2 velocity with respect to node 1, expressed in node 1 frame
-        const Velocity GetVelocityOfNode2WRTNode1(FRAME_CONVENTION fc) const;
+        const Velocity GetVelocityOfNode2WRTNode1(FRAME_CONVENTION fc) const; // tested
 
         /// Get the Marker 1 velocity with respect to node 2, expressed in node 2 frame
-        const Velocity GetVelocityOfNode1WRTNode2(FRAME_CONVENTION fc) const;
+        const Velocity GetVelocityOfNode1WRTNode2(FRAME_CONVENTION fc) const; // tested
 
         /// Get the Marker 2 angular velocity with respect to node 1, expressed in node 1 frame
-        const AngularVelocity GetAngularVelocityOfNode2WRTNode1(FRAME_CONVENTION fc) const;
+        const AngularVelocity GetAngularVelocityOfNode2WRTNode1(FRAME_CONVENTION fc) const; // tested
 
         /// Get the Marker 1 angular velocity with respect to node 2, expressed in node 2 frame
-        const AngularVelocity GetAngularVelocityOfNode1WRTNode2(FRAME_CONVENTION fc) const;
+        const AngularVelocity GetAngularVelocityOfNode1WRTNode2(FRAME_CONVENTION fc) const; // tested
 
         /*
          * Acceleration related methods
@@ -296,6 +308,27 @@ namespace frydom {
         /*
          * Link force in free degree of freedom (ie spring damping)
          */
+
+
+      const Force GetSpringDamperForceOnNode1(FRAME_CONVENTION fc) const; // tested
+
+      const Force GetSpringDamperForceOnNode2(FRAME_CONVENTION fc) const; // tested
+
+      const Force GetSpringDamperForceOnBody1(FRAME_CONVENTION fc) const; // tested
+
+      const Force GetSpringDamperForceOnBody2(FRAME_CONVENTION fc) const; // tested
+
+      const Torque GetSpringDamperTorqueOnNode1(FRAME_CONVENTION fc) const; // tested
+
+      const Torque GetSpringDamperTorqueOnNode2(FRAME_CONVENTION fc) const; // tested
+
+      const Torque GetSpringDamperTorqueOnBody1AtCOG(FRAME_CONVENTION fc) const; // tested
+
+      const Torque GetSpringDamperTorqueOnBody2AtCOG(FRAME_CONVENTION fc) const; // tested
+
+
+
+
 
         /// Get the force in link applying on body 1 at node 1 origin, expressed in frame 1
         const Force GetLinkForceOnBody1InFrame1AtOrigin1(FRAME_CONVENTION fc) const;

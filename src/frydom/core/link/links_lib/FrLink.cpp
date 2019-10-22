@@ -174,6 +174,22 @@ namespace frydom {
             return internal::ChVectorToVector3d<Torque>(C_torque);
         }
 
+      Force FrLinkLockBase::GetLinkForceOnNode1() const {
+        return -GetLinkForceOnNode2();
+      }
+
+      Torque FrLinkLockBase::GetLinkTorqueOnNode1() const {
+        return -GetLinkTorqueOnNode2();
+      }
+
+      Force FrLinkLockBase::GetLinkForceOnNode2() const {
+        return internal::ChVectorToVector3d<Force>(C_force);
+      }
+
+      Torque FrLinkLockBase::GetLinkTorqueOnNode2() const {
+        return internal::ChVectorToVector3d<Torque>(C_torque);
+      }
+
         FrFrame FrLinkLockBase::GetConstraintViolation() { // TODO : voir si c'est bien la violation de 2 par rapport a 1, dans 1 !! sinon, renvoyer l'inverse
             return internal::ChCoordsys2FrFrame(GetRelC());
         }
@@ -606,6 +622,61 @@ namespace frydom {
     }
 
     void FrLink::UpdateCache() {}
+
+  const Force FrLink::GetSpringDamperForceOnNode1(FRAME_CONVENTION fc) const {
+    auto force = m_chronoLink->GetLinkForceOnNode1();
+    if (IsNED(fc)) {internal::SwapFrameConvention(force);}
+    return force;
+  }
+
+  const Torque FrLink::GetSpringDamperTorqueOnNode1(FRAME_CONVENTION fc) const {
+    auto torque = m_chronoLink->GetLinkTorqueOnNode1();
+    if (IsNED(fc)) {internal::SwapFrameConvention(torque);}
+    return torque;
+  }
+
+  const Force FrLink::GetSpringDamperForceOnNode2(FRAME_CONVENTION fc) const {
+    auto force = m_chronoLink->GetLinkForceOnNode2();
+    if (IsNED(fc)) {internal::SwapFrameConvention(force);}
+    return force;
+  }
+
+  const Torque FrLink::GetSpringDamperTorqueOnNode2(FRAME_CONVENTION fc) const {
+    auto torque = m_chronoLink->GetLinkTorqueOnNode2();
+    if (IsNED(fc)) {internal::SwapFrameConvention(torque);}
+    return torque;
+  }
+
+  const Force FrLink::GetSpringDamperForceOnBody1(FRAME_CONVENTION fc) const {
+    auto force = GetSpringDamperForceOnNode1(fc);
+    return m_node1->GetFrameWRT_COG_InBody().ProjectVectorFrameInParent(force, fc);
+  }
+
+  const Force FrLink::GetSpringDamperForceOnBody2(FRAME_CONVENTION fc) const {
+      auto force = GetSpringDamperForceOnNode2(fc);
+      return m_node2->GetFrameWRT_COG_InBody().ProjectVectorFrameInParent(force, fc);
+
+  }
+
+  const Torque FrLink::GetSpringDamperTorqueOnBody1AtCOG(FRAME_CONVENTION fc) const {
+      auto nodeFrame_WRT_COG = m_node1->GetFrameWRT_COG_InBody();
+
+      auto torqueAtNode1_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetSpringDamperTorqueOnNode1(fc), fc);
+      auto COG_M1_ref = nodeFrame_WRT_COG.GetPosition(fc);
+      auto force_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetSpringDamperForceOnNode1(fc), fc);
+
+      return torqueAtNode1_ref + COG_M1_ref.cross(force_ref);
+    }
+
+  const Torque FrLink::GetSpringDamperTorqueOnBody2AtCOG(FRAME_CONVENTION fc) const {
+      auto nodeFrame_WRT_COG = m_node2->GetFrameWRT_COG_InBody();
+
+      auto torqueAtNode2_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetSpringDamperTorqueOnNode2(fc), fc);
+      auto COG_M2_ref = nodeFrame_WRT_COG.GetPosition(fc);
+      auto force_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetSpringDamperForceOnNode2(fc), fc);
+
+      return torqueAtNode2_ref + COG_M2_ref.cross(force_ref);
+    }
 
 //  const GeneralizedForceTorsor FrLink::GetLinkReactionForceOnNode1_(FRAME_CONVENTION fc) const {
 //      return GeneralizedForceTorsor(frydom::Force(), frydom::Torque(), frydom::Position(), NWU);
