@@ -49,13 +49,10 @@ namespace frydom {
 
     virtual void DefineLogMessages() = 0;
 
+    virtual std::string GetURL() = 0;
+
     inline FRAME_CONVENTION GetLogFC() const { return m_log_frame_convention; }
 
-    void AddSerializer(hermes::Serializer *serializer) {
-      for (auto &message : m_messages) {
-        message->AddSerializer(serializer);
-      }
-    }
 
    private:
     void InitializeLogMessages() {
@@ -98,6 +95,10 @@ namespace frydom {
     explicit FrLoggable(const std::string &name, ParentType *parent) :
         FrLoggableBase(),
         FrTreeNode<ParentType>(name, parent) {}
+
+    std::string GetURL() override {
+      return FrTreeNode<ParentType>::m_tree_path;
+    }
 
 
   };

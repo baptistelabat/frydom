@@ -6,6 +6,8 @@
 
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/core/common/FrConvention.h"
+#include "frydom/utils/FrFileSystem.h"
+#include "FrPathManager.h"
 #include "FrLogManager.h"
 #include "FrLoggable.h"
 
@@ -14,7 +16,8 @@ namespace frydom {
 
 
   FrLogManager::FrLogManager(FrOffshoreSystem *system) :
-      m_log_folder(InitializeLogFolder()) {
+      m_log_folder(InitializeLogFolder()),
+      m_log_CSV(true) {
     Add(system);
 
 //    m_serializers.push_back(std::make_unique<hermes::CSVSerializer>(m_log_folder + "file.csv"));
@@ -25,6 +28,10 @@ namespace frydom {
   FrLogManager::FrLogManager(const std::string &log_folder, FrOffshoreSystem *system) :
       m_log_folder(log_folder) {
     Add(system);
+  }
+
+  FrOffshoreSystem* FrLogManager::GetSystem() const {
+    return dynamic_cast<FrOffshoreSystem*>(m_loggable_list.front());
   }
 
   const std::string FrLogManager::GetLogFolder() const {
@@ -73,8 +80,9 @@ namespace frydom {
      *
      */
 
+    std::cerr << "Mettre en place la determination du dossier de log"<< std::endl;
 
-    return ".";
+    return "./";
 
   }
 
@@ -92,8 +100,25 @@ namespace frydom {
 
       obj->DefineLogMessages();
 
-      for (const auto &serializer : m_serializers) {
-        obj->AddSerializer(serializer.get());
+      if (m_log_CSV) {
+
+        // Adding run information
+        std::string system_folder = GetLogFolder() + GetSystem()->GetURL();
+        FrFileSystem::mkdir(system_folder);
+
+
+
+        // Adding a CSV serializer to messages
+        for (auto& message : obj->m_messages) {
+
+          // Building the message folder
+          std::string message_folder = GetLogFolder() + obj->GetURL();
+          FrFileSystem::mkdir(message_folder);
+
+          std::string csv_file = message_folder + message->GetName() + ".csv";
+
+          message->AddSerializer(new hermes::CSVSerializer(csv_file));
+        }
       }
 
       obj->InitializeLogMessages();
@@ -115,9 +140,9 @@ namespace frydom {
     }
   }
 
-//  void FrLogManager::LogCSV(bool val) {
-//
-//  }
+  void FrLogManager::LogCSV(bool val) {
+    m_log_CSV = val;
+  }
 
   unsigned int FrLogManager::GetNumberOfLoggables() const {
     return m_loggable_list.size();

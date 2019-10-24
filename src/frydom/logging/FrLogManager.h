@@ -26,6 +26,8 @@ namespace frydom {
 
     FrLogManager(const std::string &log_folder, FrOffshoreSystem* system);
 
+    FrOffshoreSystem* GetSystem() const;
+
     const std::string GetLogFolder() const;
 
     void Add(const std::shared_ptr<FrLoggableBase>& obj);
@@ -38,13 +40,13 @@ namespace frydom {
 
     unsigned int GetNumberOfLoggables() const;
 
-    void Initialize();
+    virtual void Initialize();
 
     void StepFinalize();
 
     void SetLogFrameConvention(FRAME_CONVENTION fc);
 
-//    void LogCSV(bool val);  // TODO: permettre de ne pas logger en CSV... -> perf !
+    void LogCSV(bool val);  // TODO: permettre de ne pas logger en CSV... -> perf !
 
 
    private:
@@ -58,7 +60,9 @@ namespace frydom {
 
     std::list<FrLoggableBase*> m_loggable_list;
 
-    std::vector<std::unique_ptr<hermes::Serializer>> m_serializers;
+    bool m_log_CSV;
+
+//    std::vector<std::unique_ptr<hermes::Serializer>> m_serializers;
 
   };
 

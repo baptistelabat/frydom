@@ -43,6 +43,7 @@ private:
     hermes::Serializer* DefaultCreator(const FrObject*, const std::string& path) {
       return new hermes::CSVSerializer(path);
     }
+
     using Creator = std::function<hermes::Serializer *(const FrObject*, const std::string &)>;
     std::map<std::string, Creator> creators_;
 };

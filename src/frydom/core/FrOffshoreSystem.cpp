@@ -189,6 +189,7 @@ namespace frydom {
 
     // Creating the path manager service
     m_pathManager = std::make_unique<FrPathManager>();
+    m_pathManager->RegisterTreeNode(this);
 
     // Creating the static analysis
     m_statics = std::make_unique<FrStaticAnalysis>(this);
@@ -197,6 +198,7 @@ namespace frydom {
     CreateWorldBody();
 
 //        m_message = std::make_unique<hermes::Message>();
+
 
   }
 
