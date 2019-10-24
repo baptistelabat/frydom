@@ -16,14 +16,6 @@
 #include <typeinfo>
 #include <iostream>
 
-//#include <frydom/core/common/FrTreeNode.h>
-//#include "frydom/core/body/FrBody.h"
-
-
-
-//#ifndef RESOURCES_PATH
-//#define RESOURCES_PATH
-//#endif
 
 namespace frydom {
 

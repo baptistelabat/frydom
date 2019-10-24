@@ -1,6 +1,14 @@
+// ==========================================================================
+// FRyDoM - frydom-ce.org
 //
-// Created by frongere on 25/09/19.
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+//
+// ==========================================================================
+
 
 #ifndef FRYDOM_FRLOGMANAGER_H
 #define FRYDOM_FRLOGMANAGER_H
@@ -15,6 +23,7 @@ namespace frydom {
 
   // Forward declaration
   class FrLoggableBase;
+
   class FrOffshoreSystem;
 
 
@@ -22,21 +31,21 @@ namespace frydom {
 
    public:
 
-    explicit FrLogManager(FrOffshoreSystem* system);
+    explicit FrLogManager(FrOffshoreSystem *system);
 
-    FrLogManager(const std::string &log_folder, FrOffshoreSystem* system);
+    FrLogManager(const std::string &log_folder, FrOffshoreSystem *system);
 
-    FrOffshoreSystem* GetSystem() const;
+    FrOffshoreSystem *GetSystem() const;
 
-    const std::string GetLogFolder() const;
+    const std::string &GetLogFolder() const;
 
-    void Add(const std::shared_ptr<FrLoggableBase>& obj);
+    void Add(const std::shared_ptr<FrLoggableBase> &obj);
 
-    void Add(FrLoggableBase* obj);
+    void Add(FrLoggableBase *obj);
 
-    void Remove(const std::shared_ptr<FrLoggableBase>& obj);
+    void Remove(const std::shared_ptr<FrLoggableBase> &obj);
 
-    void Remove(FrLoggableBase* obj);
+    void Remove(FrLoggableBase *obj);
 
     unsigned int GetNumberOfLoggables() const;
 
@@ -50,7 +59,7 @@ namespace frydom {
 
 
    private:
-    bool Has(FrLoggableBase* obj) const;
+    bool Has(FrLoggableBase *obj) const;
 
     std::string InitializeLogFolder();
 
@@ -58,7 +67,7 @@ namespace frydom {
    private:
     std::string m_log_folder;
 
-    std::list<FrLoggableBase*> m_loggable_list;
+    std::list<FrLoggableBase *> m_loggable_list;
 
     bool m_log_CSV;
 

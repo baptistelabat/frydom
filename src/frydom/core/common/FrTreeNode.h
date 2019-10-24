@@ -1,6 +1,14 @@
+// ==========================================================================
+// FRyDoM - frydom-ce.org
 //
-// Created by frongere on 25/09/19.
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+//
+// ==========================================================================
+
 
 #ifndef FRYDOM_FRTREENODE_H
 #define FRYDOM_FRTREENODE_H
@@ -30,11 +38,15 @@ namespace frydom {
       m_tree_path = tree_path;
     }
 
+    const std::string& GetTreePath() const {
+      return m_tree_path;
+    }
+
    private:
     std::string m_name;
 
-   protected:
-    std::string m_tree_path; // Non utilise !!
+//   protected:
+    std::string m_tree_path;
 
   };
 

@@ -1,6 +1,13 @@
+// ==========================================================================
+// FRyDoM - frydom-ce.org
 //
-// Created by frongere on 25/09/19.
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+//
+// ==========================================================================
 
 #include <algorithm>
 
@@ -13,7 +20,6 @@
 
 
 namespace frydom {
-
 
   FrLogManager::FrLogManager(FrOffshoreSystem *system) :
       m_log_folder(InitializeLogFolder()),
@@ -30,11 +36,11 @@ namespace frydom {
     Add(system);
   }
 
-  FrOffshoreSystem* FrLogManager::GetSystem() const {
-    return dynamic_cast<FrOffshoreSystem*>(m_loggable_list.front());
+  FrOffshoreSystem *FrLogManager::GetSystem() const {
+    return dynamic_cast<FrOffshoreSystem *>(m_loggable_list.front());
   }
 
-  const std::string FrLogManager::GetLogFolder() const {
+  const std::string &FrLogManager::GetLogFolder() const {
     return m_log_folder;
   }
 
@@ -75,50 +81,40 @@ namespace frydom {
      * Tout cela sera vraiment utile quand FRyDoM sera installable...
      * On fournira un utilitaire frydom_update qui permettra de mettre a jour l'install de frydom avec la dernière version...
      *
-     *
-     *
-     *
      */
 
-    std::cerr << "Mettre en place la determination du dossier de log"<< std::endl;
+    std::cerr << "Mettre en place la determination du dossier de log" << std::endl;
 
     return "./";
 
   }
 
-  void FrLogManager::Initialize() {
-
-
-    /*
-     * TODO : ici, il faut initialiser les serializers de telle maniere a ce que ca se passe bien sur les targets
-     *
-     *
-     */
-
+  void FrLogManager::Initialize() { // TODO : retirer la necessite d'avoir cette methode friend de FrLoggableBase
 
     for (auto &obj : m_loggable_list) {
+
+      if (!obj->IsLogged()) continue;
 
       obj->DefineLogMessages();
 
       if (m_log_CSV) {
 
         // Adding run information
-        std::string system_folder = GetLogFolder() + GetSystem()->GetURL();
+        std::string system_folder = m_log_folder + GetSystem()->GetTreePath();
         FrFileSystem::mkdir(system_folder);
 
-
-
         // Adding a CSV serializer to messages
-        for (auto& message : obj->m_messages) {
+        for (auto &message : obj->m_messages) { // TODO : ajouter un iterateur de message sur FrLoggableBase
 
           // Building the message folder
-          std::string message_folder = GetLogFolder() + obj->GetURL();
+          std::string message_folder = m_log_folder + obj->GetTreePath();
           FrFileSystem::mkdir(message_folder);
 
           std::string csv_file = message_folder + message->GetName() + ".csv";
 
           message->AddSerializer(new hermes::CSVSerializer(csv_file));
         }
+
       }
 
       obj->InitializeLogMessages();
@@ -130,6 +126,7 @@ namespace frydom {
 
   void FrLogManager::StepFinalize() {
     for (auto &obj : m_loggable_list) {
+      if (!obj->IsLogged()) continue;
       obj->StepFinalizeLog();
     }
   }

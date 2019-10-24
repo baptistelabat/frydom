@@ -9,8 +9,6 @@
 
 #include "cppfs/fs.h"
 #include "cppfs/FileHandle.h"
-//#include "cppfs/FilePath.h"
-
 
 // TODO : cette classe merite d'etre placee dans un depot a part !!
 
@@ -22,11 +20,11 @@ namespace frydom {
    public:
 
     /// Create directory in a recursive way (similar to mkdir -p /path/to/dir under Unix but multiplatform)
-    static bool mkdir(const std::string& path);
+    static bool mkdir(const std::string &path);
 
    private:
 
-    static bool mkdir(cppfs::FileHandle& fh);
+    static bool mkdir(cppfs::FileHandle &fh);
 
   };
 
