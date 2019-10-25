@@ -15,7 +15,7 @@ int main() {
 
   std::cout << "User login: " << FrFileSystem::get_login() << std::endl;
 
-  std::cout << "Hostname: " << FrFileSystem::get_hotname() << std::endl;
+  std::cout << "Hostname: " << FrFileSystem::get_hostname() << std::endl;
 
 
 }

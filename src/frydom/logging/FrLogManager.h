@@ -33,11 +33,7 @@ namespace frydom {
 
     explicit FrLogManager(FrOffshoreSystem *system);
 
-    FrLogManager(const std::string &log_folder, FrOffshoreSystem *system);
-
     FrOffshoreSystem *GetSystem() const;
-
-    const std::string &GetLogFolder() const;
 
     void Add(const std::shared_ptr<FrLoggableBase> &obj);
 
@@ -55,7 +51,7 @@ namespace frydom {
 
     void SetLogFrameConvention(FRAME_CONVENTION fc);
 
-    void LogCSV(bool val);  // TODO: permettre de ne pas logger en CSV... -> perf !
+    void NoCSVLlog();  // TODO: permettre de ne pas logger en CSV... -> perf !
 
 
    private:

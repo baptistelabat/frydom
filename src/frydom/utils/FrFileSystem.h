@@ -100,7 +100,7 @@ namespace frydom {
     static std::string get_login();
 
     /// Return the current hostname
-    static std::string get_hotname();
+    static std::string get_hostname();
 
 
 

@@ -50,7 +50,7 @@ namespace frydom {
 
   }
 
-  std::string FrFileSystem::get_home() {
+  std::string FrFileSystem::get_home() {  // FIXME : non portable ...
     std::string res;
     int uid = getuid();
     const char *homeEnv = std::getenv("HOME");
@@ -72,12 +72,12 @@ namespace frydom {
   }
 
 //  std::string FrFileSystem::abspath(const std::string &path) {
-//    std::cerr << "Not yep implemented..." << std::endl;
+//    std::cerr << "Not implemented yet..." << std::endl;
 //    exit(EXIT_FAILURE);
 //  }
 //
 //  std::string FrFileSystem::normpath(const std::string& path) {
-//    std::cerr << "Not yep implemented..." << std::endl;
+//    std::cerr << "Not implemented yet..." << std::endl;
 //    exit(EXIT_FAILURE);
 //  }
 
@@ -101,7 +101,6 @@ namespace frydom {
     return false;
   }
 
-
   bool FrFileSystem::exists(const std::string &path) {
     cppfs::FileHandle fh = cppfs::fs::open(path);
     return fh.exists();
@@ -118,12 +117,12 @@ namespace frydom {
   }
 
 //  std::string FrFileSystem::basename(const std::string &path) {
-//    std::cerr << "Not yep implemented..." << std::endl;
+//    std::cerr << "Not implemented yet..." << std::endl;
 //    exit(EXIT_FAILURE);
 //  }
 //
 //  std::string FrFileSystem::dirname(const std::string &path) {
-//    std::cerr << "Not yep implemented..." << std::endl;
+//    std::cerr << "Not implemented yet..." << std::endl;
 //    exit(EXIT_FAILURE);
 //  }
 //
@@ -141,47 +140,47 @@ namespace frydom {
   }
 
 //  std::pair<std::string, std::string> FrFileSystem::split(const std::string &path) {
-//    std::cerr << "Not yep implemented..." << std::endl;
+//    std::cerr << "Not implemented yet..." << std::endl;
 //    exit(EXIT_FAILURE);
 //  }
 //
 //  std::pair<std::string, std::string> FrFileSystem::splitdrive(const std::string &path) {
-//    std::cerr << "Not yep implemented..." << std::endl;
+//    std::cerr << "Not implemented yet..." << std::endl;
 //    exit(EXIT_FAILURE);
 //  }
 //
 //  std::pair<std::string, std::string> FrFileSystem::splitext(const std::string &path) {
-//    std::cerr << "Not yep implemented..." << std::endl;
+//    std::cerr << "Not implemented yet..." << std::endl;
 //    exit(EXIT_FAILURE);
 //  }
 //
 //  void FrFileSystem::copy(const std::string &src, const std::string &dst) {
-//    std::cerr << "Not yep implemented..." << std::endl;
+//    std::cerr << "Not implemented yet..." << std::endl;
 //    exit(EXIT_FAILURE);
 //  }
 //
 //  void FrFileSystem::copytree(const std::string &src, const std::string &dst) {
-//    std::cerr << "Not yep implemented..." << std::endl;
+//    std::cerr << "Not implemented yet..." << std::endl;
 //    exit(EXIT_FAILURE);
 //  }
 //
 //  void FrFileSystem::rmtree(const std::string &path) {
-//    std::cerr << "Not yep implemented..." << std::endl;
+//    std::cerr << "Not implemented yet..." << std::endl;
 //    exit(EXIT_FAILURE);
 //  }
 //
 //  void FrFileSystem::move(const std::string &src, const std::string &dst) {
-//    std::cerr << "Not yep implemented..." << std::endl;
+//    std::cerr << "Not implemented yet..." << std::endl;
 //    exit(EXIT_FAILURE);
 //  }
 
 //  void FrFileSystem::make_archive_tgz(const std::string &archive_name, const std::string &root_dir) {
-//    std::cerr << "Not yep implemented..." << std::endl;
+//    std::cerr << "Not implemented yet..." << std::endl;
 //    exit(EXIT_FAILURE);
 //  }
 //
 //  void FrFileSystem::make_archive_zip(const std::string &archive_name, const std::string &root_dir) {
-//    std::cerr << "Not yep implemented..." << std::endl;
+//    std::cerr << "Not implemented yet..." << std::endl;
 //    exit(EXIT_FAILURE);
 //  }
 
@@ -192,7 +191,7 @@ namespace frydom {
 //    getlogin_r(username, LOGIN_NAME_MAX);
 //    return username;
 //    #else
-//    std::cerr << "Not yep implemented..." << std::endl;
+//    std::cerr << "Not implemented yet..." << std::endl;
 //    exit(EXIT_FAILURE);
 //    #endif
 
@@ -208,27 +207,27 @@ namespace frydom {
     }
 
     #else
-    std::cerr << "Not yep implemented..." << std::endl;
+    std::cerr << "Not implemented yet..." << std::endl;
     exit(EXIT_FAILURE);
     #endif
 
   }
 
-  std::string FrFileSystem::get_hotname() {
+  std::string FrFileSystem::get_hostname() {
 
     #ifndef _WIN32
     char hostname[HOST_NAME_MAX];
     gethostname(hostname, HOST_NAME_MAX);
     return hostname;
     #else
-    std::cerr << "Not yep implemented..." << std::endl;
+    std::cerr << "Not implemented yet..." << std::endl;
     exit(EXIT_FAILURE);
     #endif
 
   }
 
 //  void FrFileSystem::rename(const std::string &src, const std::string &dst) {
-//    std::cerr << "Not yep implemented..." << std::endl;
+//    std::cerr << "Not implemented yet..." << std::endl;
 //    exit(EXIT_FAILURE);
 //  }
 

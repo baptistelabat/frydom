@@ -41,17 +41,8 @@ namespace frydom {
     m_log_folder = InitializeLogFolder();
   }
 
-  FrLogManager::FrLogManager(const std::string &log_folder, FrOffshoreSystem *system) :
-      m_log_folder(log_folder) {
-    Add(system);
-  }
-
   FrOffshoreSystem *FrLogManager::GetSystem() const {
     return m_system;
-  }
-
-  const std::string &FrLogManager::GetLogFolder() const {
-    return m_log_folder;
   }
 
   void FrLogManager::Add(const std::shared_ptr<FrLoggableBase> &obj) {
@@ -112,8 +103,6 @@ namespace frydom {
 
     CreateMetaDataFile(log_folder);
 
-    exit(EXIT_SUCCESS);
-
     return log_folder;
   }
 
@@ -122,10 +111,13 @@ namespace frydom {
     json j;
 
     j["date"] = now();
-    j["username"] = FrFileSystem::get_login();
-    j["hostname"] = FrFileSystem::get_hotname();
+    j["username@hostname"] = FrFileSystem::get_login() + "@" + FrFileSystem::get_hostname();
     j["project_name"] = GetSystem()->GetName();
     j["frydom_git_revision"] = GetGitSHA1();
+
+    // TODO : ajouter le nom du fichier de main utilise voir meme le code source (pb si des headers a voir...)
+    // TODO : ajouter la plateforme utilisee pour effectuer les calculs (Linux, Windows... version etc...)
+    // TODO : ajouter le type de release de FRyDoM : CE ou EE...
 
     std::ofstream file;
     file.open(FrFileSystem::join({log_folder, META_FILE_NAME}), std::ios::trunc);
@@ -183,14 +175,14 @@ namespace frydom {
       if (m_log_CSV) {
 
         // Adding run information
-        std::string system_folder = m_log_folder + GetSystem()->GetTreePath();
+        std::string system_folder = FrFileSystem::join({m_log_folder, GetSystem()->GetTreePath()});
         FrFileSystem::mkdir(system_folder);
 
         // Adding a CSV serializer to messages
         for (auto &message : obj->m_messages) { // TODO : ajouter un iterateur de message sur FrLoggableBase
 
           // Building the message folder
-          std::string message_folder = m_log_folder + obj->GetTreePath();
+          std::string message_folder = FrFileSystem::join({m_log_folder, obj->GetTreePath()});
           FrFileSystem::mkdir(message_folder);
 
           std::string csv_file = message_folder + message->GetName() + ".csv";
@@ -219,9 +211,7 @@ namespace frydom {
     }
   }
 
-  void FrLogManager::LogCSV(bool val) {
-    m_log_CSV = val;
-  }
+  void FrLogManager::NoCSVLlog() { m_log_CSV = false; }
 
   unsigned int FrLogManager::GetNumberOfLoggables() const {
     return m_loggable_list.size();
