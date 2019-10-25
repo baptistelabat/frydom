@@ -33,6 +33,8 @@ foreach(subdir ${subdirs})
 
 endforeach()
 
+list(APPEND FRYDOM_SRC_FILES "${CMAKE_CURRENT_BINARY_DIR}/utils/GitSHA1.cpp")
+
 # =============================================================================
 # FRyDoM DEPENDENCIES
 # =============================================================================

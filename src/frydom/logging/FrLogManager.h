@@ -63,11 +63,11 @@ namespace frydom {
 
     std::string InitializeLogFolder();
 
-    static std::string LogFolderFromFydomConfigFile(const std::string& path_to_config_file);
+    static std::string LogFolderFromFrydomConfigFile(const std::string &path_to_config_file);
 
     static std::string GetDateFolder();
 
-    static void CreateMetadataFile(const std::string& log_folder);
+    void CreateMetadataFile(const std::string &log_folder);
 
     static std::string now();
 
@@ -75,6 +75,8 @@ namespace frydom {
     std::string m_log_folder;
 
     std::list<FrLoggableBase *> m_loggable_list;
+
+    FrOffshoreSystem *m_system;
 
     bool m_log_CSV;
 

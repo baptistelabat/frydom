@@ -257,7 +257,7 @@ index 4e533bb49..344d355dc 100644
  
    public:
 diff --git a/src/chrono/physics/ChSystem.h b/src/chrono/physics/ChSystem.h
-index e61891ed9..fd86eaef7 100644
+index e61891ed9..e9d9a1125 100644
 --- a/src/chrono/physics/ChSystem.h
 +++ b/src/chrono/physics/ChSystem.h
 @@ -64,7 +64,7 @@ class ChContactContainer;
@@ -314,6 +314,15 @@ index e61891ed9..fd86eaef7 100644
      /// Note: use only _before_ you start adding colliding bodies to the system!
      void SetCollisionSystem(std::shared_ptr<collision::ChCollisionSystem> newcollsystem);
  
+@@ -616,7 +616,7 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
+     /// Tell if the system will put to sleep the bodies whose motion has almost come to a rest.
+     bool GetUseSleeping() const { return use_sleeping; }
+ 
+-  private:
++  protected:
+     /// Put bodies to sleep if possible. Also awakens sleeping bodies, if needed.
+     /// Returns true if some body changed from sleep to no sleep or viceversa,
+     /// returns false if nothing changed. In the former case, also performs Setup()
 @@ -637,7 +637,7 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
      /// This is the most important function for analysis, you
      /// can use it, for example, once per screen refresh in VR

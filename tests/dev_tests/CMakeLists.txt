@@ -9,8 +9,6 @@ set(REFACTORING_TESTS
         test_FrFileSystem
         )
 
-#include(Add_matplotlib-cpp)
-
 set(test_cylinder_interaction_resources_path ${CMAKE_SOURCE_DIR}/tests/data/CylinderInteraction/)
 
 foreach(test ${REFACTORING_TESTS})

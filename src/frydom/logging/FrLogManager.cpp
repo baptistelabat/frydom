@@ -14,9 +14,12 @@
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/core/common/FrConvention.h"
 #include "frydom/utils/FrFileSystem.h"
+#include "frydom/utils/GitSHA1.h"
+
 #include "FrPathManager.h"
 #include "FrLogManager.h"
 #include "FrLoggable.h"
+
 
 #include <nlohmann/json.hpp>
 #include <ctime>
@@ -32,9 +35,11 @@ using json = nlohmann::json;
 namespace frydom {
 
   FrLogManager::FrLogManager(FrOffshoreSystem *system) :
-      m_log_folder(InitializeLogFolder()),
-      m_log_CSV(true) {
+      m_log_CSV(true),
+      m_system(system) {
+
     Add(system);
+    m_log_folder = InitializeLogFolder();
 
 //    m_serializers.push_back(std::make_unique<hermes::CSVSerializer>(m_log_folder + "file.csv"));
     // FIXME : lorsqu'on change le log_folder, il faut que ce soit vu par le serializer...
@@ -47,7 +52,7 @@ namespace frydom {
   }
 
   FrOffshoreSystem *FrLogManager::GetSystem() const {
-    return dynamic_cast<FrOffshoreSystem *>(m_loggable_list.front());
+    return m_system;
   }
 
   const std::string &FrLogManager::GetLogFolder() const {
@@ -87,21 +92,18 @@ namespace frydom {
      * 3 - taking the current directory;
      */
 
-    // TODO : ajouter repertoire avec date !!!!
-
-
     std::string log_folder;
 
     // Looking for a file .frydom_config into the CURRENT directory (local project config)
     std::string local_config_file = FrFileSystem::join({FrFileSystem::cwd(), ".frydom_config"});
     if (FrFileSystem::exists(local_config_file)) {
-      log_folder = LogFolderFromFydomConfigFile(local_config_file);
+      log_folder = LogFolderFromFrydomConfigFile(local_config_file);
     }
 
     // Looking for a file .frydom_config into the HOME directory (session config))
     std::string session_file = FrFileSystem::join({FrFileSystem::get_home(), ".frydom_config"});
     if (FrFileSystem::exists(session_file) && log_folder.empty()) {
-      log_folder = LogFolderFromFydomConfigFile(session_file);
+      log_folder = LogFolderFromFrydomConfigFile(session_file);
     }
 
     if (log_folder.empty()) {
@@ -110,6 +112,8 @@ namespace frydom {
 
     log_folder = FrFileSystem::join({log_folder, GetDateFolder()});
     FrFileSystem::mkdir(log_folder);
+
+    std::cout << "Logging into: " << log_folder << std::endl;
 
     CreateMetadataFile(log_folder);
 
@@ -122,11 +126,15 @@ namespace frydom {
 
     json j;
 
-    j["Date"] = now();
+    j["date"] = now();
     j["username"] = FrFileSystem::get_login();
     j["hostname"] = FrFileSystem::get_hotname();
+    j["project_name"] = GetSystem()->GetName();
+    j["frydom_git_revision"] = GetGitSHA1();
 
     // version frydom -> mettre le hash de commit
+
+
 
     std::ofstream file;
     file.open(FrFileSystem::join({log_folder, META_FILE_NAME}), std::ios::trunc);
@@ -141,7 +149,7 @@ namespace frydom {
     return now_str.substr(0, now_str.size() - 1); // Removing last char that is an end line...
   }
 
-  std::string FrLogManager::LogFolderFromFydomConfigFile(const std::string &path_to_config_file) {
+  std::string FrLogManager::LogFolderFromFrydomConfigFile(const std::string &path_to_config_file) {
 
     if (!FrFileSystem::exists(path_to_config_file)) exit(EXIT_FAILURE);
 

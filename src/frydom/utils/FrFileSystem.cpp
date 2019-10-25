@@ -53,17 +53,17 @@ namespace frydom {
   std::string FrFileSystem::get_home() {
     std::string res;
     int uid = getuid();
-    const char* homeEnv = std::getenv("HOME");
-    if ( uid != 0 && homeEnv) {
+    const char *homeEnv = std::getenv("HOME");
+    if (uid != 0 && homeEnv) {
       //We only acknowlegde HOME if not root.
       res = homeEnv;
       return res;
     }
-    struct passwd* pw = getpwuid(uid);
+    struct passwd *pw = getpwuid(uid);
     if (!pw) {
       throw std::runtime_error("Unable to get passwd struct.");
     }
-    const char* tempRes = pw->pw_dir;
+    const char *tempRes = pw->pw_dir;
     if (!tempRes) {
       throw std::runtime_error("User has no home directory");
     }
@@ -134,7 +134,7 @@ namespace frydom {
 
   std::string FrFileSystem::join(std::vector<std::string> paths) {
     cppfs::FilePath fp;
-    for (const auto& path : paths) {
+    for (const auto &path : paths) {
       fp = fp.resolve(path);
     }
     return fp.resolved();
@@ -201,7 +201,7 @@ namespace frydom {
     #ifndef _WIN32
 
     struct passwd *pwd = getpwuid(getuid());
-    if(pwd) {
+    if (pwd) {
       return pwd->pw_name;
     } else {
       return "(?)";

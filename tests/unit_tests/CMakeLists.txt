@@ -29,8 +29,6 @@ set(UNIT_TESTS
         test_FrWaveSpectrum
         test_FrQuadraticDamping
         test_FrShape
-        #test_FrLinks
-        #        test_FrFunction
         test_edge_splitting
         test_FrAssembly
         test_FrClippingSurface

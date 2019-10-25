@@ -51,11 +51,11 @@ set(CMAKE_CXX_STANDARD 14)
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 #=============================================================================
-# Adding Thirparty libraries to the project
+# Retrieving the current Git revision
 #=============================================================================
-# It set FRYDOM_THIRDPARTY_LIBS and FRYDOM_THIRDPARTY_INCLUDE_DIRS
-#add_subdirectory(thirdparty)
-
+include(GetGitRevisionDescription)
+get_git_head_revision(GIT_REFSPEC GIT_SHA1)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/frydom/utils/GitSHA1.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/src/frydom/utils/GitSHA1.cpp")
 
 # =============================================================================
 # FRyDoM DEPENDENCIES
@@ -63,12 +63,13 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/URL.conf.cmake)
 
+
+
 include(Add_googletest)
 
 include(Add_chrono)
 include(Add_MathUtils)
 include(Add_HDF5)
-
 include(Add_GeographicLib)
 include(Add_fmt)
 include(Add_cppfs)
@@ -76,6 +77,7 @@ include(Add_TimeZone)
 include(Add_hermes)
 include(Add_OpenMesh)
 include(Add_json)
+include(Add_spdlog)
 
 #=============================================================================
 # Adding the FRyDoM project sources
