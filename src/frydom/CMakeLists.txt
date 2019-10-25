@@ -51,6 +51,7 @@ target_link_libraries(FRyDoM_Engine
         hermes
         OpenMeshCore
         nlohmann_json
+        platform_folders
         )
 
 target_include_directories(FRyDoM_Engine PUBLIC

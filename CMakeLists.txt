@@ -76,6 +76,7 @@ include(Add_TimeZone)
 include(Add_hermes)
 include(Add_OpenMesh)
 include(Add_json)
+include(Add_PlatformFolders)
 
 #=============================================================================
 # Adding the FRyDoM project sources

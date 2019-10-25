@@ -46,3 +46,11 @@ set(cppfs_TAG v1.2.0)
 set(json_URL https://github.com/nlohmann/json.git)
 set(json_TAG v3.6.1)
 
+# OpenMesh
+set(openmesh_URL https://www.graphics.rwth-aachen.de:9000/OpenMesh/OpenMesh.git)
+set(openmesh_TAG OpenMesh-7.0)
+
+# PlatformFolders
+set(platform_folders_URL https://github.com/sago007/PlatformFolders.git)
+set(platform_folders_TAG 3.2.1)
+set(platform_folders_PATCH platform_folders_3.2.1.patch)
