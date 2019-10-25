@@ -51,9 +51,9 @@ namespace frydom {
     /// Return True if path is an existing directory
     static bool isdir(const std::string &path);
 
-//    /// Join one or more path components intelligently
-//    static std::string join(std::vector<std::string> paths);
-//
+    /// Join one or more path components intelligently
+    static std::string join(std::vector<std::string> paths);
+
 //    /// Split the pathname path into a pair, (head, tail) where tail is the last pathname component and head is
 //    /// everything leading up to that. The tail part will never contain a slash; if path ends in a slash, tail
 //    /// will be empty. If there is no slash in path, head will be empty. If path is empty, both head and tail

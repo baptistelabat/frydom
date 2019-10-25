@@ -18,6 +18,11 @@
 #include "FrLogManager.h"
 #include "FrLoggable.h"
 
+#include <nlohmann/json.hpp>
+#include <ctime>
+#include <chrono>
+
+using json = nlohmann::json;
 
 namespace frydom {
 
@@ -70,24 +75,97 @@ namespace frydom {
   }
 
   std::string FrLogManager::InitializeLogFolder() {
-    // Looking for frydom configuration file
+
     /*
-     * TODO :
-     * On regarde en premier si on a un .frydom dans le repertoire courant --> avoir du frydom init a la git ?
-     * On devrait pouvoir faire un frydom init.
-     *
-     * Si on a un .frydom dans le home, on voit si on peut charger un workspace
-     *
-     * Tout cela sera vraiment utile quand FRyDoM sera installable...
-     * On fournira un utilitaire frydom_update qui permettra de mettre a jour l'install de frydom avec la dernière version...
-     *
+     * 1 - looking for a local frydom_config file
+     * 2 - looking for a frydom_config file into home
+     * 3 - taking the current directory;
      */
 
-    std::cerr << "Mettre en place la determination du dossier de log" << std::endl;
+    // TODO : ajouter repertoire avec date !!!!
 
-    return "./";
+
+    std::string log_folder;
+
+    // Looking for a file .frydom_config into the CURRENT directory (local project config)
+    std::string local_config_file = FrFileSystem::join({FrFileSystem::cwd(), ".frydom_config"});
+    if (FrFileSystem::exists(local_config_file)) {
+      log_folder = LogFolderFromFydomConfigFile(local_config_file);
+    }
+
+    // Looking for a file .frydom_config into the HOME directory (session config))
+    std::string session_file = FrFileSystem::join({FrFileSystem::get_home(), ".frydom_config"});
+    if (FrFileSystem::exists(session_file) && log_folder.empty()) {
+      log_folder = LogFolderFromFydomConfigFile(session_file);
+    }
+
+    if (log_folder.empty()) {
+      log_folder = FrFileSystem::cwd();
+    }
+
+    log_folder = FrFileSystem::join({log_folder, GetDateFolder()});
+    FrFileSystem::mkdir(log_folder);
+
+    CreateMetadataFile(log_folder);
+
+    exit(EXIT_SUCCESS);
+
+    return log_folder;
+  }
+
+  void FrLogManager::CreateMetadataFile(const std::string &log_folder) {
+
+    json j;
+
+    j["Date"] = now();
+    j["username"] = FrFileSystem::get_login();
+    j["hostname"] = FrFileSystem::get_hotname();
+
+    // version frydom -> mettre le hash de commit
+
+    std::ofstream file;
+    file.open(FrFileSystem::join({log_folder, "meta.json"}), std::ios::trunc);
+    file << j.dump(2);
+    file.close();
 
   }
+
+  std::string FrLogManager::now() {
+    std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    std::string now_str = std::ctime(&now);
+    return now_str.substr(0, now_str.size() - 1); // Removing last char that is an end line...
+  }
+
+  std::string FrLogManager::LogFolderFromFydomConfigFile(const std::string &path_to_config_file) {
+
+    if (!FrFileSystem::exists(path_to_config_file)) exit(EXIT_FAILURE);
+
+    std::ifstream ifs(path_to_config_file);
+
+    json json_obj = json::parse(ifs);
+
+    std::string log_folder = json_obj["log_folder"].get<std::string>();
+
+    if (!FrFileSystem::isabs(log_folder)) return "";
+
+    return log_folder;
+
+  }
+
+  std::string FrLogManager::GetDateFolder() {
+
+    time_t temps;
+    struct tm datetime;
+    char format[32];
+
+    time(&temps);
+    datetime = *localtime(&temps);
+
+    strftime(format, 32, "%Y-%m-%d_%Hh%Mm%Ss", &datetime);
+
+    return format;
+  }
+
 
   void FrLogManager::Initialize() { // TODO : retirer la necessite d'avoir cette methode friend de FrLoggableBase
 

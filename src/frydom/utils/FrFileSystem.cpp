@@ -66,9 +66,6 @@ namespace frydom {
 
   bool FrFileSystem::mkdir(const std::string &path) {
     cppfs::FileHandle fh = cppfs::fs::open(path);
-
-    std::vector<std::string> a{"sdlfkn", "sjkgf"};
-
     return mkdir(fh);
   }
 
@@ -117,12 +114,15 @@ namespace frydom {
     cppfs::FilePath fp(path);
     return fp.isAbsolute();
   }
-//
-//  std::string FrFileSystem::join(std::vector<std::string> paths) {
-//    std::cerr << "Not yep implemented..." << std::endl;
-//    exit(EXIT_FAILURE);
-//  }
-//
+
+  std::string FrFileSystem::join(std::vector<std::string> paths) {
+    cppfs::FilePath fp;
+    for (const auto& path : paths) {
+      fp = fp.resolve(path);
+    }
+    return fp.resolved();
+  }
+
 //  std::pair<std::string, std::string> FrFileSystem::split(const std::string &path) {
 //    std::cerr << "Not yep implemented..." << std::endl;
 //    exit(EXIT_FAILURE);
