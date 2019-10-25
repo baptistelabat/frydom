@@ -15,10 +15,7 @@
 
 #include <string>
 
-//#include "frydom/logging/FrPathManager.h"
-
 #include "FrObject.h"
-
 
 namespace frydom {
 
@@ -28,7 +25,7 @@ namespace frydom {
 
     explicit FrTreeNodeBase(const std::string &name) : m_name(name) {}
 
-    virtual ~FrTreeNodeBase() = default; // To make the class polymorphic
+    virtual ~FrTreeNodeBase() = default; // To make the class polymorphic we need at least one virtual method...
 
     const std::string &GetName() const {
       return m_name;
@@ -44,14 +41,12 @@ namespace frydom {
 
    private:
     std::string m_name;
-
-//   protected:
     std::string m_tree_path;
 
   };
 
+  // Forward declaration
   class FrOffshoreSystem;
-
 
   template<class ParentType>
   class FrTreeNode : public FrTreeNodeBase {
@@ -79,7 +74,6 @@ namespace frydom {
     }
 
   };
-
 
 }  // end namespace frydom
 

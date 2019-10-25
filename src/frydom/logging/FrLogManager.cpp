@@ -10,6 +10,9 @@
 // ==========================================================================
 
 #include <algorithm>
+#include <nlohmann/json.hpp>
+#include <ctime>
+#include <chrono>
 
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/core/common/FrConvention.h"
@@ -21,13 +24,9 @@
 #include "FrLoggable.h"
 
 
-#include <nlohmann/json.hpp>
-#include <ctime>
-#include <chrono>
-
-
 #define META_FILE_NAME "meta.json"
 #define DATE_FOLDER_FORMAT "%Y-%m-%d_%Hh%Mm%Ss"
+#define CONFIG_FILE_NAME ".frydom_config"
 
 
 using json = nlohmann::json;
@@ -36,14 +35,10 @@ namespace frydom {
 
   FrLogManager::FrLogManager(FrOffshoreSystem *system) :
       m_log_CSV(true),
-      m_system(system) {
+      m_system(system) { // FIXME : Du coup LogManager devrait etre un TreeNode...
 
     Add(system);
     m_log_folder = InitializeLogFolder();
-
-//    m_serializers.push_back(std::make_unique<hermes::CSVSerializer>(m_log_folder + "file.csv"));
-    // FIXME : lorsqu'on change le log_folder, il faut que ce soit vu par le serializer...
-    // FIXME : on a devoir passer en shared dans hermes non ?
   }
 
   FrLogManager::FrLogManager(const std::string &log_folder, FrOffshoreSystem *system) :
@@ -87,21 +82,21 @@ namespace frydom {
   std::string FrLogManager::InitializeLogFolder() {
 
     /*
-     * 1 - looking for a local frydom_config file
-     * 2 - looking for a frydom_config file into home
+     * 1 - looking for a local CONFIG_FILE_NAME file
+     * 2 - looking for a CONFIG_FILE_NAME file into home
      * 3 - taking the current directory;
      */
 
     std::string log_folder;
 
-    // Looking for a file .frydom_config into the CURRENT directory (local project config)
-    std::string local_config_file = FrFileSystem::join({FrFileSystem::cwd(), ".frydom_config"});
+    // Looking for a file CONFIG_FILE_NAME into the CURRENT directory (local project config)
+    std::string local_config_file = FrFileSystem::join({FrFileSystem::cwd(), CONFIG_FILE_NAME});
     if (FrFileSystem::exists(local_config_file)) {
       log_folder = LogFolderFromFrydomConfigFile(local_config_file);
     }
 
-    // Looking for a file .frydom_config into the HOME directory (session config))
-    std::string session_file = FrFileSystem::join({FrFileSystem::get_home(), ".frydom_config"});
+    // Looking for a file CONFIG_FILE_NAME into the HOME directory (session config))
+    std::string session_file = FrFileSystem::join({FrFileSystem::get_home(), CONFIG_FILE_NAME});
     if (FrFileSystem::exists(session_file) && log_folder.empty()) {
       log_folder = LogFolderFromFrydomConfigFile(session_file);
     }
@@ -115,14 +110,14 @@ namespace frydom {
 
     std::cout << "Logging into: " << log_folder << std::endl;
 
-    CreateMetadataFile(log_folder);
+    CreateMetaDataFile(log_folder);
 
     exit(EXIT_SUCCESS);
 
     return log_folder;
   }
 
-  void FrLogManager::CreateMetadataFile(const std::string &log_folder) {
+  void FrLogManager::CreateMetaDataFile(const std::string &log_folder) {
 
     json j;
 
@@ -131,10 +126,6 @@ namespace frydom {
     j["hostname"] = FrFileSystem::get_hotname();
     j["project_name"] = GetSystem()->GetName();
     j["frydom_git_revision"] = GetGitSHA1();
-
-    // version frydom -> mettre le hash de commit
-
-
 
     std::ofstream file;
     file.open(FrFileSystem::join({log_folder, META_FILE_NAME}), std::ios::trunc);
@@ -157,8 +148,10 @@ namespace frydom {
 
     json json_obj = json::parse(ifs);
 
+    // FIXME : si la cle n'est pas trouve, cela ne doit pas crasher !!!
     std::string log_folder = json_obj["log_folder"].get<std::string>();
 
+    // FIXME : on autorise pas les chemins relatif mais on devrait. Demande reflexion...
     if (!FrFileSystem::isabs(log_folder)) return "";
 
     return log_folder;
@@ -178,7 +171,6 @@ namespace frydom {
 
     return format;
   }
-
 
   void FrLogManager::Initialize() { // TODO : retirer la necessite d'avoir cette methode friend de FrLoggableBase
 
@@ -205,7 +197,6 @@ namespace frydom {
 
           message->AddSerializer(new hermes::CSVSerializer(csv_file));
         }
-
       }
 
       obj->InitializeLogMessages();
