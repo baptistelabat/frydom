@@ -22,6 +22,11 @@
 #include <ctime>
 #include <chrono>
 
+
+#define META_FILE_NAME "meta.json"
+#define DATE_FOLDER_FORMAT "%Y-%m-%d_%Hh%Mm%Ss"
+
+
 using json = nlohmann::json;
 
 namespace frydom {
@@ -124,7 +129,7 @@ namespace frydom {
     // version frydom -> mettre le hash de commit
 
     std::ofstream file;
-    file.open(FrFileSystem::join({log_folder, "meta.json"}), std::ios::trunc);
+    file.open(FrFileSystem::join({log_folder, META_FILE_NAME}), std::ios::trunc);
     file << j.dump(2);
     file.close();
 
@@ -161,7 +166,7 @@ namespace frydom {
     time(&temps);
     datetime = *localtime(&temps);
 
-    strftime(format, 32, "%Y-%m-%d_%Hh%Mm%Ss", &datetime);
+    strftime(format, 32, DATE_FOLDER_FORMAT, &datetime);
 
     return format;
   }
