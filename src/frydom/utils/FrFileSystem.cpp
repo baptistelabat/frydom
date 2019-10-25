@@ -14,7 +14,7 @@
 #include "FrFileSystem.h"
 #include "cppfs/fs.h"
 
-#include "platform_folders.h"
+//#include "platform_folders.h"
 
 #ifndef _WIN32
 
@@ -51,7 +51,24 @@ namespace frydom {
   }
 
   std::string FrFileSystem::get_home() {
-    return sago::getHomeDir();
+    std::string res;
+    int uid = getuid();
+    const char* homeEnv = std::getenv("HOME");
+    if ( uid != 0 && homeEnv) {
+      //We only acknowlegde HOME if not root.
+      res = homeEnv;
+      return res;
+    }
+    struct passwd* pw = getpwuid(uid);
+    if (!pw) {
+      throw std::runtime_error("Unable to get passwd struct.");
+    }
+    const char* tempRes = pw->pw_dir;
+    if (!tempRes) {
+      throw std::runtime_error("User has no home directory");
+    }
+    res = tempRes;
+    return res;
   }
 
 //  std::string FrFileSystem::abspath(const std::string &path) {
