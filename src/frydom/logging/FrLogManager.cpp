@@ -45,7 +45,7 @@ namespace frydom {
     m_log_folder = InitializeLogFolder();
 
     // Event Logging initializing
-    FrEventLogger::init("FRYDOM", "frydom_event.log");
+    FrEventLogger::init(system, "FRYDOM", "frydom_event.log");
 
 
   }
