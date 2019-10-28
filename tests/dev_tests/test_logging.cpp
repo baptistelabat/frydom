@@ -26,7 +26,7 @@ int main() {
   sphere->SetVelocityInWorldNoRotation({0, 5, 15}, NWU);
 
   system.SetTimeStep(0.03);
-  system.MonitorRealTimePerfs(true);
+  system.MonitorRealTimePerfs(false);
 
 //  system.RunInViewer();
 

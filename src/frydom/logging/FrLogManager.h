@@ -26,12 +26,17 @@ namespace frydom {
 
   class FrOffshoreSystem;
 
+  class FrEventLogger;
+
+
 
   class FrLogManager {
 
    public:
 
     explicit FrLogManager(FrOffshoreSystem *system);
+
+    ~FrLogManager();
 
     FrOffshoreSystem *GetSystem() const;
 
@@ -67,6 +72,7 @@ namespace frydom {
 
     static std::string now();
 
+
    private:
     std::string m_log_folder;
 
@@ -76,9 +82,8 @@ namespace frydom {
 
     bool m_log_CSV;
 
-//    std::vector<std::unique_ptr<hermes::Serializer>> m_serializers;
-
   };
+
 
 }  // end namespace frydom
 

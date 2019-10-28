@@ -7,6 +7,7 @@ set(REFACTORING_TESTS
         test_FrFunction
         test_logging
         test_FrFileSystem
+        test_spdlog
         )
 
 set(test_cylinder_interaction_resources_path ${CMAKE_SOURCE_DIR}/tests/data/CylinderInteraction/)
