@@ -26,9 +26,6 @@ namespace frydom {
 
   class FrOffshoreSystem;
 
-  class FrEventLogger;
-
-
 
   class FrLogManager {
 

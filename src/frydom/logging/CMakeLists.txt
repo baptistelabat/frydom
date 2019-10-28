@@ -3,6 +3,7 @@ message(STATUS "    ...logging")
 set(SRC_FILES
         FrLogManager.cpp
         FrPathManager.cpp
+        FrEventLogger.cpp
         )
 
 set(FRYDOM_LOGGING_SOURCES "")

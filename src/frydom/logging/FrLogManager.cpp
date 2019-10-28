@@ -23,9 +23,7 @@
 #include "FrLogManager.h"
 #include "FrLoggable.h"
 #include "FrTypeName.h"
-
-#include <spdlog/spdlog.h>
-#include <spdlog/sinks/basic_file_sink.h>
+#include "FrEventLogger.h"
 
 
 #define META_FILE_NAME "meta.json"
@@ -46,26 +44,13 @@ namespace frydom {
     Add(system);
     m_log_folder = InitializeLogFolder();
 
-
-
-
-
-    // Initializing event logger
-    auto file_logger = spdlog::basic_logger_mt("basic_logger", "logs/frydom_log.txt");
-    spdlog::set_default_logger(file_logger);
-    spdlog::flush_on(spdlog::level::info);
-
-
-    spdlog::info("Welcome to FRyDoM!");
-    spdlog::error("ey, une erreur !!!");
-
-
-
+    // Event Logging initializing
+    FrEventLogger::init("FRYDOM", "frydom_event.log");
 
 
   }
 
-  FrLogManager::~FrLogManager() {}
+  FrLogManager::~FrLogManager() = default;
 
   FrOffshoreSystem *FrLogManager::GetSystem() const {
     return m_system;
