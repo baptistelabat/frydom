@@ -31,8 +31,6 @@
 #define CONFIG_FILE_NAME ".frydom_config"
 
 
-
-
 using json = nlohmann::json;
 
 namespace frydom {
@@ -44,9 +42,8 @@ namespace frydom {
     Add(system);
     m_log_folder = InitializeLogFolder();
 
-    // Event Logging initializing
-    FrEventLogger::init(system, "FRYDOM", "frydom_event.log");
-
+    // Event Logger initialization
+    event_logger::init(system, "FRYDOM", "frydom_event.log");
 
   }
 
@@ -162,6 +159,8 @@ namespace frydom {
   }
 
   std::string FrLogManager::GetDateFolder() {
+
+    // TODO : utiliser fmt pour ce formattage
 
     time_t temps;
     struct tm datetime;
