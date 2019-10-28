@@ -37,9 +37,6 @@ namespace frydom {
   class FrPathManager {
 
    public:
-    FrPathManager() = default;
-
-    ~FrPathManager() = default;
 
     template<class ParentType>
     static std::string GetPath(const FrTreeNode<ParentType> *node) {
@@ -67,20 +64,13 @@ namespace frydom {
 
    private:
 
-    bool RegisterPath(const std::string &path) {
-      if (HasPath(path)) return false;
-
-      m_used_paths.insert(path);
-      return true;
-    }
+    bool RegisterPath(const std::string &path);
 
 
-    bool HasPath(const std::string &path) {
-      return (m_used_paths.find(path) != m_used_paths.end());
-    }
+    bool HasPath(const std::string &path);
 
     /// Gives the normalized path of the node given a hard coded policy concerning the naming scheme.
-    template<class ParentType>
+    template <class ParentType>
     static std::string GetNormalizedPathName(const FrTreeNode<ParentType> *node) {
 
       std::string path_name_prefix;
@@ -109,82 +99,42 @@ namespace frydom {
       return path_name_prefix + node->GetName() + "/";
     }
 
+//   public:
+//
+//    template <class ParentType>
+//    static std::string GetNormalizedTypeName(const FrTreeNode<ParentType> *node) {
+//
+//      std::string type_name;
+//
+//      if (dynamic_cast<const FrOffshoreSystem *>(node)) {
+//        type_name = "System";
+//
+//      } else if (dynamic_cast<const FrBody *>(node)) {
+//        type_name = "Body";
+//
+////      } else if (dynamic_cast<const FrForce *>(node)) {
+////        type_name = "FORCE/FORCE_";
+//
+//      } else if (dynamic_cast<const FrNode *>(node)) {
+//        type_name = "Node";
+//
+////      } else if (dynamic_cast<const FrLink *>(node)) {
+////        type_name = "LINK/LINK_";
+//
+//      } else {
+//        std::cerr << "No known policy for building normalized path name of " << typeid(node).name() << std::endl;
+//        exit(EXIT_FAILURE);
+//      }
+//
+//
+//
+//    }
 
    private:
     std::unordered_set<std::string> m_used_paths;
 
   };
 
-
-
-
-
-
-
-
-//  //Forward declaration  // FIXME : il n'y a aucune raison pour laquelle FrPathManager devrait connaitre quoique ce soit des classes de FRyDoM, seulement une interface (FrLoggable)
-////    class FrObject;
-////    class FrBody;
-//  class FrOffshoreSystem;
-////    class FrForce;
-////    class FrNode;
-////    class FrPhysicsItem;
-////    class FrLinkBase;
-////    class FrStaticAnalysis;
-////    class FrFEAMesh;
-//
-//  class FrPathManager_ {
-//   private:
-//
-//    FRAME_CONVENTION m_logFrameConvention;
-//
-//    cppfs::FilePath m_outputPath; // TODO : tous ces path doivent etre geres par le FrLogManager
-//    cppfs::FilePath m_projectPath;
-//    cppfs::FilePath m_runPath;
-//    cppfs::FilePath m_resourcesPath;
-//
-//   public:
-//
-//    /// Constructor for a log manager service
-//    explicit FrPathManager_();
-//
-//
-//    /// Set the frame convention for the logs
-//    /// \param fc frame convention (NED/NWU)
-//    void SetLogFrameConvention(FRAME_CONVENTION fc);
-//
-//    /// Get the frame convention for the logs
-//    /// \return frame convention (NED/NWU)
-//    FRAME_CONVENTION GetLogFrameConvention() const;
-//
-//    /// Set the path for the output directory, containing all log files
-//    /// \param path path for the output directory
-//    void SetLogOutputPath(std::string path);
-//
-//    /// Get the path for the output directory, containing all log files
-//    /// \return path for the output directory
-//    std::string GetLogOutputPath() const;
-//
-//    void SetRunPath(std::string relPath);
-//
-//    std::string GetRunPath() const;
-//
-//
-//    ///Initialize the log manager serice
-//    void Initialize(FrOffshoreSystem *system);
-//
-//    std::string BuildPath(const std::string &rootPath, const std::string &relPath) const;
-//
-//    std::string BuildPath(const std::string &absPath) const;
-//
-//    void SetResourcesPath(std::string absPath);
-//
-//    std::string GetDataPath(const std::string &relPath) const;
-//
-//   private:
-//    /// Read the config file
-//    void ReadConfig();
-//  };
 
 } // end namespace frydom
 

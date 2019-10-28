@@ -31,8 +31,14 @@
 #include "frydom/logging/FrLogManager.h"
 #include "frydom/logging/FrPathManager.h"
 
+#include "frydom/logging/FrTypeName.h"
+
 
 namespace frydom {
+
+
+  FRYDOM_DECLARE_CLASS_TYPE(FrOffshoreSystem, "System")
+
 
   namespace internal {
 
@@ -491,8 +497,6 @@ namespace frydom {
     }
 
     // Logging
-    StepFinalizeLog();
-
     m_LogManager->StepFinalize();
 
     if (m_monitor_real_time) {

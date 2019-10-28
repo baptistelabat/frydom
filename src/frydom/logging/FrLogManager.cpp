@@ -22,6 +22,7 @@
 #include "FrPathManager.h"
 #include "FrLogManager.h"
 #include "FrLoggable.h"
+#include "FrTypeName.h"
 
 
 #define META_FILE_NAME "meta.json"
@@ -166,17 +167,23 @@ namespace frydom {
 
   void FrLogManager::Initialize() { // TODO : retirer la necessite d'avoir cette methode friend de FrLoggableBase
 
+    auto path_manager = GetSystem()->GetPathManager();
+
     for (auto &obj : m_loggable_list) {
 
       if (!obj->IsLogged()) continue;
+
+
+//      std::string type_name(GetTypeNameId(obj));
+
 
       obj->DefineLogMessages();
 
       if (m_log_CSV) {
 
         // Adding run information
-        std::string system_folder = FrFileSystem::join({m_log_folder, GetSystem()->GetTreePath()});
-        FrFileSystem::mkdir(system_folder);
+//        std::string system_folder = FrFileSystem::join({m_log_folder, GetSystem()->GetTreePath()});
+//        FrFileSystem::mkdir(system_folder);
 
         // Adding a CSV serializer to messages
         for (auto &message : obj->m_messages) { // TODO : ajouter un iterateur de message sur FrLoggableBase
@@ -185,7 +192,7 @@ namespace frydom {
           std::string message_folder = FrFileSystem::join({m_log_folder, obj->GetTreePath()});
           FrFileSystem::mkdir(message_folder);
 
-          std::string csv_file = message_folder + message->GetName() + ".csv";
+          std::string csv_file = FrFileSystem::join({message_folder, message->GetName() + ".csv"});
 
           message->AddSerializer(new hermes::CSVSerializer(csv_file));
         }

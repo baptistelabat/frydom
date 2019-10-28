@@ -25,6 +25,8 @@
 #include "frydom/core/statics/FrStaticAnalysis.h"
 #include "frydom/core/common/FrTreeNode.h"
 
+//#include "frydom/logging/FrTypeName.h"
+
 
 namespace frydom {
 
@@ -762,9 +764,15 @@ namespace frydom {
 
     ConstLinkIter link_end() const;
 
-
   };
 
+//  FRYDOM_DECLARE_CLASS_TYPE(FrOffshoreSystem, "System")
+
+
+
 } // end namespace frydom
+
+
+
 
 #endif //FRYDOM_FROFFSHORESYSTEM_H
