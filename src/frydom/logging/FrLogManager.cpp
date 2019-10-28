@@ -24,10 +24,14 @@
 #include "FrLoggable.h"
 #include "FrTypeName.h"
 
+//#include <spdlog/spdlog.h>
+
 
 #define META_FILE_NAME "meta.json"
 #define DATE_FOLDER_FORMAT "%Y-%m-%d_%Hh%Mm%Ss"
 #define CONFIG_FILE_NAME ".frydom_config"
+
+
 
 
 using json = nlohmann::json;

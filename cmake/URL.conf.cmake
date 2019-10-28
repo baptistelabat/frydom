@@ -9,7 +9,8 @@ set(chrono_PATCH chrono_V4.0.0.patch)
 
 # fmt
 set(fmt_URL https://github.com/fmtlib/fmt.git)
-set(fmt_TAG 4.1.0)
+#set(fmt_TAG 4.1.0)
+set(fmt_TAG 6.0.0)
 
 
 # GeographicLib

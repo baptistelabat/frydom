@@ -120,36 +120,36 @@ namespace frydom {
    */
   class FrHydrostaticReporter {
    private:
-    fmt::MemoryWriter mw;
+    fmt::memory_buffer m_buffer;
 
    public:
     inline void AddLine(std::string preamble, std::string unit, double value) {
-      mw << fmt::format("{:-<50s}>\t{:.5g}\n",
-                        fmt::format("{:s} ({:s})", preamble, unit),
-                        value);
+      fmt::format_to(m_buffer, fmt::format("{:-<50s}>\t{:.5g}\n",
+                                           fmt::format("{:s} ({:s})", preamble, unit),
+                                           value));
     }
 
     inline void AddLine(std::string preamble, std::string unit, mathutils::Vector3d<double> value) {
-      mw << fmt::format("{:-<50s}>\t{:.5g}\t{:.5g}\t{:.5g}\n",
-                        fmt::format("{:s} ({:s})", preamble, unit),
-                        value[0], value[1], value[2]);
+      fmt::format_to(m_buffer, fmt::format("{:-<50s}>\t{:.5g}\t{:.5g}\t{:.5g}\n",
+                              fmt::format("{:s} ({:s})", preamble, unit),
+                              value[0], value[1], value[2]));
     }
 
     template<typename T = double>
     inline void AddLine(std::string preamble, T value) {
-      mw << fmt::format("{:-<50s}>\t{:.5g}\n", preamble, value);
+      m_buffer << fmt::format("{:-<50s}>\t{:.5g}\n", preamble, value);
     }
 
     inline void AddLine(std::string preamble) {
-      mw << fmt::format("{}\n", preamble);
+      fmt::format_to(m_buffer, "{}\n", preamble);
     }
 
     void AddBlankLine() {
-      mw << "\n";
+      fmt::format_to(m_buffer, "\n");
     };
 
     std::string operator()(const FrHydrostaticsProperties &hp) {
-      mw.clear();
+      m_buffer.clear();
 
       AddLine(fmt::format("Hydrostatic report for zg = {} (m)", hp.m_centerOfGravity[2]));
       AddLine("---------------------------------");
@@ -189,7 +189,7 @@ namespace frydom {
       AddLine("K45", "N.M", hp.m_hydrostaticTensor.K45);
       AddLine("K55", "N.M", hp.m_hydrostaticTensor.K55);
 
-      return mw.str();
+      return fmt::to_string(m_buffer);
     }
 
   };

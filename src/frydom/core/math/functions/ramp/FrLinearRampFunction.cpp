@@ -57,7 +57,7 @@ namespace frydom {
     }
 
     std::string FrLinearRampFunction::GetRepr() const {
-        fmt::MemoryWriter mw;
+//        fmt::MemoryWriter mw;
 
         return ""; // TODO
     }
