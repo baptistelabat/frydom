@@ -34,10 +34,6 @@ namespace frydom {
         m_initPositionFromBody(true),
         m_initSpeedFromBody(false) {}
 
-//    void FrEquilibriumFrame::SetBody(FrBody *body, bool initPos) {
-//      GetBody() = body;
-//      m_initPositionFromBody = initPos;
-//    }
 
   FrBody *FrEquilibriumFrame::GetBody() const {
     return GetParent();

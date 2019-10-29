@@ -11,6 +11,7 @@
 
 
 
+#include <frydom/logging/FrEventLogger.h>
 #include "FrBody.h"
 
 
@@ -82,9 +83,11 @@ namespace frydom {
 
     void FrBodyBase::RemoveAsset(std::shared_ptr<chrono::ChAsset> asset) { //taken from RemoveForce
       // trying to remove objects not previously added?
-      assert(
-          std::find<std::vector<std::shared_ptr<chrono::ChAsset>>::iterator>(assets.begin(), assets.end(), asset) !=
-          assets.end());
+
+      if (std::find<std::vector<std::shared_ptr<chrono::ChAsset>>::iterator>(assets.begin(), assets.end(), asset) ==
+          assets.end()) {
+        event_logger::error(m_frydomBody->GetTypeName(), m_frydomBody->GetName(), "Failed to remove asset");
+      }
 
       // warning! linear time search
       assets.erase(
@@ -216,14 +219,28 @@ namespace frydom {
     m_chronoBody->SetMaxWvel(DEFAULT_MAX_ROTATION_SPEED);
 
     m_DOFMask = std::make_unique<FrDOFMask>();
+
+    event_logger::info(GetTypeName(), GetName(), "Body created");
+
   }
 
   void FrBody::SetFixedInWorld(bool state) {
     m_chronoBody->SetBodyFixed(state);
+    if (state) {
+      event_logger::info(GetTypeName(), GetName(), "Body set to fixed in world");
+    } else {
+      event_logger::info(GetTypeName(), GetName(), "Body no more fixed in world");
+    }
+
   }
 
   void FrBody::SetUseSleeping(bool state) {
     m_chronoBody->SetUseSleeping(state);
+    if (state) {
+      event_logger::info(GetTypeName(), GetName(), "Use sleeping");
+    } else {
+      event_logger::info(GetTypeName(), GetName(), "Do not use sleeping");
+    }
   }
 
   bool FrBody::GetUseSleeping() const {
@@ -232,6 +249,11 @@ namespace frydom {
 
   void FrBody::SetSleeping(bool state) {
     m_chronoBody->SetSleeping(state);
+    if (state) {
+      event_logger::info(GetTypeName(), GetName(), "Enter in sleeping mode");
+    } else {
+      event_logger::info(GetTypeName(), GetName(), "Do not sleep anymore");
+    }
   }
 
   bool FrBody::GetSleeping() const {
@@ -254,10 +276,18 @@ namespace frydom {
   void FrBody::Initialize() {
 
     // Check the mass and inertia coefficients
-    assert(("Null mass not permitted : ", GetInertiaTensor().GetMass() != 0));
+    if (GetInertiaTensor().GetMass() == 0) {
+      event_logger::critical(GetTypeName(), GetName(), "Null mass is not permitted");
+      exit(EXIT_FAILURE);
+    }
+
+
     double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
     GetInertiaTensor().GetInertiaCoeffsAtCOG(Ixx, Iyy, Izz, Ixy, Ixz, Iyz, NWU);
-    assert(("Null diagonal inertia not permitted : ", Ixx != 0. && Iyy != 0. && Izz != 0.));
+    if (Ixx == 0 || Iyy == 0. || Izz == 0.) {
+      event_logger::critical(GetTypeName(), GetName(), "Null diagonal inertia not permitted");
+      exit(EXIT_FAILURE);
+    }
 
 
     // Initializing forces
@@ -276,8 +306,6 @@ namespace frydom {
     if (m_DOFMask->HasLockedDOF()) {
       InitializeLockedDOF();
     }
-
-//    GetSystem()->GetLogManager()->Add(this);
 
   }
 
@@ -391,7 +419,9 @@ namespace frydom {
 
     m_chronoBody->SetMass(inertia.GetMass());
 
-    SetCOG(inertia.GetCOGPosition(NWU), NWU);
+    auto cog_pos = inertia.GetCOGPosition(NWU);
+
+    SetCOG(cog_pos, NWU);
 
     double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
     inertia.GetInertiaCoeffsAtCOG(Ixx, Iyy, Izz, Ixy, Ixz, Iyz, NWU);
@@ -399,10 +429,22 @@ namespace frydom {
     m_chronoBody->SetInertiaXX(chrono::ChVector<double>(Ixx, Iyy, Izz));
     m_chronoBody->SetInertiaXY(chrono::ChVector<double>(Ixy, Ixz, Iyz));
 
+    event_logger::info(GetTypeName(), GetName(),
+                       "Set inertia tensor with mass = {} kg, G = [{}\t{}\t{}], "
+                       "Ixx = {}, Iyy = {}, Izz = {}, Ixy = {}, Ixz = {}, Iyz = {}",
+                       inertia.GetMass(),
+                       cog_pos[0], cog_pos[1], cog_pos[2],
+                       Ixx, Iyy, Izz, Ixy, Ixz, Iyz);
+
   }
 
   void FrBody::AllowCollision(bool isColliding) {
     m_chronoBody->SetCollide(isColliding);
+    if (isColliding) {
+      event_logger::info(GetTypeName(), GetName(), "Collision activated");
+    } else {
+      event_logger::info(GetTypeName(), GetName(), "Collision deactivated");
+    }
   }
 
   FrCollisionModel *FrBody::GetCollisionModel() {
@@ -416,16 +458,23 @@ namespace frydom {
 
   void FrBody::ActivateSpeedLimits(bool activate) {
     m_chronoBody->SetLimitSpeed(activate);
+    if (activate) {
+      event_logger::info(GetTypeName(), GetName(), "Speed limit activated");
+    } else {
+      event_logger::info(GetTypeName(), GetName(), "Speed limit deactivated");
+    }
   }
 
   void FrBody::SetMaxSpeed(double maxSpeed_ms) {
     m_chronoBody->SetMaxSpeed((float) maxSpeed_ms);
     ActivateSpeedLimits(true);
+    event_logger::info(GetTypeName(), GetName(), "Speed limit set to {} m/s", maxSpeed_ms);
   }
 
   void FrBody::SetMaxRotationSpeed(double wMax_rads) {
     m_chronoBody->SetMaxWvel((float) wMax_rads);
     ActivateSpeedLimits(true);
+    event_logger::info(GetTypeName(), GetName(), "Speed limit set to {} rad/s", wMax_rads);
   }
 
   void FrBody::RemoveGravity(
@@ -452,6 +501,8 @@ namespace frydom {
 
     GetSystem()->GetLogManager()->Add(force);
 
+    event_logger::info(GetTypeName(), GetName(), "External force {} added", force->GetName());
+
   }
 
   void FrBody::RemoveExternalForce(std::shared_ptr<FrForce> force) {
@@ -471,7 +522,7 @@ namespace frydom {
           asserted = true;
         }
       }
-      assert(asserted);
+      assert(asserted); // FIXME : renvoyer une erreur mais ne pas faire planter !!!
       force->m_asset = nullptr;
 
     }

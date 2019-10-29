@@ -18,104 +18,106 @@
 #include "freeSurface/FrFreeSurface.h"
 #include "seabed/FrSeabed.h"
 #include "current/FrCurrent.h"
+#include "frydom/logging/FrEventLogger.h"
 
 
+namespace frydom {
 
-namespace frydom{
+  FrOcean::FrOcean(FrEnvironment *environment) : m_environment(environment) {
 
-    FrOcean::FrOcean(FrEnvironment* environment) : m_environment(environment) {
+    m_seabed = std::make_unique<FrMeanSeabed>(this);
+    m_freeSurface = std::make_unique<FrFreeSurface>(this);
+    m_current = std::make_unique<FrCurrent>(this);
+    m_waterProp = std::make_unique<FrFluidProperties>(10., 1027., 0.001397, 1.3604E-06, 35., 1.2030E-03);
 
-        m_seabed        = std::make_unique<FrMeanSeabed>(this);
-        m_freeSurface   = std::make_unique<FrFreeSurface>(this);
-        m_current       = std::make_unique<FrCurrent>(this);
-        m_waterProp     = std::make_unique<FrFluidProperties>(10., 1027., 0.001397, 1.3604E-06, 35., 1.2030E-03 );
+  }
 
-    }
-
-    FrEnvironment *FrOcean::GetEnvironment() const { return m_environment;}
+  FrEnvironment *FrOcean::GetEnvironment() const { return m_environment; }
 
 
-    void FrOcean::SetTemperature(double Temperature) {m_waterProp->m_temperature = Temperature;}
+  void FrOcean::SetTemperature(double Temperature) { m_waterProp->m_temperature = Temperature; }
 
-    double FrOcean::GetTemperature() const {return m_waterProp->m_temperature;}
+  double FrOcean::GetTemperature() const { return m_waterProp->m_temperature; }
 
-    void FrOcean::SetDensity(double Density) {m_waterProp->m_density = Density;}
+  void FrOcean::SetDensity(double Density) { m_waterProp->m_density = Density; }
 
-    double FrOcean::GetDensity() const {return m_waterProp->m_density;}
+  double FrOcean::GetDensity() const { return m_waterProp->m_density; }
 
-    void FrOcean::SetDynamicViscosity(double DynamicViscosity) {m_waterProp->m_dynamicViscosity = DynamicViscosity;}
+  void FrOcean::SetDynamicViscosity(double DynamicViscosity) { m_waterProp->m_dynamicViscosity = DynamicViscosity; }
 
-    double FrOcean::GetDynamicViscosity() const {return m_waterProp->m_dynamicViscosity;}
+  double FrOcean::GetDynamicViscosity() const { return m_waterProp->m_dynamicViscosity; }
 
-    void FrOcean::SetKinematicViscosity(double KinematicViscosity) {m_waterProp->m_kinematicViscosity = KinematicViscosity;}
+  void
+  FrOcean::SetKinematicViscosity(double KinematicViscosity) { m_waterProp->m_kinematicViscosity = KinematicViscosity; }
 
-    double FrOcean::GetKinematicViscosity() const {return m_waterProp->m_kinematicViscosity;}
+  double FrOcean::GetKinematicViscosity() const { return m_waterProp->m_kinematicViscosity; }
 
-    void FrOcean::SetSalinity(double Salinity) {m_waterProp->m_salinity = Salinity;}
+  void FrOcean::SetSalinity(double Salinity) { m_waterProp->m_salinity = Salinity; }
 
-    double FrOcean::GetSalinity() const {return m_waterProp->m_salinity;}
+  double FrOcean::GetSalinity() const { return m_waterProp->m_salinity; }
 
-    void FrOcean::SetPressure(double Pressure) {m_waterProp->m_pressure = Pressure;}
+  void FrOcean::SetPressure(double Pressure) { m_waterProp->m_pressure = Pressure; }
 
-    double FrOcean::GetPressure() const {return m_waterProp->m_pressure;}
+  double FrOcean::GetPressure() const { return m_waterProp->m_pressure; }
 
-    double FrOcean::GetReynoldsNumberInWater(double characteristicLength, double velocity) const {
-        return fabs(velocity) * characteristicLength / GetKinematicViscosity();
-    }
+  double FrOcean::GetReynoldsNumberInWater(double characteristicLength, double velocity) const {
+    return fabs(velocity) * characteristicLength / GetKinematicViscosity();
+  }
 
-    double FrOcean::GetFroudeNumberInWater(double characteristicLength, double velocity) const {
-        return fabs(velocity) / sqrt(m_environment->GetGravityAcceleration() * characteristicLength);
-    }
+  double FrOcean::GetFroudeNumberInWater(double characteristicLength, double velocity) const {
+    return fabs(velocity) / sqrt(m_environment->GetGravityAcceleration() * characteristicLength);
+  }
 
-    FrFreeSurface *FrOcean::GetFreeSurface() const { return m_freeSurface.get();}
+  FrFreeSurface *FrOcean::GetFreeSurface() const { return m_freeSurface.get(); }
 
-    FrCurrent *FrOcean::GetCurrent() const { return m_current.get();}
+  FrCurrent *FrOcean::GetCurrent() const { return m_current.get(); }
 
-    FrSeabed *FrOcean::GetSeabed() const { return m_seabed.get();}
+  FrSeabed *FrOcean::GetSeabed() const { return m_seabed.get(); }
 
-    void FrOcean::Update(double time) {
+  void FrOcean::Update(double time) {
 
-        m_freeSurface->Update(time);
-        m_current->Update(time);
-        m_seabed->Update(time);
+    m_freeSurface->Update(time);
+    m_current->Update(time);
+    m_seabed->Update(time);
 
-    }
+  }
 
-    void FrOcean::Initialize() {
-        m_freeSurface->Initialize();
-        m_current->Initialize();
-        m_seabed->Initialize();
-    }
+  void FrOcean::Initialize() {
+    event_logger::info("Ocean", "", "BEGIN Ocean initialization");
+    m_freeSurface->Initialize();
+    m_current->Initialize();
+    m_seabed->Initialize();
+    event_logger::info("Ocean", "", "END Ocean initialization");
+  }
 
-    void FrOcean::StepFinalize() {
-        m_freeSurface->StepFinalize();
-        m_current->StepFinalize();
-        m_seabed->StepFinalize();
-    }
+  void FrOcean::StepFinalize() {
+    m_freeSurface->StepFinalize();
+    m_current->StepFinalize();
+    m_seabed->StepFinalize();
+  }
 
-    double FrOcean::GetDepth(FRAME_CONVENTION fc) const {
-        return m_freeSurface->GetTidal()->GetHeight(fc) - m_seabed->GetBathymetry(fc);
-    }
+  double FrOcean::GetDepth(FRAME_CONVENTION fc) const {
+    return m_freeSurface->GetTidal()->GetHeight(fc) - m_seabed->GetBathymetry(fc);
+  }
 
-    double FrOcean::GetDepth(double x, double y, FRAME_CONVENTION fc) const {
-        return m_freeSurface->GetTidal()->GetHeight(fc) - m_seabed->GetBathymetry(x,y,fc);
-    }
+  double FrOcean::GetDepth(double x, double y, FRAME_CONVENTION fc) const {
+    return m_freeSurface->GetTidal()->GetHeight(fc) - m_seabed->GetBathymetry(x, y, fc);
+  }
 
-    void FrOcean::ShowSeabed(bool showSeabed) {
-        if (showSeabed) {
+  void FrOcean::ShowSeabed(bool showSeabed) {
+    if (showSeabed) {
 //            assert(dynamic_cast<FrNullSeabed>(m_seabed)); //FIXME to check that the deleted seabed is a NullSeabed
-            m_seabed = std::make_unique<FrMeanSeabed>(this);
-        }
-        else{
-            m_seabed = std::make_unique<FrNullSeabed>(this);
-        }
+      m_seabed = std::make_unique<FrMeanSeabed>(this);
+    } else {
+      m_seabed = std::make_unique<FrNullSeabed>(this);
     }
+  }
 
-    void FrOcean::ShowFreeSurface(bool showFreeSurface) {
-        m_freeSurface->ShowFreeSurface(showFreeSurface);
-    }
+  void FrOcean::ShowFreeSurface(bool showFreeSurface) {
+    m_freeSurface->ShowFreeSurface(showFreeSurface);
+  }
 
-    void FrOcean::SetInfiniteDepth() {ShowSeabed(false);}
+  void FrOcean::SetInfiniteDepth() { ShowSeabed(false); }
 
 
 }  // end namespace frydom

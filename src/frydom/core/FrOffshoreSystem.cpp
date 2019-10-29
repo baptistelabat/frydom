@@ -241,6 +241,7 @@ namespace frydom {
 
     m_chronoSystem->AddBody(chrono_body);  // Authorized because this method is a friend of FrBody
     m_bodyList.push_back(body);
+    event_logger::info(GetTypeName(), GetName(), "Body {} has been ADDED to the system", body->GetName());
   }
 
   FrOffshoreSystem::BodyContainer &FrOffshoreSystem::GetBodyList() {
@@ -258,6 +259,8 @@ namespace frydom {
     body->RemoveAllForces();
     body->RemoveAllNodes();
 
+    event_logger::info(GetTypeName(), GetName(), "Body {} has been REMOVED from the system", body->GetName());
+
     // FIXME : we should launch removal of FrNode and FrForce objects attached to this body from the logManager...
 
   }
@@ -267,6 +270,8 @@ namespace frydom {
     for (auto &body: m_bodyList)
       Remove(body);
 
+    event_logger::info(GetTypeName(), GetName(), "Every bodies have been removed from the system");
+
   }
 
 
@@ -275,6 +280,7 @@ namespace frydom {
   void FrOffshoreSystem::AddLink(std::shared_ptr<FrLinkBase> link, std::shared_ptr<chrono::ChLink> chrono_link) {
     m_chronoSystem->AddLink(chrono_link);
     m_linkList.push_back(link);
+    event_logger::info(GetTypeName(), GetName(), "Link {} has been ADDED to the system", link->GetName());
   }
 
   void FrOffshoreSystem::RemoveLink(std::shared_ptr<FrLinkBase> link, std::shared_ptr<chrono::ChLink> chrono_link) {
@@ -284,6 +290,7 @@ namespace frydom {
     auto it = std::find(link_begin(), link_end(), link);
     assert(it != link_end());
     m_linkList.erase(it);
+    event_logger::info(GetTypeName(), GetName(), "Link {} has been REMOVED from the system", link->GetName());
   }
 
   void FrOffshoreSystem::RemoveAllLinks() {
@@ -300,6 +307,7 @@ namespace frydom {
 
     m_chronoSystem->AddOtherPhysicsItem(chrono_physics_item);
     m_PrePhysicsList.push_back(otherPhysics);
+    event_logger::info(GetTypeName(), GetName(), "A Physics Item has been ADDED to the system");
   }
 
   FrOffshoreSystem::PrePhysicsContainer FrOffshoreSystem::GetPrePhysicsItemList() {
@@ -314,6 +322,7 @@ namespace frydom {
     auto it = std::find(m_PrePhysicsList.begin(), m_PrePhysicsList.end(), item);
     if (it != m_PrePhysicsList.end())
       m_PrePhysicsList.erase(it);
+    event_logger::info(GetTypeName(), GetName(), "A Physics Item has been REMOVED to the system");
   }
 
 //  void FrOffshoreSystem::RemoveAllPhysicsItem() {
@@ -377,6 +386,7 @@ namespace frydom {
 
   void FrOffshoreSystem::MonitorRealTimePerfs(bool val) {
     m_monitor_real_time = val;
+    event_logger::info(GetTypeName(), GetName(), "Monitoring time performance set to {}", val);
   }
 
 
@@ -414,6 +424,9 @@ namespace frydom {
     if (m_isInitialized)
       return;
 
+    event_logger::info(GetTypeName(), GetName(), "BEGIN OffshoreSystem initialization");
+
+
     // Initializing environment before bodies
     m_environment->Initialize();
 
@@ -438,6 +451,8 @@ namespace frydom {
     m_LogManager->Initialize();
 
     m_isInitialized = true;
+
+    event_logger::info(GetTypeName(), GetName(), "END OffshoreSystem initialization");
 
   }
 
@@ -540,8 +555,12 @@ namespace frydom {
   }
 
   void FrOffshoreSystem::EventLogConstructor() const {
-//    event_logger::info(GetTypeNameId(*this), GetName(), "Initializing system");
-    std::cerr << "ENVOYER infos d'evenement depuis FrOffshoreSystem::EventLogConstructor()";
+    std::string type_name(GetTypeName());
+    std::string name(GetName());
+
+    event_logger::info(type_name, name, "FRyDoM started");
+
+    // TODO: mettre ici les infos pertinentes pour l'event log ...
 
   }
 

@@ -12,6 +12,7 @@
 #include <cppfs/fs.h>
 #include <cppfs/FileHandle.h>
 #include <cppfs/FilePath.h>
+#include <frydom/logging/FrEventLogger.h>
 
 #include "FrNode.h"
 #include "frydom/asset/FrNodeAsset.h"
@@ -39,6 +40,9 @@ namespace frydom {
     m_chronoMarker = std::make_shared<internal::FrMarker>(this);
     //Chrono body can be retrieved because this constructor is a friend of FrBody
     body->GetChronoBody()->AddMarker(m_chronoMarker);
+
+    event_logger::info(GetTypeName(), GetName(), "Node created");
+
   }
 
   void FrNode::Set(const Position &position, const Direction &e1, const Direction &e2, const Direction &e3,
