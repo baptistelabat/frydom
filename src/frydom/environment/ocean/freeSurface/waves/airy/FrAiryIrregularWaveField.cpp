@@ -275,9 +275,10 @@ namespace frydom {
   }
 
   void FrAiryIrregularWaveField::Initialize() {
-    event_logger::info("AiryIrregularOptimWaveField", "",
+    event_logger::info("WaveField", "AiryIrregularOptimWaveField",
                        "Airy Irregular Wave field initialization with {} wave directions "
                        "and {} wave frequencies", m_nbDir, m_nbFreq);
+    event_logger::flush();
 
     FrWaveField::Initialize();
     m_verticalFactor->SetInfDepth(m_infinite_depth);

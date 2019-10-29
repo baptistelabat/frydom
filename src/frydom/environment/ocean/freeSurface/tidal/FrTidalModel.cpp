@@ -147,7 +147,8 @@ namespace frydom {
   }
 
   void FrTidal::Initialize() {
-      event_logger::info("Tidal", "", "Tidal model initialization");
+    event_logger::info("Tidal", "", "Tidal model initialization");
+    event_logger::flush();
   }
 
   void FrTidal::StepFinalize() {

@@ -84,10 +84,12 @@ namespace frydom {
 
   void FrOcean::Initialize() {
     event_logger::info("Ocean", "", "BEGIN Ocean initialization");
+    event_logger::flush();
     m_freeSurface->Initialize();
     m_current->Initialize();
     m_seabed->Initialize();
     event_logger::info("Ocean", "", "END Ocean initialization");
+    event_logger::flush();
   }
 
   void FrOcean::StepFinalize() {

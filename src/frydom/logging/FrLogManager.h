@@ -65,7 +65,7 @@ namespace frydom {
 
     static std::string GetDateFolder();
 
-    void CreateMetaDataFile(const std::string &log_folder);
+    void WriteMetaDataFile(const std::string &log_folder);
 
     static std::string now();
 

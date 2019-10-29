@@ -43,9 +43,11 @@ namespace frydom {
     m_log_folder = InitializeLogFolder();
 
     // Event Logger initialization
-    event_logger::init(system, "FRYDOM", "frydom_event.log");
+    event_logger::init(system, "FRYDOM", FrFileSystem::join({m_log_folder, "events.txt"}));
 
-    event_logger::info("LogManager", "log manager", "Results will be logged into {}", m_log_folder);
+    // TODO : ne garder pout cette info que le repertoire de date...
+    event_logger::info("LogManager", "log manager", "Log folder: {}", m_log_folder);
+    std::cout << "Log folder: " << m_log_folder << std::endl;
 
   }
 
@@ -111,12 +113,12 @@ namespace frydom {
 
 //    std::cout << "Logging into: " << log_folder << std::endl;
 
-    CreateMetaDataFile(log_folder);
+    WriteMetaDataFile(log_folder);
 
     return log_folder;
   }
 
-  void FrLogManager::CreateMetaDataFile(const std::string &log_folder) {
+  void FrLogManager::WriteMetaDataFile(const std::string &log_folder) {
 
     json j;
 
@@ -183,10 +185,6 @@ namespace frydom {
 
       if (!obj->IsLogged()) continue;
 
-
-//      std::string type_name(GetTypeNameId(*obj));
-
-
       obj->DefineLogMessages();
 
       if (m_log_CSV) {
@@ -198,7 +196,8 @@ namespace frydom {
           std::string message_folder = FrFileSystem::join({m_log_folder, obj->GetTreePath()});
           FrFileSystem::mkdir(message_folder);
 
-          std::string csv_file = FrFileSystem::join({message_folder, message->GetName() + ".csv"}); // FIXME : ajouter les infos de type...
+          std::string csv_file = FrFileSystem::join(
+              {message_folder, obj->GetTypeName() + message->GetName() + ".csv"});
 
           message->AddSerializer(new hermes::CSVSerializer(csv_file));
         }

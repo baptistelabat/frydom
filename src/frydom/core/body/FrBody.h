@@ -31,9 +31,6 @@
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrRadiationModelBase.h"
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrVariablesBEMBodyBase.h"
 
-//#include "frydom/logging/FrTypeName.h"
-
-
 #define DEFAULT_MAX_SPEED (float)10.
 #define DEFAULT_MAX_ROTATION_SPEED (float)(180.*DEG2RAD)
 

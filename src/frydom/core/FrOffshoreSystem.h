@@ -552,8 +552,8 @@ namespace frydom {
     ///   - Suggested for finite element smooth dynamics: HHT, EULER_IMPLICIT_LINEARIZED
     ///
     /// \param type time stepper method
-    /// \param checkCompat check compatibility between contact method, solver and time stepper, if true
-    void SetTimeStepper(TIME_STEPPER type, bool checkCompat);
+    /// \param check_compatibility check compatibility between contact method, solver and time stepper, if true
+    void SetTimeStepper(TIME_STEPPER type, bool check_compatibility);
 
     void SetTimeStepper(TIME_STEPPER type);
 
@@ -730,10 +730,6 @@ namespace frydom {
 
     /// Check the compatibility between the system contact method and the specified body contact type
     bool CheckBodyContactMethod(std::shared_ptr<FrBody> body);
-
-    /// Log instantiation events
-    void EventLogConstructor() const;
-
 
    public:
 

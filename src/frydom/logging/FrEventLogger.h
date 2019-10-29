@@ -5,18 +5,16 @@
 #ifndef FRYDOM_FREVENTLOGGER_H
 #define FRYDOM_FREVENTLOGGER_H
 
+#include <iostream>
 
 #include <spdlog/spdlog.h>
 #include <spdlog/details/fmt_helper.h>
 #include <spdlog/sinks/basic_file_sink.h>
 
-
-#include <frydom/utils/FrFileSystem.h>
-#include <iostream>
-
-
+#include "frydom/utils/FrFileSystem.h"
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/logging/FrLoggable.h"
+#include "frydom/version.h"
 
 
 namespace frydom {
@@ -62,16 +60,6 @@ namespace frydom {
         fmt::format_to(buffer, "[{}] [{}] {}", objType, objName, msg);
         return spdlog::details::fmt_helper::to_string_view(buffer);
       }
-
-//      template<typename... Args>
-//      inline string_view PreFormat(memory_buffer &buffer,
-//                            const std::string &objType, const std::string &objName,
-//                            string_view fmt, const Args &... args) {
-//
-//        fmt::format_to(buffer, "[{}] [{}] {}", objType, objName, fmt);
-//        return spdlog::details::fmt_helper::to_string_view(buffer);
-//      }
-
 
     }  // end namespace frydom::event_logger::internal
 
@@ -146,59 +134,18 @@ namespace frydom {
       spdlog::critical(internal::PreFormat(buffer, objType, objName, fmt), args...);
     }
 
-    static LOG_LEVEL get_default_log_level() { return INFO; }
+    LOG_LEVEL get_default_log_level();
 
-    static void set_log_level(LOG_LEVEL log_level) {
-      switch (log_level) {
-        case TRACE:
-          spdlog::set_level(spdlog::level::trace);
-          break;
-        case DEBUG:
-          spdlog::set_level(spdlog::level::debug);
-          break;
-        case INFO:
-          spdlog::set_level(spdlog::level::info);
-          break;
-        case WARN:
-          spdlog::set_level(spdlog::level::warn);
-          break;
-        case ERROR:
-          spdlog::set_level(spdlog::level::err);
-          break;
-        case CRITICAL:
-          spdlog::set_level(spdlog::level::critical);
-          break;
-        default:
-          error("FrEventLogger", "event logger", "Unknown log level {}. Set default log level at {}",
-                log_level, get_default_log_level());
-          set_log_level(get_default_log_level());
-      }
-    }
+    void set_log_level(LOG_LEVEL log_level);
 
-    static void set_default_log_level() {
-      set_log_level(get_default_log_level());
-    }
+    void set_default_log_level();
 
-    static void init(FrOffshoreSystem *system, const std::string &name, const std::string &event_log_file) {
-      // Initializing event logger
-      auto file_logger = spdlog::basic_logger_mt(name, event_log_file);
-      spdlog::set_default_logger(file_logger);
+    void init(FrOffshoreSystem *system, const std::string &name, const std::string &event_log_file);
 
-      set_default_log_level();
-
-
-      // TODO : gerer manuellement le flush a chaque pas de temps... ou permettre de relaxer avec une temporisation
-      // de flush interne basee sur le temps de simulation (et pas chrono).
-      spdlog::flush_every(std::chrono::seconds(1));
-
-      file_logger->set_formatter(std::make_unique<internal::SimulationFormatter>(system));
-
-    }
+    void flush();
 
   }  // end namespace frydom::event_logger
 
 }  // end namespace frydom
-
-
 
 #endif //FRYDOM_FREVENTLOGGER_H

@@ -146,13 +146,16 @@ namespace frydom {
   void FrFreeSurface::Initialize() {
     if (m_showFreeSurface) {
       event_logger::info("FreeSurface", "", "BEGIN Free surface initialization");
+      event_logger::flush();
       m_tidal->Initialize();
       m_waveField->Initialize();
       m_freeSurfaceGridAsset->Initialize();
       m_ocean->GetEnvironment()->GetSystem()->GetWorldBody()->AddAsset(m_freeSurfaceGridAsset);
       event_logger::info("FreeSurface", "", "END Free surface initialization");
+      event_logger::flush();
     } else {
       event_logger::info("FreeSurface", "", "No Free Surface");
+      event_logger::flush();
     }
   }
 

@@ -174,6 +174,9 @@ namespace frydom {
     // Creating the chrono System backend. It drives the way contact are modelled
     SetSystemType(systemType, false);
 
+    // Creating the log manager service
+    m_LogManager = std::make_unique<FrLogManager>(this);
+
     // Setting the time stepper
     SetTimeStepper(timeStepper, false);
 
@@ -191,17 +194,14 @@ namespace frydom {
     m_pathManager = std::make_unique<FrPathManager>();
     m_pathManager->RegisterTreeNode(this);
 
-    // Creating the log manager service
-    m_LogManager = std::make_unique<FrLogManager>(this);
+//    // Creating the log manager service
+//    m_LogManager = std::make_unique<FrLogManager>(this);
 
     // Creating the static analysis
     m_statics = std::make_unique<FrStaticAnalysis>(this);
 
     // Creating a fixed world body to be able to attach anything to it (anchors...)
     CreateWorldBody();
-
-    EventLogConstructor();
-
   }
 
   FrOffshoreSystem::~FrOffshoreSystem() = default;
@@ -241,7 +241,9 @@ namespace frydom {
 
     m_chronoSystem->AddBody(chrono_body);  // Authorized because this method is a friend of FrBody
     m_bodyList.push_back(body);
-    event_logger::info(GetTypeName(), GetName(), "Body {} has been ADDED to the system", body->GetName());
+
+    event_logger::info(GetTypeName(), GetName(),
+                       "Body {} has been ADDED to the system", body->GetName());
   }
 
   FrOffshoreSystem::BodyContainer &FrOffshoreSystem::GetBodyList() {
@@ -289,6 +291,12 @@ namespace frydom {
 
     auto it = std::find(link_begin(), link_end(), link);
     assert(it != link_end());
+    if (it == link_end()) {
+      event_logger::error(GetTypeName(), GetName(),
+          "Fail to remove link {} as it is not registered", link->GetName());
+      return;
+    }
+
     m_linkList.erase(it);
     event_logger::info(GetTypeName(), GetName(), "Link {} has been REMOVED from the system", link->GetName());
   }
@@ -425,7 +433,7 @@ namespace frydom {
       return;
 
     event_logger::info(GetTypeName(), GetName(), "BEGIN OffshoreSystem initialization");
-
+    event_logger::flush();
 
     // Initializing environment before bodies
     m_environment->Initialize();
@@ -453,6 +461,7 @@ namespace frydom {
     m_isInitialized = true;
 
     event_logger::info(GetTypeName(), GetName(), "END OffshoreSystem initialization");
+    event_logger::flush();
 
   }
 
@@ -549,18 +558,6 @@ namespace frydom {
 
   void FrOffshoreSystem::CheckCompatibility() const {
     // TODO : verifier la compatibilite entre type systeme, solveur et integrateur temporel
-
-
-
-  }
-
-  void FrOffshoreSystem::EventLogConstructor() const {
-    std::string type_name(GetTypeName());
-    std::string name(GetName());
-
-    event_logger::info(type_name, name, "FRyDoM started");
-
-    // TODO: mettre ici les infos pertinentes pour l'event log ...
 
   }
 
@@ -708,24 +705,33 @@ namespace frydom {
   void FrOffshoreSystem::SetStiffContact(bool isStiff) {
     if (m_systemType == SMOOTH_CONTACT) {
       dynamic_cast<chrono::ChSystemSMC *>(m_chronoSystem.get())->SetStiffContact(isStiff);
+      event_logger::info(GetTypeName(), GetName(),
+          "Stiff contact {}", (isStiff) ? "activated" : "deactivated");
     } else {
-      std::cerr << "StiffContact is only for SMOOTH_CONTACT systems" << std::endl;
+      event_logger::error(GetTypeName(), GetName(),
+                          "StiffContact is only for SMOOTH_CONTACT systems. Action ignored");
     }
   }
 
   void FrOffshoreSystem::SetSlipVelocityThreshold(double velocity) {
     if (m_systemType == SMOOTH_CONTACT) {
       dynamic_cast<chrono::ChSystemSMC *>(m_chronoSystem.get())->SetSlipVelocityThreshold(velocity);
+      event_logger::info(GetTypeName(), GetName(),
+                         "Slip Velocity Threshold set to {} m/s", velocity);
     } else {
-      std::cerr << "Slip Velocity Threshold is only for SMOOTH_CONTACT systems" << std::endl;
+      event_logger::error(GetTypeName(), GetName(),
+                          "Slip Velocity Threshold is only for SMOOTH_CONTACT systems. Action ignored");
     }
   }
 
   void FrOffshoreSystem::SetCharacteristicImpactVelocity(double velocity) {
     if (m_systemType == SMOOTH_CONTACT) {
       dynamic_cast<chrono::ChSystemSMC *>(m_chronoSystem.get())->SetCharacteristicImpactVelocity(velocity);
+      event_logger::info(GetTypeName(), GetName(),
+                          "Characteristic Impact Velocity set to {} m/s", velocity);
     } else {
-      std::cerr << "Characteristic Impact Velocity is only for SMOOTH_CONTACT systems" << std::endl;
+      event_logger::error(GetTypeName(), GetName(),
+          "Characteristic Impact Velocity is only for SMOOTH_CONTACT systems. Action ignored");
     }
   }
 
@@ -774,10 +780,13 @@ namespace frydom {
   }
 
   void FrOffshoreSystem::SetGravityAcceleration(double gravityAcceleration) {
+    event_logger::info(GetTypeName(), GetName(),
+                       "Gravity acceleration set to {} m/s2", gravityAcceleration);
     m_chronoSystem->Set_G_acc(chrono::ChVector<double>(0., 0., -gravityAcceleration));
   }
 
   bool FrOffshoreSystem::DoAssembly() {
+    event_logger::info(GetTypeName(), GetName(), "Solving assembly");
     return m_chronoSystem->DoFullAssembly();
   }
 
@@ -787,9 +796,9 @@ namespace frydom {
 
   bool FrOffshoreSystem::SolveStaticWithRelaxation() {
 
+    event_logger::info(GetTypeName(), GetName(), "Static analysis by dynamic relaxation STARTED");
     Initialize();
     return m_statics->SolveStatic();
-
   }
 
   void FrOffshoreSystem::Relax(FrStaticAnalysis::RELAXTYPE relax) {
@@ -817,43 +826,52 @@ namespace frydom {
 
   }
 
-  void FrOffshoreSystem::SetTimeStepper(TIME_STEPPER type, bool checkCompat) {
+  void FrOffshoreSystem::SetTimeStepper(TIME_STEPPER type, bool check_compatibility) {
 
     using timeStepperType = chrono::ChTimestepper::Type;
 
     switch (type) {
       case EULER_IMPLICIT_LINEARIZED:
         m_chronoSystem->SetTimestepperType(timeStepperType::EULER_IMPLICIT_LINEARIZED);
+        event_logger::info(GetTypeName(), GetName(), "Time stepper set to EULER_IMPLICIT_LINEARIZED");
         break;
       case EULER_IMPLICIT_PROJECTED:
         m_chronoSystem->SetTimestepperType(timeStepperType::EULER_IMPLICIT_PROJECTED);
+        event_logger::info(GetTypeName(), GetName(), "Time stepper set to EULER_IMPLICIT_PROJECTED");
         break;
       case EULER_IMPLICIT:
         m_chronoSystem->SetTimestepperType(timeStepperType::EULER_IMPLICIT);
+        event_logger::info(GetTypeName(), GetName(), "Time stepper set to EULER_IMPLICIT");
         break;
       case TRAPEZOIDAL:
         m_chronoSystem->SetTimestepperType(timeStepperType::TRAPEZOIDAL);
+        event_logger::info(GetTypeName(), GetName(), "Time stepper set to TRAPEZOIDAL");
         break;
       case TRAPEZOIDAL_LINEARIZED:
         m_chronoSystem->SetTimestepperType(timeStepperType::TRAPEZOIDAL_LINEARIZED);
+        event_logger::info(GetTypeName(), GetName(), "Time stepper set to TRAPEZOIDAL_LINEARIZED");
         break;
       case HHT:
         m_chronoSystem->SetTimestepperType(timeStepperType::HHT);
+        event_logger::info(GetTypeName(), GetName(), "Time stepper set to HHT");
         break;
       case RUNGEKUTTA45:
         m_chronoSystem->SetTimestepperType(timeStepperType::RUNGEKUTTA45);
+        event_logger::info(GetTypeName(), GetName(), "Time stepper set to RUNGEKUTTA45");
         break;
       case EULER_EXPLICIT:
         m_chronoSystem->SetTimestepperType(timeStepperType::EULER_EXPLICIT);
+        event_logger::info(GetTypeName(), GetName(), "Time stepper set to EULER_EXPLICIT");
         break;
       case NEWMARK:
         m_chronoSystem->SetTimestepperType(timeStepperType::NEWMARK);
+        event_logger::info(GetTypeName(), GetName(), "Time stepper set to NEWMARK");
         break;
     }
 
     m_timeStepper = type;
 
-    if (checkCompat) CheckCompatibility();
+    if (check_compatibility) CheckCompatibility();
 
   }
 
@@ -863,6 +881,7 @@ namespace frydom {
 
   void FrOffshoreSystem::SetTimeStep(double timeStep) {
     m_chronoSystem->SetStep(timeStep);
+    event_logger::info(GetTypeName(), GetName(), "Time step set to {} s", timeStep);
   }
 
   double FrOffshoreSystem::GetTimeStep() const {
@@ -871,10 +890,12 @@ namespace frydom {
 
   void FrOffshoreSystem::SetMinTimeStep(double minTimeStep) {
     m_chronoSystem->SetStepMin(minTimeStep);
+    event_logger::info(GetTypeName(), GetName(), "Set minimum time step to {} s", minTimeStep);
   }
 
   void FrOffshoreSystem::SetMaxTimeStep(double maxTimeStep) {
     m_chronoSystem->SetStepMax(maxTimeStep);
+    event_logger::info(GetTypeName(), GetName(), "Set maximum time step to {} s", maxTimeStep);
   }
 
   double FrOffshoreSystem::GetTime() const {
@@ -897,6 +918,7 @@ namespace frydom {
 
   bool FrOffshoreSystem::RunDynamics(double frameStep) {
     Initialize();
+    event_logger::info(GetTypeName(), GetName(), "Dynamic simulation STARTED");
     m_chronoSystem->Setup();
     m_chronoSystem->DoAssembly(chrono::AssemblyLevel::POSITION |
                                chrono::AssemblyLevel::VELOCITY |
@@ -968,6 +990,11 @@ namespace frydom {
     app.SetTimestep(m_chronoSystem->GetStep());
     app.SetVideoframeSave(recordVideo);
     app.SetVideoframeSaveInterval(videoFrameSaveInterval);
+
+    event_logger::info(GetTypeName(), GetName(),
+                       "Dynamic simulation STARTED in viewer with endTime = {} s, video recording set to {}",
+                       endTime, recordVideo);
+
     app.Run(endTime); // The temporal loop is here.
 
   }

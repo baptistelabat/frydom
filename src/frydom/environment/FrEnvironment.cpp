@@ -120,6 +120,7 @@ namespace frydom {
   void FrEnvironment::Initialize() {
 
     event_logger::info("Environment", "", "BEGIN Environment initialization");
+    event_logger::flush();
 
     m_timeRamp->Initialize();
 
@@ -128,6 +129,7 @@ namespace frydom {
     m_timeServices->Initialize();
 
     event_logger::info("Environment", "", "END Environment initialization");
+    event_logger::flush();
 
   }
 

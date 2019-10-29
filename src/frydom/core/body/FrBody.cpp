@@ -512,6 +512,8 @@ namespace frydom {
         std::find<std::vector<std::shared_ptr<FrForce>>::iterator>(m_externalForces.begin(), m_externalForces.end(),
                                                                    force));
 
+    event_logger::info(GetTypeName(), GetName(), "External force {} removed", force->GetName());
+
     if (force->m_asset != nullptr) {
       m_chronoBody->RemoveAsset(force->m_asset->GetChronoAsset());
 
@@ -536,6 +538,8 @@ namespace frydom {
       logManager->Remove(force);
     }
     m_externalForces.clear();
+
+    event_logger::info(GetTypeName(), GetName(), "All forces removed");
   }
 
   void FrBody::RemoveAllNodes() {
@@ -546,6 +550,8 @@ namespace frydom {
       logManager->Remove(node);
     }
     m_nodes.clear();
+
+    event_logger::info(GetTypeName(), GetName(), "All nodes removed");
   }
 
   Force FrBody::GetTotalExtForceInWorld(FRAME_CONVENTION fc) const {
@@ -575,6 +581,12 @@ namespace frydom {
   std::shared_ptr<FrNode> FrBody::NewNode(const std::string &name) {
     auto node = std::make_shared<FrNode>(name, this);
     m_nodes.push_back(node);
+
+    auto pos = node->GetNodePositionInBody(NWU);
+
+    event_logger::info(GetTypeName(), GetName(),
+                       "Node {} added to body at position {}\t{}\t{}",
+                       node->GetName(), pos[0], pos[1], pos[2]);
     GetSystem()->GetPathManager()->RegisterTreeNode(node.get());
 
     GetSystem()->GetLogManager()->Add(node);
@@ -585,6 +597,9 @@ namespace frydom {
   void FrBody::SetCOG(const Position &bodyPos, FRAME_CONVENTION fc) {
     FrFrame cogFrame;
     cogFrame.SetPosition(bodyPos, fc);
+    event_logger::info(GetTypeName(), GetName(),
+                       "Center of gravity set (in body reference frame) to [{}\t{}\t{}]", bodyPos.x(), bodyPos.y(),
+                       bodyPos.z());
     m_chronoBody->UpdateMarkerPositionToCOG(internal::Vector3dToChVector(cogFrame.GetPosition(NWU)));
     m_chronoBody->SetFrame_COG_to_REF(internal::FrFrame2ChFrame(cogFrame));
   }
@@ -611,12 +626,20 @@ namespace frydom {
 
     auto bodyFrame = GetFrame();
     bodyFrame.SetPosition(worldPos, fc);
+
+    event_logger::info(GetTypeName(), GetName(),
+                       "Set body position (in world reference frame NWU) to [{}\t{}\t{}]",
+                       worldPos.x(), worldPos.y(), worldPos.z());
+
     m_chronoBody->SetFrame_REF_to_abs(internal::FrFrame2ChFrame(bodyFrame));
     m_chronoBody->UpdateAfterMove();
   }
 
   void FrBody::SetGeoPosition(const FrGeographicCoord &geoCoord) {
     SetPosition(GeoToCart(geoCoord, NWU), NWU);
+    event_logger::info(GetTypeName(), GetName(),
+                       "Set geographic body position to latitude = {} °; longitude{} °]",
+                       geoCoord.GetLatitude(), geoCoord.GetLongitude());
   }
 
   FrRotation FrBody::GetRotation() const {
@@ -634,7 +657,16 @@ namespace frydom {
   void FrBody::SetRotation(const FrUnitQuaternion &quaternion) {
     Position bodyWorldPos = GetPosition(NWU);
     m_chronoBody->SetRot(internal::Fr2ChQuaternion(quaternion));
-    SetPosition(bodyWorldPos, NWU);
+
+    double phi, theta, psi;
+    FrRotation(quaternion).GetCardanAngles_DEGREES(phi, theta, psi, NWU);
+
+    event_logger::info(GetTypeName(), GetName(),
+                       "Set body orientation (in world reference frame NWU, cardan angles) to "
+                       "phi = {}\ttheta = {}\tpsi = {}]",
+                       phi, theta, psi);
+
+    SetPosition(bodyWorldPos, NWU);  // FIXME : pourquoi doit-on set la position ???
   }
 
   FrFrame FrBody::GetFrame() const {

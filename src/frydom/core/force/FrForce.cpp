@@ -9,6 +9,7 @@
 //
 // ==========================================================================
 
+#include <frydom/logging/FrEventLogger.h>
 #include "FrForce.h"
 
 #include "frydom/asset/FrForceAsset.h"
@@ -75,7 +76,7 @@ namespace frydom {
                    const std::string &type_name,
                    FrBody *body) :
       FrLoggable(name, type_name, body) {
-
+    event_logger::info(GetTypeName(), GetName(), "Force created");
     m_chronoForce = std::make_shared<internal::FrForceBase>(this);
 
   }
@@ -140,6 +141,7 @@ namespace frydom {
   }
 
   void FrForce::SetMaxForceLimit(double fmax) {
+    event_logger::info(GetTypeName(), GetName(), "Maximum force limit set to {} N", fmax);
     m_forceLimit = fmax;
   }
 
@@ -148,6 +150,7 @@ namespace frydom {
   }
 
   void FrForce::SetMaxTorqueLimit(double tmax) {
+    event_logger::info(GetTypeName(), GetName(), "Maximum torque limit set to {} N.m", tmax);
     m_torqueLimit = tmax;
   }
 
@@ -157,6 +160,11 @@ namespace frydom {
 
   void FrForce::SetLimit(bool val) {
     m_limitForce = val;
+    if (val) {
+      event_logger::info(GetTypeName(), GetName(), "Force/Torque limit activated");
+    } else {
+      event_logger::info(GetTypeName(), GetName(), "Force/Torque limit deactivated");
+    }
   }
 
   bool FrForce::GetLimit() const {

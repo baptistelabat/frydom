@@ -11,6 +11,7 @@
 
 
 #include "FrLoggable.h"
+#include "FrEventLogger.h"
 
 
 namespace frydom {
@@ -20,7 +21,9 @@ namespace frydom {
       m_log_this(true),
       m_log_frame_convention(NWU) {}
 
-  void FrLoggableBase::LogThis(bool log) { m_log_this = log; }
+  void FrLoggableBase::LogThis(bool log) {
+    m_log_this = log;
+  }
 
   void FrLoggableBase::StepFinalizeLog() {
     SerializeLogMessages();
@@ -33,7 +36,7 @@ namespace frydom {
     return m_log_this;
   }
 
-  const std::string& FrLoggableBase::GetTypeName() const {
+  const std::string &FrLoggableBase::GetTypeName() const {
     return m_type_name;
   }
 
