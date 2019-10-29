@@ -45,6 +45,8 @@ namespace frydom {
     // Event Logger initialization
     event_logger::init(system, "FRYDOM", "frydom_event.log");
 
+    event_logger::info("Logging into {}", m_log_folder);
+
   }
 
   FrLogManager::~FrLogManager() = default;
@@ -134,7 +136,7 @@ namespace frydom {
 
   }
 
-  std::string FrLogManager::now() {
+  std::string FrLogManager::now() { // TODO : voir a faire avec fmt...
     std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     std::string now_str = std::ctime(&now);
     return now_str.substr(0, now_str.size() - 1); // Removing last char that is an end line...
@@ -160,7 +162,7 @@ namespace frydom {
 
   std::string FrLogManager::GetDateFolder() {
 
-    // TODO : utiliser fmt pour ce formattage
+    // TODO : utiliser fmt pour ce formatage
 
     time_t temps;
     struct tm datetime;

@@ -36,13 +36,10 @@ namespace frydom {
            * [<simulation_time>] [<log_level>] [<ObjType>] [<obj_name>] <Message>
            */
 
-          // Simulation time
-          fmt::format_to(dest, "[{}] ", m_system->GetTime());
+          // Simulation time & log level
+          fmt::format_to(dest, "[{}] [{}] ", m_system->GetTime(), spdlog::level::to_string_view(msg.level));
 
           // TODO: see how we can add color formatting for std output...
-
-          // Log level
-          fmt::format_to(dest, "[{}] ", spdlog::level::to_string_view(msg.level));
 
           // Object type
           // TODO
@@ -75,35 +72,35 @@ namespace frydom {
     // TODO : voir comment ajouter les infos de type d'objet et de nom d'objet avant de deployer partout !!!
 
     template<typename T>
-    static inline void debug(const T &msg) { spdlog::debug(msg); }
+    inline void debug(const T &msg) { spdlog::debug(msg); }
 
     template<typename T>
-    static inline void info(const T &msg) { spdlog::info(msg); }
+    inline void info(const T &msg) { spdlog::info(msg); }
 
     template<typename T>
-    static inline void warn(const T &msg) { spdlog::warn(msg); }
+    inline void warn(const T &msg) { spdlog::warn(msg); }
 
     template<typename T>
-    static inline void error(const T &msg) { spdlog::error(msg); }
+    inline void error(const T &msg) { spdlog::error(msg); }
 
     template<typename T>
-    static inline void critical(const T &msg) { spdlog::critical(msg); }
+    inline void critical(const T &msg) { spdlog::critical(msg); }
 
 
     template<typename... Args>
-    static inline void debug(string_view fmt, const Args &... args) { spdlog::debug(fmt, args...); }
+    inline void debug(string_view fmt, const Args &... args) { spdlog::debug(fmt, args...); }
 
     template<typename... Args>
-    static inline void info(string_view fmt, const Args &... args) { spdlog::info(fmt, args...); }
+    inline void info(string_view fmt, const Args &... args) { spdlog::info(fmt, args...); }
 
     template<typename... Args>
-    static inline void warn(string_view fmt, const Args &... args) { spdlog::warn(fmt, args...); }
+    inline void warn(string_view fmt, const Args &... args) { spdlog::warn(fmt, args...); }
 
     template<typename... Args>
-    static inline void error(string_view fmt, const Args &... args) { spdlog::error(fmt, args...); }
+    inline void error(string_view fmt, const Args &... args) { spdlog::error(fmt, args...); }
 
     template<typename... Args>
-    static inline void critical(string_view fmt, const Args &... args) { spdlog::critical(fmt, args...); }
+    inline void critical(string_view fmt, const Args &... args) { spdlog::critical(fmt, args...); }
 
 
     static void init(FrOffshoreSystem *system, const std::string &name, const std::string &event_log_file) {
@@ -121,10 +118,12 @@ namespace frydom {
       file_logger->set_formatter(std::make_unique<internal::SimulationFormatter>(system));
 
 
+      info("testing de log dans FrEventLogger::init");
       info("coucou {}", FrFileSystem::get_login());
       info("coucou");
       debug(10.2);
       error("Mother fucker {}", FrFileSystem::get_home());
+      critical("FIN testing de log dans FrEventLogger::init");
 
     }
 
