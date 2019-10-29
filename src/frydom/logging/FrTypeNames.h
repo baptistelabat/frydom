@@ -2,8 +2,8 @@
 // Created by frongere on 28/10/19.
 //
 
-#ifndef FRYDOM_FRTYPENAME_H
-#define FRYDOM_FRTYPENAME_H
+#ifndef FRYDOM_FRTYPENAMES_H
+#define FRYDOM_FRTYPENAMES_H
 
 #include <string>
 
@@ -22,22 +22,7 @@ namespace frydom {
 
   #define TYPE_TO_STRING(Type, name) template <> std::string TypeToString<Type>() { return name; }
 
-//  class FrOffshoreSystem;
-//  TYPE_TO_STRING(FrOffshoreSystem, "OffshoreSystem")
-
-
-
-
-
-
-//
-//  class FrBody;
-//  TYPE_TO_STRING(FrBody, "Body")
-
-
-//  template <>
-//  std::string TypeToString<FrOffshoreSystem>() { return "OffshoreSystem"; }
-
+  // Every classes names have to be declared in the CPP file...
 
 
 //  #define FRYDOM_DECLARE_CLASS_TYPE(T, type_name) \
@@ -53,4 +38,4 @@ namespace frydom {
 
 }  // end namespace frydom
 
-#endif //FRYDOM_FRTYPENAME_H
+#endif //FRYDOM_FRTYPENAMES_H

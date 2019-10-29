@@ -15,6 +15,7 @@
 #include "frydom/core/body/FrBody.h"
 #include "frydom/utils/FrRecorder.h"
 #include "frydom/logging/FrLogManager.h"
+#include "frydom/logging/FrTypeNames.h"
 
 
 namespace frydom {
@@ -24,7 +25,7 @@ namespace frydom {
   // ---------------------------------------------------------------------
 
   FrEquilibriumFrame::FrEquilibriumFrame(const std::string &name, FrBody *body)
-      : FrLoggable(name, body),
+      : FrLoggable(name, TypeToString(this), body),
         FrPrePhysicsItem(),
         m_velocity(),
         m_angularVelocity(0.),

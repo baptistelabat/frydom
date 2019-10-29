@@ -29,7 +29,7 @@ namespace frydom {
   class FrLoggableBase {
 
    public:
-    FrLoggableBase();
+    explicit FrLoggableBase(const std::string &type_name);
 
     void LogThis(bool log);
 
@@ -38,6 +38,8 @@ namespace frydom {
     void SetLogFrameConvention(FRAME_CONVENTION fc);
 
     bool IsLogged() const;
+
+    const std::string& GetTypeName() const;
 
    protected:
     hermes::Message *NewMessage(const std::string &name, const std::string &description);
@@ -72,8 +74,11 @@ namespace frydom {
   class FrLoggable : public FrLoggableBase, public FrTreeNode<ParentType> {
 
    public:
-    explicit FrLoggable(const std::string &name, ParentType *parent) :
-        FrLoggableBase(),
+    explicit FrLoggable(const std::string &name,
+                        const std::string &type_name,
+                        ParentType *parent) :
+
+        FrLoggableBase(type_name),
         FrTreeNode<ParentType>(name, parent) {}
 
     const std::string &GetTreePath() const override {

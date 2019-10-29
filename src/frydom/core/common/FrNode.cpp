@@ -19,6 +19,7 @@
 
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/logging/FrLogManager.h"
+#include "frydom/logging/FrTypeNames.h"
 
 namespace frydom {
 
@@ -32,7 +33,7 @@ namespace frydom {
 //  const std::string FrNode::s_type = NODE_TYPE;
 
   FrNode::FrNode(const std::string &name, frydom::FrBody *body) :
-      FrLoggable(name, body),
+      FrLoggable(name, TypeToString(this), body),
       m_showAsset(false) {
 
     m_chronoMarker = std::make_shared<internal::FrMarker>(this);

@@ -17,12 +17,16 @@
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOceanInc.h"
 #include "frydom/hydrodynamics/FrEquilibriumFrame.h"
+#include "frydom/logging/FrTypeNames.h"
 
 
 namespace frydom {
 
-  FrWaveDriftForce::FrWaveDriftForce(const std::string &name, FrBody *body, std::shared_ptr<FrHydroDB> hdb)
-      : FrForce(name, body), m_hdb(hdb) {}
+  FrWaveDriftForce::FrWaveDriftForce(const std::string &name,
+                                     FrBody *body,
+                                     std::shared_ptr<FrHydroDB> hdb)
+      : FrForce(name, TypeToString(this), body),
+        m_hdb(hdb) {}
 
   void FrWaveDriftForce::Compute(double time) {
 

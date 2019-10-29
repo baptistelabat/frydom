@@ -16,12 +16,16 @@
 #include "frydom/core/body/FrBody.h"
 #include "frydom/IO/FrLoader.h"
 #include "frydom/environment/FrEnvironmentInc.h"
+#include "frydom/logging/FrTypeNames.h"
 
 
 namespace frydom {
 
-  FrFlowForce::FrFlowForce(const std::string &name, FrBody *body, const std::string &jsonFile) :
-      FrForce(name, body) {
+  FrFlowForce::FrFlowForce(const std::string &name,
+                           const std::string &type_name,
+                           FrBody *body,
+                           const std::string &jsonFile) :
+      FrForce(name, type_name, body) {
     this->ReadTable(jsonFile);
   }
 
@@ -143,8 +147,10 @@ namespace frydom {
     FrFlowForce::Compute(time);
   }
 
-  FrCurrentForce::FrCurrentForce(const std::string &name, FrBody *body, const std::string &jsonFile) :
-      FrFlowForce(name, body, jsonFile) {}
+  FrCurrentForce::FrCurrentForce(const std::string &name,
+                                 FrBody *body,
+                                 const std::string &jsonFile) :
+      FrFlowForce(name, TypeToString(this), body, jsonFile) {}
 
   void FrWindForce::Compute(double time) {
 
@@ -161,8 +167,10 @@ namespace frydom {
     FrFlowForce::Compute(time);
   }
 
-  FrWindForce::FrWindForce(const std::string &name, FrBody *body, const std::string &jsonFile) :
-      FrFlowForce(name, body, jsonFile) {}
+  FrWindForce::FrWindForce(const std::string &name,
+                           FrBody *body,
+                           const std::string &jsonFile) :
+      FrFlowForce(name, TypeToString(this), body, jsonFile) {}
 
   std::shared_ptr<FrCurrentForce> make_current_force(const std::string &name,
                                                      std::shared_ptr<FrBody> body,

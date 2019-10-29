@@ -24,83 +24,86 @@
 
 namespace frydom {
 
-    /**
-     * \class FrFlowForce
-     * \brief Class for computing the flow force.
-     */
-    class FrFlowForce : public FrForce {
+  /**
+   * \class FrFlowForce
+   * \brief Class for computing the flow force.
+   */
+  class FrFlowForce : public FrForce {
 
-     protected:
+   protected:
 
-      Velocity m_fluxVelocityInBody;             ///< relative velocity of the flow in the body frame
-      mathutils::LookupTable1D<double, mathutils::Vector3d<double>> m_table;  ///< Table of polar coefficient
+    Velocity m_fluxVelocityInBody;             ///< relative velocity of the flow in the body frame
+    mathutils::LookupTable1D<double, mathutils::Vector3d<double>> m_table;  ///< Table of polar coefficient
 
-     public:
+   public:
 
-      /// Default constructor
+    /// Default constructor
 //      FrFlowForce() = default;
 
-      /// Constructor of the flow force with polar coeffients from json table
-      /// \param jsonFile Name of the json file containing the polar coefficients
-      explicit FrFlowForce(const std::string &name, FrBody* body, const std::string &jsonFile);
+    /// Constructor of the flow force with polar coeffients from json table
+    /// \param jsonFile Name of the json file containing the polar coefficients
+    explicit FrFlowForce(const std::string &name,
+                         const std::string &type_name,
+                         FrBody *body,
+                         const std::string &jsonFile);
 
-      /// Extract polar coeffients from json table
-      /// \param jsonFile Name of the json file containing the polar coefficients
-      void ReadTable(const std::string &jsonFile);
+    /// Extract polar coeffients from json table
+    /// \param jsonFile Name of the json file containing the polar coefficients
+    void ReadTable(const std::string &jsonFile);
 
-     protected:
+   protected:
 
-      /// Update the state of the flow force
-      /// \param time Current time of the simulation
-      void Compute(double time) override;
+    /// Update the state of the flow force
+    /// \param time Current time of the simulation
+    void Compute(double time) override;
 
-    };
-
-
-    /**
-     * \class FrCurrentForce
-     * \brief Class for computing the current loads.
-     */
-    class FrCurrentForce : public FrFlowForce {
+  };
 
 
-     public:
-
-      FrCurrentForce(const std::string &name, FrBody* body, const std::string &jsonFile);
-
-     private:
-
-      void Compute(double time) override;
-
-    };
+  /**
+   * \class FrCurrentForce
+   * \brief Class for computing the current loads.
+   */
+  class FrCurrentForce : public FrFlowForce {
 
 
-    /**
-     * \class FrWindForce
-     * \brief Class for computing the wind loads.
-     */
-    class FrWindForce : public FrFlowForce {
+   public:
 
-     public:
+    FrCurrentForce(const std::string &name, FrBody *body, const std::string &jsonFile);
 
-      explicit FrWindForce(const std::string &name, FrBody* body, const std::string &jsonFile);
+   private:
+
+    void Compute(double time) override;
+
+  };
 
 
-     private:
+  /**
+   * \class FrWindForce
+   * \brief Class for computing the wind loads.
+   */
+  class FrWindForce : public FrFlowForce {
 
-      /// Compute thd wind force
-      /// \param time Current time of the simulation from beginning, in seconds
-      void Compute(double time) override;
+   public:
 
-    };
+    explicit FrWindForce(const std::string &name, FrBody *body, const std::string &jsonFile);
 
-    std::shared_ptr<FrCurrentForce> make_current_force(const std::string &name,
-                                                       const std::string &jsonFile,
-                                                       std::shared_ptr<FrBody> body);
 
-    std::shared_ptr<FrWindForce> make_wind_force(const std::string &name,
-                                                 const std::string &jsonFile,
-                                                 std::shared_ptr<FrBody> body);
+   private:
+
+    /// Compute thd wind force
+    /// \param time Current time of the simulation from beginning, in seconds
+    void Compute(double time) override;
+
+  };
+
+  std::shared_ptr<FrCurrentForce> make_current_force(const std::string &name,
+                                                     const std::string &jsonFile,
+                                                     std::shared_ptr<FrBody> body);
+
+  std::shared_ptr<FrWindForce> make_wind_force(const std::string &name,
+                                               const std::string &jsonFile,
+                                               std::shared_ptr<FrBody> body);
 
 
 } // end of namespace frydom

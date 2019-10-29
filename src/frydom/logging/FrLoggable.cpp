@@ -15,7 +15,10 @@
 
 namespace frydom {
 
-  FrLoggableBase::FrLoggableBase() : m_log_this(true), m_log_frame_convention(NWU) {}
+  FrLoggableBase::FrLoggableBase(const std::string &type_name) :
+      m_type_name(type_name),
+      m_log_this(true),
+      m_log_frame_convention(NWU) {}
 
   void FrLoggableBase::LogThis(bool log) { m_log_this = log; }
 
@@ -28,6 +31,10 @@ namespace frydom {
 
   bool FrLoggableBase::IsLogged() const {
     return m_log_this;
+  }
+
+  const std::string& FrLoggableBase::GetTypeName() const {
+    return m_type_name;
   }
 
   hermes::Message *FrLoggableBase::NewMessage(const std::string &name, const std::string &description) {

@@ -248,10 +248,11 @@ namespace frydom {
    */
 
   FrLink::FrLink(const std::string &name,
+                 const std::string &type_name,
                  FrOffshoreSystem *system,
                  const std::shared_ptr<FrNode> &node1,
                  const std::shared_ptr<FrNode> &node2) :
-      FrLinkBase(name, system, node1, node2),
+      FrLinkBase(name, type_name, system, node1, node2),
       m_frame2WRT1_reference() {
 
     m_chronoLink = std::make_shared<internal::FrLinkLockBase>(this);

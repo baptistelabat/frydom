@@ -8,16 +8,17 @@
 #include "frydom/core/common/FrNode.h"
 #include "frydom/core/common/FrFrame.h"
 #include "frydom/logging/FrLogManager.h"
+#include "frydom/logging/FrTypeNames.h"
 
 namespace frydom {
 
 
   FrConstraint::FrConstraint(const std::string &name,
+                             const std::string &type_name,
                              FrOffshoreSystem *system,
                              const std::shared_ptr<FrNode> &node1,
                              const std::shared_ptr<FrNode> &node2) :
-      FrLinkBase(name, system, node1, node2) {
-//        SetLogged(true);
+      FrLinkBase(name, type_name, system, node1, node2) {
   }
 
   FrFrame FrConstraint::GetConstraintReferenceFrameInWorld() const {
@@ -122,7 +123,7 @@ namespace frydom {
                                              FrOffshoreSystem *system,
                                              const std::shared_ptr<FrCAxis> &axis1,
                                              const std::shared_ptr<FrCAxis> &axis2) :
-      FrConstraint(name, system, axis1->GetNode(), axis2->GetNode()),
+      FrConstraint(name, TypeToString(this), system, axis1->GetNode(), axis2->GetNode()),
       m_axis1(axis1), m_axis2(axis2) {
 
     m_chronoConstraint = std::make_shared<chrono::ChLinkMateParallel>();
@@ -160,7 +161,7 @@ namespace frydom {
                                                        FrOffshoreSystem *system,
                                                        const std::shared_ptr<FrCAxis> &axis1,
                                                        const std::shared_ptr<FrCAxis> &axis2) :
-      FrConstraint(name, system, axis1->GetNode(), axis2->GetNode()),
+      FrConstraint(name, TypeToString(this), system, axis1->GetNode(), axis2->GetNode()),
       m_axis1(axis1), m_axis2(axis2) {
 
     m_chronoConstraint = std::make_shared<chrono::ChLinkMateOrthogonal>();
@@ -197,7 +198,7 @@ namespace frydom {
                                                      const std::shared_ptr<FrCPlane> &plane2,
                                                      bool flipped,
                                                      double distance) :
-      FrConstraint(name, system, plane1->GetNode(), plane2->GetNode()),
+      FrConstraint(name, TypeToString(this), system, plane1->GetNode(), plane2->GetNode()),
       m_plane1(plane1), m_plane2(plane2) {
 
     m_chronoConstraint = std::make_shared<chrono::ChLinkMatePlane>();
@@ -245,7 +246,7 @@ namespace frydom {
                                                      const std::shared_ptr<FrCPlane> &plane,
                                                      const std::shared_ptr<FrCPoint> &point,
                                                      double distance) :
-      FrConstraint(name, system, plane->GetNode(), point->GetNode()),
+      FrConstraint(name, TypeToString(this), system, plane->GetNode(), point->GetNode()),
       m_plane(plane), m_point(point) {
 
     m_chronoConstraint = std::make_shared<chrono::ChLinkMateXdistance>();
@@ -286,7 +287,7 @@ namespace frydom {
                                                    const std::shared_ptr<FrCAxis> &line,
                                                    const std::shared_ptr<FrCPoint> &point,
                                                    double distance) :
-      FrConstraint(name, system, line->GetNode(), point->GetNode()),
+      FrConstraint(name, TypeToString(this), system, line->GetNode(), point->GetNode()),
       m_point(point), m_axis(line) {
 
     m_chronoConstraint = std::make_shared<chrono::ChLinkLockPointLine>();
@@ -332,7 +333,7 @@ namespace frydom {
                                                          const std::shared_ptr<FrCPoint> &point,
                                                          bool autoDistance,
                                                          double distance) :
-      FrConstraint(name, system, axis->GetNode(), point->GetNode()),
+      FrConstraint(name, TypeToString(this), system, axis->GetNode(), point->GetNode()),
       m_point(point), m_axis(axis),
       m_autoDistance(autoDistance) {
 
@@ -382,7 +383,7 @@ namespace frydom {
                                                                        const std::shared_ptr<FrCPoint> &point2,
                                                                        bool autoDistance,
                                                                        double distance) :
-      FrConstraint(name, system, point1->GetNode(), point2->GetNode()),
+      FrConstraint(name, TypeToString(this), system, point1->GetNode(), point2->GetNode()),
       m_point1(point1),
       m_point2(point2),
       m_autoDistance(autoDistance) {

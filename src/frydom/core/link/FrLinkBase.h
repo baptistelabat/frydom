@@ -58,6 +58,7 @@ namespace frydom {
    public:
 
     FrLinkBase(const std::string &name,
+               const std::string &type_name,
                FrOffshoreSystem *system,
                const std::shared_ptr<FrNode> &node1,
                const std::shared_ptr<FrNode> &node2);
@@ -111,6 +112,7 @@ namespace frydom {
 
 
     friend void FrOffshoreSystem::Add(std::shared_ptr<FrTreeNodeBase>);
+
     friend void FrOffshoreSystem::Remove(std::shared_ptr<FrTreeNodeBase>);
 
 

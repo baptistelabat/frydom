@@ -15,7 +15,7 @@
 #include "frydom/hydrodynamics/morison/FrMorisonModel.h"
 #include "frydom/core/body/FrBody.h"
 #include "frydom/core/common/FrNode.h"
-
+#include "frydom/logging/FrTypeNames.h"
 
 namespace frydom {
 
@@ -30,7 +30,7 @@ namespace frydom {
     }
 
     FrMorisonForce::FrMorisonForce(const std::string &name, FrBody* body, std::shared_ptr<FrMorisonElement> model)
-        : FrForce(name, body), m_model(model) {}
+        : FrForce(name, TypeToString(this), body), m_model(model) {}
 
     void FrMorisonForce::Compute(double time) {
 

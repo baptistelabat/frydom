@@ -1010,6 +1010,7 @@ namespace frydom {
     friend FrNode::FrNode(const std::string &name, FrBody *);
 
     friend FrLinkBase::FrLinkBase(const std::string &,
+                                  const std::string &,
                                   FrOffshoreSystem *,
                                   const std::shared_ptr<FrNode> &,
                                   const std::shared_ptr<FrNode> &);

@@ -29,6 +29,7 @@
 #include "frydom/logging/FrLogManager.h"
 
 #include "frydom/logging/FrPathManager.h"
+#include "frydom/logging/FrTypeNames.h"
 
 
 namespace frydom {
@@ -206,7 +207,7 @@ namespace frydom {
   }  // end namespace frydom::internal
 
   FrBody::FrBody(const std::string &name, FrOffshoreSystem *system) :
-      FrLoggable(name, system) {
+      FrLoggable(name, TypeToString(this), system) {
 
 //        SetLogged(true);
 

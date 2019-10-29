@@ -15,6 +15,7 @@
 #include "frydom/core/body/FrBody.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOcean.h"
+#include "frydom/logging/FrTypeNames.h"
 
 
 namespace frydom {
@@ -64,7 +65,7 @@ namespace frydom {
                                      double ca,
                                      double caa,
                                      double capp) :
-      FrForce(name, body),
+      FrForce(name, TypeToString(this), body),
       m_Lpp(Lpp),
       m_hullWetSurface(hullWetSurface),
       m_k(k),

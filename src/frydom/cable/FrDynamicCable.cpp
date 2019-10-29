@@ -17,6 +17,8 @@
 #include "frydom/core/common/FrNode.h"
 #include "frydom/core/body/FrBody.h"
 
+#include "frydom/logging/FrTypeNames.h"
+
 #include <type_traits>
 
 namespace frydom {
@@ -294,7 +296,7 @@ namespace frydom {
                                  double unstrainedLength,
                                  double rayleighDamping,
                                  unsigned int nbElements) :
-      FrLoggable(name, system),
+      FrLoggable(name, TypeToString(this), system),
       FrFEAMesh(),
       FrCable(startingNode, endingNode, properties, unstrainedLength),
       m_rayleighDamping(rayleighDamping),

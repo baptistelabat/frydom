@@ -18,16 +18,16 @@
 #include "frydom/environment/ocean/FrOcean.h"
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
-//#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrLinearHDBInc.h"
 
 #include "frydom/mesh/FrHydroMesh.h"
+#include "frydom/logging/FrTypeNames.h"
 
 namespace frydom {
 
   FrLinearHydrostaticForce::FrLinearHydrostaticForce(const std::string &name,
                                                      FrBody *body,
                                                      const std::shared_ptr<FrEquilibriumFrame> &eqFrame) :
-      FrForce(name, body),
+      FrForce(name, TypeToString(this), body),
       m_equilibriumFrame(eqFrame) {}
 
   void FrLinearHydrostaticForce::Initialize() {

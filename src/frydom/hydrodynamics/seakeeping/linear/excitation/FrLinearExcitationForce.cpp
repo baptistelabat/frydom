@@ -15,6 +15,7 @@
 #include "frydom/hydrodynamics/FrEquilibriumFrame.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOceanInc.h"
+#include "frydom/logging/FrTypeNames.h"
 
 namespace frydom {
 
@@ -37,7 +38,7 @@ namespace frydom {
   FrLinearExcitationForce::FrLinearExcitationForce(const std::string &name,
                                                    FrBody *body,
                                                    const std::shared_ptr<FrHydroDB> &HDB) :
-      FrLinearHDBForce(name, body, HDB) {}
+      FrLinearHDBForce(name, TypeToString(this), body, HDB) {}
 
   std::shared_ptr<FrLinearExcitationForce>
   make_linear_excitation_force(const std::string &name,

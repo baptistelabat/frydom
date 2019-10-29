@@ -13,8 +13,9 @@
 namespace frydom {
 
 
-  FrActuator::FrActuator(const std::string &name, FrLink *actuatedLink) :
+  FrActuator::FrActuator(const std::string &name, const std::string &type_name, FrLink *actuatedLink) :
       FrLinkBase(name,
+                 type_name,
                  actuatedLink->GetSystem(),
                  actuatedLink->GetNode1(),
                  actuatedLink->GetNode2()

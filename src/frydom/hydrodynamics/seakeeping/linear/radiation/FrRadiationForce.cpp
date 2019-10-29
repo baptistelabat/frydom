@@ -14,6 +14,7 @@
 
 #include "FrRadiationModel.h"
 #include "frydom/core/body/FrBody.h"
+#include "frydom/logging/FrTypeNames.h"
 
 
 namespace frydom {
@@ -25,7 +26,7 @@ namespace frydom {
   FrRadiationForce::FrRadiationForce(const std::string &name,
                                      FrBody *body,
                                      FrRadiationModel *radiationModel)
-      : FrForce(name, body),
+      : FrForce(name, TypeToString(this), body),
         m_radiationModel(radiationModel) {}
 
   void FrRadiationForce::SetRadiationModel(FrRadiationModel *radiationModel) {

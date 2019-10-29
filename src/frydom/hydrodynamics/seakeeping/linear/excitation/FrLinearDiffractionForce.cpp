@@ -16,6 +16,7 @@
 #include "frydom/hydrodynamics/FrEquilibriumFrame.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOceanInc.h"
+#include "frydom/logging/FrTypeNames.h"
 
 namespace frydom {
 
@@ -38,7 +39,7 @@ namespace frydom {
   FrLinearDiffractionForce::FrLinearDiffractionForce(const std::string &name,
                                                      FrBody *body,
                                                      const std::shared_ptr<FrHydroDB> &HDB)
-      : FrLinearHDBForce(name, body, HDB) {}
+      : FrLinearHDBForce(name, TypeToString(this), body, HDB) {}
 
   std::shared_ptr<FrLinearDiffractionForce>
   make_linear_diffraction_force(const std::string &name,

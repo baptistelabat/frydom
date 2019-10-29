@@ -11,35 +11,36 @@
 
 namespace frydom {
 
-    // Forward declaration
-    class FrLink;
+  // Forward declaration
+  class FrLink;
 
-    class FrLinearActuator : public FrActuator {
-    private:
-        std::shared_ptr<chrono::ChLinkMotorLinear> m_chronoActuator;
+  class FrLinearActuator : public FrActuator {
+   private:
+    std::shared_ptr<chrono::ChLinkMotorLinear> m_chronoActuator;
 
-    public:
-        FrLinearActuator(const std::string &name, FrLink *actuatedLink, ACTUATOR_CONTROL control);
+   public:
+    FrLinearActuator(const std::string &name, FrLink *actuatedLink, ACTUATOR_CONTROL control);
 
-        void SetMotorFunction(const FrFunctionBase& function) override;
+    void SetMotorFunction(const FrFunctionBase &function) override;
 
-        Force GetMotorForceInNode(FRAME_CONVENTION fc) const override;
+    Force GetMotorForceInNode(FRAME_CONVENTION fc) const override;
 
-        Torque GetMotorTorqueInNode(FRAME_CONVENTION fc) const override;
+    Torque GetMotorTorqueInNode(FRAME_CONVENTION fc) const override;
 
-        double GetMotorPower() const override;
+    double GetMotorPower() const override;
 
-        void Initialize() override;
+    void Initialize() override;
 
 //        void StepFinalize() override {};
 
-    protected:
+   protected:
 
-        std::shared_ptr<chrono::ChLink> GetChronoLink() override;
-        chrono::ChLinkMotorLinear* GetChronoItem_ptr() const override;
+    std::shared_ptr<chrono::ChLink> GetChronoLink() override;
+
+    chrono::ChLinkMotorLinear *GetChronoItem_ptr() const override;
 
 
-    };
+  };
 
 } //end namespace frydom
 

@@ -13,6 +13,7 @@
 #include "FrManoeuvringDamping.h"
 
 #include "frydom/core/body/FrBody.h"
+#include "frydom/logging/FrTypeNames.h"
 
 
 namespace frydom {
@@ -128,7 +129,7 @@ namespace frydom {
   }
 
   FrManDampingTaylorExpansion::FrManDampingTaylorExpansion(const std::string &name, FrBody *body) :
-      FrForce(name, body) {}
+      FrForce(name, TypeToString(this), body) {}
 
   std::shared_ptr<FrManDampingTaylorExpansion>
   make_manoeuvring_model(const std::string &name, const std::shared_ptr<FrBody> &body) {

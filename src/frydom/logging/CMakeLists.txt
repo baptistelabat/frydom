@@ -5,7 +5,7 @@ set(SRC_FILES
         FrPathManager.cpp
         FrEventLogger.cpp
         FrLoggable.cpp
-        FrTypeName.cpp
+        FrTypeNames.cpp
         )
 
 set(FRYDOM_LOGGING_SOURCES "")

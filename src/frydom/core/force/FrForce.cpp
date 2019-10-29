@@ -13,6 +13,7 @@
 
 #include "frydom/asset/FrForceAsset.h"
 #include "frydom/logging/FrLogManager.h"
+#include "frydom/logging/FrTypeNames.h"
 
 
 namespace frydom {
@@ -70,10 +71,12 @@ namespace frydom {
 
   // FrForce methods implementations
 
-  FrForce::FrForce(const std::string &name, FrBody *body) : FrLoggable(name, body) {
+  FrForce::FrForce(const std::string &name,
+                   const std::string &type_name,
+                   FrBody *body) :
+      FrLoggable(name, type_name, body) {
 
     m_chronoForce = std::make_shared<internal::FrForceBase>(this);
-//        SetLogged(true);
 
   }
 
@@ -85,8 +88,6 @@ namespace frydom {
       m_asset->Initialize();
       GetBody()->AddAsset(m_asset);
     }
-
-//      GetBody()->GetSystem()->GetLogManager()->Add(this);
 
   }
 

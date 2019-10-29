@@ -11,28 +11,28 @@
 
 
 #include "FrCylindricalLink.h"
-
+#include "frydom/logging/FrTypeNames.h"
 
 namespace frydom {
 
-    FrCylindricalLink::FrCylindricalLink(const std::string &name,
-                                         FrOffshoreSystem *system,
-                                         const std::shared_ptr<FrNode> &node1,
-                                         const std::shared_ptr<FrNode> &node2)
-        : FrLink(name, system, node1, node2) {
+  FrCylindricalLink::FrCylindricalLink(const std::string &name,
+                                       FrOffshoreSystem *system,
+                                       const std::shared_ptr<FrNode> &node1,
+                                       const std::shared_ptr<FrNode> &node2)
+      : FrLink(name, TypeToString(this), system, node1, node2) {
 
-      m_chronoLink->SetLinkType(CYLINDRICAL);
-    }
+    m_chronoLink->SetLinkType(CYLINDRICAL);
+  }
 
-    std::shared_ptr<FrCylindricalLink>
-    make_cylindrical_link(const std::string &name,
-                          FrOffshoreSystem *system,
-                          const std::shared_ptr<FrNode> &node1,
-                          const std::shared_ptr<FrNode> &node2) {
+  std::shared_ptr<FrCylindricalLink>
+  make_cylindrical_link(const std::string &name,
+                        FrOffshoreSystem *system,
+                        const std::shared_ptr<FrNode> &node1,
+                        const std::shared_ptr<FrNode> &node2) {
 
-      auto link = std::make_shared<FrCylindricalLink>(name, system, node1, node2);
-      system->Add(link);
-      return link;
-    }
+    auto link = std::make_shared<FrCylindricalLink>(name, system, node1, node2);
+    system->Add(link);
+    return link;
+  }
 
 }  // end namespace frydom

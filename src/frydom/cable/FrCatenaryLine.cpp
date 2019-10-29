@@ -18,6 +18,8 @@
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/asset/FrCatenaryLineAsset.h"
 
+#include "frydom/logging/FrTypeNames.h"
+
 
 namespace frydom {
 
@@ -29,7 +31,7 @@ namespace frydom {
                                  bool elastic,
                                  double unstrainedLength,
                                  FLUID_TYPE fluid) :
-      FrLoggable(name, system),
+      FrLoggable(name, TypeToString(this), system),
       FrPrePhysicsItem(),
       FrCable(startingNode, endingNode, properties, unstrainedLength),
       m_elastic(elastic),

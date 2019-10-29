@@ -210,9 +210,10 @@ namespace frydom {
   }
 
   FrLinearHDBForce::FrLinearHDBForce(const std::string &name,
+                                     const std::string &type_name,
                                      FrBody *body,
                                      const std::shared_ptr<FrHydroDB> &HDB) :
-      FrForce(name, body),
+      FrForce(name, type_name, body),
       m_HDB(HDB) {}
 
 

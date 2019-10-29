@@ -21,14 +21,15 @@
 #include "frydom/environment/ocean/FrOcean.h"
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
+#include "frydom/logging/FrTypeNames.h"
 
 namespace frydom {
 
-    FrNonlinearHydrostaticForce::FrNonlinearHydrostaticForce(const std::string &name,
-                                                             FrBody* body,
-                                                             const std::shared_ptr<FrHydroMesh> &hydroMesh) :
-        FrForce(name, body),
-        m_hydroMesh(hydroMesh) {}
+  FrNonlinearHydrostaticForce::FrNonlinearHydrostaticForce(const std::string &name,
+                                                           FrBody *body,
+                                                           const std::shared_ptr<FrHydroMesh> &hydroMesh) :
+      FrForce(name, TypeToString(this), body),
+      m_hydroMesh(hydroMesh) {}
 
 //    void FrNonlinearHydrostaticForce::AddFields() {
 //
@@ -55,155 +56,155 @@ namespace frydom {
 //
 //    }
 
-    void FrNonlinearHydrostaticForce::Compute(double time) {
+  void FrNonlinearHydrostaticForce::Compute(double time) {
 
-      switch (m_hydroMesh->GetClippingSupport()) {
-        case FrHydroMesh::ClippingSupport::PLANESURFACE: {
-          SetForceInWorldAtPointInWorld(GetHydrostaticForceInWorld(NWU), GetCenterOfBuoyancyInWorld(NWU), NWU);
-          break;
-        }
-        case FrHydroMesh::ClippingSupport::WAVESURFACE: {
-          Position meshPos = GetBody()->GetPosition(NWU);
-          meshPos.GetZ() = 0;
-          // This function computes the nonlinear hydrostatic loads.
-          SetForceTorqueInWorldAtPointInWorld(GetHydrostaticForceInWorld(NWU), GetHydrostaticTorqueInWorld(NWU),
-                                              meshPos, NWU);
-          break;
-        }
+    switch (m_hydroMesh->GetClippingSupport()) {
+      case FrHydroMesh::ClippingSupport::PLANESURFACE: {
+        SetForceInWorldAtPointInWorld(GetHydrostaticForceInWorld(NWU), GetCenterOfBuoyancyInWorld(NWU), NWU);
+        break;
       }
-
-    }
-
-
-    Position FrNonlinearHydrostaticForce::GetCenterOfBuoyancyInBody(FRAME_CONVENTION fc) {
-      return GetBody()->GetPointPositionInBody(GetCenterOfBuoyancyInWorld(fc), fc);
-    }
-
-    // Not working for clipped mesh with wave plane
-    Position FrNonlinearHydrostaticForce::GetCenterOfBuoyancyInWorld(FRAME_CONVENTION fc) {
-      // clipped mesh is expressed in the world reference frame, but its horizontal position is centered around (0.,0.)
-
-      if (m_hydroMesh->GetClippedMesh().vertices_empty()) return {0., 0., 0.};
-
-      auto CoBInWorld = m_hydroMesh->GetClippedMesh().GetCOG();
-
-      // Addition of the horizontal position of the body
-      auto bodyPos = GetBody()->GetPosition(NWU);
-      bodyPos.GetZ() = 0.;
-      CoBInWorld += bodyPos;
-
-      if (IsNED(fc)) internal::SwapFrameConvention<Position>(CoBInWorld);
-
-      return CoBInWorld;
-    }
-
-    Force FrNonlinearHydrostaticForce::GetHydrostaticForceInBody(FRAME_CONVENTION fc) {
-      return GetBody()->ProjectVectorInBody(GetHydrostaticForceInWorld(fc), fc);
-    }
-
-    Force FrNonlinearHydrostaticForce::GetHydrostaticForceInWorld(FRAME_CONVENTION fc) {
-      // This function performs the hydrostatic pressure integration.
-
-      Force hydrostaticForce = {0., 0., 0.};
-
-      auto clippedMesh = &(m_hydroMesh->GetClippedMesh());
-
-      // Loop over the faces.
-      for (auto f_iter = clippedMesh->faces_begin(); f_iter != clippedMesh->faces_end(); ++f_iter) {
-
-        // Normal.
-        auto normal = clippedMesh->normal(*f_iter);
-
-        // Pressure*Area.
-        auto pressure = clippedMesh->data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z);
-
-        // Hydrostatic force without the term rho*g.
-        hydrostaticForce[0] += pressure * normal[0];
-        hydrostaticForce[1] += pressure * normal[1];
-        hydrostaticForce[2] += pressure * normal[2];
-
+      case FrHydroMesh::ClippingSupport::WAVESURFACE: {
+        Position meshPos = GetBody()->GetPosition(NWU);
+        meshPos.GetZ() = 0;
+        // This function computes the nonlinear hydrostatic loads.
+        SetForceTorqueInWorldAtPointInWorld(GetHydrostaticForceInWorld(NWU), GetHydrostaticTorqueInWorld(NWU),
+                                            meshPos, NWU);
+        break;
       }
-
-      auto system = GetBody()->GetSystem();
-
-      // Multiplication by rho*g
-      hydrostaticForce *= system->GetGravityAcceleration() * system->GetEnvironment()->GetFluidDensity(WATER);
-
-      if (IsNED(fc)) internal::SwapFrameConvention<Position>(hydrostaticForce);
-
-      return hydrostaticForce;
     }
 
-    Torque FrNonlinearHydrostaticForce::GetHydrostaticTorqueInWorld(FRAME_CONVENTION fc) {
+  }
 
-      Torque Ms = {0., 0., 0.};
 
-      auto clippedMesh = &(m_hydroMesh->GetClippedMesh());
+  Position FrNonlinearHydrostaticForce::GetCenterOfBuoyancyInBody(FRAME_CONVENTION fc) {
+    return GetBody()->GetPointPositionInBody(GetCenterOfBuoyancyInWorld(fc), fc);
+  }
+
+  // Not working for clipped mesh with wave plane
+  Position FrNonlinearHydrostaticForce::GetCenterOfBuoyancyInWorld(FRAME_CONVENTION fc) {
+    // clipped mesh is expressed in the world reference frame, but its horizontal position is centered around (0.,0.)
+
+    if (m_hydroMesh->GetClippedMesh().vertices_empty()) return {0., 0., 0.};
+
+    auto CoBInWorld = m_hydroMesh->GetClippedMesh().GetCOG();
+
+    // Addition of the horizontal position of the body
+    auto bodyPos = GetBody()->GetPosition(NWU);
+    bodyPos.GetZ() = 0.;
+    CoBInWorld += bodyPos;
+
+    if (IsNED(fc)) internal::SwapFrameConvention<Position>(CoBInWorld);
+
+    return CoBInWorld;
+  }
+
+  Force FrNonlinearHydrostaticForce::GetHydrostaticForceInBody(FRAME_CONVENTION fc) {
+    return GetBody()->ProjectVectorInBody(GetHydrostaticForceInWorld(fc), fc);
+  }
+
+  Force FrNonlinearHydrostaticForce::GetHydrostaticForceInWorld(FRAME_CONVENTION fc) {
+    // This function performs the hydrostatic pressure integration.
+
+    Force hydrostaticForce = {0., 0., 0.};
+
+    auto clippedMesh = &(m_hydroMesh->GetClippedMesh());
+
+    // Loop over the faces.
+    for (auto f_iter = clippedMesh->faces_begin(); f_iter != clippedMesh->faces_end(); ++f_iter) {
+
+      // Normal.
+      auto normal = clippedMesh->normal(*f_iter);
+
+      // Pressure*Area.
+      auto pressure = clippedMesh->data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z);
+
+      // Hydrostatic force without the term rho*g.
+      hydrostaticForce[0] += pressure * normal[0];
+      hydrostaticForce[1] += pressure * normal[1];
+      hydrostaticForce[2] += pressure * normal[2];
+
+    }
+
+    auto system = GetBody()->GetSystem();
+
+    // Multiplication by rho*g
+    hydrostaticForce *= system->GetGravityAcceleration() * system->GetEnvironment()->GetFluidDensity(WATER);
+
+    if (IsNED(fc)) internal::SwapFrameConvention<Position>(hydrostaticForce);
+
+    return hydrostaticForce;
+  }
+
+  Torque FrNonlinearHydrostaticForce::GetHydrostaticTorqueInWorld(FRAME_CONVENTION fc) {
+
+    Torque Ms = {0., 0., 0.};
+
+    auto clippedMesh = &(m_hydroMesh->GetClippedMesh());
 //        clippedMesh->Write("TorqueMesh.obj");
 
-      // Loop over the faces.
-      for (auto f_iter = clippedMesh->faces_begin(); f_iter != clippedMesh->faces_end(); ++f_iter) {
+    // Loop over the faces.
+    for (auto f_iter = clippedMesh->faces_begin(); f_iter != clippedMesh->faces_end(); ++f_iter) {
 
-        // Normal.
-        auto normal = clippedMesh->normal(*f_iter);
+      // Normal.
+      auto normal = clippedMesh->normal(*f_iter);
 
-        double xz = clippedMesh->data(*f_iter).GetSurfaceIntegral(mesh::POLY_XZ);
-        double yz = clippedMesh->data(*f_iter).GetSurfaceIntegral(mesh::POLY_YZ);
-        double zz = clippedMesh->data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2);
+      double xz = clippedMesh->data(*f_iter).GetSurfaceIntegral(mesh::POLY_XZ);
+      double yz = clippedMesh->data(*f_iter).GetSurfaceIntegral(mesh::POLY_YZ);
+      double zz = clippedMesh->data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2);
 
-        // Hydrostatic torque without the term rho*g.
-        Ms[0] += yz * normal[2] - zz * normal[1];
-        Ms[1] += zz * normal[0] - xz * normal[2];
-        Ms[2] += xz * normal[1] - yz * normal[0];
-
-      }
-
-      auto system = GetBody()->GetSystem();
-
-      // Multiplication by rho*g
-      Ms *= system->GetGravityAcceleration() * system->GetEnvironment()->GetFluidDensity(WATER);
-
-      if (IsNED(fc)) internal::SwapFrameConvention<Position>(Ms);
-
-      return Ms;
+      // Hydrostatic torque without the term rho*g.
+      Ms[0] += yz * normal[2] - zz * normal[1];
+      Ms[1] += zz * normal[0] - xz * normal[2];
+      Ms[2] += xz * normal[1] - yz * normal[0];
 
     }
 
-    Torque FrNonlinearHydrostaticForce::GetHydrostaticTorqueInBody(FRAME_CONVENTION fc) {
-      return GetBody()->ProjectVectorInBody(GetHydrostaticTorqueInWorld(fc), fc);
-    }
+    auto system = GetBody()->GetSystem();
 
-    Position FrNonlinearHydrostaticForce::GetMetacentricHeight() {
+    // Multiplication by rho*g
+    Ms *= system->GetGravityAcceleration() * system->GetEnvironment()->GetFluidDensity(WATER);
 
-      auto clippedMesh = m_hydroMesh->GetClippedMesh();
+    if (IsNED(fc)) internal::SwapFrameConvention<Position>(Ms);
 
-      auto body = GetBody();
-      auto system = body->GetSystem();
+    return Ms;
 
-      FrHydrostaticsProperties hsp(system->GetEnvironment()->GetFluidDensity(WATER),
-                                   system->GetGravityAcceleration(),
-                                   clippedMesh,
-                                   body->GetCOGPositionInWorld(NWU));
-      hsp.Process();
+  }
 
-      return {hsp.GetTransversalMetacentricHeight(), hsp.GetLongitudinalMetacentricHeight(), 0.};
-    }
+  Torque FrNonlinearHydrostaticForce::GetHydrostaticTorqueInBody(FRAME_CONVENTION fc) {
+    return GetBody()->ProjectVectorInBody(GetHydrostaticTorqueInWorld(fc), fc);
+  }
 
-    std::shared_ptr<FrNonlinearHydrostaticForce>
-    make_nonlinear_hydrostatic_force(const std::string &name,
-                                     const std::shared_ptr<FrBody> &body,
-                                     const std::shared_ptr<FrHydroMesh> &HydroMesh) {
+  Position FrNonlinearHydrostaticForce::GetMetacentricHeight() {
 
-      // This function creates a (fully or weakly) nonlinear hydrostatic force object.
+    auto clippedMesh = m_hydroMesh->GetClippedMesh();
 
-      // Construction of the (fully or weakly) nonlinear hydrostatic force object.
-      auto forceHst = std::make_shared<FrNonlinearHydrostaticForce>(name, body.get(), HydroMesh);
+    auto body = GetBody();
+    auto system = body->GetSystem();
 
-      // Add the (fully or weakly) nonlinear hydrostatic force object as an external force to the body.
-      body->AddExternalForce(forceHst);
+    FrHydrostaticsProperties hsp(system->GetEnvironment()->GetFluidDensity(WATER),
+                                 system->GetGravityAcceleration(),
+                                 clippedMesh,
+                                 body->GetCOGPositionInWorld(NWU));
+    hsp.Process();
 
-      return forceHst;
-    }
+    return {hsp.GetTransversalMetacentricHeight(), hsp.GetLongitudinalMetacentricHeight(), 0.};
+  }
+
+  std::shared_ptr<FrNonlinearHydrostaticForce>
+  make_nonlinear_hydrostatic_force(const std::string &name,
+                                   const std::shared_ptr<FrBody> &body,
+                                   const std::shared_ptr<FrHydroMesh> &HydroMesh) {
+
+    // This function creates a (fully or weakly) nonlinear hydrostatic force object.
+
+    // Construction of the (fully or weakly) nonlinear hydrostatic force object.
+    auto forceHst = std::make_shared<FrNonlinearHydrostaticForce>(name, body.get(), HydroMesh);
+
+    // Add the (fully or weakly) nonlinear hydrostatic force object as an external force to the body.
+    body->AddExternalForce(forceHst);
+
+    return forceHst;
+  }
 
 
 }  // end namespace frydom

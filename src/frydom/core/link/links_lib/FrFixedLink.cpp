@@ -11,30 +11,30 @@
 
 
 #include "FrFixedLink.h"
-
+#include "frydom/logging/FrTypeNames.h"
 
 namespace frydom {
 
 
-    FrFixedLink::FrFixedLink(const std::string &name,
-                             FrOffshoreSystem *system,
-                             const std::shared_ptr<FrNode> &node1,
-                             const std::shared_ptr<FrNode> &node2)
-        : FrLink(name, system, node1, node2) {
+  FrFixedLink::FrFixedLink(const std::string &name,
+                           FrOffshoreSystem *system,
+                           const std::shared_ptr<FrNode> &node1,
+                           const std::shared_ptr<FrNode> &node2)
+      : FrLink(name, TypeToString(this), system, node1, node2) {
 
-      m_chronoLink->SetLinkType(FIXED_LINK);
-    }
+    m_chronoLink->SetLinkType(FIXED_LINK);
+  }
 
-    std::shared_ptr<FrFixedLink>
-    make_fixed_link(const std::string &name,
-                    FrOffshoreSystem *system,
-                    const std::shared_ptr<FrNode> &node1,
-                    const std::shared_ptr<FrNode> &node2) {
+  std::shared_ptr<FrFixedLink>
+  make_fixed_link(const std::string &name,
+                  FrOffshoreSystem *system,
+                  const std::shared_ptr<FrNode> &node1,
+                  const std::shared_ptr<FrNode> &node2) {
 
-      auto link = std::make_shared<FrFixedLink>(name, system, node1, node2);
-      system->Add(link);
-      return link;
-    }
+    auto link = std::make_shared<FrFixedLink>(name, system, node1, node2);
+    system->Add(link);
+    return link;
+  }
 
 
 }  // end namespace frydom

@@ -16,6 +16,7 @@
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/core/body/FrBody.h"
 #include "frydom/environment/FrEnvironment.h"
+#include "frydom/logging/FrTypeNames.h"
 
 
 namespace frydom {
@@ -24,7 +25,7 @@ namespace frydom {
                                          FrBody *body,
                                          FLUID_TYPE ft,
                                          bool relativeToFluid) :
-      FrForce(name, body),
+      FrForce(name, TypeToString(this), body),
       m_fluidType(ft),
       m_relative2Fluid(relativeToFluid) {}
 

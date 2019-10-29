@@ -12,12 +12,11 @@
 
 #include "FrRevoluteLink.h"
 
-//#include "frydom/core/body/FrBody.h"
 #include "frydom/core/common/FrNode.h"
 #include "frydom/core/math/functions/FrFunctionsInc.h"
 
 #include "frydom/core/link/links_lib/actuators/FrAngularActuator.h"
-
+#include "frydom/logging/FrTypeNames.h"
 
 namespace frydom {
 
@@ -25,7 +24,7 @@ namespace frydom {
                                  FrOffshoreSystem *system,
                                  const std::shared_ptr<FrNode> &node1,
                                  const std::shared_ptr<FrNode> &node2) :
-      FrLink(name, system, node1, node2) {
+      FrLink(name, TypeToString(this), system, node1, node2) {
 
     m_chronoLink->SetLinkType(REVOLUTE);
   }

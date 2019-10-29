@@ -31,7 +31,7 @@
 #include "frydom/logging/FrLogManager.h"
 #include "frydom/logging/FrPathManager.h"
 
-#include "frydom/logging/FrTypeName.h"
+#include "frydom/logging/FrTypeNames.h"
 
 #include "frydom/logging/FrEventLogger.h"
 
@@ -168,7 +168,7 @@ namespace frydom {
                                      SYSTEM_TYPE systemType,
                                      TIME_STEPPER timeStepper,
                                      SOLVER solver) :
-      FrLoggable(name, nullptr),
+      FrLoggable(name, TypeToString(this), nullptr),
       m_monitor_real_time(false) {
 
     // Creating the chrono System backend. It drives the way contact are modelled

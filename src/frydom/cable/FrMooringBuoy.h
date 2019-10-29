@@ -24,12 +24,13 @@ namespace frydom {
   class FrMooringBuoy : public FrBody {
 
    private:
+
     class FrSphereNonLinearHydrostaticForce : public FrForce {
 
      public:
 
       explicit FrSphereNonLinearHydrostaticForce(const std::string &name, FrBody *body) :
-          FrForce(name, body) {}
+          FrForce(name, "NonlinearHydrostaticsOnSphericBuoy", body) {} // TODO : Refactorer completement cette classe !!
 
       /// Return true if the force is included in the static analysis
       bool IncludedInStaticAnalysis() const override { return true; }

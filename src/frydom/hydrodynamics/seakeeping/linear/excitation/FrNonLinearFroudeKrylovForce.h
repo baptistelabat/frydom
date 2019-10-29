@@ -29,40 +29,40 @@
 
 namespace frydom {
 
-    // Forward declarations.
-    class FrHydroDB;
+  // Forward declarations.
+  class FrHydroDB;
 
-    class FrBody;
+  class FrBody;
 
-    class FrEquilibriumFrame;
+  class FrEquilibriumFrame;
 
-    /**
-     * \class FrNonLinearExcitationForce
-     * \brief Class for computing the nonlinear excitation loads (nonlinear FK, linear diffraction).
-     */
-    class FrNonLinearFroudeKrylovForce : public FrForce {
+  /**
+   * \class FrNonLinearExcitationForce
+   * \brief Class for computing the nonlinear excitation loads (nonlinear FK, linear diffraction).
+   */
+  class FrNonLinearFroudeKrylovForce : public FrForce {
 
-     private:
+   private:
 
-      std::shared_ptr<FrHydroMesh> m_hydroMesh;   ///< clipped mesh container
+    std::shared_ptr<FrHydroMesh> m_hydroMesh;   ///< clipped mesh container
 
-     public:
+   public:
 
-      FrNonLinearFroudeKrylovForce(const std::string &name,
-                                   FrBody* body,
-                                   std::shared_ptr<FrHydroMesh> HydroMesh);
+    FrNonLinearFroudeKrylovForce(const std::string &name,
+                                 FrBody *body,
+                                 std::shared_ptr<FrHydroMesh> HydroMesh);
 
-     private:
+   private:
 
-      void Compute(double time) override;
+    void Compute(double time) override;
 
-    };
+  };
 
-    /// This function creates a (fully or weakly) nonlinear Froude-Krylov force object.
-    std::shared_ptr<FrNonLinearFroudeKrylovForce>
-    make_nonlinear_froude_krylov_force(const std::string &name,
-                                       std::shared_ptr<FrBody> body,
-                                       std::shared_ptr<FrHydroMesh> HydroMesh);
+  /// This function creates a (fully or weakly) nonlinear Froude-Krylov force object.
+  std::shared_ptr<FrNonLinearFroudeKrylovForce>
+  make_nonlinear_froude_krylov_force(const std::string &name,
+                                     std::shared_ptr<FrBody> body,
+                                     std::shared_ptr<FrHydroMesh> HydroMesh);
 
 }  // end namespace frydom
 

@@ -17,26 +17,26 @@
 
 namespace frydom {
 
-    /**
-     * \class FrSphericalLink
-     * \brief Class for defining a spherical link, derived from FrLink : allows all rotations, no translations
-     */
-    class FrSphericalLink : public FrLink {
+  /**
+   * \class FrSphericalLink
+   * \brief Class for defining a spherical link, derived from FrLink : allows all rotations, no translations
+   */
+  class FrSphericalLink : public FrLink {
 
-     public:
+   public:
 
-      FrSphericalLink(const std::string &name,
-                      FrOffshoreSystem *system,
-                      const std::shared_ptr<FrNode> &node1,
-                      const std::shared_ptr<FrNode> &node2);
+    FrSphericalLink(const std::string &name,
+                    FrOffshoreSystem *system,
+                    const std::shared_ptr<FrNode> &node1,
+                    const std::shared_ptr<FrNode> &node2);
 
-    };
+  };
 
-    /// Helper function to make it easy to link two nodes by a spherical link
-    std::shared_ptr<FrSphericalLink> make_spherical_link(const std::string &name,
-                                                         FrOffshoreSystem *system,
-                                                         const std::shared_ptr<FrNode> &node1,
-                                                         const std::shared_ptr<FrNode> &node2);
+  /// Helper function to make it easy to link two nodes by a spherical link
+  std::shared_ptr<FrSphericalLink> make_spherical_link(const std::string &name,
+                                                       FrOffshoreSystem *system,
+                                                       const std::shared_ptr<FrNode> &node1,
+                                                       const std::shared_ptr<FrNode> &node2);
 
 }  // end namespace frydom
 

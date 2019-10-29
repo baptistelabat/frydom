@@ -20,13 +20,14 @@
 #include "frydom/environment/ocean/FrOceanInc.h"
 
 #include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
+#include "frydom/logging/FrTypeNames.h"
 
 namespace frydom {
 
   FrNonLinearFroudeKrylovForce::FrNonLinearFroudeKrylovForce(const std::string &name,
                                                              FrBody *body,
                                                              std::shared_ptr<FrHydroMesh> HydroMesh) :
-      FrForce(name, body) {
+      FrForce(name, TypeToString(this), body) {
     m_hydroMesh = HydroMesh;
   }
 

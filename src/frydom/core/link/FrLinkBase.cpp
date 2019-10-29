@@ -15,14 +15,16 @@
 #include "frydom/core/body/FrBody.h"
 #include "frydom/core/common/FrNode.h"
 
+#include "frydom/logging/FrTypeNames.h"
 
 namespace frydom {
 
   FrLinkBase::FrLinkBase(const std::string &name,
+                         const std::string &type_name,
                          FrOffshoreSystem *system,
                          const std::shared_ptr<FrNode> &node1,
                          const std::shared_ptr<FrNode> &node2) :
-      FrLoggable(name, system),
+      FrLoggable(name, type_name, system),
       m_node1(node1),
       m_node2(node2),
       c_chrono_body_1(node1->GetBody()->GetChronoBody()),

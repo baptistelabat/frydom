@@ -40,13 +40,10 @@ namespace frydom {
     FrCatenaryForce(const std::string &name,
                     FrBody *body,
                     FrCatenaryLine *line,
-                    FrCatenaryLine::LINE_SIDE side) :
-        FrForce(name, body),
-        m_line(line),
-        m_line_side(side) {};
+                    FrCatenaryLine::LINE_SIDE side);;
 
     /// Return true if the force is included in the static analysis
-    bool IncludedInStaticAnalysis() const override { return true; }
+    bool IncludedInStaticAnalysis() const override;
 
    private:
 

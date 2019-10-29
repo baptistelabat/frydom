@@ -41,6 +41,7 @@ namespace frydom {
     /// \param node2 second node
     /// \param system system in charge of the constraint
     FrConstraint(const std::string &name,
+                 const std::string &type_name,
                  FrOffshoreSystem *system,
                  const std::shared_ptr<FrNode> &node1,
                  const std::shared_ptr<FrNode> &node2);

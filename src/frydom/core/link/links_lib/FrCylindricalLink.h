@@ -18,29 +18,29 @@
 namespace frydom {
 
 
-    /**
-     * \class FrCylindricalLink
-     * \brief Class implementing a cylindrical link, derived from FrLink: allows rotation and translation around the Z axis.
-     */
-    class FrCylindricalLink : public FrLink {
+  /**
+   * \class FrCylindricalLink
+   * \brief Class implementing a cylindrical link, derived from FrLink: allows rotation and translation around the Z axis.
+   */
+  class FrCylindricalLink : public FrLink {
 
-     public:
+   public:
 
-      /// Constructor from two nodes and a pointer to the system.
-      /// It automatically adds the link to the system
-      FrCylindricalLink(const std::string &name,
+    /// Constructor from two nodes and a pointer to the system.
+    /// It automatically adds the link to the system
+    FrCylindricalLink(const std::string &name,
+                      FrOffshoreSystem *system,
+                      const std::shared_ptr<FrNode> &node1,
+                      const std::shared_ptr<FrNode> &node2);
+
+  };
+
+  /// Helper function to make it easy to link two nodes by a cylindrical link
+  std::shared_ptr<FrCylindricalLink>
+  make_cylindrical_link(const std::string &name,
                         FrOffshoreSystem *system,
                         const std::shared_ptr<FrNode> &node1,
                         const std::shared_ptr<FrNode> &node2);
-
-    };
-
-    /// Helper function to make it easy to link two nodes by a cylindrical link
-    std::shared_ptr<FrCylindricalLink>
-    make_cylindrical_link(const std::string &name,
-                          FrOffshoreSystem *system,
-                          const std::shared_ptr<FrNode> &node1,
-                          const std::shared_ptr<FrNode> &node2);
 
 }  // end namespace frydom
 
