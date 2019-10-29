@@ -8,21 +8,47 @@
 #include <string>
 
 
-//#include <iostream>
-//#include <typeinfo>
-
-
-
 namespace frydom {
 
 
-  #define FRYDOM_DECLARE_CLASS_TYPE(T, type_name) \
-  template <> \
-  std::string GetTypeNameId<T>(const T& obj) { return type_name; }
+  template <typename T>
+  std::string TypeToString();
+
+  template <typename T>
+  std::string TypeToString(T*) {
+    return TypeToString<T>();
+  }
 
 
-  template <class T>
-  std::string GetTypeNameId(const T& obj);
+  #define TYPE_TO_STRING(Type, name) template <> std::string TypeToString<Type>() { return name; }
+
+//  class FrOffshoreSystem;
+//  TYPE_TO_STRING(FrOffshoreSystem, "OffshoreSystem")
+
+
+
+
+
+
+//
+//  class FrBody;
+//  TYPE_TO_STRING(FrBody, "Body")
+
+
+//  template <>
+//  std::string TypeToString<FrOffshoreSystem>() { return "OffshoreSystem"; }
+
+
+
+//  #define FRYDOM_DECLARE_CLASS_TYPE(T, type_name) \
+//  template <> \
+//  std::string GetTypeNameId<T>(const T& obj) { return type_name; }
+//
+//
+//  template <class T>
+//  std::string GetTypeNameId(const T& obj);
+
+
 
 
 }  // end namespace frydom

@@ -11,10 +11,14 @@
 
 
 #define GIT_SHA1 "@GIT_SHA1@"
+#define FRYDOM_FLAVOR "@FRYDOM_FLAVOR@"
 
-#include "frydom/utils/GitSHA1.h"
+#include "frydom/version.h"
 
 std::string frydom::GetGitSHA1() {
   return std::string(GIT_SHA1);
 }
 
+std::string frydom::GetFrydomFlavor() {
+  return std::string(FRYDOM_FLAVOR);
+}

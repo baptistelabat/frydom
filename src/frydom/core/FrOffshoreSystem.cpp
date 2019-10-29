@@ -33,11 +33,10 @@
 
 #include "frydom/logging/FrTypeName.h"
 
+#include "frydom/logging/FrEventLogger.h"
+
 
 namespace frydom {
-
-
-  FRYDOM_DECLARE_CLASS_TYPE(FrOffshoreSystem, "System")
 
 
   namespace internal {
@@ -173,16 +172,14 @@ namespace frydom {
       m_monitor_real_time(false) {
 
     // Creating the chrono System backend. It drives the way contact are modelled
-    SetSystemType(systemType,
-                  false);
+    SetSystemType(systemType, false);
 
     // Setting the time stepper
-    SetTimeStepper(timeStepper,
-                   false);
+    SetTimeStepper(timeStepper, false);
 
     // Setting the constraints solver
-    SetSolver(solver,
-              false);
+    SetSolver(solver, false);
+
 
     // Check compatibility between system contact model, time stepper and constraint solver
     CheckCompatibility();
@@ -190,12 +187,12 @@ namespace frydom {
     // Creating the environment
     m_environment = std::make_unique<FrEnvironment>(this);
 
-    // Creating the log manager service
-    m_LogManager = std::make_unique<FrLogManager>(this);
-
     // Creating the path manager service
     m_pathManager = std::make_unique<FrPathManager>();
     m_pathManager->RegisterTreeNode(this);
+
+    // Creating the log manager service
+    m_LogManager = std::make_unique<FrLogManager>(this);
 
     // Creating the static analysis
     m_statics = std::make_unique<FrStaticAnalysis>(this);
@@ -203,8 +200,7 @@ namespace frydom {
     // Creating a fixed world body to be able to attach anything to it (anchors...)
     CreateWorldBody();
 
-//        m_message = std::make_unique<hermes::Message>();
-
+    EventLogConstructor();
 
   }
 
@@ -540,6 +536,12 @@ namespace frydom {
     // TODO : verifier la compatibilite entre type systeme, solveur et integrateur temporel
 
 
+
+  }
+
+  void FrOffshoreSystem::EventLogConstructor() const {
+//    event_logger::info(GetTypeNameId(*this), GetName(), "Initializing system");
+    std::cerr << "ENVOYER infos d'evenement depuis FrOffshoreSystem::EventLogConstructor()";
 
   }
 

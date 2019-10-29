@@ -25,30 +25,22 @@
 
 namespace frydom {
 
+
   class FrLoggableBase {
 
    public:
+    FrLoggableBase();
 
-    explicit FrLoggableBase() : m_log_this(true), m_log_frame_convention(NWU) {}
+    void LogThis(bool log);
 
-    void LogThis(bool log) { m_log_this = log; }
+    virtual void StepFinalizeLog();
 
-    virtual void StepFinalizeLog() {
-      SerializeLogMessages();
-      SendLogMessages();
-    }
+    void SetLogFrameConvention(FRAME_CONVENTION fc);
 
-    void SetLogFrameConvention(FRAME_CONVENTION fc) { m_log_frame_convention = fc; }
-
-    bool IsLogged() const {
-      return m_log_this;
-    }
+    bool IsLogged() const;
 
    protected:
-    hermes::Message *NewMessage(const std::string &name, const std::string &description) {
-      m_messages.emplace_back(std::make_unique<hermes::Message>(name, description));
-      return m_messages.back().get();
-    }
+    hermes::Message *NewMessage(const std::string &name, const std::string &description);
 
     virtual void DefineLogMessages() = 0;
 
@@ -57,23 +49,11 @@ namespace frydom {
     inline FRAME_CONVENTION GetLogFC() const { return m_log_frame_convention; }
 
    private:
-    void InitializeLogMessages() {
-      for (auto &message : m_messages) {
-        message->Initialize();
-      }
-    }
+    void InitializeLogMessages();
 
-    void SerializeLogMessages() {
-      for (auto &message : m_messages) {
-        message->Serialize();
-      }
-    }
+    void SerializeLogMessages();
 
-    void SendLogMessages() {
-      for (auto &message : m_messages) {
-        message->Send();
-      }
-    }
+    void SendLogMessages();
 
    private:
     bool m_log_this;
@@ -81,6 +61,8 @@ namespace frydom {
     FRAME_CONVENTION m_log_frame_convention;
 
     std::vector<std::unique_ptr<hermes::Message>> m_messages;
+
+    std::string m_type_name;
 
     friend void FrLogManager::Initialize();
 
@@ -90,7 +72,6 @@ namespace frydom {
   class FrLoggable : public FrLoggableBase, public FrTreeNode<ParentType> {
 
    public:
-
     explicit FrLoggable(const std::string &name, ParentType *parent) :
         FrLoggableBase(),
         FrTreeNode<ParentType>(name, parent) {}

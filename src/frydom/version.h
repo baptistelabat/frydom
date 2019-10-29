@@ -20,6 +20,8 @@ namespace frydom {
 
   std::string GetGitSHA1();
 
+  std::string GetFrydomFlavor();
+
 } // end namespace frydom
 
 #endif //FRYDOM_GITSHA1_H

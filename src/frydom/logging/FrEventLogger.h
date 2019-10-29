@@ -16,11 +16,26 @@
 
 
 #include "frydom/core/FrOffshoreSystem.h"
+#include "frydom/logging/FrLoggable.h"
 
 
 namespace frydom {
 
   namespace event_logger {
+
+
+    enum LOG_LEVEL {
+      TRACE,
+      DEBUG,
+      INFO,
+      WARN,
+      ERROR,
+      CRITICAL
+    };
+
+
+    using string_view = spdlog::string_view_t;
+    using memory_buffer = spdlog::memory_buf_t;
 
     namespace internal {
 
@@ -28,102 +43,155 @@ namespace frydom {
 
        public:
 
-        explicit SimulationFormatter(FrOffshoreSystem *system) : m_system(system) {}
+        explicit SimulationFormatter(FrOffshoreSystem *system);
 
-        void format(const spdlog::details::log_msg &msg, spdlog::memory_buf_t &dest) override {
+        void format(const spdlog::details::log_msg &msg, spdlog::memory_buf_t &dest) override;
 
-          /*
-           * [<simulation_time>] [<log_level>] [<ObjType>] [<obj_name>] <Message>
-           */
-
-          // Simulation time & log level
-          fmt::format_to(dest, "[{}] [{}] ", m_system->GetTime(), spdlog::level::to_string_view(msg.level));
-
-          // TODO: see how we can add color formatting for std output...
-
-          // Object type
-          // TODO
-
-          // Object name
-          // TODO
-
-          // Message
-          spdlog::details::fmt_helper::append_string_view(msg.payload, dest);
-
-          // End of line
-          spdlog::details::fmt_helper::append_string_view(spdlog::details::os::default_eol, dest);
-
-        }
-
-        std::unique_ptr<spdlog::formatter> clone() const override {
-          return spdlog::details::make_unique<SimulationFormatter>(m_system);
-        }
+        std::unique_ptr<spdlog::formatter> clone() const override;
 
        private:
         FrOffshoreSystem *m_system;
 
       };
 
+      template<typename T>
+      inline string_view PreFormat(memory_buffer &buffer,
+                                   const std::string &objType, const std::string &objName,
+                                   const T &msg) {
+
+        fmt::format_to(buffer, "[{}] [{}] {}", objType, objName, msg);
+        return spdlog::details::fmt_helper::to_string_view(buffer);
+      }
+
+//      template<typename... Args>
+//      inline string_view PreFormat(memory_buffer &buffer,
+//                            const std::string &objType, const std::string &objName,
+//                            string_view fmt, const Args &... args) {
+//
+//        fmt::format_to(buffer, "[{}] [{}] {}", objType, objName, fmt);
+//        return spdlog::details::fmt_helper::to_string_view(buffer);
+//      }
+
+
     }  // end namespace frydom::event_logger::internal
 
 
-    using string_view = spdlog::string_view_t;
+
 
     // TODO : voir comment ajouter les infos de type d'objet et de nom d'objet avant de deployer partout !!!
 
     template<typename T>
-    inline void debug(const T &msg) { spdlog::debug(msg); }
+    inline void debug(const std::string &objType, const std::string &objName, const T &msg) {
+      memory_buffer buffer;
+      spdlog::debug(internal::PreFormat(buffer, objType, objName, msg));
+    }
 
     template<typename T>
-    inline void info(const T &msg) { spdlog::info(msg); }
+    inline void info(const std::string &objType, const std::string &objName, const T &msg) {
+      memory_buffer buffer;
+      spdlog::info(internal::PreFormat(buffer, objType, objName, msg));
+    }
 
     template<typename T>
-    inline void warn(const T &msg) { spdlog::warn(msg); }
+    inline void warn(const std::string &objType, const std::string &objName, const T &msg) {
+      memory_buffer buffer;
+      spdlog::warn(internal::PreFormat(buffer, objType, objName, msg));
+    }
 
     template<typename T>
-    inline void error(const T &msg) { spdlog::error(msg); }
+    inline void error(const std::string &objType, const std::string &objName, const T &msg) {
+      memory_buffer buffer;
+      spdlog::error(internal::PreFormat(buffer, objType, objName, msg));
+    }
 
     template<typename T>
-    inline void critical(const T &msg) { spdlog::critical(msg); }
+    inline void critical(const std::string &objType, const std::string &objName, const T &msg) {
+      memory_buffer buffer;
+      spdlog::critical(internal::PreFormat(buffer, objType, objName, msg));
+    }
 
 
     template<typename... Args>
-    inline void debug(string_view fmt, const Args &... args) { spdlog::debug(fmt, args...); }
+    inline void debug(const std::string &objType, const std::string &objName, string_view fmt,
+                      const Args &... args) {
+      memory_buffer buffer;
+      spdlog::debug(internal::PreFormat(buffer, objType, objName, fmt), args...);
+    }
 
     template<typename... Args>
-    inline void info(string_view fmt, const Args &... args) { spdlog::info(fmt, args...); }
+    inline void info(const std::string &objType, const std::string &objName, string_view fmt,
+                     const Args &... args) {
+      memory_buffer buffer;
+      spdlog::info(internal::PreFormat(buffer, objType, objName, fmt), args...);
+    }
 
     template<typename... Args>
-    inline void warn(string_view fmt, const Args &... args) { spdlog::warn(fmt, args...); }
+    inline void warn(const std::string &objType, const std::string &objName, string_view fmt,
+                     const Args &... args) {
+      memory_buffer buffer;
+      spdlog::warn(internal::PreFormat(buffer, objType, objName, fmt), args...);
+    }
 
     template<typename... Args>
-    inline void error(string_view fmt, const Args &... args) { spdlog::error(fmt, args...); }
+    inline void error(const std::string &objType, const std::string &objName, string_view fmt,
+                      const Args &... args) {
+      memory_buffer buffer;
+      spdlog::error(internal::PreFormat(buffer, objType, objName, fmt), args...);
+    }
 
     template<typename... Args>
-    inline void critical(string_view fmt, const Args &... args) { spdlog::critical(fmt, args...); }
+    inline void critical(const std::string &objType, const std::string &objName, string_view fmt,
+                         const Args &... args) {
+      memory_buffer buffer;
+      spdlog::critical(internal::PreFormat(buffer, objType, objName, fmt), args...);
+    }
 
+    static LOG_LEVEL get_default_log_level() { return INFO; }
+
+    static void set_log_level(LOG_LEVEL log_level) {
+      switch (log_level) {
+        case TRACE:
+          spdlog::set_level(spdlog::level::trace);
+          break;
+        case DEBUG:
+          spdlog::set_level(spdlog::level::debug);
+          break;
+        case INFO:
+          spdlog::set_level(spdlog::level::info);
+          break;
+        case WARN:
+          spdlog::set_level(spdlog::level::warn);
+          break;
+        case ERROR:
+          spdlog::set_level(spdlog::level::err);
+          break;
+        case CRITICAL:
+          spdlog::set_level(spdlog::level::critical);
+          break;
+        default:
+          error("FrEventLogger", "event logger", "Unknown log level {}. Set default log level at {}",
+                log_level, get_default_log_level());
+          set_log_level(get_default_log_level());
+      }
+    }
+
+    static void set_default_log_level() {
+      set_log_level(get_default_log_level());
+    }
 
     static void init(FrOffshoreSystem *system, const std::string &name, const std::string &event_log_file) {
       // Initializing event logger
       auto file_logger = spdlog::basic_logger_mt(name, event_log_file);
       spdlog::set_default_logger(file_logger);
 
-      // TODO: permettre de faire ce set...
-      file_logger->set_level(spdlog::level::debug);
+      set_default_log_level();
+
 
       // TODO : gerer manuellement le flush a chaque pas de temps... ou permettre de relaxer avec une temporisation
       // de flush interne basee sur le temps de simulation (et pas chrono).
       spdlog::flush_every(std::chrono::seconds(1));
 
       file_logger->set_formatter(std::make_unique<internal::SimulationFormatter>(system));
-
-
-      info("testing de log dans FrEventLogger::init");
-      info("coucou {}", FrFileSystem::get_login());
-      info("coucou");
-      debug(10.2);
-      error("Mother fucker {}", FrFileSystem::get_home());
-      critical("FIN testing de log dans FrEventLogger::init");
 
     }
 

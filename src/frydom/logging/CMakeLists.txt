@@ -4,6 +4,8 @@ set(SRC_FILES
         FrLogManager.cpp
         FrPathManager.cpp
         FrEventLogger.cpp
+        FrLoggable.cpp
+        FrTypeName.cpp
         )
 
 set(FRYDOM_LOGGING_SOURCES "")

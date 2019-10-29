@@ -731,6 +731,9 @@ namespace frydom {
     /// Check the compatibility between the system contact method and the specified body contact type
     bool CheckBodyContactMethod(std::shared_ptr<FrBody> body);
 
+    /// Log instantiation events
+    void EventLogConstructor() const;
+
 
    public:
 

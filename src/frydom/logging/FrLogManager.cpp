@@ -16,13 +16,14 @@
 
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/core/common/FrConvention.h"
+#include "frydom/core/FrPlatform.h"
 #include "frydom/utils/FrFileSystem.h"
-#include "frydom/utils/GitSHA1.h"
+#include "frydom/version.h"
 
 #include "FrPathManager.h"
 #include "FrLogManager.h"
 #include "FrLoggable.h"
-#include "FrTypeName.h"
+//#include "FrTypeName.h"
 #include "FrEventLogger.h"
 
 
@@ -45,7 +46,7 @@ namespace frydom {
     // Event Logger initialization
     event_logger::init(system, "FRYDOM", "frydom_event.log");
 
-    event_logger::info("Logging into {}", m_log_folder);
+    event_logger::info("LogManager", "log manager", "Results will be logged into {}", m_log_folder);
 
   }
 
@@ -109,7 +110,7 @@ namespace frydom {
     log_folder = FrFileSystem::join({log_folder, GetDateFolder()});
     FrFileSystem::mkdir(log_folder);
 
-    std::cout << "Logging into: " << log_folder << std::endl;
+//    std::cout << "Logging into: " << log_folder << std::endl;
 
     CreateMetaDataFile(log_folder);
 
@@ -124,10 +125,9 @@ namespace frydom {
     j["username@hostname"] = FrFileSystem::get_login() + "@" + FrFileSystem::get_hostname();
     j["project_name"] = GetSystem()->GetName();
     j["frydom_git_revision"] = GetGitSHA1();
+    j["platform"] = GetPlatformName();
+    j["frydom_flavor"] = GetFrydomFlavor();
 
-    // TODO : ajouter le nom du fichier de main utilise voir meme le code source (pb si des headers a voir...)
-    // TODO : ajouter la plateforme utilisee pour effectuer les calculs (Linux, Windows... version etc...)
-    // TODO : ajouter le type de release de FRyDoM : CE ou EE...
 
     std::ofstream file;
     file.open(FrFileSystem::join({log_folder, META_FILE_NAME}), std::ios::trunc);
@@ -185,16 +185,12 @@ namespace frydom {
       if (!obj->IsLogged()) continue;
 
 
-//      std::string type_name(GetTypeNameId(obj));
+//      std::string type_name(GetTypeNameId(*obj));
 
 
       obj->DefineLogMessages();
 
       if (m_log_CSV) {
-
-        // Adding run information
-//        std::string system_folder = FrFileSystem::join({m_log_folder, GetSystem()->GetTreePath()});
-//        FrFileSystem::mkdir(system_folder);
 
         // Adding a CSV serializer to messages
         for (auto &message : obj->m_messages) { // TODO : ajouter un iterateur de message sur FrLoggableBase
@@ -203,10 +199,11 @@ namespace frydom {
           std::string message_folder = FrFileSystem::join({m_log_folder, obj->GetTreePath()});
           FrFileSystem::mkdir(message_folder);
 
-          std::string csv_file = FrFileSystem::join({message_folder, message->GetName() + ".csv"});
+          std::string csv_file = FrFileSystem::join({message_folder, message->GetName() + ".csv"}); // FIXME : ajouter les infos de type...
 
           message->AddSerializer(new hermes::CSVSerializer(csv_file));
         }
+
       }
 
       obj->InitializeLogMessages();
