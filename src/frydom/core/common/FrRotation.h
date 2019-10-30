@@ -195,7 +195,7 @@ namespace frydom {
         /// \param fc frame convention (NED/NWU)
         /// \return rotated vector
         template <class Vector>
-        Vector Rotate(const Vector& vector, FRAME_CONVENTION fc) {  // TODO : voir si on a pas qqch de plus optimise...
+        Vector Rotate(const Vector& vector, FRAME_CONVENTION fc) const {  // TODO : voir si on a pas qqch de plus optimise...
             auto vectorTmp = vector;
 
             if (IsNED(fc)) internal::SwapFrameConvention<Vector>(vectorTmp);
@@ -563,7 +563,7 @@ namespace frydom {
         /// \param fc frame convention (NED/NWU)
         /// \return rotated vector
         template <class Vector>
-        Vector Rotate(const Vector& vector, FRAME_CONVENTION fc) {
+        Vector Rotate(const Vector& vector, FRAME_CONVENTION fc) const {
             auto out = m_frQuaternion.Rotate<Vector>(vector, fc);
 //            if (IsNED(fc)) internal::SwapFrameConvention<Vector>(out);
             return out;

@@ -13,6 +13,8 @@
 #include "FrRotation.h"
 
 #include "frydom/core/math/FrMatrix.h"
+#include "frydom/core/math/FrVector.h"
+#include "frydom/mesh/FrPlane.h"
 
 
 namespace frydom {
@@ -216,7 +218,7 @@ namespace frydom {
     }
 
   bool FrUnitQuaternion::IsApprox(const FrUnitQuaternion &other, double prec) const {
-      GetChronoQuaternion().Equals(other.GetChronoQuaternion(), prec);
+      return GetChronoQuaternion().Equals(other.GetChronoQuaternion(), prec);
   }
 
   bool FrUnitQuaternion::IsZero(double prec) const {
