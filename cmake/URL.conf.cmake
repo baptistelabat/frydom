@@ -1,5 +1,5 @@
 
-# Here we declare the different path and tag to get the FRyDoM dependencies
+# Here we declare the different PATH, TAG and PATCH to get the FRyDoM dependencies
 
 # Chrono
 set(chrono_URL "https://github.com/projectchrono/chrono.git")

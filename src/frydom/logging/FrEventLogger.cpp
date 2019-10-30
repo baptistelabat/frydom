@@ -2,10 +2,7 @@
 // Created by frongere on 28/10/19.
 //
 
-#include <regex>
-
 #include "FrEventLogger.h"
-
 
 namespace frydom {
 
@@ -13,33 +10,16 @@ namespace frydom {
 
     namespace internal {
 
-
       SimulationFormatter::SimulationFormatter(FrOffshoreSystem *system) : m_system(system) {}
 
       void SimulationFormatter::format(const spdlog::details::log_msg &msg, spdlog::memory_buf_t &dest) {
-
-        /*
-         * [<simulation_time>] [<log_level>] [<ObjType>] [<obj_name>] <Message>
-         */
-
-        // Here we extract object type name and object name from the message
-
-
-        // Simulation time & log level
-        fmt::format_to(dest, "[{}] [{}] ", m_system->GetTime(), spdlog::level::to_string_view(msg.level)); // TODO : compiler
+        // [<simulation_time>] [<log_level>] [<ObjType>] [<obj_name>] <Message>
 
         // TODO: see how we can add color formatting for std output...
 
-        // Object type
-        // TODO
-
-        // Object name
-        // TODO
-
-        // Message
+        fmt::format_to(dest, "[{}] [{}] ", m_system->GetTime(),
+                       spdlog::level::to_string_view(msg.level)); // TODO : compiler
         spdlog::details::fmt_helper::append_string_view(msg.payload, dest);
-
-        // End of line
         spdlog::details::fmt_helper::append_string_view(spdlog::details::os::default_eol, dest);
 
       }
@@ -79,7 +59,8 @@ namespace frydom {
           spdlog::info("Log level set to {}", "CRITICAL");
           break;
         default:
-          error("FrEventLogger", "event logger", "Unknown log level {}. Set default log level at {}",
+          error("FrEventLogger", "event logger",
+                "Unknown log level {}. Set default log level at {}",
                 log_level, get_default_log_level());
           set_log_level(get_default_log_level());
       }
@@ -112,7 +93,5 @@ namespace frydom {
       spdlog::default_logger()->flush();
     }
   } // end namespace frydom::event_logger
-
-
 
 }  // end namespace frydom

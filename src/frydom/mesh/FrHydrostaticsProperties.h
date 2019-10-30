@@ -131,8 +131,8 @@ namespace frydom {
 
     inline void AddLine(std::string preamble, std::string unit, mathutils::Vector3d<double> value) {
       fmt::format_to(m_buffer, fmt::format("{:-<50s}>\t{:.5g}\t{:.5g}\t{:.5g}\n",
-                              fmt::format("{:s} ({:s})", preamble, unit),
-                              value[0], value[1], value[2]));
+                                           fmt::format("{:s} ({:s})", preamble, unit),
+                                           value[0], value[1], value[2]));
     }
 
     template<typename T = double>
