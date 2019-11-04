@@ -133,7 +133,7 @@ namespace frydom {
   void FrHydroMesh::StepFinalize() {
         FrObject::StepFinalize();
         
-        if (m_showAsset) {
+        if (m_showAsset and GetSystem()->GetIrrApp()) {
 
             // Remove former asset
             RemoveAssets();
