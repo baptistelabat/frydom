@@ -169,7 +169,8 @@ namespace frydom {
                                      TIME_STEPPER timeStepper,
                                      SOLVER solver) :
       FrLoggable(name, TypeToString(this), nullptr),
-      m_monitor_real_time(false) {
+      m_monitor_real_time(false),
+      m_config_file() {
 
     // Creating the chrono System backend. It drives the way contact are modelled
     SetSystemType(systemType, false);
@@ -228,7 +229,9 @@ namespace frydom {
 //    }
 //
 //  }
-
+  const FrConfigFile& FrOffshoreSystem::config_file() {
+    return m_config_file;
+  }
 
 // ***** Body *****
 

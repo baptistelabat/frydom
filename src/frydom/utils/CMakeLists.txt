@@ -4,6 +4,7 @@ set(SRC_FILES
         FrIrrApp.cpp
         FrIrrCamera.cpp
         FrFileSystem.cpp
+        FrConfigFile.cpp
 )
 
 set(FRYDOM_UTILS_SOURCES "")

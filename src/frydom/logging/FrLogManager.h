@@ -59,7 +59,7 @@ namespace frydom {
    private:
     bool Has(FrLoggableBase *obj) const;
 
-    std::string InitializeLogFolder();
+//    std::string InitializeLogFolder();
 
     static std::string LogFolderFromFrydomConfigFile(const std::string &path_to_config_file);
 
