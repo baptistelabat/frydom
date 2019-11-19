@@ -14,6 +14,12 @@ namespace frydom {
         m_bodyList.push_back(body);
     }
 
+    void FrAssembly::AddToAssembly(const std::vector<std::shared_ptr<FrBody>>& bodyList) {
+        for (auto body : bodyList) {
+            AddToAssembly(body);
+        }
+    }
+
     void FrAssembly::RemoveFromAssembly(const std::shared_ptr<FrBody> &body) {
         // trying to remove objects not previously added?
         assert(std::find<std::vector<std::shared_ptr<FrBody>>::iterator>(m_bodyList.begin(), m_bodyList.end(), body) !=
@@ -54,8 +60,6 @@ namespace frydom {
 
         m_masterBody->SetFixedInWorld(false);
 
-//        std::cout<<GetInertiaTensor()<<std::endl;
-
     }
 
   std::shared_ptr<FrBody> FrAssembly::GetMasterBody() {
@@ -69,5 +73,15 @@ namespace frydom {
   std::shared_ptr<FrBody> FrAssembly::GetBody(int iBody) {
         return m_bodyList[iBody];
     }
+
+  std::shared_ptr<FrAssembly> make_assembly(const std::shared_ptr<FrBody>& masterBody) {
+        return std::make_shared<FrAssembly>(masterBody);
+    }
+
+  std::shared_ptr<FrAssembly> make_assembly(const std::shared_ptr<FrBody>& masterBody, const std::vector<std::shared_ptr<FrBody>>& bodyList) {
+      auto assembly = std::make_shared<FrAssembly>(masterBody);
+      assembly->AddToAssembly(bodyList);
+      return assembly;
+  }
 
 } // end namespace frydom
