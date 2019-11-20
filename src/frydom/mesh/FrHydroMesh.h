@@ -79,6 +79,8 @@ namespace frydom {
         /// \return clipping support
         ClippingSupport GetClippingSupport() const;
 
+        mesh::FrMeshClipper* GetClipper() { return m_clipper.get();}
+
      protected:
 
       /// This function is called at the end of the time step, after the last step of the integration scheme.
