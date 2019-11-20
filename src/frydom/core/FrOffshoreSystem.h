@@ -16,7 +16,7 @@
 
 #include <map>
 #include <frydom/logging/FrLoggable.h>
-#include <frydom/utils/FrConfigFile.h>
+#include <frydom/utils/FrConfig.h>
 
 
 #include "chrono/physics/ChSystemSMC.h"
@@ -244,7 +244,7 @@ namespace frydom {
 
     bool m_monitor_real_time;
 
-    FrConfigFile m_config_file;
+    FrConfig m_config_file;
 
 
    public:
@@ -262,7 +262,7 @@ namespace frydom {
     /// Destructor
     ~FrOffshoreSystem();
 
-    const FrConfigFile& config_file();
+    const FrConfig& config_file();
 
 
     /// Add an item (body, link, etc.) to the offshore sytem

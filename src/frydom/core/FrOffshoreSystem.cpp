@@ -229,7 +229,7 @@ namespace frydom {
 //    }
 //
 //  }
-  const FrConfigFile& FrOffshoreSystem::config_file() {
+  const FrConfig& FrOffshoreSystem::config_file() {
     return m_config_file;
   }
 
