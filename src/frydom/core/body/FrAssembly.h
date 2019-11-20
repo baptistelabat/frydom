@@ -13,37 +13,67 @@ namespace frydom {
     class FrBody;
     class FrInertiaTensor;
 
+    /**
+     *  \class : FrAssembly
+     *  \brief : Assembly of FrBody instances, for inertia tensor manipulation
+     */
     class FrAssembly : public FrObject {
 
     private:
 
-        std::shared_ptr<FrBody> m_masterBody;
+      std::shared_ptr<FrBody> m_masterBody;             ///< Main body of the assembly, in which reference frame the
+                                                        ///< assembly inertia tensor is given
 
-        std::vector<std::shared_ptr<FrBody>> m_bodyList;
+      std::vector<std::shared_ptr<FrBody>> m_bodyList;  ///< list of bodies composing the assembly, except the master body
 
     public:
 
-        /// Get the type name of the object
-        /// \return type name of the object
-        std::string GetTypeName() const override { return "Assembly"; };
-        
-        void Initialize() override {};
+      /// Constructor of the assembly, requires a master body
+      explicit FrAssembly(const std::shared_ptr<FrBody>& masterBody);
 
-        void Clear() {
-            m_bodyList.clear();
-        }
+      /// Get the type name of the object
+      /// \return type name of the object
+      std::string GetTypeName() const override { return "Assembly"; };
 
-        void SetMasterBody(const std::shared_ptr<FrBody>& body);
+      /// Initialize the assembly
+      void Initialize() override {};
 
-        void AddToAssembly(const std::shared_ptr<FrBody>& body);
+      /// Clear the body list
+      void Clear() {
+          m_bodyList.clear();
+      }
 
-        void RemoveFromAssembly(const std::shared_ptr<FrBody>& body);
+      /// Add a body to the assembly
+      void AddToAssembly(const std::shared_ptr<FrBody>& body);
 
-        FrInertiaTensor GetInertiaTensor() const;
+      /// Add a list of bodies to the assembly
+      void AddToAssembly(const std::vector<std::shared_ptr<FrBody>>& bodyList);
 
-        void DoAssembly();
+      /// Remove a body to the assembly
+      void RemoveFromAssembly(const std::shared_ptr<FrBody>& body);
+
+      /// Get the master body of the assembly
+      std::shared_ptr<FrBody> GetMasterBody();
+
+      /// Get the list of bodies composing the assembly, except the master body
+      std::vector<std::shared_ptr<FrBody>> GetBodyList();
+
+      /// Get the i-th body of the list of bodies
+      std::shared_ptr<FrBody> GetBody(int iBody);
+
+      /// Get the inertia tensor of the assembly, given in the master body reference frame
+      FrInertiaTensor GetInertiaTensor() const;
+
+      /// Solve the constraints between the different bodies, the master body is considered fixed, the others bodies
+      /// position according to the master body position and the constraints. Be careful if you have constraints not
+      /// resolved between the master body and the WorldBody : use directly system->DoAssembly();
+      void DoAssembly();
 
     };
+
+    std::shared_ptr<FrAssembly> make_assembly(const std::shared_ptr<FrBody>& masterBody);
+
+    std::shared_ptr<FrAssembly> make_assembly(const std::shared_ptr<FrBody>& masterBody, const std::vector<std::shared_ptr<FrBody>>& bodyList);
 
 } // end namespace frydom
 

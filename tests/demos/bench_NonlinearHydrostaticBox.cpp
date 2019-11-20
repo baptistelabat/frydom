@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
 
     std::cout << " ===================================================== \n"
                  " Benchmark test : Nonlinear hydrostatics on a box \n"
-                 " ===================================================== " << std::endl;
+                 " ===================================================== \n" << std::endl;
 
     cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
 
@@ -91,6 +91,8 @@ int main(int argc, char* argv[]) {
 
     auto mass = L * H * B * c * system.GetEnvironment()->GetFluidDensity(WATER);
     makeItBox(body,L,B,H,mass);
+
+    body->RemoveAssets();
 
     bool linear = false;
     if (linear) {

@@ -28,6 +28,7 @@ using namespace OpenMesh;
 namespace frydom {
 
     class FrInertiaTensor;
+    class FrTriangleMeshConnected;
 
     namespace mesh {
 
@@ -101,6 +102,8 @@ namespace frydom {
             /// Write the file in an output file, by incrementing it
             void WriteInc();
 
+            std::shared_ptr<frydom::FrTriangleMeshConnected> ConvertToTriangleMeshConnected();
+
 
             /// This function updates all properties of faces and vertices (normals, centroids, surface integrals).
             void UpdateAllProperties();
@@ -131,6 +134,10 @@ namespace frydom {
             /// \return area (m^2)
             const double GetArea(const FaceHandle &fh) const;
 
+            /// Get the area of the meshed surface
+            /// \return area (m^2)
+            const double GetMeshedSurfaceArea();
+
             /// Get the area of the surface mesh, closed by the set of boundary polygons
             /// \return area (m^2)
             const double GetArea();
@@ -143,6 +150,10 @@ namespace frydom {
             /// boundary polygons, under the assumption of uniform weight distribution.
             /// \return center of gravity (m)
             const Position GetCOG();
+
+            const FrInertiaTensor GetPlainInertiaTensor(double density);
+
+            const FrInertiaTensor GetShellInertiaTensor(double density, double thickness);
 
 
             /// Check if the surface mesh has boundaries

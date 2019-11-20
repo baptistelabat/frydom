@@ -15,6 +15,7 @@
 #include "FrPolygon.h"
 #include "frydom/core/body/FrInertiaTensor.h"
 #include "frydom/core/link/constraint/FrCGeometrical.h"
+#include "FrTriangleMeshConnected.h"
 
 namespace frydom {
     namespace mesh {
@@ -402,6 +403,33 @@ namespace frydom {
             m_writer(*this);
         }
 
+        std::shared_ptr<frydom::FrTriangleMeshConnected> FrMesh::ConvertToTriangleMeshConnected() {
+
+            auto triangleMesh = std::make_shared<FrTriangleMeshConnected>();
+
+            for (auto v_iter=vertices_begin(); v_iter!= vertices_end(); v_iter ++) {
+                auto vertex = OpenMeshPointToVector3d<Position>(point(*v_iter));
+                triangleMesh->addVertex(internal::Vector3dToChVector(vertex));
+            }
+
+            for (auto f_iter=faces_begin(); f_iter!=faces_end(); f_iter++) {
+                               
+                chrono::ChVector<> connectivity;
+                auto fv = fv_iter(*f_iter);
+
+                int i=0;
+                for (; fv.is_valid(); ++fv) {
+                    connectivity[i] = fv->idx();
+                    i++;
+                }
+
+                triangleMesh->addTriangle(connectivity);
+            }
+
+
+            return triangleMesh;
+        }
+
         void FrMesh::UpdateAllProperties() {
 
             // This function updates all properties of faces and vertices (normals, centroids, surface integrals).
@@ -411,6 +439,8 @@ namespace frydom {
 
             // Computation of surface polynomial integrals.
             UpdateFacesPolynomialIntegrals();
+
+            m_polygonSet.Invalidate();
         }
 
         void FrMesh::UpdateBaseProperties() {
@@ -541,13 +571,21 @@ namespace frydom {
             return data(fh).GetSurfaceIntegral(POLY_1);
         }
 
-        const double FrMesh::GetArea() {
+        const double FrMesh::GetMeshedSurfaceArea(){
 
             double area = 0;
 
             for (FaceIter fh = faces_begin(); fh != faces_end(); ++fh) {
                 area += GetArea(*fh);
             }
+
+            return area;
+
+        }
+
+        const double FrMesh::GetArea() {
+
+            double area = GetMeshedSurfaceArea();
 
             for (auto& polygon:GetBoundaryPolygonSet()) {
                 area += polygon.GetArea();
@@ -569,7 +607,7 @@ namespace frydom {
                 auto plane = polygon.GetPlane();
                 auto frame = plane.GetFrame();
 
-                double e = frame.GetPosition(NWU).norm();
+                double e = frame.GetPosition(NWU).dot(plane.GetNormal(NWU));
                 double wc = plane.GetNormal(NWU).Getuz();
                 double R13 = frame.GetRotation().GetInverseRotationMatrix().at(0,2);
                 double R23 = frame.GetRotation().GetInverseRotationMatrix().at(1,2);
@@ -581,6 +619,129 @@ namespace frydom {
             }
 
             return volume;
+        }
+
+        const FrInertiaTensor FrMesh::GetPlainInertiaTensor(double density) {
+
+            auto mass = density * GetVolume();
+            auto COG = GetCOG();
+
+            double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
+
+            double third = 1./3.;
+
+            double intV_x2 = third * GetMeshedSurfaceIntegral(0,POLY_X3);
+            double intV_y2 = third * GetMeshedSurfaceIntegral(1,POLY_Y3);
+            double intV_z2 = third * GetMeshedSurfaceIntegral(2,POLY_Z3);
+
+            double intV_xy = GetMeshedSurfaceIntegral(0,POLY_X2Y);
+            double intV_yz = GetMeshedSurfaceIntegral(1,POLY_Y2Z);
+            double intV_zx = GetMeshedSurfaceIntegral(2,POLY_Z2X);
+
+
+            auto polygonSet = GetBoundaryPolygonSet();
+            for (auto& polygon : polygonSet) {
+
+                auto plane = polygon.GetPlane();
+                auto frame = plane.GetFrame();
+
+                auto normal = plane.GetNormal(NWU);
+                double e = frame.GetPosition(NWU).dot(normal);
+                auto rotMatrix = frame.GetRotation().GetInverseRotationMatrix();
+
+                auto integrals = polygon.GetSurfaceIntegrals();
+
+                Vector3d<double> intV;
+                for (unsigned int i=0;i<3;i++) {
+                    intV[i] = normal[i] * third * (
+                            std::pow(rotMatrix.at(0,i),3) * integrals.GetSurfaceIntegral(POLY_X3)
+                            + std::pow(rotMatrix.at(1,i),3) * integrals.GetSurfaceIntegral(POLY_Y3)
+                            + 3.* std::pow(rotMatrix.at(0,i),2) * rotMatrix.at(1,i) * integrals.GetSurfaceIntegral(POLY_X2Y)
+                            + 3.* std::pow(rotMatrix.at(1,i),2) * rotMatrix.at(0,i) * integrals.GetSurfaceIntegral(POLY_Y2X))
+                              + e * std::pow(normal[i],2.) * (
+                            std::pow(rotMatrix.at(0,i),2) * integrals.GetSurfaceIntegral(POLY_X2)
+                            + std::pow(rotMatrix.at(1,i),2) * integrals.GetSurfaceIntegral(POLY_Y2)
+                            + 2. * rotMatrix.at(0,i) * rotMatrix.at(1,i) * integrals.GetSurfaceIntegral(POLY_XY))
+                              + e*e * std::pow(normal[i],3.) * (
+                            rotMatrix.at(0,i) * integrals.GetSurfaceIntegral(POLY_X) + rotMatrix.at(1,i) * integrals.GetSurfaceIntegral(POLY_Y))
+                              + third * e*e*e * std::pow(normal[i],4.) * integrals.GetSurfaceIntegral(POLY_1);
+
+                }
+                intV_x2 += intV[0];
+                intV_y2 += intV[1];
+                intV_z2 += intV[2];
+
+
+                intV_xy += normal[0] * (
+                            std::pow(rotMatrix.at(0,0),2.) * rotMatrix.at(0,1) * integrals.GetSurfaceIntegral(POLY_X3)
+                          + std::pow(rotMatrix.at(1,0),2.) * rotMatrix.at(1,1) * integrals.GetSurfaceIntegral(POLY_Y3)
+                          + (std::pow(rotMatrix.at(0,0),2.) * rotMatrix.at(1,1) + 2. * rotMatrix.at(0,0) * rotMatrix.at(0,1) * rotMatrix.at(1,0)) * integrals.GetSurfaceIntegral(POLY_X2Y)
+                          + (std::pow(rotMatrix.at(0,1),2.) * rotMatrix.at(1,0) + 2. * rotMatrix.at(0,0) * rotMatrix.at(1,0) * rotMatrix.at(1,1)) * integrals.GetSurfaceIntegral(POLY_Y2X)
+                          + e * (
+                               (std::pow(rotMatrix.at(0,0),2.) * normal[1] + 2. * rotMatrix.at(0,0) * rotMatrix.at(0,1) * normal[0]) * integrals.GetSurfaceIntegral(POLY_X2)
+                             + (std::pow(rotMatrix.at(1,0),2.) * normal[1] + 2. * rotMatrix.at(1,0) * rotMatrix.at(1,1) * normal[0]) * integrals.GetSurfaceIntegral(POLY_Y2)
+                             + 2.*(rotMatrix.at(0,0) * rotMatrix.at(1,0) * normal[1] + rotMatrix.at(0,1) * rotMatrix.at(1,0) * normal[0] + rotMatrix.at(0,0) * rotMatrix.at(1,1) * normal[0]) * integrals.GetSurfaceIntegral(POLY_XY))
+                          + e*e * normal[0] * (
+                               (rotMatrix.at(0,1) * normal[0] + 2. * rotMatrix.at(0,0) * normal[1]) * integrals.GetSurfaceIntegral(POLY_X)
+                             + (rotMatrix.at(1,1) * normal[0] + 2. * rotMatrix.at(1,0) * normal[1]) * integrals.GetSurfaceIntegral(POLY_Y))
+                          + e*e*e * std::pow(normal[0],2.) * normal[1] * integrals.GetSurfaceIntegral(POLY_1));
+
+                intV_yz += normal[1] * (
+                            std::pow(rotMatrix.at(0,1),2.) * rotMatrix.at(0,2) * integrals.GetSurfaceIntegral(POLY_X3)
+                          + std::pow(rotMatrix.at(1,1),2.) * rotMatrix.at(1,2) * integrals.GetSurfaceIntegral(POLY_Y3)
+                          + (std::pow(rotMatrix.at(0,1),2.) * rotMatrix.at(1,2) + 2. * rotMatrix.at(0,1) * rotMatrix.at(0,2) * rotMatrix.at(1,1)) * integrals.GetSurfaceIntegral(POLY_X2Y)
+                          + (std::pow(rotMatrix.at(0,2),2.) * rotMatrix.at(1,1) + 2. * rotMatrix.at(0,1) * rotMatrix.at(1,1) * rotMatrix.at(1,2)) * integrals.GetSurfaceIntegral(POLY_Y2X)
+                          + e * (
+                            (std::pow(rotMatrix.at(0,1),2.) * normal[2] + 2. * rotMatrix.at(0,1) * rotMatrix.at(0,2) * normal[1]) * integrals.GetSurfaceIntegral(POLY_X2)
+                            + (std::pow(rotMatrix.at(1,1),2.) * normal[2] + 2. * rotMatrix.at(1,1) * rotMatrix.at(1,2) * normal[1]) * integrals.GetSurfaceIntegral(POLY_Y2)
+                            + 2.*(rotMatrix.at(0,1) * rotMatrix.at(1,1) * normal[2] + rotMatrix.at(0,2) * rotMatrix.at(1,1) * normal[1] + rotMatrix.at(0,1) * rotMatrix.at(1,2) * normal[1]) * integrals.GetSurfaceIntegral(POLY_XY))
+                          + e*e * normal[1] * (
+                            (rotMatrix.at(0,2) * normal[1] + 2. * rotMatrix.at(0,1) * normal[2]) * integrals.GetSurfaceIntegral(POLY_X)
+                            + (rotMatrix.at(1,2) * normal[1] + 2. * rotMatrix.at(1,1) * normal[2]) * integrals.GetSurfaceIntegral(POLY_Y))
+                          + e*e*e * std::pow(normal[1],2.) * normal[2] * integrals.GetSurfaceIntegral(POLY_1));
+
+                intV_zx += normal[2] * (
+                            std::pow(rotMatrix.at(0,2),2.) * rotMatrix.at(0,0) * integrals.GetSurfaceIntegral(POLY_X3)
+                          + std::pow(rotMatrix.at(1,2),2.) * rotMatrix.at(1,0) * integrals.GetSurfaceIntegral(POLY_Y3)
+                          + (std::pow(rotMatrix.at(0,2),2.) * rotMatrix.at(1,0) + 2. * rotMatrix.at(0,2) * rotMatrix.at(0,0) * rotMatrix.at(1,2)) * integrals.GetSurfaceIntegral(POLY_X2Y)
+                          + (std::pow(rotMatrix.at(0,0),2.) * rotMatrix.at(1,2) + 2. * rotMatrix.at(0,2) * rotMatrix.at(1,2) * rotMatrix.at(1,0)) * integrals.GetSurfaceIntegral(POLY_Y2X)
+                          + e * (
+                            (std::pow(rotMatrix.at(0,2),2.) * normal[0] + 2. * rotMatrix.at(0,2) * rotMatrix.at(0,0) * normal[2]) * integrals.GetSurfaceIntegral(POLY_X2)
+                            + (std::pow(rotMatrix.at(1,2),2.) * normal[0] + 2. * rotMatrix.at(1,2) * rotMatrix.at(1,0) * normal[2]) * integrals.GetSurfaceIntegral(POLY_Y2)
+                            + 2.*(rotMatrix.at(0,2) * rotMatrix.at(1,2) * normal[0] + rotMatrix.at(0,0) * rotMatrix.at(1,2) * normal[2] + rotMatrix.at(0,2) * rotMatrix.at(1,0) * normal[2]) * integrals.GetSurfaceIntegral(POLY_XY))
+                          + e*e * normal[2] * (
+                            (rotMatrix.at(0,0) * normal[2] + 2. * rotMatrix.at(0,2) * normal[0]) * integrals.GetSurfaceIntegral(POLY_X)
+                            + (rotMatrix.at(1,0) * normal[2] + 2. * rotMatrix.at(1,2) * normal[0]) * integrals.GetSurfaceIntegral(POLY_Y))
+                          + e*e*e * std::pow(normal[2],2.) * normal[0] * integrals.GetSurfaceIntegral(POLY_1));
+
+            }
+
+            Ixx = density * (intV_y2 + intV_z2);
+            Iyy = density * (intV_x2 + intV_z2);
+            Izz = density * (intV_x2 + intV_y2);
+
+            Iyz = -0.5 * density * intV_yz;
+            Ixz = -0.5 * density * intV_zx;
+            Ixy = -0.5 * density * intV_xy;
+
+            return FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, FrFrame(), COG, NWU);
+
+        }
+
+        const FrInertiaTensor FrMesh::GetShellInertiaTensor(double density, double thickness) {
+
+            assert(GetBoundaryPolygonSet().empty());
+
+            double Ixx = density * thickness * (GetMeshedSurfaceIntegral(POLY_Y2) + GetMeshedSurfaceIntegral(POLY_Z2));
+            double Iyy = density * thickness * (GetMeshedSurfaceIntegral(POLY_X2) + GetMeshedSurfaceIntegral(POLY_Z2));
+            double Izz = density * thickness * (GetMeshedSurfaceIntegral(POLY_Y2) + GetMeshedSurfaceIntegral(POLY_X2));
+
+            double Iyz = -density * thickness * GetMeshedSurfaceIntegral(POLY_YZ);
+            double Ixz = -density * thickness * GetMeshedSurfaceIntegral(POLY_XZ);
+            double Ixy = -density * thickness * GetMeshedSurfaceIntegral(POLY_XY);
+
+            return FrInertiaTensor(density*GetVolume(), Ixx, Iyy, Izz, Ixy, Ixz, Iyz, FrFrame(), GetCOG(), NWU);
+
         }
 
         const Position FrMesh::GetCOG() {
@@ -602,8 +763,8 @@ namespace frydom {
                 auto plane = polygon.GetPlane();
                 auto frame = plane.GetFrame();
 
-                auto e = frame.GetPosition(NWU).norm();
                 auto normal = plane.GetNormal(NWU);
+                double e = frame.GetPosition(NWU).dot(normal);
                 auto R = frame.GetRotation().GetInverseRotationMatrix();
 //                auto R = frame.GetRotation().GetRotationMatrix();
 
@@ -627,9 +788,7 @@ namespace frydom {
                 Gcorr = Inv2Volume * Gcorr.cwiseProduct(normal);
             }
 
-            G += Gcorr;
-
-            return G;
+            return G + Gcorr;
         }
 
         bool FrMesh::HasBoundaries() const {  // FIXME: si le maillage est non conforme mais hermetique, HasBoudaries() renvoie true et donc IsWatertight() false, c'est un faux négatif...
@@ -673,7 +832,6 @@ namespace frydom {
 
             double val = 0.;
             for (FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
-                auto n = normal(*f_iter);
                 val += data(*f_iter).GetSurfaceIntegral(type);
             }
 

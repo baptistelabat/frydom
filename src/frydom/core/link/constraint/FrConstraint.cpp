@@ -64,7 +64,7 @@ namespace frydom {
     }
 
     void FrConstraint::SetDisabled(bool disabled) {
-        m_chronoConstraint->SetDisabled(true);
+        m_chronoConstraint->SetDisabled(disabled);
     }
 
     bool FrConstraint::IsActive() const {

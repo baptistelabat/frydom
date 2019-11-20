@@ -91,7 +91,6 @@ TEST(FrAssemblyTest,Add) {
     system.GetEnvironment()->ShowSeabed(false);
     system.GetEnvironment()->ShowFreeSurface(false);
 
-    FrAssembly assembly;
 
     double L1 = 10, L2 = 15, L3 = 17;
     double d1 = 0.35, d2 = 0.15, d3 = 0.75;
@@ -100,7 +99,8 @@ TEST(FrAssemblyTest,Add) {
     makeItBox(body1, L1, L2, L3*d3, L1*L2*L3*d3);
     body1->SetColor(DarkRed);
     body1->SetFixedInWorld(true);
-    assembly.SetMasterBody(body1);
+
+    FrAssembly assembly(body1);
 
 //    std::cout<<body1->GetInertiaTensor()<<std::endl;
 
@@ -171,8 +171,6 @@ TEST(FrAssemblyTest,AddRotation) {
     system.GetEnvironment()->ShowSeabed(false);
     system.GetEnvironment()->ShowFreeSurface(false);
 
-    FrAssembly assembly;
-
     double L1 = 10, L2 = 15, L3 = 17;
     double d1 = 0.35, d2 = 0.15, d3 = 0.75;
 
@@ -180,7 +178,8 @@ TEST(FrAssemblyTest,AddRotation) {
     makeItBox(body1, L1, L2, L3*d3, L1*L2*L3*d3);
     body1->SetColor(DarkRed);
     body1->SetFixedInWorld(true);
-    assembly.SetMasterBody(body1);
+
+    FrAssembly assembly(body1);
 
 //    std::cout<<body1->GetInertiaTensor()<<std::endl;
 
@@ -262,8 +261,6 @@ TEST(FrAssemblyTest,AddCOG) {
     system.GetEnvironment()->ShowSeabed(false);
     system.GetEnvironment()->ShowFreeSurface(false);
 
-    FrAssembly assembly;
-
     double L1 = 10, L2 = 15, L3 = 17;
     double d1 = 0.35, d2 = 0.15, d3 = 0.75;
 
@@ -271,7 +268,8 @@ TEST(FrAssemblyTest,AddCOG) {
     makeBox(body1, L1, L2, L3*d3, L1*L2*L3*d3);
     body1->SetColor(DarkRed);
     body1->SetFixedInWorld(true);
-    assembly.SetMasterBody(body1);
+
+    FrAssembly assembly(body1);
 
 //    std::cout<<body1->GetInertiaTensor()<<std::endl;
 
@@ -342,8 +340,6 @@ TEST(FrAssemblyTest,AddCOGRotation) {
     system.GetEnvironment()->ShowSeabed(false);
     system.GetEnvironment()->ShowFreeSurface(false);
 
-    FrAssembly assembly;
-
     double L1 = 10, L2 = 15, L3 = 17;
     double d1 = 0.35, d2 = 0.15, d3 = 0.75;
 
@@ -351,7 +347,8 @@ TEST(FrAssemblyTest,AddCOGRotation) {
     makeBox(body1, L1, L2, L3*d3, L1*L2*L3*d3);
     body1->SetColor(DarkRed);
     body1->SetFixedInWorld(true);
-    assembly.SetMasterBody(body1);
+
+    FrAssembly assembly(body1);
 
 //    std::cout<<body1->GetInertiaTensor()<<std::endl;
 

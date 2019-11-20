@@ -20,6 +20,7 @@
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/mesh/FrMeshClipper.h"
 #include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
+#include "frydom/asset/FrAssetOwner.h"
 
 #include "frydom/core/common/FrFrame.h"
 
@@ -28,13 +29,15 @@ namespace frydom {
     // Forward declarations
     class FrOffshoreSystem;
     class FrBody;
+    class FrTriangleMeshShape;
+
     namespace geom { class FrPlane; }
 
     /**
      * \class FrHydroMesh
      * \brief Class for managing the meshes used for computing the nonlinear hydrostatic and Froude-Krylov loads.
      */
-    class FrHydroMesh : public FrPrePhysicsItem {
+    class FrHydroMesh : public FrPrePhysicsItem, public FrAssetOwner {
 
     public:
 
@@ -52,6 +55,8 @@ namespace frydom {
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "HydroMesh"; }
+
+        void ShowAsset(bool show) {m_showAsset = show;};
 
         /// Initialize the hydromesh
         void Initialize() override;
@@ -74,12 +79,21 @@ namespace frydom {
         /// \return clipping support
         ClippingSupport GetClippingSupport() const;
 
+     protected:
+
+      /// This function is called at the end of the time step, after the last step of the integration scheme.
+      void StepFinalize() override;;
+
 
     private:
 
         /// Update nonlinear hydrostatic force.
         /// \param time Current time of the simulation from beginning.
         void Compute(double time) override;
+
+      /// Get the internal item, related to chrono::ChPhysicsItem
+      /// \return internal item, related to chrono::ChPhysicsItem
+      chrono::ChPhysicsItem* GetChronoItem_ptr() const override { return m_chronoPhysicsItem.get();};
 
     private:
 
@@ -94,6 +108,8 @@ namespace frydom {
         ClippingSupport m_clippingSupport;              ///< Support for the clipping procedure
 
         std::shared_ptr<geom::FrPlane> c_clippingPlane; ///< plane for the FrClippingPane
+
+        bool m_showAsset = false;
 
     };
 
