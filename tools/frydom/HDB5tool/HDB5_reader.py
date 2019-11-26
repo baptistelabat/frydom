@@ -785,7 +785,7 @@ class HDB5reader_v1(HDB5reader):
             pyHDB object for storing the hydrodynamic database.
         """
 
-        for ibody in xrange(pyHDB.nb_bodies):
+        for ibody in range(pyHDB.nb_bodies):
             body_path = '/Bodies/Body_%u' % ibody
 
             # Index of the body.
