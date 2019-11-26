@@ -136,6 +136,14 @@ def get_parser(parser):
                         metavar=('ibody_force', 'iforce', 'ibody_motion', 'idof'), action="append", help="""
                 Plot the impulse response functions with speed velocity of ibody_force along iforce for a motion of ibody_motion along idof.""")
 
+    # Plot mesh.
+    parser.add_argument('--plot_mesh', '-pm', nargs = 1, metavar=('ibody'), action="append", help="""
+                Plot the mesh of ibody.""")
+
+    # Plot meshes.
+    parser.add_argument('--plot_meshes', '-pms', action="store_true", help="""
+                    Plot all the meshes in the same time.""")
+
     # Reading a hdb5 file.
     parser.add_argument('--read','-r', action="store", help="""
                 Reading a hdb5 file with the given name.""")
@@ -314,6 +322,16 @@ def get_Arg_part_2_CE(args, database):
 def get_Arg_part_3_CE(args, database):
 
     """ This function plots all the physical quantities: added mass, damping, loads and IRF."""
+
+    # Plot mesh.
+    if (args.plot_mesh is not None):
+        nb_plots_mesh = len(args.plot_mesh)
+        for j in range(0, nb_plots_mesh):
+            database.Plot_Mesh(ibody=int(args.plot_mesh[j][0]) - 1)
+
+    # Plot meshes.
+    if (args.plot_meshes is not None):
+        database.Plot_Meshes()
 
     # Plot added mass and damping coefficients.
     if (args.plot_radiation is not None):
