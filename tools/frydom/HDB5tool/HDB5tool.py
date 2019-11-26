@@ -330,7 +330,7 @@ def get_Arg_part_3_CE(args, database):
             database.Plot_Mesh(ibody=int(args.plot_mesh[j][0]) - 1)
 
     # Plot meshes.
-    if (args.plot_meshes is not None):
+    if (args.plot_meshes is True):
         database.Plot_Meshes()
 
     # Plot added mass and damping coefficients.
