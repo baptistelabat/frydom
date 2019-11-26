@@ -41,6 +41,7 @@ namespace frydom {
 
     Add(system);
     m_log_folder = FrFileSystem::join({system->config_file().GetLogFolder(), GetDateFolder()});
+    FrFileSystem::mkdir(m_log_folder);
 
     event_logger::info("LogManager", "", "Logging into directory \"{}\".", m_log_folder);
 

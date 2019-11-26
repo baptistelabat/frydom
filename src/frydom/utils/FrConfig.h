@@ -38,7 +38,9 @@ namespace frydom {
 
 
    private:
-    json m_json_node;
+//    json m_json_node;
+    std::string m_log_folder;
+
 
   };
 

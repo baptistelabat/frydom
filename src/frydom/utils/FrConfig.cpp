@@ -14,21 +14,22 @@
 namespace frydom {
 
 
-  FrConfig::FrConfig() {
+  FrConfig::FrConfig() {  // FIXME : voir si on met en place un comportement plus generique vis a vis des champs du json
     const std::string config_file = LookForConfigFile();
 
     if (config_file.empty()) {
-      m_json_node = json(); // empty json node...
-      return;
+//      m_json_node = json(); // empty json node...
+//      return;
+      m_log_folder = FrFileSystem::cwd();
     }
 
     // A configuration file has been found
     std::ifstream ifs(config_file);
     try {
       // Is the file correct ? (does it have a frydom_config root node ?
-      m_json_node = json::parse(ifs)["frydom_config"];
+      m_log_folder = json::parse(ifs)["frydom_config"]["log_folder"];
     } catch (nlohmann::detail::parse_error &err) {
-      m_json_node = json();
+//      m_json_node = json();
     }
 
     // FIXME : d'autres choses a faire ?
@@ -56,7 +57,7 @@ namespace frydom {
   }
 
   const std::string &FrConfig::GetLogFolder() const {
-    return "";
+    return m_log_folder;
   }
 
 
