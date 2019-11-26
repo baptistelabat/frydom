@@ -67,6 +67,18 @@ index a1d0f90d0..8208fd3e2 100644
      /// Initial setup (before analysis).
      /// This function is called from ChSystem::SetupInitial, marking a point where system
      /// construction is completed.
+diff --git a/src/chrono/physics/ChBodyAuxRef.cpp b/src/chrono/physics/ChBodyAuxRef.cpp
+index 9ec946534..8105d634c 100644
+--- a/src/chrono/physics/ChBodyAuxRef.cpp
++++ b/src/chrono/physics/ChBodyAuxRef.cpp
+@@ -49,6 +49,7 @@ void ChBodyAuxRef::SetFrame_COG_to_REF(const ChFrame<>& mloc) {
+ 
+     for (auto& marker : marklist) {
+         marker->ConcatenatePreTransformation(cog_oldnew);
++        marker->Impose_Rel_Coord(marker->GetCoord());
+         marker->Update(ChTime);
+     }
+ 
 diff --git a/src/chrono/physics/ChForce.h b/src/chrono/physics/ChForce.h
 index 3ae1ff0e2..49a9226f6 100644
 --- a/src/chrono/physics/ChForce.h
@@ -257,98 +269,10 @@ index 4e533bb49..344d355dc 100644
  
    public:
 diff --git a/src/chrono/physics/ChSystem.h b/src/chrono/physics/ChSystem.h
-index e61891ed9..9ed6da306 100644
+index e61891ed9..2432bd241 100644
 --- a/src/chrono/physics/ChSystem.h
 +++ b/src/chrono/physics/ChSystem.h
-@@ -64,7 +64,7 @@ class ChContactContainer;
- /// links into it..)
- ///
- /// Note that this is an abstract class, in your code you must
--/// create a system from one of the concrete classes: 
-+/// create a system from one of the concrete classes:
- ///   @ref chrono::ChSystemNSC (for non-smooth contacts) or
- ///   @ref chrono::ChSystemSMC (for smooth 'penalty' contacts).
- ///
-@@ -234,7 +234,7 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
-     double GetSolverSharpnessParam() const;
- 
-     /// Instead of using SetSolverType(), you can create your own custom solver (inherited from ChSolver)
--    /// and plug it into the system using this function. 
-+    /// and plug it into the system using this function.
-     virtual void SetStabSolver(std::shared_ptr<ChSolver> newsolver);
- 
-     /// Access directly the stabilization solver, configured to be used for the stabilization
-@@ -433,7 +433,7 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
-     virtual void InjectKRMmatrices(ChSystemDescriptor& mdescriptor) override;
-     virtual void KRMmatricesLoad(double Kfactor, double Rfactor, double Mfactor) override;
- 
--    // Old bookkeeping system 
-+    // Old bookkeeping system
-     virtual void VariablesFbReset() override;
-     virtual void VariablesFbLoadForces(double factor = 1) override;
-     virtual void VariablesQbLoadSpeed() override;
-@@ -576,7 +576,7 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
-     /// This is mostly called automatically by time integration.
-     double ComputeCollisions();
- 
--    /// Class to be used as a callback interface for user defined actions performed 
-+    /// Class to be used as a callback interface for user defined actions performed
-     /// at each collision detection step.  For example, additional contact points can
-     /// be added to the underlying contact container.
-     class ChApi CustomCollisionCallback {
-@@ -587,7 +587,7 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
- 
-     /// Specify a callback object to be invoked at each collision detection step.
-     /// Multiple such callback objects can be registered with a system. If present,
--    /// their OnCustomCollision() method is invoked 
-+    /// their OnCustomCollision() method is invoked
-     /// Use this if you want that some specific callback function is executed at each
-     /// collision detection step (ex. all the times that ComputeCollisions() is automatically
-     /// called by the integration method). For example some other collision engine could
-@@ -597,7 +597,7 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
-     }
- 
-     /// For higher performance (ex. when GPU coprocessors are available) you can create your own custom
--    /// collision engine (inherited from ChCollisionSystem) and plug it into the system using this function. 
-+    /// collision engine (inherited from ChCollisionSystem) and plug it into the system using this function.
-     /// Note: use only _before_ you start adding colliding bodies to the system!
-     void SetCollisionSystem(std::shared_ptr<collision::ChCollisionSystem> newcollsystem);
- 
-@@ -623,6 +623,7 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
-     /// because the sleeping policy changed the totalDOFs and offsets.
-     bool ManageSleepingBodies();
- 
-+  protected:
-     /// Performs a single dynamical simulation step, according to
-     /// current values of:  Y, time, step  (and other minor settings)
-     /// Depending on the integration type, it switches to one of the following:
-@@ -693,13 +694,13 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
-     bool GetDumpSolverMatrices() const { return dump_matrices; }
- 
-     /// Dump the current M mass matrix, K damping matrix, R damping matrix, Cq constraint jacobian
--    /// matrix (at the current configuration). 
-+    /// matrix (at the current configuration).
-     /// These can be later used for linearized motion, modal analysis, buckling analysis, etc.
--    /// The name of the files will be [path]_M.dat [path]_K.dat [path]_R.dat [path]_Cq.dat 
-+    /// The name of the files will be [path]_M.dat [path]_K.dat [path]_R.dat [path]_Cq.dat
-     /// Might throw ChException if file can't be saved.
-     void DumpSystemMatrices(bool save_M, bool save_K, bool save_R, bool save_Cq, const char* path);
- 
--    /// Compute the system-level mass matrix. 
-+    /// Compute the system-level mass matrix.
-     /// This function has a small overhead, because it must assembly the
-     /// sparse matrix -which is used only for the purpose of this function.
-     void GetMassMatrix(ChSparseMatrix* M);    ///< fill this system mass matrix
-@@ -744,7 +745,7 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
- 
-     /// Given the current time and state, attempt to satisfy all constraints, using
-     /// a Newton-Raphson iteration loop. Used iteratively in inverse kinematics.
--    /// Action can be one of AssemblyLevel::POSITION, AssemblyLevel::VELOCITY, or 
-+    /// Action can be one of AssemblyLevel::POSITION, AssemblyLevel::VELOCITY, or
-     /// AssemblyLevel::ACCELERATION (or a combination of these)
-     /// Returns true if no errors and false if an error occurred (impossible assembly?)
-     bool DoAssembly(int action);
-@@ -758,7 +759,7 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
+@@ -758,7 +758,7 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
      /// reactions). This is a one-step only approach that solves
      /// the _linear_ equilibrium. To be used mostly for FEM
      /// problems with small deformations.
@@ -428,3 +352,18 @@ index 72a152ce6..14e63f2d9 100644
 -#endif
 \ No newline at end of file
 +#endif
+diff --git a/src/chrono/solver/ChVariablesBodyOwnMass.h b/src/chrono/solver/ChVariablesBodyOwnMass.h
+index 3a278f344..aa597b12f 100644
+--- a/src/chrono/solver/ChVariablesBodyOwnMass.h
++++ b/src/chrono/solver/ChVariablesBodyOwnMass.h
+@@ -35,7 +35,9 @@ class ChApi ChVariablesBodyOwnMass : public ChVariablesBody {
+ 
+   public:
+     ChVariablesBodyOwnMass();
+-    virtual ~ChVariablesBodyOwnMass() {}
++    virtual ~ChVariablesBodyOwnMass() {
++        std::cout << "Deallocate body own mass of mass " << mass << std::endl;
++    }
+ 
+     /// Assignment operator: copy from other object
+     ChVariablesBodyOwnMass& operator=(const ChVariablesBodyOwnMass& other);

@@ -8,13 +8,16 @@
 
 namespace frydom {
 
-
-    void FrAssembly::SetMasterBody(const std::shared_ptr<FrBody>& body) {
-        m_masterBody = body;
-    }
+    FrAssembly::FrAssembly(const std::shared_ptr<FrBody> &masterBody) : m_masterBody(masterBody) {}
 
     void FrAssembly::AddToAssembly(const std::shared_ptr<frydom::FrBody> &body) {
         m_bodyList.push_back(body);
+    }
+
+    void FrAssembly::AddToAssembly(const std::vector<std::shared_ptr<FrBody>>& bodyList) {
+        for (auto body : bodyList) {
+            AddToAssembly(body);
+        }
     }
 
     void FrAssembly::RemoveFromAssembly(const std::shared_ptr<FrBody> &body) {
@@ -53,15 +56,32 @@ namespace frydom {
 
         m_masterBody->SetFixedInWorld(true);
 
-        auto system = m_masterBody->GetSystem();
-
-        system->Initialize();
-        system->DoAssembly();
+        m_masterBody->GetSystem()->DoAssembly();
 
         m_masterBody->SetFixedInWorld(false);
 
-        std::cout<<GetInertiaTensor()<<std::endl;
-
     }
+
+  std::shared_ptr<FrBody> FrAssembly::GetMasterBody() {
+        return m_masterBody;
+    }
+
+  std::vector<std::shared_ptr<FrBody>> FrAssembly::GetBodyList() {
+        return m_bodyList;
+    }
+
+  std::shared_ptr<FrBody> FrAssembly::GetBody(int iBody) {
+        return m_bodyList[iBody];
+    }
+
+  std::shared_ptr<FrAssembly> make_assembly(const std::shared_ptr<FrBody>& masterBody) {
+        return std::make_shared<FrAssembly>(masterBody);
+    }
+
+  std::shared_ptr<FrAssembly> make_assembly(const std::shared_ptr<FrBody>& masterBody, const std::vector<std::shared_ptr<FrBody>>& bodyList) {
+      auto assembly = std::make_shared<FrAssembly>(masterBody);
+      assembly->AddToAssembly(bodyList);
+      return assembly;
+  }
 
 } // end namespace frydom

@@ -35,7 +35,7 @@ namespace frydom {
     double m_youngModulus = 3.1416E10;          ///< Young modulus of the cable, in Pa
     double m_linearDensity = 616.538;           ///< Linear density of the cable, in kg/m
     double m_rayleighDamping = 0;               ///< Rayleigh damping of the cable (for dynamic cable only)
-//        double m_breakingTension = 0;               ///< breaking tension, in N (for visualization purpose for now)
+    double m_breakingTension = 0;               ///< breaking tension, in N (for visualization purpose for now)
 
    public:
 
@@ -96,6 +96,13 @@ namespace frydom {
     /// \return density
     double GetDensity() const;
 
+    /// Set the breeaking tension of the cable
+    /// \param breakingTension Breaking tension value
+    void SetBreakingTension(double breakingTension);
+
+    /// Return the breaking tension of the cable
+    double GetBreakingTension() const;
+
   };
 
   std::shared_ptr<FrCableProperties> make_cable_properties();
@@ -154,6 +161,8 @@ namespace frydom {
             const std::shared_ptr<FrCableProperties> &properties,
             double unstrainedLength);
 
+//        /// Default destructor
+//        ~FrCable();
     void Initialize();
 
     //--------------------------------------------------------------------------------------------------------------
@@ -238,8 +247,6 @@ namespace frydom {
 
     /// Update the length of the cable if unrolling speed is defined.
     virtual void UpdateState();
-
-//    FrOffshoreSystem *GetSystem() const;
 
   };
 

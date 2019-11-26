@@ -16,6 +16,9 @@
 
 #include "frydom/core/body/FrBody.h"
 #include "frydom/core/link/constraint/FrCGeometrical.h"
+#include "FrTriangleMeshConnected.h"
+#include "frydom/asset/shape/FrTriangleMeshShape.h"
+#include "frydom/utils/FrIrrApp.h"
 
 namespace frydom {
 
@@ -143,6 +146,30 @@ namespace frydom {
     return m_clippingSupport;
   }
 
+  void FrHydroMesh::StepFinalize() {
+        FrObject::StepFinalize();
+        
+        if (m_showAsset and GetSystem()->GetIrrApp()) {
+
+            // Remove former asset
+            RemoveAssets();
+
+            // Get the clipped mesh and translate it to the horizontal body position
+            auto tempMesh = m_clippedMesh;
+            auto bodyPos = m_body->GetPosition(NWU); bodyPos.GetZ() = 0.;
+            tempMesh.Translate(mesh::Vector3dToOpenMeshPoint(bodyPos));
+
+            // Convert the clipped mesh to FrTriangleMeshConnected and add it to the asset owner
+            auto triangleMesh = tempMesh.ConvertToTriangleMeshConnected();
+            AddMeshAsset(triangleMesh);
+
+            // Bind and update the new asset
+            auto irrApp = GetSystem()->GetIrrApp();
+            irrApp->AssetBind(GetChronoPhysicsItem());
+            irrApp->AssetUpdate(GetChronoPhysicsItem());
+
+        }
+  }
   std::shared_ptr<FrHydroMesh>
   make_hydro_mesh(const std::string &name,
                   const std::shared_ptr<FrBody> &body,

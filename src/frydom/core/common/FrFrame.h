@@ -155,6 +155,12 @@ namespace frydom {
     /// \param otherFrame T
     void operator*=(const FrFrame &otherFrame);
 
+      bool operator==(const FrFrame& otherFrame) const;
+      bool operator!=(const FrFrame& otherFrame) const;
+
+
+      bool IsApprox(const FrFrame &otherFrame, const double& prec = 1e-8) const;
+      bool IsZero(const double &prec = 1e-8) const;
 
     // Rotation
 

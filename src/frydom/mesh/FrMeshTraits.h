@@ -43,6 +43,7 @@ namespace frydom {
       POLY_X2Y,
       POLY_Y2Z,
       POLY_Z2X,
+            POLY_Y2X,
 //            INFINITE_DEPTH_GREEN_FUNCTION, // TODO : en parler avec Camille et Lucas et PYW
 //            FINITE_DEPTH_GREEN_FUNCTION
     };
@@ -133,8 +134,7 @@ namespace frydom {
         void SetCenter(const Point &center) { m_center = center; }
 
         /// This function gives the surface integral of a face.
-        const double GetSurfaceIntegral(
-            IntegrandType type) const { // TODO: abandonner les enums pour les integrandes et preferer les accessors voir mieux, des fonctors...
+                const double GetSurfaceIntegral(IntegrandType type) const { // TODO: abandonner les enums pour les integrandes et preferer les accessors voir mieux, des fonctors...
           switch (type) {
             case POLY_1:
               return m_integrals.m_int_1; // This is the surface area...

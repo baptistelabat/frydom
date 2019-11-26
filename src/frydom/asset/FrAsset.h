@@ -20,48 +20,50 @@
 
 namespace frydom {
 
-  class FrAsset;
+    class FrAsset;
 
-  namespace internal {
+    namespace internal {
 
-    struct FrAssetBase : public chrono::ChAssetLevel {
+        struct FrAssetBase : public chrono::ChAssetLevel {
 
-      FrAsset *m_frydomAsset;
+            FrAsset * m_frydomAsset;
 
-      explicit FrAssetBase(FrAsset *asset);
+            explicit FrAssetBase(FrAsset * asset);
 
 //            void Update(chrono::ChPhysicsItem* updater, const chrono::ChCoordsys<>& coords) override;
 
+        };
+
+    }  // end namespace frydom::internal
+
+    /**
+     * \class FrAsset
+     * \brief
+     */
+    class FrAsset {
+
+    protected:
+        std::shared_ptr<internal::FrAssetBase> m_chronoAsset;
+
+    public:
+
+        FrAsset();
+
+        virtual void Initialize() = 0;
+
+        /// Update the state of the asset, at the end of a time step
+        virtual void StepFinalize() = 0;
+
+    protected:
+
+        std::shared_ptr<chrono::ChAsset> GetChronoAsset();
+
+    private:
+
+        friend void FrAssetOwner::AddAsset(std::shared_ptr<FrAsset>);
+        friend void FrAssetOwner::RemoveAsset(std::shared_ptr<FrAsset>);
+
     };
-
-  }  // end namespace frydom::internal
-
-  /**
-   * \class FrAsset
-   * \brief
-   */
-  class FrAsset {
-
-   protected:
-    std::shared_ptr<internal::FrAssetBase> m_chronoAsset;
-
-   public:
-
-    FrAsset();
-
-    virtual void Initialize() = 0;
-
-    /// Update the state of the asset, at the end of a time step
-    virtual void StepFinalize() = 0;
-
-   protected:
-
-    std::shared_ptr<chrono::ChAsset> GetChronoAsset();
-
-   private:
-
-    friend void FrAssetOwner::AddAsset(std::shared_ptr<FrAsset>);
-  };
 
 
 }   // end namespace frydom

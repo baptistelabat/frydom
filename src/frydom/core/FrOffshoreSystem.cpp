@@ -34,7 +34,7 @@
 #include "frydom/logging/FrTypeNames.h"
 
 #include "frydom/logging/FrEventLogger.h"
-
+#include "frydom/logging/FrSerializerFactory.h"
 
 namespace frydom {
 
@@ -932,6 +932,7 @@ namespace frydom {
       if (!AdvanceTo(nextTime))
         return false;
     }
+        return true;
   }
 
   void FrOffshoreSystem::CreateWorldBody() {
@@ -982,23 +983,28 @@ namespace frydom {
 
 // Irrlicht visualization
 
+  FrIrrApp* FrOffshoreSystem::GetIrrApp() const {
+    return m_irrApp.get();
+  }
+
   void FrOffshoreSystem::RunInViewer(double endTime, double dist, bool recordVideo, int videoFrameSaveInterval) {
 
     // Initialization of the system if not already done.
     Initialize();
 
     // Definition and initialization of the Irrlicht application.
-    FrIrrApp app(this, m_chronoSystem.get(), dist);
+    // Definition and initialization of the Irrlicht application.
+    m_irrApp = std::make_unique<FrIrrApp>(this, m_chronoSystem.get(), dist);
 
-    app.SetTimestep(m_chronoSystem->GetStep());
-    app.SetVideoframeSave(recordVideo);
-    app.SetVideoframeSaveInterval(videoFrameSaveInterval);
+    m_irrApp->SetTimestep(m_chronoSystem->GetStep());
+    m_irrApp->SetVideoframeSave(recordVideo);
+    m_irrApp->SetVideoframeSaveInterval(videoFrameSaveInterval);
 
     event_logger::info(GetTypeName(), GetName(),
                        "Dynamic simulation STARTED in viewer with endTime = {} s, video recording set to {}",
                        endTime, recordVideo);
 
-    app.Run(endTime); // The temporal loop is here.
+    m_irrApp->Run(endTime); // The temporal loop is here.
 
   }
 
@@ -1276,6 +1282,5 @@ namespace frydom {
     }
 
   }
-
 
 }  // end namespace frydom

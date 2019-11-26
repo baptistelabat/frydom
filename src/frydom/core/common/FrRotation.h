@@ -185,6 +185,9 @@ namespace frydom {
     /// \param other other FrUnitQuaternion to compare
     /// \return true if FrUnitQuaternion are equals, false otherwise
     bool operator==(const FrUnitQuaternion &other) const;
+        bool IsApprox(const FrUnitQuaternion& other, double prec = 1e-8) const;
+
+        bool IsZero(double prec = 1e-8) const;
 
     /// Rotate a templated vector A, of type Vector, of a rotation,
     /// on the basis of this quaternion: res=p*[0,A]*p'
@@ -193,7 +196,7 @@ namespace frydom {
     /// \param fc frame convention (NED/NWU)
     /// \return rotated vector
     template<class Vector>
-    Vector Rotate(const Vector &vector, FRAME_CONVENTION fc) {  // TODO : voir si on a pas qqch de plus optimise...
+        Vector Rotate(const Vector& vector, FRAME_CONVENTION fc) const {  // TODO : voir si on a pas qqch de plus optimise...
       auto vectorTmp = vector;
 
       if (IsNED(fc)) internal::SwapFrameConvention<Vector>(vectorTmp);
@@ -562,7 +565,7 @@ namespace frydom {
     /// \param fc frame convention (NED/NWU)
     /// \return rotated vector
     template<class Vector>
-    Vector Rotate(const Vector &vector, FRAME_CONVENTION fc) {
+        Vector Rotate(const Vector& vector, FRAME_CONVENTION fc) const {
       auto out = m_frQuaternion.Rotate<Vector>(vector, fc);
 //            if (IsNED(fc)) internal::SwapFrameConvention<Vector>(out);
       return out;

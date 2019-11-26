@@ -72,6 +72,15 @@ namespace frydom {
     return m_linearDensity / m_section;
   }
 
+  void FrCableProperties::SetBreakingTension(double breakingTension) {
+    assert(breakingTension > DBL_EPSILON);
+    m_breakingTension = breakingTension;
+  }
+
+  double FrCableProperties::GetBreakingTension() const {
+    return m_breakingTension;
+  }
+
   std::shared_ptr<FrCableProperties> make_cable_properties() {
     return std::make_shared<FrCableProperties>();
   }
@@ -83,7 +92,9 @@ namespace frydom {
   //------------------------------------------------------------------------------------------------------------------
   // FrCable
 
-  void FrCable::Initialize() {}
+//    FrCable::FrCable() = default;
+
+//    FrCable::~FrCable() = default;
 
   FrCable::FrCable(const std::shared_ptr<FrNode> &startingNode,
                    const std::shared_ptr<FrNode> &endingNode) :
@@ -102,6 +113,7 @@ namespace frydom {
       m_unstrainedLength(unstrainedLength),
       m_properties(properties) {}
 
+  void FrCable::Initialize() {}
 
   void FrCable::SetCableProperties(const std::shared_ptr<FrCableProperties> prop) {
     m_properties = prop;

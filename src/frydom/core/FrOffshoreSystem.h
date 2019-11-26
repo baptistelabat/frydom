@@ -22,7 +22,6 @@
 #include "chrono/physics/ChSystemSMC.h"
 #include "chrono/physics/ChSystemNSC.h"
 
-
 #include "frydom/core/statics/FrStaticAnalysis.h"
 #include "frydom/core/common/FrTreeNode.h"
 
@@ -108,6 +107,8 @@ namespace frydom {
   class FrPathManager;
 
   class FrLogManager;
+
+    class FrIrrApp;
 
   /// Main class for a FRyDoM offshore system. This class is used to represent a multibody physical system,
   /// so it acts also as a database for most items involved in simulations, most noticeably objects of FrBody and FrLink
@@ -223,6 +224,8 @@ namespace frydom {
     ///< arising from QP optimization problems.
 
     std::unique_ptr<FrStaticAnalysis> m_statics;
+
+        std::unique_ptr<FrIrrApp> m_irrApp;
 
     // Container: definition.
     using BodyContainer = std::vector<std::shared_ptr<FrBody>>;
@@ -629,6 +632,10 @@ namespace frydom {
 
 
     // Visualization
+
+    // Irrlicht Application
+
+    FrIrrApp* GetIrrApp() const;
 
     /// Run the simulation in the viewer environment
     /// \param endTime end time of the simulation
