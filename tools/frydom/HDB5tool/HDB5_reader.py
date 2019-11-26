@@ -89,7 +89,7 @@ class HDB5reader():
 
         # Solver.
         try:
-            pyHDB.solver = str(np.array(reader['Solver']))
+            pyHDB.solver = str(np.array(reader['Solver']))[1:] # [1:] for removing the b of bytes.
         except:
             pyHDB.solver = "Nemoh"
 
