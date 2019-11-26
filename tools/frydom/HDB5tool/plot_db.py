@@ -421,3 +421,4 @@ def Meshmagick_viewer(mesh):
     mesh_vizu.viewer.renderer.ResetCamera()
     mesh_vizu.viewer.render_window.Render()
     mesh_vizu.viewer.render_window_interactor.Start()
+    mesh_vizu.viewer.finalize()
