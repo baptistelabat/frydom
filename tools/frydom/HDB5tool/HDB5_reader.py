@@ -521,7 +521,7 @@ class HDB5reader_v2(HDB5reader):
 
             # Body name.
             try:
-                body.name = str(np.array(reader[body_path + "/BodyName"]))
+                body.name = str(np.array(reader[body_path + "/BodyName"]))[1:] # [1:] for removing the b of bytes.
             except:
                 pass
 
@@ -800,7 +800,7 @@ class HDB5reader_v1(HDB5reader):
 
             # Body name.
             try:
-                body.name = str(np.array(reader[body_path + "/BodyName"]))
+                body.name = str(np.array(reader[body_path + "/BodyName"]))[1:] # [1:] for removing the b of bytes.
             except:
                 pass
 
