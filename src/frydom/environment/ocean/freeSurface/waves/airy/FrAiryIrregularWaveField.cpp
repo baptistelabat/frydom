@@ -471,7 +471,7 @@ namespace frydom {
       if (m_infinite_depth) { // Infinite water depth.
         th = 1;
       } else { // Finite water depth.
-        th = tanh(ki * c_depth);
+        th = std::tanh(ki * c_depth);
       }
       Ez = m_verticalFactor->Eval(x, y, z, ki, c_depth);
       // Loop over the wave directions.
@@ -490,5 +490,51 @@ namespace frydom {
     return Pressure;
 
   }
+
+  void FrAiryIrregularWaveField::WriteToJSON(const std::string& filename) const {
+
+    json j;
+
+    j["wave_field_type"] = "AiryIrregularWaveField";
+    j["wave_frequencies_rads"] = m_waveFrequencies;
+    j["wave_numbers_m"] = m_waveNumbers;
+    j["wave_directions_rad"] = m_waveDirections;
+    j["wave_mean_direction_rad"] = m_meanDir;
+    j["wave_amplitudes_m"] = c_amplitude;
+    j["wave_phases_rad"] = *m_wavePhases;
+
+    std::ofstream file;
+    file.open(filename, std::ios::trunc);
+    file << j.dump(2) << std::endl;
+    file.close();
+
+  }
+
+  void FrAiryIrregularWaveField::LoadJSON(const std::string& filename) {
+
+    // TODO : a generaliser pour d'autres combinaisons de spectre et type de wavefield...
+
+    std::ifstream ifs(filename);
+    auto json_obj = json::parse(ifs);
+
+    m_waveFrequencies = json_obj["wave_frequencies_rads"].get<std::vector<double>>();
+    m_waveNumbers = json_obj["wave_numbers_m"].get<std::vector<double>>();
+    m_nbFreq = m_waveFrequencies.size();
+    m_minFreq = m_waveFrequencies.front();
+    m_maxFreq = m_waveFrequencies.back();
+
+    m_waveDirections = json_obj["wave_directions_rad"].get<std::vector<double>>();
+    m_nbDir = m_waveDirections.size();
+
+    m_meanDir = json_obj["wave_mean_direction_rad"];
+
+    c_amplitude.clear();
+    c_amplitude = json_obj["wave_amplitudes_m"].get<std::vector<std::vector<double>>>();
+
+    m_wavePhases->clear();
+    m_wavePhases = std::make_unique<std::vector<std::vector<double>>>(json_obj["wave_phases_rad"].get<std::vector<std::vector<double>>>());
+
+  }
+
 
 }  // end namespace frydom

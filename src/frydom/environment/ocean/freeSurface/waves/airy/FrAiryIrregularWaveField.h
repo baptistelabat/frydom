@@ -205,6 +205,14 @@ namespace frydom {
         /// Initialize the state of the wave field
         void Initialize() override;
 
+        /// Writes the wave field spectral rays into a CSV file
+        void WriteToJSON(const std::string &filename) const;
+
+        /// Writes the wave field spectral rays into a CSV file
+        void LoadJSON(const std::string &filename);
+
+
+
     protected:
 
         /// Compute the wave directions vector
