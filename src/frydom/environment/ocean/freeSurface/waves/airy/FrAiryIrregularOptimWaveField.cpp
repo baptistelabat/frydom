@@ -112,7 +112,7 @@ namespace frydom {
       c_sinTheta.push_back(dirTemp);
       Aphi_temp.clear();
       for (unsigned int ifreq = 0; ifreq < m_nbFreq; ++ifreq) {
-        expTemp = Amplitudes[idir][ifreq] * exp(JJ * m_wavePhases->at(idir)[ifreq]);
+        expTemp = Amplitudes[idir][ifreq] * exp(JJ * m_wavePhases[idir][ifreq]);
         Aphi_temp.push_back(expTemp);
       }
       c_AExpJphi.push_back(Aphi_temp);

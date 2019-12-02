@@ -162,7 +162,7 @@ namespace frydom {
 
         virtual std::vector<double> GetWaveFrequencies(FREQUENCY_UNIT unit) const = 0;
 
-        virtual std::vector<double> GetWaveNumbers() const = 0;
+      virtual std::vector<double> GetWaveNumbers() const = 0;
 
         virtual std::vector<std::vector<double>> GetWaveAmplitudes() const = 0;
 

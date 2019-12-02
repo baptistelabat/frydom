@@ -24,7 +24,10 @@
 
 namespace frydom {
 
-  FrAiryIrregularWaveField::FrAiryIrregularWaveField(FrFreeSurface *freeSurface) : FrWaveField(freeSurface) {
+  FrAiryIrregularWaveField::FrAiryIrregularWaveField(FrFreeSurface *freeSurface) :
+      FrWaveField(freeSurface),
+      m_set_from_file(false) {
+
     m_waveModel = LINEAR_WAVES;
     m_verticalFactor = std::make_unique<FrKinematicStretching>();
 
@@ -147,14 +150,14 @@ namespace frydom {
     }
   }
 
-  void FrAiryIrregularWaveField::SetWavePhases(std::vector<std::vector<double>> &wavePhases) {
-    assert(wavePhases.size() == m_nbDir);
-    for (auto &w: wavePhases) {
-      assert(w.size() == m_nbFreq);
-    }
-    m_wavePhases = std::make_unique<std::vector<std::vector<double>>>(wavePhases);
-    event_logger::info("IrregularWaveField", "", "Phases have been set with external values");
-  }
+//  void FrAiryIrregularWaveField::SetWavePhases(const Container2D &wavePhases) {
+//    assert(wavePhases.size() == m_nbDir);
+//    for (auto &w: wavePhases) {
+//      assert(w.size() == m_nbFreq);
+//    }
+//    m_wavePhases = wavePhases;
+//    event_logger::info("IrregularWaveField", "", "Phases have been set with external values");
+//  }
 
   FrJonswapWaveSpectrum *FrAiryIrregularWaveField::SetJonswapWaveSpectrum(double Hs, double Tp, double gamma) {
     m_waveSpectrum = std::make_unique<FrJonswapWaveSpectrum>(Hs, Tp, gamma);
@@ -231,9 +234,9 @@ namespace frydom {
 
   void FrAiryIrregularWaveField::GenerateRandomWavePhases(std::mt19937 &seed) {
 
-    m_wavePhases = std::make_unique<std::vector<std::vector<double>>>();
-    m_wavePhases->clear();
-    m_wavePhases->reserve(m_waveDirections.size());
+//    m_wavePhases = std::make_unique<std::vector<std::vector<double>>>();
+    m_wavePhases.clear();
+    m_wavePhases.reserve(m_waveDirections.size());
 
     std::vector<double> phases;
     phases.reserve(m_waveFrequencies.size());
@@ -245,13 +248,13 @@ namespace frydom {
       for (double freq: m_waveFrequencies) {
         phases.push_back(dis(seed));
       }
-      m_wavePhases->push_back(phases);
+      m_wavePhases.push_back(phases);
     }
     event_logger::info("IrregularWaveField", "", "Random phases generated");
 
   }
 
-  std::vector<double> FrAiryIrregularWaveField::GetWaveFrequencies(FREQUENCY_UNIT unit) const {
+  FrAiryIrregularWaveField::Container1D FrAiryIrregularWaveField::GetWaveFrequencies(FREQUENCY_UNIT unit) const {
     std::vector<double> freqs = m_waveFrequencies;
     if (unit != mathutils::RADS) {
       for (auto &freq: freqs) {
@@ -261,8 +264,9 @@ namespace frydom {
     return freqs;
   }
 
-  std::vector<double> FrAiryIrregularWaveField::GetWaveDirections(ANGLE_UNIT unit, FRAME_CONVENTION fc,
-                                                                  DIRECTION_CONVENTION dc) const {
+  FrAiryIrregularWaveField::Container1D
+  FrAiryIrregularWaveField::GetWaveDirections(ANGLE_UNIT unit, FRAME_CONVENTION fc,
+                                              DIRECTION_CONVENTION dc) const {
     auto directions = m_waveDirections;
 
     if (IsNED(fc)) for (auto &dir: directions) { dir = -dir; }
@@ -283,29 +287,32 @@ namespace frydom {
     FrWaveField::Initialize();
     m_verticalFactor->SetInfDepth(m_infinite_depth);
 
-    if (m_waveDirections.empty()) { m_waveDirections.push_back(m_meanDir); }
+    if (!m_set_from_file) {
 
-    if (m_minFreq == 0. && m_maxFreq == 0.) {
-      GetWaveSpectrum()->GetFrequencyBandwidth(m_minFreq, m_maxFreq);
-    }
+      if (m_waveDirections.empty()) { m_waveDirections.push_back(m_meanDir); }
 
-    // Initialize wave frequency vector
-    SetWaveFrequencies(m_minFreq, m_maxFreq, m_nbFreq);
-
-    // Checks wave phases, and randomly generate them if needed
-    bool testSize = true;
-    if (m_wavePhases != nullptr) {
-      testSize = m_wavePhases->size() == m_nbDir;
-      for (unsigned int idir = 0; idir < m_nbDir; ++idir) {
-        testSize = testSize & m_wavePhases->at(idir).size() == m_nbFreq;
+      if (m_minFreq == 0. && m_maxFreq == 0.) {
+        GetWaveSpectrum()->GetFrequencyBandwidth(m_minFreq, m_maxFreq);
       }
-    }
 
-    if (m_wavePhases == nullptr || !testSize) {
+      // Initialize wave frequency vector
+      SetWaveFrequencies(m_minFreq, m_maxFreq, m_nbFreq);
+
+//    // Checks wave phases, and randomly generate them if needed
+//    bool testSize = true;
+//    if (m_wavePhases != nullptr) {
+//      testSize = m_wavePhases->size() == m_nbDir;
+//      for (unsigned int idir = 0; idir < m_nbDir; ++idir) {
+//        testSize = testSize & m_wavePhases->at(idir).size() == m_nbFreq;
+//      }
+//    }
+
       GenerateRandomWavePhases();
+
     }
 
     Update(0.);
+
   }
 
   std::vector<std::vector<Complex>>
@@ -346,7 +353,7 @@ namespace frydom {
       for (unsigned int ifreq = 0; ifreq < m_nbFreq; ++ifreq) {
         ki = m_waveNumbers[ifreq];
         aik = amplitudeTemp[ifreq];
-        phi_ik = m_wavePhases->at(idir)[ifreq];
+        phi_ik = m_wavePhases[idir][ifreq];
         elevation = aik * exp(JJ * (ki * kdir - m_waveFrequencies[ifreq] * c_time + phi_ik)) * NWUsign * c_ramp;
         ComplexElevation_temp.push_back(elevation);
       }
@@ -446,6 +453,8 @@ namespace frydom {
     return {cos(dirAngle), sin(dirAngle), 0.};
   }
 
+  const FrAiryIrregularWaveField::Container2D &FrAiryIrregularWaveField::GetWavePhases() const { return m_wavePhases; }
+
   // ------------------------------------- Pressure ----------------------------
 
   double FrAiryIrregularWaveField::GetPressure(double x, double y, double z, FRAME_CONVENTION fc) const {
@@ -478,7 +487,7 @@ namespace frydom {
       for (unsigned int idir = 0; idir < m_nbDir; ++idir) { // m.
         kdir = x * cos(m_waveDirections[idir]) + y * sin(m_waveDirections[idir]);
         aik = c_amplitude[idir][ifreq];
-        phi_ik = m_wavePhases->at(idir)[ifreq];
+        phi_ik = m_wavePhases[idir][ifreq];
         Pressure = Pressure + Ez * th * std::imag(
             aik * exp(JJ * (ki * kdir - m_waveFrequencies[ifreq] * c_time + phi_ik)) * NWUsign * c_ramp);
       }
@@ -491,7 +500,7 @@ namespace frydom {
 
   }
 
-  void FrAiryIrregularWaveField::WriteToJSON(const std::string& filename) const {
+  void FrAiryIrregularWaveField::WriteToJSON(const std::string &filename) const {
 
     json j;
 
@@ -501,7 +510,7 @@ namespace frydom {
     j["wave_directions_rad"] = m_waveDirections;
     j["wave_mean_direction_rad"] = m_meanDir;
     j["wave_amplitudes_m"] = c_amplitude;
-    j["wave_phases_rad"] = *m_wavePhases;
+    j["wave_phases_rad"] = m_wavePhases;
 
     std::ofstream file;
     file.open(filename, std::ios::trunc);
@@ -510,7 +519,7 @@ namespace frydom {
 
   }
 
-  void FrAiryIrregularWaveField::LoadJSON(const std::string& filename) {
+  void FrAiryIrregularWaveField::LoadJSON(const std::string &filename) {
 
     // TODO : a generaliser pour d'autres combinaisons de spectre et type de wavefield...
 
@@ -523,6 +532,7 @@ namespace frydom {
     m_minFreq = m_waveFrequencies.front();
     m_maxFreq = m_waveFrequencies.back();
 
+
     m_waveDirections = json_obj["wave_directions_rad"].get<std::vector<double>>();
     m_nbDir = m_waveDirections.size();
 
@@ -531,8 +541,10 @@ namespace frydom {
     c_amplitude.clear();
     c_amplitude = json_obj["wave_amplitudes_m"].get<std::vector<std::vector<double>>>();
 
-    m_wavePhases->clear();
-    m_wavePhases = std::make_unique<std::vector<std::vector<double>>>(json_obj["wave_phases_rad"].get<std::vector<std::vector<double>>>());
+    m_wavePhases.clear();
+    m_wavePhases = json_obj["wave_phases_rad"].get<std::vector<std::vector<double>>>();
+
+    m_set_from_file = true;
 
   }
 
