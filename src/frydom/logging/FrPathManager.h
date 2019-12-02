@@ -26,11 +26,13 @@ namespace frydom {
 
   class FrBody;
 
-  class FrLink;
+  class FrLinkBase;
 
   class FrForce;
 
   class FrNode;
+
+  class FrActuator;
 
 
   // TODO : renommer en TreeManager ??
@@ -87,9 +89,12 @@ namespace frydom {
       } else if (dynamic_cast<const FrNode *>(node)) {
         path_name_prefix = "NODE/NODE_";
 
-      } else if (dynamic_cast<const FrLink *>(node)) {
+      } else if (dynamic_cast<const FrLinkBase *>(node)) { // TODO : repasser en FrLink
         path_name_prefix = "LINK/LINK_";
 
+      //} else if (dynamic_cast<const FrActuator *>(node)) {  // TODO : a placer dans
+      //  path_name_prefix = "ACTUATORS/ACTUATOR_";           // TODO : LINKS/LINK_{name}/ACTUATOR_
+      //                                                      // TODO :
       } else {
         std::cerr << "No known policy for building normalized path name of " << typeid(node).name() << std::endl;
         exit(EXIT_FAILURE);
