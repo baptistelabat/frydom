@@ -477,7 +477,7 @@ namespace frydom {
 
     // Solver related messages
 
-    auto msg = NewMessage("Solver_message", "Messages relative to the dynamic solver and constraint solvers");
+    auto msg = NewMessage("solver", "Messages relative to the dynamic solver and constraint solvers");
 
     msg->AddField<double>("time", "s", "Current time of the simulation", [this]() { return GetTime(); });
 
