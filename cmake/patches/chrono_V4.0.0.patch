@@ -269,10 +269,20 @@ index 4e533bb49..344d355dc 100644
  
    public:
 diff --git a/src/chrono/physics/ChSystem.h b/src/chrono/physics/ChSystem.h
-index e61891ed9..2432bd241 100644
+index e61891ed9..26ab9232c 100644
 --- a/src/chrono/physics/ChSystem.h
 +++ b/src/chrono/physics/ChSystem.h
-@@ -758,7 +758,7 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
+@@ -622,7 +622,8 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
+     /// returns false if nothing changed. In the former case, also performs Setup()
+     /// because the sleeping policy changed the totalDOFs and offsets.
+     bool ManageSleepingBodies();
+-
++  
++  protected:
+     /// Performs a single dynamical simulation step, according to
+     /// current values of:  Y, time, step  (and other minor settings)
+     /// Depending on the integration type, it switches to one of the following:
+@@ -758,7 +759,7 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
      /// reactions). This is a one-step only approach that solves
      /// the _linear_ equilibrium. To be used mostly for FEM
      /// problems with small deformations.
