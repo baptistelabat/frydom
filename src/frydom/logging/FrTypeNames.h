@@ -10,7 +10,6 @@
 
 namespace frydom {
 
-
   template <typename T>
   std::string TypeToString();
 
@@ -19,22 +18,9 @@ namespace frydom {
     return TypeToString<T>();
   }
 
-
   #define TYPE_TO_STRING(Type, name) template <> std::string TypeToString<Type>() { return name; }
 
   // Every classes names have to be declared in the CPP file...
-
-
-//  #define FRYDOM_DECLARE_CLASS_TYPE(T, type_name) \
-//  template <> \
-//  std::string GetTypeNameId<T>(const T& obj) { return type_name; }
-//
-//
-//  template <class T>
-//  std::string GetTypeNameId(const T& obj);
-
-
-
 
 }  // end namespace frydom
 

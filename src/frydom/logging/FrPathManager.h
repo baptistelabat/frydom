@@ -16,6 +16,8 @@
 #include <typeinfo>
 #include <iostream>
 
+#include "FrPathPolicies.h"
+
 
 namespace frydom {
 
@@ -41,7 +43,7 @@ namespace frydom {
    public:
 
     template<class ParentType>
-    static std::string GetPath(const FrTreeNode<ParentType> *node) {
+    static std::string GetPath(FrTreeNode<ParentType> *node) {
       if (!node) return "";
 
       return GetPath(node->GetParent()) + GetNormalizedPathName(node);
@@ -73,35 +75,39 @@ namespace frydom {
 
     /// Gives the normalized path of the node given a hard coded policy concerning the naming scheme.
     template <class ParentType>
-    static std::string GetNormalizedPathName(const FrTreeNode<ParentType> *node) {
+    static std::string GetNormalizedPathName(FrTreeNode<ParentType> *node) {
 
-      std::string path_name_prefix;
-
-      if (dynamic_cast<const FrOffshoreSystem *>(node)) {
-        path_name_prefix = "FRYDOM_";
-
-      } else if (dynamic_cast<const FrBody *>(node)) {
-        path_name_prefix = "BODY/BODY_";
-
-      } else if (dynamic_cast<const FrForce *>(node)) {
-        path_name_prefix = "FORCE/FORCE_";
-
-      } else if (dynamic_cast<const FrNode *>(node)) {
-        path_name_prefix = "NODE/NODE_";
-
-      } else if (dynamic_cast<const FrLinkBase *>(node)) { // TODO : repasser en FrLink
-        path_name_prefix = "LINK/LINK_";
-
-      //} else if (dynamic_cast<const FrActuator *>(node)) {  // TODO : a placer dans
-      //  path_name_prefix = "ACTUATORS/ACTUATOR_";           // TODO : LINKS/LINK_{name}/ACTUATOR_
-      //                                                      // TODO :
-      } else {
-        std::cerr << "No known policy for building normalized path name of " << typeid(node).name() << std::endl;
-        exit(EXIT_FAILURE);
-      }
+//      std::string path_name_prefix;
 
 
-      return path_name_prefix + node->GetName() + "/";
+//      if (dynamic_cast<const FrOffshoreSystem *>(node)) {
+//        path_name_prefix = "FRYDOM_";
+//
+//      } else if (dynamic_cast<const FrBody *>(node)) {
+//        path_name_prefix = "BODY/BODY_";
+//
+//      } else if (dynamic_cast<const FrForce *>(node)) {
+//        path_name_prefix = "FORCE/FORCE_";
+//
+//      } else if (dynamic_cast<const FrNode *>(node)) {
+//        path_name_prefix = "NODE/NODE_";
+//
+//      } else if (dynamic_cast<const FrLinkBase *>(node)) { // TODO : repasser en FrLink
+//        path_name_prefix = "LINK/LINK_";
+//
+//      //} else if (dynamic_cast<const FrActuator *>(node)) {  // TODO : a placer dans
+//      //  path_name_prefix = "ACTUATORS/ACTUATOR_";           // TODO : LINKS/LINK_{name}/ACTUATOR_
+//      //                                                      // TODO :
+//      } else {
+//        std::cerr << "No known policy for building normalized path name of " << typeid(node).name() << std::endl;
+//        exit(EXIT_FAILURE);
+//      }
+
+      std::string path_name_prefix = TypeToNormalizedPathPrefix(node);
+
+
+//      return path_name_prefix + node->GetName() + "/";
+      return "";
     }
 
 //   public:
