@@ -42,21 +42,21 @@ namespace frydom {
 
    public:
 
-    template<class ParentType>
-    static std::string GetPath(FrTreeNode<ParentType> *node) {
+    template<class NodeType>
+    static std::string GetPath(NodeType *node) {
       if (!node) return "";
 
       return GetPath(node->GetParent()) + GetNormalizedPathName(node);
     }
 
-    template<class ParentType>
-    static std::string GetPath(const FrTreeNode<ParentType> &node) {
+    template<class NodeType>
+    static std::string GetPath(const NodeType &node) {
       return GetPath(&node);
     }
 
 
-    template<class ParentType>
-    bool RegisterTreeNode(FrTreeNode<ParentType> *node) {
+    template<class NodeType>
+    bool RegisterTreeNode(NodeType *node) {
       auto path = GetPath(node);
 
       if (RegisterPath(path)) {
@@ -74,40 +74,9 @@ namespace frydom {
     bool HasPath(const std::string &path);
 
     /// Gives the normalized path of the node given a hard coded policy concerning the naming scheme.
-    template <class ParentType>
-    static std::string GetNormalizedPathName(FrTreeNode<ParentType> *node) {
-
-//      std::string path_name_prefix;
-
-
-//      if (dynamic_cast<const FrOffshoreSystem *>(node)) {
-//        path_name_prefix = "FRYDOM_";
-//
-//      } else if (dynamic_cast<const FrBody *>(node)) {
-//        path_name_prefix = "BODY/BODY_";
-//
-//      } else if (dynamic_cast<const FrForce *>(node)) {
-//        path_name_prefix = "FORCE/FORCE_";
-//
-//      } else if (dynamic_cast<const FrNode *>(node)) {
-//        path_name_prefix = "NODE/NODE_";
-//
-//      } else if (dynamic_cast<const FrLinkBase *>(node)) { // TODO : repasser en FrLink
-//        path_name_prefix = "LINK/LINK_";
-//
-//      //} else if (dynamic_cast<const FrActuator *>(node)) {  // TODO : a placer dans
-//      //  path_name_prefix = "ACTUATORS/ACTUATOR_";           // TODO : LINKS/LINK_{name}/ACTUATOR_
-//      //                                                      // TODO :
-//      } else {
-//        std::cerr << "No known policy for building normalized path name of " << typeid(node).name() << std::endl;
-//        exit(EXIT_FAILURE);
-//      }
-
-      std::string path_name_prefix = TypeToNormalizedPathPrefix(node);
-
-
-//      return path_name_prefix + node->GetName() + "/";
-      return "";
+    template <class NodeType>
+    static std::string GetNormalizedPathName(NodeType *node) {
+      return TypeToNormalizedPathPrefix(node) + node->GetName() + "/";
     }
 
 //   public:
