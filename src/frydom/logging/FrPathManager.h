@@ -56,14 +56,19 @@ namespace frydom {
 
 
     template<class NodeType>
-    bool RegisterTreeNode(NodeType *node) {
+    void RegisterTreeNode(NodeType *node) {
       auto path = GetPath(node);
 
-      if (RegisterPath(path)) {
-        node->SetTreePath(path);
-        return true;
+      if (!RegisterPath(path)) {
+
+        throw std::runtime_error("Object with name " + node->GetName() + " already exists in this context. Defined twice.");
       }
-      return false;
+
+//      if (RegisterPath(path)) {
+        node->SetTreePath(path);
+//        return true;
+//      }
+//      return false;
     }
 
    private:
