@@ -30,6 +30,8 @@ namespace frydom {
 
     const std::string &GetLogFolder() const;
 
+    const std::string &GetDataFolder() const;
+
 
    private:
     static std::string LookForConfigFile();
@@ -40,6 +42,8 @@ namespace frydom {
    private:
 //    json m_json_node;
     std::string m_log_folder;
+
+    std::string m_data_folder;
 
 
   };

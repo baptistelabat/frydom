@@ -21,16 +21,31 @@ namespace frydom {
 //      m_json_node = json(); // empty json node...
 //      return;
       m_log_folder = FrFileSystem::cwd();
+      m_data_folder = FrFileSystem::cwd();
     }
 
     // A configuration file has been found
     std::ifstream ifs(config_file);
+    auto json_obj = json::parse(ifs);
+
+//    std::cout
+
     try {
       // Is the file correct ? (does it have a frydom_config root node ?
-      m_log_folder = json::parse(ifs)["frydom_config"]["log_folder"];
-    } catch (nlohmann::detail::parse_error &err) {
-//      m_json_node = json();
+      m_log_folder = json_obj["frydom_config"]["log_folder"];
+//    } catch (nlohmann::detail::parse_error &err) {
+    } catch (...) {
+      std::cerr << "log_folder key not found" << std::endl; // FIXME : si pas d'entree la, prendre cwd
     }
+
+    try {
+      m_data_folder = json_obj["frydom_config"]["data_folder"];
+      event_logger::info("FrConfig", "", "Data folder is {}", m_data_folder);
+    } catch (...) {
+      std::cerr << "data_folder key not found" << std::endl; // FIXME : si pas d'entree la, prendre cwd
+    }
+
+
 
     // FIXME : d'autres choses a faire ?
   }
@@ -40,12 +55,14 @@ namespace frydom {
     // Looking for a local frydom configuration file
     std::string config_file = FrFileSystem::join({FrFileSystem::cwd(), CONFIG_FILE_NAME});
     if (FrFileSystem::exists(config_file)) {
+      event_logger::info("FRyDoM", "", "Configuration file found at {}", config_file);
       return config_file;
     }
 
     // Looking for a session wide frydom configuration file
     config_file = FrFileSystem::join({FrFileSystem::get_home(), CONFIG_FILE_NAME});
     if (FrFileSystem::exists(config_file)) {
+      event_logger::info("FRyDoM", "", "Configuration file found at {}", config_file);
       return config_file;
     }
 
@@ -58,6 +75,10 @@ namespace frydom {
 
   const std::string &FrConfig::GetLogFolder() const {
     return m_log_folder;
+  }
+
+  const std::string &FrConfig::GetDataFolder() const {
+    return m_data_folder;
   }
 
 
