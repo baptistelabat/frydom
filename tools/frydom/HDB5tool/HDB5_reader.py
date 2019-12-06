@@ -251,7 +251,7 @@ class HDB5reader():
                         heading_path = wave_drift_path + mode + "/heading_%u" % ibeta
 
                         # Check wave direction.
-                        assert pyHDB.wave_dir[ibeta] == np.array(reader[heading_path + "/heading"])
+                        assert(abs(pyHDB.wave_dir[ibeta] - np.array(reader[heading_path + "/heading"])) < pow(10,-5))
 
                         # Wave drift coefficients.
                         if(mode == "/surge"):
@@ -357,7 +357,7 @@ class HDB5reader_v2(HDB5reader):
             wave_dir_path = fk_path + "/Angle_%u" % idir
 
             # Check of the wave direction.
-            assert pyHDB.wave_dir[idir] == np.radians(np.array(reader[wave_dir_path + "/Angle"]))
+            assert(abs(pyHDB.wave_dir[idir] - np.radians(np.array(reader[wave_dir_path + "/Angle"]))) < pow(10,-5))
 
             # Real parts.
             body.Froude_Krylov[:, :, idir].real = np.array(reader[wave_dir_path + "/RealCoeffs"])
@@ -373,7 +373,7 @@ class HDB5reader_v2(HDB5reader):
             wave_dir_path = diffraction_path + "/Angle_%u" % idir
 
             # Check of the wave direction.
-            assert pyHDB.wave_dir[idir] == np.radians(np.array(reader[wave_dir_path + "/Angle"]))
+            assert(abs(pyHDB.wave_dir[idir] - np.radians(np.array(reader[wave_dir_path + "/Angle"]))) < pow(10, -5))
 
             # Real parts.
             body.Diffraction[:, :, idir].real = np.array(reader[wave_dir_path + "/RealCoeffs"])
@@ -480,7 +480,7 @@ class HDB5reader_v2(HDB5reader):
                 wave_dir_path = RAO_path + "/Angle_%u" % idir
 
                 # Check of the wave direction.
-                assert pyHDB.wave_dir[idir] == np.radians(np.array(reader[wave_dir_path + "/Angle"]))
+                assert(abs(pyHDB.wave_dir[idir] - np.radians(np.array(reader[wave_dir_path + "/Angle"])) < pow(10,-5)))
 
                 # Amplitude.
                 Abs_RAO = np.array(reader[wave_dir_path + "/Amplitude"])
@@ -635,7 +635,7 @@ class HDB5reader_v1(HDB5reader):
             wave_dir_path = fk_path + "/Angle_%u" % idir
 
             # Check of the wave direction.
-            assert pyHDB.wave_dir[idir] == np.radians(np.array(reader[wave_dir_path + "/Angle"]))
+            assert(abs(pyHDB.wave_dir[idir] - np.radians(np.array(reader[wave_dir_path + "/Angle"]))) < pow(10,-5))
 
             # Real parts.
             data = np.array(reader[wave_dir_path + "/RealCoeffs"])
@@ -661,7 +661,7 @@ class HDB5reader_v1(HDB5reader):
             wave_dir_path = diffraction_path + "/Angle_%u" % idir
 
             # Check of the wave direction.
-            assert pyHDB.wave_dir[idir] == np.radians(np.array(reader[wave_dir_path + "/Angle"]))
+            assert(abs(pyHDB.wave_dir[idir] - np.radians(np.array(reader[wave_dir_path + "/Angle"]))) < pow(10,-5))
 
             # Real parts.
             data = np.array(reader[wave_dir_path + "/RealCoeffs"])
