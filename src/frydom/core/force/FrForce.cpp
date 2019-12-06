@@ -98,7 +98,7 @@ namespace frydom {
 
   void FrForce::DefineLogMessages() {
 
-    auto msg = NewMessage("Force", "Force message");
+    auto msg = NewMessage("", "Force message");
 
     msg->AddField<double>("time", "s", "Current time of the simulation",
                           [this]() { return m_chronoForce->GetChTime(); });
