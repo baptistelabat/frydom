@@ -98,7 +98,7 @@ namespace frydom {
 
   void FrForce::DefineLogMessages() {
 
-    auto msg = NewMessage("Force message", "Force message");
+    auto msg = NewMessage("Force", "Force message");
 
     msg->AddField<double>("time", "s", "Current time of the simulation",
                           [this]() { return m_chronoForce->GetChTime(); });
@@ -119,12 +119,8 @@ namespace frydom {
         ("TorqueInWorldAtCOG", "Nm", fmt::format("torque at COG in world reference frame in {}", GetLogFC()),
          [this]() { return GetTorqueInWorldAtCOG(GetLogFC()); });
 
-    msg->Initialize();
-    msg->Send();
-
-  }
-
-  void FrForce::StepFinalizeLog() {
+    //msg->Initialize();
+    //msg->Send();
 
   }
 
