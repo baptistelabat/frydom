@@ -65,6 +65,11 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/frydom/version.cpp.in" "${CMAKE_
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/URL.conf.cmake)
 
 
+if (${frydom_download_demo_data})
+    include(${CMAKE_CURRENT_SOURCE_DIR}/data/DownloadData.cmake)
+    DownloadData()
+endif()
+
 
 include(Add_googletest)
 

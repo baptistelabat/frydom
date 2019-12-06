@@ -10,14 +10,14 @@ set(REFACTORING_TESTS
         test_spdlog
         )
 
-set(test_cylinder_interaction_resources_path ${CMAKE_SOURCE_DIR}/tests/data/CylinderInteraction/)
+#set(test_cylinder_interaction_resources_path ${CMAKE_SOURCE_DIR}/tests/data/CylinderInteraction/)
 
 foreach(test ${REFACTORING_TESTS})
     message(STATUS "        ...add ${test}")
 
     add_executable(${test} ${test}.cpp)
     target_link_libraries(${test} FRyDoM_Engine)
-    target_compile_definitions(${test} PUBLIC RESOURCES_PATH="${${test}_resources_path}")
+#    target_compile_definitions(${test} PUBLIC RESOURCES_PATH="${${test}_resources_path}")
 
 endforeach()
 
