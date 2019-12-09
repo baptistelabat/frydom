@@ -31,9 +31,7 @@ int main(int argc, char* argv[]) {
     DIRECTION_CONVENTION dc = GOTO;
 
     // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
-    FrOffshoreSystem system;
-    system.SetName("Hydrodynamics");
-    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
+    FrOffshoreSystem system("demo_Hydrodynamics");
 
     // --------------------------------------------------
     // Environment
@@ -93,9 +91,9 @@ int main(int argc, char* argv[]) {
     // platform
     // --------------------------------------------------
     // Create the platform, give it a name, asset, etc.
-    auto platform = system.NewBody();
-    platform->SetName("platform");
-    platform->AddMeshAsset(system.GetDataPath("Platform_GVA7500.obj"));
+    auto platform = system.NewBody("platform");
+    auto platform_mesh_file = FrFileSystem::join({system.config_file().GetDataFolder(),"ce/platform/Platform_GVA7500.obj"});
+    platform->AddMeshAsset(platform_mesh_file);
     platform->SetColor(Yellow);
 
     // Set the inertia tensor
@@ -113,7 +111,8 @@ int main(int argc, char* argv[]) {
     // -- Hydrodynamics
 
 //     Create a hydrodynamic database (hdb), load data from the input file and creates and initialize the BEMBodies.
-    auto hdb = make_hydrodynamic_database(system.GetDataPath("Platform_HDB_Without_drift.hdb5"));
+    auto hdb_file = FrFileSystem::join({system.config_file().GetDataFolder(),"ce/platform/Platform_HDB_Without_drift.hdb5"});
+    auto hdb = make_hydrodynamic_database(hdb_file);
 
     // Create an equilibrium frame for the platform and add it to the system at the position of the body CoG.
     auto eqFrame = make_equilibrium_frame("EqFrame", &system, platform);
@@ -123,14 +122,14 @@ int main(int argc, char* argv[]) {
     hdb->Map(0, platform.get(), eqFrame);
 
     // -- Add a linear hydrostatic force to the platform
-    auto forceHst = make_linear_hydrostatic_force(hdb, platform);
+    auto forceHst = make_linear_hydrostatic_force("linear_hydrostatic", platform, hdb);
 
     // -- Add a linear excitation force to the platform
-    auto excitationForce = make_linear_excitation_force(hdb, platform);
+    auto excitationForce = make_linear_excitation_force("linear_excitation", platform, hdb);
 
     // -- Create a linear radiation model and add it to the system. It is designed to compute the convolution integration
     // and distribute the radiation force to the different bodies included inside the hydrodynamic data base.
-    auto radiationModel = make_radiation_convolution_model(hdb, &system);
+    auto radiationModel = make_radiation_convolution_model("linear_radiation_model", &system, hdb);
     radiationModel->SetImpulseResponseSize(platform.get(), 40., 0.01);
 
     // -- Wave drift force
@@ -140,11 +139,13 @@ int main(int argc, char* argv[]) {
 
     // -- Current model force, based on polar coefficients
     // Create the current model force and add it to the platform
-    auto currentForce = make_current_force(system.GetDataPath("Platform_PolarCurrentCoeffs_NC.json"), platform);
+    auto Platform_PolarCurrentCoeffs_NC = FrFileSystem::join({system.config_file().GetDataFolder(),"ce/platform/Platform_PolarCurrentCoeffs_NC.json"});
+    auto currentForce = make_current_force("current_force", platform, Platform_PolarCurrentCoeffs_NC);
 
     // -- Wind model force, based on polar coefficients
     // Create the model model force and add it to the platform
-    auto windForce = make_wind_force(system.GetDataPath("Platform_PolarWindCoeffs_NC.json"), platform);
+    auto Platform_PolarWindCoeffs_NC = FrFileSystem::join({system.config_file().GetDataFolder(),"ce/platform/Platform_PolarWindCoeffs_NC.json"});
+    auto windForce = make_wind_force("wind_force", platform, Platform_PolarWindCoeffs_NC);
     windForce->ShowAsset(true);
 
     // ------------------ Run with Irrlicht ------------------ //

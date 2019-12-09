@@ -98,12 +98,12 @@ namespace frydom {
   };
 
   std::shared_ptr<FrCurrentForce> make_current_force(const std::string &name,
-                                                     const std::string &jsonFile,
-                                                     std::shared_ptr<FrBody> body);
+                                                     std::shared_ptr<FrBody> body,
+                                                     const std::string &jsonFile);
 
   std::shared_ptr<FrWindForce> make_wind_force(const std::string &name,
-                                               const std::string &jsonFile,
-                                               std::shared_ptr<FrBody> body);
+                                               std::shared_ptr<FrBody> body,
+                                               const std::string &jsonFile);
 
 
 } // end of namespace frydom
