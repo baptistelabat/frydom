@@ -39,15 +39,11 @@ set(UNIT_TESTS
         test_Torsor
         )
 
-# Set the path definition of the data resources
-set(unit_test_resources_path ${CMAKE_SOURCE_DIR}/tests/data/unit_test/)
-
 foreach (test ${UNIT_TESTS})
     message(STATUS "        ...add ${test}")
 
     add_executable(${test} ${test}.cpp)
     target_link_libraries(${test} FRyDoM_Engine gtest_main)
-    target_compile_definitions(${test} PUBLIC RESOURCES_PATH="${unit_test_resources_path}")
     add_test(NAME ${test}
             COMMAND ${test})
 endforeach ()

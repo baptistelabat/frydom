@@ -55,13 +55,16 @@ void makeBox(const::std::shared_ptr<FrBody>& body, double xSize, double ySize, d
 void AttachBodies(const std::shared_ptr<FrBody>& body1, const std::shared_ptr<FrBody>& body2,
         const Position& Pos1, const Position& Pos2, FRAME_CONVENTION fc) {
 
-    auto thisNode = body1->NewNode();
+    auto nodeName = "Node_" + std::to_string(body1->GetNodeList().size());
+    auto thisNode = body1->NewNode(nodeName);
     thisNode->SetPositionInBody(Pos1, fc);
 
-    auto newNode = body2->NewNode();
+    nodeName = "Node_" + std::to_string(body2->GetNodeList().size());
+    auto newNode = body2->NewNode(nodeName);
     newNode->SetPositionInBody(Pos2, fc);
 
-    auto fixedLink = make_fixed_link(thisNode, newNode, body1->GetSystem());
+    auto linkName = "FixedLink_" + body1->GetName() + "_" + body2->GetName();
+    auto fixedLink = make_fixed_link(linkName, body1->GetSystem(), thisNode, newNode);
 
 }
 
@@ -72,13 +75,16 @@ void AttachBodies(const std::shared_ptr<FrBody>& body1, const std::shared_ptr<Fr
 void AttachBodies(const std::shared_ptr<FrBody>& body1, const std::shared_ptr<FrBody>& body2,
                   const FrFrame& frame1, const FrFrame& frame2) {
 
-    auto thisNode = body1->NewNode();
+    auto nodeName = "Node_" + std::to_string(body1->GetNodeList().size());
+    auto thisNode = body1->NewNode(nodeName);
     thisNode->SetFrameInBody(frame1);
 
-    auto newNode = body2->NewNode();
+    nodeName = "Node_" + std::to_string(body2->GetNodeList().size());
+    auto newNode = body2->NewNode(nodeName);
     newNode->SetFrameInBody(frame2);
 
-    auto fixedLink = make_fixed_link(thisNode, newNode, body1->GetSystem());
+    auto linkName = "FixedLink_" + body1->GetName() + "_" + body2->GetName();
+    auto fixedLink = make_fixed_link(linkName, body1->GetSystem(), thisNode, newNode);
 
 }
 
@@ -86,7 +92,7 @@ void AttachBodies(const std::shared_ptr<FrBody>& body1, const std::shared_ptr<Fr
 TEST(FrAssemblyTest,Add) {
     FRAME_CONVENTION fc = NWU;
 
-    FrOffshoreSystem system;
+    FrOffshoreSystem system("unit_test_FrAssembly_Add");
 
     system.GetEnvironment()->ShowSeabed(false);
     system.GetEnvironment()->ShowFreeSurface(false);
@@ -95,7 +101,7 @@ TEST(FrAssemblyTest,Add) {
     double L1 = 10, L2 = 15, L3 = 17;
     double d1 = 0.35, d2 = 0.15, d3 = 0.75;
 
-    auto body1 = system.NewBody();
+    auto body1 = system.NewBody("base");
     makeItBox(body1, L1, L2, L3*d3, L1*L2*L3*d3);
     body1->SetColor(DarkRed);
     body1->SetFixedInWorld(true);
@@ -105,7 +111,7 @@ TEST(FrAssemblyTest,Add) {
 //    std::cout<<body1->GetInertiaTensor()<<std::endl;
 
     if (d1!=0 && d2!=0) {
-        auto body2 = system.NewBody();
+        auto body2 = system.NewBody("body_2");
         makeItBox(body2, d1 * L1, d2 * L2, (1. - d3) * L3, d1 * L1 * d2 * L2 * (1. - d3) * L3);
         body2->SetColor(DarkBlue);
         AttachBodies(body1, body2, Position(-0.5 * L1, -0.5 * L2, 0.5 * d3 * L3),
@@ -115,7 +121,7 @@ TEST(FrAssemblyTest,Add) {
 //        std::cout<<body2->GetInertiaTensor()<<std::endl;
 
         if (d1<1) {
-            auto body3 = system.NewBody();
+            auto body3 = system.NewBody("body_3");
             makeItBox(body3, (1. - d1) * L1, d2 * L2, (1. - d3) * L3, (1. - d1) * L1 * d2 * L2 * (1. - d3) * L3);
             body3->SetColor(DarkGreen);
             AttachBodies(body2, body3, Position(0.5 * d1 * L1, -0.5 * d2 * L2, -0.5 * (1. - d3) * L3),
@@ -127,7 +133,7 @@ TEST(FrAssemblyTest,Add) {
 
     }
 
-    auto body4 = system.NewBody();
+    auto body4 = system.NewBody("body_4");
     makeItBox(body4, L1, (1.-d2)*L2, (1.-d3)*L3, L1*(1.-d2)*L2*(1.-d3)*L3);
     body4->SetColor(DarkGoldenRod);
     AttachBodies(body1,body4, Position(0.5*L1,0.5*L2,0.5*d3*L3), Position(0.5*L1, 0.5*(1.-d2)*L2, -0.5*(1.-d3)*L3), fc);
@@ -135,7 +141,7 @@ TEST(FrAssemblyTest,Add) {
 
 //    std::cout<<body4->GetInertiaTensor()<<std::endl;
 
-    auto bodyFull = system.NewBody();
+    auto bodyFull = system.NewBody("full_body");
     bodyFull->SetColor(DarkKhaki);
     makeItBox(bodyFull, L1, L2, L3, L1*L2*L3);
     bodyFull->SetFixedInWorld(true);
@@ -166,7 +172,7 @@ TEST(FrAssemblyTest,Add) {
 TEST(FrAssemblyTest,AddRotation) {
     FRAME_CONVENTION fc = NWU;
 
-    FrOffshoreSystem system;
+    FrOffshoreSystem system("unit_test_FrAssembly_AddRotation");
 
     system.GetEnvironment()->ShowSeabed(false);
     system.GetEnvironment()->ShowFreeSurface(false);
@@ -174,7 +180,7 @@ TEST(FrAssemblyTest,AddRotation) {
     double L1 = 10, L2 = 15, L3 = 17;
     double d1 = 0.35, d2 = 0.15, d3 = 0.75;
 
-    auto body1 = system.NewBody();
+    auto body1 = system.NewBody("base");
     makeItBox(body1, L1, L2, L3*d3, L1*L2*L3*d3);
     body1->SetColor(DarkRed);
     body1->SetFixedInWorld(true);
@@ -184,7 +190,7 @@ TEST(FrAssemblyTest,AddRotation) {
 //    std::cout<<body1->GetInertiaTensor()<<std::endl;
 
     if (d1!=0 && d2!=0) {
-        auto body2 = system.NewBody();
+        auto body2 = system.NewBody("body_2");
         makeItBox(body2, (1. - d3) * L3, d2 * L2, d1 * L1, d1 * L1 * d2 * L2 * (1. - d3) * L3);
         body2->SetColor(DarkBlue);
 
@@ -197,7 +203,7 @@ TEST(FrAssemblyTest,AddRotation) {
 //        std::cout<<body2->GetInertiaTensor()<<std::endl;
 
         if (d1<1) {
-            auto body3 = system.NewBody();
+            auto body3 = system.NewBody("body_3");
             makeItBox(body3, (1. - d1) * L1, d2 * L2, (1. - d3) * L3, (1. - d1) * L1 * d2 * L2 * (1. - d3) * L3);
             body3->SetColor(DarkGreen);
 
@@ -212,7 +218,7 @@ TEST(FrAssemblyTest,AddRotation) {
 
     }
 
-    auto body4 = system.NewBody();
+    auto body4 = system.NewBody("body_4");
     makeItBox(body4, L1, (1.-d3)*L3, (1.-d2)*L2, L1*(1.-d2)*L2*(1.-d3)*L3);
     body4->SetColor(DarkGoldenRod);
 
@@ -224,7 +230,7 @@ TEST(FrAssemblyTest,AddRotation) {
 
 //    std::cout<<body4->GetInertiaTensor()<<std::endl;
 
-    auto bodyFull = system.NewBody();
+    auto bodyFull = system.NewBody("full_body");
     bodyFull->SetColor(DarkKhaki);
     makeItBox(bodyFull, L1, L2, L3, L1*L2*L3);
     bodyFull->SetFixedInWorld(true);
@@ -256,7 +262,7 @@ TEST(FrAssemblyTest,AddRotation) {
 TEST(FrAssemblyTest,AddCOG) {
     FRAME_CONVENTION fc = NWU;
 
-    FrOffshoreSystem system;
+    FrOffshoreSystem system("unit_test_FrAssembly_AddCOG");
 
     system.GetEnvironment()->ShowSeabed(false);
     system.GetEnvironment()->ShowFreeSurface(false);
@@ -264,7 +270,7 @@ TEST(FrAssemblyTest,AddCOG) {
     double L1 = 10, L2 = 15, L3 = 17;
     double d1 = 0.35, d2 = 0.15, d3 = 0.75;
 
-    auto body1 = system.NewBody();
+    auto body1 = system.NewBody("base");
     makeBox(body1, L1, L2, L3*d3, L1*L2*L3*d3);
     body1->SetColor(DarkRed);
     body1->SetFixedInWorld(true);
@@ -274,7 +280,7 @@ TEST(FrAssemblyTest,AddCOG) {
 //    std::cout<<body1->GetInertiaTensor()<<std::endl;
 
     if (d1!=0 && d2!=0) {
-        auto body2 = system.NewBody();
+        auto body2 = system.NewBody("body_2");
         makeBox(body2, d1 * L1, d2 * L2, (1. - d3) * L3, d1 * L1 * d2 * L2 * (1. - d3) * L3);
         body2->SetColor(DarkBlue);
         AttachBodies(body1, body2, Position(0., 0., d3 * L3),
@@ -284,7 +290,7 @@ TEST(FrAssemblyTest,AddCOG) {
 //        std::cout<<body2->GetInertiaTensor()<<std::endl;
 
         if (d1<1) {
-            auto body3 = system.NewBody();
+            auto body3 = system.NewBody("body_3");
             makeBox(body3, (1. - d1) * L1, d2 * L2, (1. - d3) * L3, (1. - d1) * L1 * d2 * L2 * (1. - d3) * L3);
             body3->SetColor(DarkGreen);
             AttachBodies(body2, body3, Position(d1 * L1, 0., 0.),
@@ -296,7 +302,7 @@ TEST(FrAssemblyTest,AddCOG) {
 
     }
 
-    auto body4 = system.NewBody();
+    auto body4 = system.NewBody("body_4");
     makeBox(body4, L1, (1.-d2)*L2, (1.-d3)*L3, L1*(1.-d2)*L2*(1.-d3)*L3);
     body4->SetColor(DarkGoldenRod);
     AttachBodies(body1,body4, Position(L1,L2,d3*L3), Position(L1, (1.-d2)*L2, 0.), fc);
@@ -304,7 +310,7 @@ TEST(FrAssemblyTest,AddCOG) {
 
 //    std::cout<<body4->GetInertiaTensor()<<std::endl;
 
-    auto bodyFull = system.NewBody();
+    auto bodyFull = system.NewBody("full_body");
     bodyFull->SetColor(DarkKhaki);
     makeBox(bodyFull, L1, L2, L3, L1*L2*L3);
     bodyFull->SetFixedInWorld(true);
@@ -335,7 +341,7 @@ TEST(FrAssemblyTest,AddCOG) {
 TEST(FrAssemblyTest,AddCOGRotation) {
     FRAME_CONVENTION fc = NWU;
 
-    FrOffshoreSystem system;
+    FrOffshoreSystem system("unit_test_FrAssembly_AddCOGRotation");
 
     system.GetEnvironment()->ShowSeabed(false);
     system.GetEnvironment()->ShowFreeSurface(false);
@@ -343,7 +349,7 @@ TEST(FrAssemblyTest,AddCOGRotation) {
     double L1 = 10, L2 = 15, L3 = 17;
     double d1 = 0.35, d2 = 0.15, d3 = 0.75;
 
-    auto body1 = system.NewBody();
+    auto body1 = system.NewBody("base");
     makeBox(body1, L1, L2, L3*d3, L1*L2*L3*d3);
     body1->SetColor(DarkRed);
     body1->SetFixedInWorld(true);
@@ -353,7 +359,7 @@ TEST(FrAssemblyTest,AddCOGRotation) {
 //    std::cout<<body1->GetInertiaTensor()<<std::endl;
 
     if (d1!=0 && d2!=0) {
-        auto body2 = system.NewBody();
+        auto body2 = system.NewBody("body_2");
         makeBox(body2, (1. - d3) * L3, d2 * L2, d1 * L1, d1 * L1 * d2 * L2 * (1. - d3) * L3);
         body2->SetColor(DarkBlue);
 
@@ -366,7 +372,7 @@ TEST(FrAssemblyTest,AddCOGRotation) {
 //        std::cout<<body2->GetInertiaTensor()<<std::endl;
 
         if (d1<1) {
-            auto body3 = system.NewBody();
+            auto body3 = system.NewBody("body_3");
             makeBox(body3, (1. - d1) * L1, d2 * L2, (1. - d3) * L3, (1. - d1) * L1 * d2 * L2 * (1. - d3) * L3);
             body3->SetColor(DarkGreen);
 
@@ -381,7 +387,7 @@ TEST(FrAssemblyTest,AddCOGRotation) {
 
     }
 
-    auto body4 = system.NewBody();
+    auto body4 = system.NewBody("body_4");
     makeBox(body4, L1, (1.-d3)*L3, (1.-d2)*L2, L1*(1.-d2)*L2*(1.-d3)*L3);
     body4->SetColor(DarkGoldenRod);
 
@@ -394,7 +400,7 @@ TEST(FrAssemblyTest,AddCOGRotation) {
 //    std::cout<<body4->GetInertiaTensor()<<std::endl;
 
 
-    auto bodyFull = system.NewBody();
+    auto bodyFull = system.NewBody("full_body");
     bodyFull->SetColor(DarkKhaki);
     makeBox(bodyFull, L1, L2, L3, L1*L2*L3);
     bodyFull->SetFixedInWorld(true);

@@ -92,6 +92,13 @@ namespace frydom {
     void flush() {
       spdlog::default_logger()->flush();
     }
+
+    void reset_to_default_logger() {
+      spdlog::drop_all();
+      auto color_sink = std::make_shared<spdlog::sinks::ansicolor_stdout_sink_mt>();
+      auto default_logger_ = std::make_shared<spdlog::logger>("", std::move(color_sink));
+      spdlog::set_default_logger(default_logger_);
+    }
   } // end namespace frydom::event_logger
 
 }  // end namespace frydom

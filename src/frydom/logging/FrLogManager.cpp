@@ -50,7 +50,9 @@ namespace frydom {
 
   }
 
-  FrLogManager::~FrLogManager() = default;
+  FrLogManager::~FrLogManager() {
+    event_logger::reset_to_default_logger();
+  };
 
   FrOffshoreSystem *FrLogManager::GetSystem() const {
     return m_system;

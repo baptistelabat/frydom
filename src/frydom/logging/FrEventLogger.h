@@ -144,6 +144,8 @@ namespace frydom {
 
     void flush();
 
+    void reset_to_default_logger();
+
   }  // end namespace frydom::event_logger
 
 }  // end namespace frydom
