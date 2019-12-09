@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
     //auto hdb = make_hydrodynamic_database(resources_path.resolve("sphere_hdb.h5").path());
     auto hdb = make_hydrodynamic_database(system.GetDataPath("sphere_hdb.h5"));
 
-    auto eqFrame = make_equilibrium_frame(body, &system);
+    auto eqFrame = make_equilibrium_frame("EqFrame", &system, body);
 
 
     hdb->Map(0, body.get(), eqFrame);

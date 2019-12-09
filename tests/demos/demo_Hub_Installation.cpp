@@ -111,7 +111,7 @@ int main(int argc, char* argv[]) {
 
     auto hdb = make_hydrodynamic_database(system.GetDataPath("Barge_HDB.h5"));
 
-    auto eqFrame = make_equilibrium_frame(barge, &system);
+    auto eqFrame = make_equilibrium_frame("EqFrame", &system, barge);
     eqFrame->SetLogged(true);
 
     hdb->Map(0, barge.get(), eqFrame);

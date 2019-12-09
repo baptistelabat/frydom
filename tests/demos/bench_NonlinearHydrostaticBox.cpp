@@ -97,7 +97,7 @@ int main(int argc, char* argv[]) {
     bool linear = false;
     if (linear) {
         // -- Linear hydrostatics
-        auto eqFrame = make_equilibrium_frame(body, &system);
+        auto eqFrame = make_equilibrium_frame("EqFrame", &system, body);
 
         auto forceHst = make_linear_hydrostatic_force(eqFrame, body, resources_path.resolve("box_385.obj").path(), FrFrame());
     } else {

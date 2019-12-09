@@ -231,7 +231,7 @@ int main(int argc, char* argv[]) {
 
     auto hdb = make_hydrodynamic_database(system.GetDataPath("DTMB5512.hdb5"));
 
-    auto eqFrame = make_equilibrium_frame(body, &system);
+    auto eqFrame = make_equilibrium_frame("EqFrame", &system, body);
     eqFrame->SetPositionInWorld(Position(0., 0., 0.03), NWU);
     eqFrame->SetVelocityInWorld(Velocity(speed, 0., 0.), NWU);
 

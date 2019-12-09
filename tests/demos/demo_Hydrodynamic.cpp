@@ -116,7 +116,7 @@ int main(int argc, char* argv[]) {
     auto hdb = make_hydrodynamic_database(system.GetDataPath("Platform_HDB_Without_drift.hdb5"));
 
     // Create an equilibrium frame for the platform and add it to the system at the position of the body CoG.
-    auto eqFrame = make_equilibrium_frame(platform, &system);
+    auto eqFrame = make_equilibrium_frame("EqFrame", &system, platform);
 
 
     // Map the equilibrium frame and the body in the hdb mapper

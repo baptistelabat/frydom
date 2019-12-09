@@ -24,7 +24,7 @@
 #include "cable/FrCableInc.h"
 #include "frydom/IO/FrIOInc.h"  // TODO: pour respecter le nommage, paser le repertoire IO en io
 #include "mesh/FrMeshInc.h"
-#include "utils/FrIrrApp.h"
+#include "utils/FrUtilsInc.h"
 #include "asset/FrAssetInc.h"
 #include "collision/FrCollisionModel.h"
 

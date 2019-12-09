@@ -80,18 +80,16 @@ Vector TestFrEquilibriumFrame::ReadVector(FrHDF5Reader &reader, std::string fiel
 }
 
 void TestFrEquilibriumFrame::SetUp() {
-  system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
-  LoadData(system.GetDataPath("TNR_database.h5"), "/equilibrium_frame/");
+  auto database = FrFileSystem::join({system.config_file().GetDataFolder(), "unit_test/TNR_database.h5"});
+  LoadData(database, "/equilibrium_frame/");
 
-  body = system.NewBody();
+  body = system.NewBody("body");
   body->SetPosition(m_PositionInWorld, fc);
   body->SetRotation(m_quat);
 
-  m_eqFrame = std::make_unique<FrEquilibriumFrame>(body.get());
+  m_eqFrame = make_equilibrium_frame("eqFrame", &system, body);
   m_eqFrame->SetPositionInWorld(m_PositionInWorld, fc);
   m_eqFrame->SetRotation(FrRotation(m_quat));
-
-  system.Add(m_eqFrame);
 
   system.Initialize();
 }

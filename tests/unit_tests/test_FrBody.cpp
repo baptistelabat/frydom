@@ -152,8 +152,11 @@ TEST(FrBodyTest,PositionNED) {
 
 TEST(FrBodyTest,Translation) {
     FRAME_CONVENTION fc = NED;
+
+    FrOffshoreSystem system("system");
+
     // Body Instantiation
-    auto body = std::make_shared<FrBody>();
+    auto body = system.NewBody("body");
 
     Position RefPositionInWorld(1., 2., 3.);
     body->SetPosition(RefPositionInWorld, fc);

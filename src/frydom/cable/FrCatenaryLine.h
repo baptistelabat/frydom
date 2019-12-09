@@ -113,7 +113,7 @@ namespace frydom {
 
     /// Get the FrOffshoreSystem
     inline FrOffshoreSystem *GetSystem() const {
-      GetParent();
+      return GetParent();
     }
 
     //--------------------------------------------------------------------------------------------------------------

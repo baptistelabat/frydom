@@ -86,9 +86,9 @@ void DemoModel(FrOffshoreSystem& system, bool flap1_fixed, bool flap2_fixed, dou
 
     auto hdb = make_hydrodynamic_database(system.GetDataPath("FOSWEC_phase2_filtered.hdb5"));
 
-    auto eqFrame0 = make_equilibrium_frame(platform, &system);
-    auto eqFrame1 = make_equilibrium_frame(flap1, &system);
-    auto eqFrame2 = make_equilibrium_frame(flap2, &system);
+    auto eqFrame0 = make_equilibrium_frame("eqFrame0", &system, platform);
+    auto eqFrame1 = make_equilibrium_frame("eqFrame1", &system, flap1);
+    auto eqFrame2 = make_equilibrium_frame("eqFrame2", &system, flap2);
     eqFrame1->SetPositionInWorld(Position(-0.65, 0., -0.29), NWU);
     eqFrame2->SetPositionInWorld(Position(0.65, 0., -0.29), NWU);
 

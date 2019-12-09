@@ -180,7 +180,7 @@ namespace frydom {
   };
 
   std::shared_ptr<FrEquilibriumFrame>
-  make_equilibrium_frame(const std::string &name, const std::shared_ptr<FrBody> &body, FrOffshoreSystem *system);
+  make_equilibrium_frame(const std::string &name, FrOffshoreSystem *system, const std::shared_ptr<FrBody> &body);
 
 
   /**
@@ -295,8 +295,8 @@ namespace frydom {
   };
 
   std::shared_ptr<FrEqFrameMeanMotion>
-  make_mean_motion_equilibrium_frame(const std::string &name, const std::shared_ptr<FrBody> &body,
-                                     FrOffshoreSystem *system,
+  make_mean_motion_equilibrium_frame(const std::string &name, FrOffshoreSystem *system,
+                                     const std::shared_ptr<FrBody> &body,
                                      double timePersistence,
                                      double timeStep);
 

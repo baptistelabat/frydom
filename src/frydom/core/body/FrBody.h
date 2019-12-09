@@ -172,7 +172,7 @@ namespace frydom {
 
     /// Get the FrOffshoreSystem where the body has been registered
     inline FrOffshoreSystem *GetSystem() const {
-      GetParent();
+      return GetParent();
     }
 
     /// Make the body fixed

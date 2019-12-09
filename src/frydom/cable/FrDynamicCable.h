@@ -157,7 +157,7 @@ namespace frydom {
 
     /// Get the FrOffshoreSystem
     inline FrOffshoreSystem *GetSystem() const {
-      FrTreeNode<FrOffshoreSystem>::GetParent();
+      return FrTreeNode<FrOffshoreSystem>::GetParent();
     }
 
     /// Set the Rayleigh damping coefficient (only stiffness related coefficient is included in chrono model, as in: R = r * K )
