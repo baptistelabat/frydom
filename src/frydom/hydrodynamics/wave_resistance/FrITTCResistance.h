@@ -110,6 +110,18 @@ namespace frydom {
 
   };
 
+  /// This function creates a linear damping force.
+  std::shared_ptr<FrITTCResistance>
+  make_ITTC_resistance_force(const std::string &name,
+                             std::shared_ptr<FrBody> body,
+                             double Lpp,
+                             double hullWetSurface,
+                             double cr,
+                             double k = 0.,
+                             double ca = 0.,
+                             double caa = 0.,
+                             double capp = 0.);
+
 }  // end namespace frydom
 
 

@@ -12,7 +12,7 @@ TEST(FrLinkTest, FrLinkTest_Fixed_force_Test) {
 
   FRAME_CONVENTION fc = NWU;
 
-  FrOffshoreSystem system;
+  FrOffshoreSystem system("test_FrLink");
 
   auto WBody = system.GetWorldBody();
   makeItBox(WBody, 2., 0.2, 0.2, 1.);
@@ -20,7 +20,7 @@ TEST(FrLinkTest, FrLinkTest_Fixed_force_Test) {
   WBody->AllowCollision(false);
 
   // nody creation
-  auto body = system.NewBody();
+  auto body = system.NewBody("body");
   makeItBox(body, 2., 0.2, 0.2, 1.);
   body->SetColor(Green);
   body->AllowCollision(false);
@@ -30,7 +30,7 @@ TEST(FrLinkTest, FrLinkTest_Fixed_force_Test) {
   body->SetPosition(randPos, fc);
 
   // bodyNode creation
-  auto bodyNode = body->NewNode();
+  auto bodyNode = body->NewNode("bodyNode");
   Position bodyNodePosInBody; bodyNodePosInBody.setRandom();
   bodyNodePosInBody = {-1.,0.,0.};
   bodyNode->SetPositionInBody(bodyNodePosInBody, fc);
@@ -38,7 +38,7 @@ TEST(FrLinkTest, FrLinkTest_Fixed_force_Test) {
   bodyNode->SetOrientationInBody(FrRotation(direction, 0.35894, fc));
 
   // worldNode Creation
-  auto worldNode = WBody->NewNode();
+  auto worldNode = WBody->NewNode("worldNode");
   Position worldNodePosInBody; worldNodePosInBody.setRandom();
   worldNodePosInBody = {1.,0.,0.};
   worldNode->SetPositionInBody(worldNodePosInBody, fc);
@@ -46,7 +46,7 @@ TEST(FrLinkTest, FrLinkTest_Fixed_force_Test) {
   bodyNode->SetOrientationInBody(FrRotation(direction2, 0.19708, fc));
 
   // link  creation
-  auto fixedLink = make_fixed_link(worldNode, bodyNode, &system);
+  auto fixedLink = make_fixed_link("fixedLink", &system, worldNode, bodyNode);
 
   // initialization and assembly
   system.Initialize();
@@ -128,7 +128,7 @@ TEST(FrLinkTest, FrLinkTest_Prismatic_velocity_Test) {
 
   FRAME_CONVENTION fc = NWU;
 
-  FrOffshoreSystem system;
+  FrOffshoreSystem system("FrLinkTest_Prismatic_velocity_Test");
 
   auto WBody = system.GetWorldBody();
   makeItBox(WBody, 2., 0.2, 0.2, 1.);
@@ -136,7 +136,7 @@ TEST(FrLinkTest, FrLinkTest_Prismatic_velocity_Test) {
   WBody->AllowCollision(false);
 
   // body creation
-  auto body = system.NewBody();
+  auto body = system.NewBody("body");
   makeItBox(body, 2., 0.2, 0.2, 1.);
   body->SetColor(Green);
   body->AllowCollision(false);
@@ -147,19 +147,19 @@ TEST(FrLinkTest, FrLinkTest_Prismatic_velocity_Test) {
   body->SetPosition(randPos, fc);
 
   // bodyNode creation
-  auto bodyNode = body->NewNode();
+  auto bodyNode = body->NewNode("bodyNode");
   FrRotation bodyNodeRot(Direction(0., 1., 0.), 90 * DEG2RAD, fc);
   bodyNode->SetFrameInBody(FrFrame(Position(), bodyNodeRot, fc));
 
   // worldNode Creation
-  auto worldNode = WBody->NewNode();
+  auto worldNode = WBody->NewNode("worldNode");
   Position worldNodePosInBody;
   worldNodePosInBody.setRandom();
   worldNodePosInBody = {1., 0., 0.};
   worldNode->SetPositionInBody(worldNodePosInBody, fc);
 
   // link  creation
-  auto link = make_prismatic_link(worldNode, bodyNode, &system);
+  auto link = make_prismatic_link("prismaticLink", &system, worldNode, bodyNode);
   link->SetSpringDamper(10., 0.);
 
 // initialization and assembly
@@ -245,7 +245,7 @@ TEST(FrLinkTest, FrLinkTest_Revolute_velocity_Test) {
 
   FRAME_CONVENTION fc = NWU;
 
-  FrOffshoreSystem system;
+  FrOffshoreSystem system("FrLinkTest_Revolute_velocity_Test");
 
   auto WBody = system.GetWorldBody();
   makeItBox(WBody, 2., 0.2, 0.2, 1.);
@@ -253,7 +253,7 @@ TEST(FrLinkTest, FrLinkTest_Revolute_velocity_Test) {
   WBody->AllowCollision(false);
 
   // nody creation
-  auto body = system.NewBody();
+  auto body = system.NewBody("body");
   makeItBox(body, 2., 0.2, 0.2, 1.);
   body->SetColor(Green);
   body->AllowCollision(false);
@@ -264,17 +264,17 @@ TEST(FrLinkTest, FrLinkTest_Revolute_velocity_Test) {
   body->SetPosition(randPos, fc);
 
   // bodyNode creation
-  auto bodyNode = body->NewNode();
+  auto bodyNode = body->NewNode("bodyNode");
   FrRotation bodyNodeRot(Direction(1.,0.,0.), 90*DEG2RAD, fc);
   bodyNode->SetFrameInBody(FrFrame(Position(-1., 0., 0.), bodyNodeRot, fc));
 
   // worldNode Creation
-  auto worldNode = WBody->NewNode();
+  auto worldNode = WBody->NewNode("worldNode");
   FrRotation worldNodeRot(Direction(1.,0.,0.), 90*DEG2RAD, fc);
   worldNode->SetFrameInBody(FrFrame(Position(1., 0., 0.), worldNodeRot, fc));
 
   // link  creation
-  auto link = make_revolute_link(worldNode, bodyNode, &system);
+  auto link = make_revolute_link("revoluteLink", &system, worldNode, bodyNode);
   link->SetSpringDamper(100.,10.);
 
 // initialization and assembly
@@ -318,15 +318,14 @@ TEST(FrLinkTest, FrLinkTest_Revolute_velocity_Test) {
       bodyNode->GetPositionInWorld(fc), fc
   );
 
-  bool test = worldNode->ProjectVectorInWorld(node2Velo.GetVelocity(), fc).isApprox(
-      node2Vel.GetLinearVelocityAtPoint(bodyNode->GetPositionInWorld(fc), fc));
-  EXPECT_TRUE(test);
-  if (!test) {
+  Velocity testVelocity = worldNode->ProjectVectorInWorld(node2Velo.GetVelocity(), fc) - node2Vel.GetLinearVelocityAtPoint(bodyNode->GetPositionInWorld(fc), fc);
+  EXPECT_TRUE(testVelocity.isZero(1E-15));
+  if (!testVelocity.isZero(1E-15)) {
     std::cout << worldNode->ProjectVectorInWorld(node2Velo.GetVelocity(), fc) << std::endl;
     std::cout << node2Vel.GetLinearVelocityAtPoint(bodyNode->GetPositionInWorld(fc), fc) << std::endl;
   }
 
-  test = worldNode->ProjectVectorInWorld(node2Velo.GetAngularVelocity(), fc).isApprox(node2Vel.GetAngularVelocity());
+  bool test = worldNode->ProjectVectorInWorld(node2Velo.GetAngularVelocity(), fc).isApprox(node2Vel.GetAngularVelocity());
   EXPECT_TRUE(test);
   if (!test) {
     std::cout << worldNode->ProjectVectorInWorld(node2Velo.GetAngularVelocity(), fc) << std::endl;
@@ -361,7 +360,7 @@ TEST(FrLinkTest, FrLinkTest_Prismatic_force_Test) {
 
   FRAME_CONVENTION fc = NWU;
 
-  FrOffshoreSystem system;
+  FrOffshoreSystem system("FrLinkTest_Prismatic_force_Test");
 
   auto WBody = system.GetWorldBody();
   makeItBox(WBody, 2., 0.2, 0.2, 1.);
@@ -369,7 +368,7 @@ TEST(FrLinkTest, FrLinkTest_Prismatic_force_Test) {
   WBody->AllowCollision(false);
 
   // nody creation
-  auto body = system.NewBody();
+  auto body = system.NewBody("body");
   makeItBox(body, 2., 0.2, 0.2, 1.);
   body->SetColor(Green);
   body->AllowCollision(false);
@@ -380,17 +379,17 @@ TEST(FrLinkTest, FrLinkTest_Prismatic_force_Test) {
   body->SetPosition(randPos, fc);
 
   // bodyNode creation
-  auto bodyNode = body->NewNode();
+  auto bodyNode = body->NewNode("bodyNode");
   FrRotation bodyNodeRot(Direction(0.,1.,0.), 90*DEG2RAD, fc);
   bodyNode->SetFrameInBody(FrFrame(Position(), bodyNodeRot, fc));
 
   // worldNode Creation
-  auto worldNode = WBody->NewNode();
+  auto worldNode = WBody->NewNode("worldNode");
   FrRotation worldNodeRot(Direction(0.,1.,0.), -45*DEG2RAD, fc);
   worldNode->SetFrameInBody(FrFrame(Position(1., 0., 0.), worldNodeRot, fc));
 
   // link  creation
-  auto link = make_prismatic_link(worldNode, bodyNode, &system);
+  auto link = make_prismatic_link("prismaticLink", &system, worldNode, bodyNode);
   link->SetSpringDamper(10.,0.);
 
 // initialization and assembly
@@ -493,7 +492,7 @@ TEST(FrLinkTest, FrLinkTest_Revolute_force_Test) {
 
   FRAME_CONVENTION fc = NWU;
 
-  FrOffshoreSystem system;
+  FrOffshoreSystem system("FrLinkTest_Revolute_force_Test");
 
   auto WBody = system.GetWorldBody();
   makeItBox(WBody, 2., 0.2, 0.2, 1.);
@@ -501,7 +500,7 @@ TEST(FrLinkTest, FrLinkTest_Revolute_force_Test) {
   WBody->AllowCollision(false);
 
   // nody creation
-  auto body = system.NewBody();
+  auto body = system.NewBody("body");
   makeItBox(body, 2., 0.2, 0.2, 1.);
   body->SetColor(Green);
   body->AllowCollision(false);
@@ -512,17 +511,17 @@ TEST(FrLinkTest, FrLinkTest_Revolute_force_Test) {
   body->SetPosition(randPos, fc);
 
   // bodyNode creation
-  auto bodyNode = body->NewNode();
+  auto bodyNode = body->NewNode("bodyNode");
   FrRotation bodyNodeRot(Direction(1.,0.,0.), 90*DEG2RAD, fc);
   bodyNode->SetFrameInBody(FrFrame(Position(-1., 0., 0.), bodyNodeRot, fc));
 
   // worldNode Creation
-  auto worldNode = WBody->NewNode();
+  auto worldNode = WBody->NewNode("worldNode");
   FrRotation worldNodeRot(Direction(1.,0.,0.), 90*DEG2RAD, fc);
   worldNode->SetFrameInBody(FrFrame(Position(1., 0., 0.), worldNodeRot, fc));
 
   // link  creation
-  auto link = make_revolute_link(worldNode, bodyNode, &system);
+  auto link = make_revolute_link("revoluteLink", &system, worldNode, bodyNode);
   link->SetSpringDamper(100.,10.);
 
 // initialization and assembly

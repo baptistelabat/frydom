@@ -74,4 +74,23 @@ namespace frydom {
       m_caa(caa),
       m_capp(capp) {}
 
+  std::shared_ptr<FrITTCResistance>
+  make_ITTC_resistance_force(const std::string &name,
+                             std::shared_ptr<FrBody> body,
+                             double Lpp,
+                             double hullWetSurface,
+                             double cr,
+                             double k,
+                             double ca,
+                             double caa,
+                             double capp) {
+    
+    auto force = std::make_shared<FrITTCResistance>(name, body.get(), Lpp, hullWetSurface, cr, k, ca, caa, capp);
+    
+    body->AddExternalForce(force);
+
+    return force;
+    
+  }
+
 }  // end namespace frydom

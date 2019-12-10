@@ -69,7 +69,7 @@ TEST(FrGeographicServices, FrBodyIntegration) {
   GeoServices->SetGeographicOrigin(Origin);
 
 
-  auto body = system.NewBody();
+  auto body = system.NewBody("body");
 
   Position bodyPosition(50., 92., 1.5);
   body->SetPosition(bodyPosition, fc);
