@@ -59,11 +59,15 @@ TEST(FrTorsor, FrTorsor_GeneralizedVelocity_Test) {
   point.setRandom();
 
   // Generalized Velocity
-  Velocity velocity; velocity.setRandom(); AngularVelocity angularVelocity; angularVelocity.setRandom();
+  Velocity velocity;
+  velocity.setRandom();
+  AngularVelocity angularVelocity;
+  angularVelocity.setRandom();
   GeneralizedVelocityTorsor velocityTorsor(velocity, angularVelocity, point, fc);
 
-  Position newPoint; newPoint.setRandom();
-  Velocity VelocityAtNewCOG = velocity + (point-newPoint).cross(angularVelocity);
+  Position newPoint;
+  newPoint.setRandom();
+  Velocity VelocityAtNewCOG = velocity + (point - newPoint).cross(angularVelocity);
 
   Velocity testVelocity = VelocityAtNewCOG - velocityTorsor.GetLinearVelocityAtPoint(newPoint, fc);
   EXPECT_TRUE(testVelocity.isZero());

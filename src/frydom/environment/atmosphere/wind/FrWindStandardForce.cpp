@@ -98,4 +98,12 @@ namespace frydom {
     SetForceTorqueInWorldAtPointInBody(worldForce, worldTorque, Position(m_xCenter, 0., 0.), NWU);
   }
 
+  std::shared_ptr<FrWindStandardForce> make_wind_standard_force(const std::string &name, std::shared_ptr<FrBody> body) {
+
+    auto force = std::make_shared<FrWindStandardForce>(name, body.get());
+
+    body->AddExternalForce(force);
+
+    return force;
+  }
 }  // end namespace frydom

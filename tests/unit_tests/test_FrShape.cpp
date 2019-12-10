@@ -5,44 +5,50 @@
 using namespace frydom;
 
 TEST(FrShape, FrBoxShape) {
-  FrBody body;
-  body.AddBoxShape(1, 2, 3);
+  FrOffshoreSystem system("test_FrShape");
+  
+  auto body = system.NewBody("body");
+  body->AddBoxShape(1, 2, 3);
 
-  ASSERT_EQ(body.GetBoxShapes().size(), 1);
-  ASSERT_EQ(body.GetCylinderShapes().size(), 0);
-  ASSERT_EQ(body.GetSphereShapes().size(), 0);
-  ASSERT_EQ(body.GetMeshAssets().size(), 0);
+  ASSERT_EQ(body->GetBoxShapes().size(), 1);
+  ASSERT_EQ(body->GetCylinderShapes().size(), 0);
+  ASSERT_EQ(body->GetSphereShapes().size(), 0);
+  ASSERT_EQ(body->GetMeshAssets().size(), 0);
 
-  auto shape = body.GetBoxShapes()[0];
+  auto shape = body->GetBoxShapes()[0];
   ASSERT_EQ(shape->xSize(), 1);
   ASSERT_EQ(shape->ySize(), 2);
   ASSERT_EQ(shape->zSize(), 3);
 }
 
 TEST(FrShape, FrCylinderShape) {
-  FrBody body;
-  body.AddCylinderShape(1, 10);
+  FrOffshoreSystem system("test_FrShape");
 
-  ASSERT_EQ(body.GetBoxShapes().size(), 0);
-  ASSERT_EQ(body.GetCylinderShapes().size(), 1);
-  ASSERT_EQ(body.GetSphereShapes().size(), 0);
-  ASSERT_EQ(body.GetMeshAssets().size(), 0);
+  auto body = system.NewBody("body");
+  body->AddCylinderShape(1, 10);
 
-  auto shape = body.GetCylinderShapes()[0];
+  ASSERT_EQ(body->GetBoxShapes().size(), 0);
+  ASSERT_EQ(body->GetCylinderShapes().size(), 1);
+  ASSERT_EQ(body->GetSphereShapes().size(), 0);
+  ASSERT_EQ(body->GetMeshAssets().size(), 0);
+
+  auto shape = body->GetCylinderShapes()[0];
   ASSERT_EQ(shape->radius(), 1);
   ASSERT_EQ(shape->height(), 10);
 }
 
 TEST(FrShape, FrSphereShape) {
-  FrBody body;
-  body.AddSphereShape(1);
+  FrOffshoreSystem system("test_FrShape");
 
-  ASSERT_EQ(body.GetBoxShapes().size(), 0);
-  ASSERT_EQ(body.GetCylinderShapes().size(), 0);
-  ASSERT_EQ(body.GetSphereShapes().size(), 1);
-  ASSERT_EQ(body.GetMeshAssets().size(), 0);
+  auto body = system.NewBody("body");
+  body->AddSphereShape(1);
 
-  auto shape = body.GetSphereShapes()[0];
+  ASSERT_EQ(body->GetBoxShapes().size(), 0);
+  ASSERT_EQ(body->GetCylinderShapes().size(), 0);
+  ASSERT_EQ(body->GetSphereShapes().size(), 1);
+  ASSERT_EQ(body->GetMeshAssets().size(), 0);
+
+  auto shape = body->GetSphereShapes()[0];
   ASSERT_EQ(shape->radius(), 1);
 }
 
@@ -94,21 +100,23 @@ f 1/2/8 2/9/8 3/13/8\n\
 f 1/2/8 3/13/8 4/14/8");
 
   std::ofstream f;
-  f.open ("/tmp/test.mesh");
+  f.open("/tmp/test.mesh");
   f << mesh_content;
   f.close();
 
   // load the mesh file
-  FrBody body;
-  body.AddMeshAsset("/tmp/test.mesh");
+  FrOffshoreSystem system("test_FrShape");
 
-  ASSERT_EQ(body.GetBoxShapes().size(), 0);
-  ASSERT_EQ(body.GetCylinderShapes().size(), 0);
-  ASSERT_EQ(body.GetSphereShapes().size(), 0);
-  ASSERT_EQ(body.GetMeshAssets().size(), 1);
+  auto body = system.NewBody("body");
+  body->AddMeshAsset("/tmp/test.mesh");
+
+  ASSERT_EQ(body->GetBoxShapes().size(), 0);
+  ASSERT_EQ(body->GetCylinderShapes().size(), 0);
+  ASSERT_EQ(body->GetSphereShapes().size(), 0);
+  ASSERT_EQ(body->GetMeshAssets().size(), 1);
 
   // assert a couple of values
-  auto mesh = body.GetMeshAssets()[0];
+  auto mesh = body->GetMeshAssets()[0];
 
   ASSERT_EQ(mesh->vertices().size(), 8);
   ASSERT_EQ(mesh->vertices()[0][0], 1.0);

@@ -63,6 +63,10 @@ namespace frydom {
   };
 
 
+  std::shared_ptr<FrWindStandardForce>
+  make_wind_standard_force(const std::string &name, std::shared_ptr<FrBody> body);
+
+
 }  // end namespace frydom
 
 

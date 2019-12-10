@@ -57,6 +57,9 @@ namespace frydom {
   class FrWindStandardForce;
   TYPE_TO_STRING(FrWindStandardForce, "WindStandardForce")
 
+  class FrCurrentStandardForce;
+  TYPE_TO_STRING(FrCurrentStandardForce, "CurrentStandardForce")
+
   class FrNonLinearFroudeKrylovForce;
   TYPE_TO_STRING(FrNonLinearFroudeKrylovForce, "NonLinearFroudeKrylovForce")
 
@@ -64,7 +67,7 @@ namespace frydom {
   TYPE_TO_STRING(FrITTCResistance, "ITTCResistanceForce")
 
   class FrMorisonForce;
-  TYPE_TO_STRING(FrMorisonForce, "MorsonForce")
+  TYPE_TO_STRING(FrMorisonForce, "MorisonForce")
 
   class FrManDampingTaylorExpansion;
   TYPE_TO_STRING(FrManDampingTaylorExpansion, "ManeuveringForce")

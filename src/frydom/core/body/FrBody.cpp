@@ -600,7 +600,7 @@ namespace frydom {
     event_logger::info(GetTypeName(), GetName(),
                        "Center of gravity set (in body reference frame) to [{}\t{}\t{}]", bodyPos.x(), bodyPos.y(),
                        bodyPos.z());
-    m_chronoBody->UpdateMarkerPositionToCOG(internal::Vector3dToChVector(cogFrame.GetPosition(NWU)));
+//    m_chronoBody->UpdateMarkerPositionToCOG(internal::Vector3dToChVector(cogFrame.GetPosition(NWU)));
     m_chronoBody->SetFrame_COG_to_REF(internal::FrFrame2ChFrame(cogFrame));
   }
 
