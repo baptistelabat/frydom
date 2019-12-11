@@ -41,6 +41,8 @@ option(frydom_build_demo "Build demo tests" ON)
 option(frydom_build_dev_test "Build dev test" ON)
 option(frydom_download_demo_data "Downloading demo data" ON)
 
+option(frydom_build_tools "Build the standalone tools" ON)
+
 #-----------------------------------------------------------------------------
 # C++ dialect
 #-----------------------------------------------------------------------------
@@ -98,4 +100,13 @@ if (${frydom_build_tests})
     include(Add_googletest)
 
     add_subdirectory(tests)
+endif()
+
+
+#=============================================================================
+# Adding tools
+#=============================================================================
+if (${frydom_build_tools})
+    include(add_cxxopts)
+    add_subdirectory(tools)
 endif()

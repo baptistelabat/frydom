@@ -194,36 +194,41 @@ TEST(FrWaveField, BiChromaticWaveInfDepth) {
   auto freeSurface = system.GetEnvironment()->GetOcean()->GetFreeSurface();
   auto waveField = freeSurface->SetAiryIrregularWaveField();
 
-//    // Set the JONSWAP wave spectrum
-//    double Hs = 3;
-//    double Tp = 9;
-//    auto Jonswap = waveField->SetJonswapWaveSpectrum(Hs, Tp);
+  auto wavedata = FrFileSystem::join({system.config_file().GetDataFolder(), "unit_test/BiChromaticWaveInfDepth.json"});
+  waveField->LoadJSON(wavedata);
 
-  auto spectre = waveField->SetTestWaveSpectrum();
+////    // Set the JONSWAP wave spectrum
+////    double Hs = 3;
+////    double Tp = 9;
+////    auto Jonswap = waveField->SetJonswapWaveSpectrum(Hs, Tp);
+//
+//  auto spectre = waveField->SetTestWaveSpectrum();
   double T1 = 12, T2 = 6;
-  auto w1 = 2. * M_PI / T1;
-  auto w2 = 2. * M_PI / T2;
-//    std:: cout<<"w1 = "<<w1<<", w2 = "<<w2<<std::endl;
-  auto k1 = SolveWaveDispersionRelation(depth, w1, g);
-  auto k2 = SolveWaveDispersionRelation(depth, w2, g);
-  double Amp = sqrt(2. * (w2 - w1));
-//    std::cout<<"Amp = "<<Amp<<std::endl;
+//  auto w1 = 2. * M_PI / T1;
+//  auto w2 = 2. * M_PI / T2;
+////    std:: cout<<"w1 = "<<w1<<", w2 = "<<w2<<std::endl;
+//  auto k1 = SolveWaveDispersionRelation(depth, w1, g);
+//  auto k2 = SolveWaveDispersionRelation(depth, w2, g);
+//  double Amp = sqrt(2. * (w2 - w1));
+////    std::cout<<"Amp = "<<Amp<<std::endl;
+//
+//  waveField->SetWaveFrequencies(w1, w2, 2);
+//
+//  // Set wave direction
+//  waveField->SetMeanWaveDirection(Direction(EAST(fc)), fc, dc);
+////    waveField->SetDirectionalParameters(2,10);
+//
+//  std::vector<double> phases_temp;
+//  phases_temp.push_back(0.);
+//  phases_temp.push_back(0.);
+//  std::vector<std::vector<double>> phases;
+//  phases.push_back(phases_temp);
 
-  waveField->SetWaveFrequencies(w1, w2, 2);
-
-  // Set wave direction
-  waveField->SetMeanWaveDirection(Direction(EAST(fc)), fc, dc);
-//    waveField->SetDirectionalParameters(2,10);
-
-  std::vector<double> phases_temp;
-  phases_temp.push_back(0.);
-  phases_temp.push_back(0.);
-  std::vector<std::vector<double>> phases;
-  phases.push_back(phases_temp);
-
-  waveField->SetWavePhases(phases);
+//  waveField->SetWavePhases(phases);
 
   waveField->Initialize();
+
+//  waveField->WriteToJSON("test_BiChromaticWaveInfDepth.json");
 
 
   BiChromaticWaveInfDepth WaveRef(T1, T2, waveField->GetMeanWaveDirectionAngle(RAD, fc, dc), depth);
@@ -419,30 +424,35 @@ TEST(FrWaveField, BiDirectionalWaveInfDepth) {
   auto freeSurface = system.GetEnvironment()->GetOcean()->GetFreeSurface();
   auto waveField = freeSurface->SetAiryIrregularWaveField();
 
-//    // Set the JONSWAP wave spectrum
-//    double Hs = 3;
-//    double Tp = 9;
-//    auto Jonswap = waveField->SetJonswapWaveSpectrum(Hs, Tp);
+  auto wavedata = FrFileSystem::join({system.config_file().GetDataFolder(), "unit_test/BiDirectionalWaveInfDepth.json"});
+  waveField->LoadJSON(wavedata);
 
-  waveField->SetTestWaveSpectrum();
+////    // Set the JONSWAP wave spectrum
+////    double Hs = 3;
+////    double Tp = 9;
+////    auto Jonswap = waveField->SetJonswapWaveSpectrum(Hs, Tp);
+//
+//  waveField->SetTestWaveSpectrum();
   double T = 12;
-  auto w = 2. * M_PI / T;
-
-  waveField->SetWaveFrequencies(w, w, 1);
-
-  // Set wave direction
-  waveField->SetMeanWaveDirection(Direction(NORTH(fc)), fc, dc);
-  waveField->SetDirectionalParameters(2, 10, DIRTEST);
-
-  std::vector<double> phases_temp;
-  phases_temp.push_back(0.);
-  std::vector<std::vector<double>> phases;
-  phases.push_back(phases_temp);
-  phases.push_back(phases_temp);
-
-  waveField->SetWavePhases(phases);
+//  auto w = 2. * M_PI / T;
+//
+//  waveField->SetWaveFrequencies(w, w, 1);
+//
+//  // Set wave direction
+//  waveField->SetMeanWaveDirection(Direction(NORTH(fc)), fc, dc);
+//  waveField->SetDirectionalParameters(2, 10, DIRTEST);
+//
+//  std::vector<double> phases_temp;
+//  phases_temp.push_back(0.);
+//  std::vector<std::vector<double>> phases;
+//  phases.push_back(phases_temp);
+//  phases.push_back(phases_temp);
+//
+////  waveField->SetWavePhases(phases);
 
   waveField->Initialize();
+
+//  waveField->WriteToJSON("BiDirectionalWaveInfDepth.json");
 
 
   double dir1 = 0, dir2 = 0.1;

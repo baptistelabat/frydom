@@ -54,3 +54,7 @@ set(openmesh_TAG OpenMesh-7.0)
 # spdlog
 set(spdlog_URL https://github.com/gabime/spdlog.git)
 set(spdlog_TAG v1.4.2)
+
+# cxxopts
+set(cxxopts_URL https://github.com/jarro2783/cxxopts.git)
+set(cxxopts_TAG v2.2.0)
