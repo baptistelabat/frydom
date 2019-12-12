@@ -152,8 +152,9 @@ namespace frydom {
 //    }
 
     bool FrSystemBaseSMC::Integrate_Y() {
-      chrono::ChSystem::Integrate_Y();
+      auto output = chrono::ChSystem::Integrate_Y();
       m_offshoreSystem->StepFinalize();
+      return output;
     }
 
   }  // end namespace frydom::internal

@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
 
   // You can also constraint the body motion to some degree of freedom, a particular plane, etc.
   // The body is then linked to the world, using a DOF mask.
-  body->GetDOFMask()->MakeItLocked();
+//  body->GetDOFMask()->MakeItLocked();
 
   // =============================================================================================================
   // VISUAL AND COLLISION ASSETS

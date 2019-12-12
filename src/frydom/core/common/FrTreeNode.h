@@ -70,6 +70,7 @@ namespace frydom {
 
    public:
     FrRootNode *GetParent() const final {
+      std::cout<<"test"<<std::endl;
       return nullptr;
     }
 
