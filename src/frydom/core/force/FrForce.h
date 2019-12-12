@@ -116,8 +116,6 @@ namespace frydom {
     /// Return true if the force is included in the static analysis
     virtual bool IncludedInStaticAnalysis() const { return false; }
 
-    void StepFinalizeLog() override;
-
     // Force Asset
     /// Inquire if a ForceAsset is displayed
     /// \return true if a ForceAsset is displayed
