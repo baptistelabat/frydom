@@ -528,6 +528,12 @@ namespace frydom {
       force->m_asset = nullptr;
 
     }
+
+    auto logManager = GetSystem()->GetLogManager();
+    if (auto loggable = std::dynamic_pointer_cast<FrLoggableBase>(force)) {
+      logManager->Remove(loggable);
+    }
+
   }
 
   void FrBody::RemoveAllForces() {

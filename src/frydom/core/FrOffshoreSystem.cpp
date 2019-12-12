@@ -1227,15 +1227,16 @@ namespace frydom {
       AddPhysicsItem(physics_item, physics_item->GetChronoPhysicsItem());
 //      m_pathManager->RegisterTreeNode(physics_item.get());
 
+      // DYNAMIC CABLE
+      // MUST BE BEFORE FEAMESH CASE (dynamic cable is also feamesh, however the AddDynamicCable also add the hinges)
+    } else if (auto dynamic_cable = std::dynamic_pointer_cast<FrDynamicCable>(item)) {
+      AddDynamicCable(dynamic_cable, dynamic_cable->GetChronoMesh());
+      m_pathManager->RegisterTreeNode(dynamic_cable.get());
+
       // FEA MESH
     } else if (auto fea_mesh = std::dynamic_pointer_cast<FrFEAMesh>(item)) {
       AddFEAMesh(fea_mesh, fea_mesh->GetChronoMesh());
 //      m_pathManager->RegisterTreeNode(fea_mesh.get());
-
-      // DYNAMIC CABLE
-    } else if (auto dynamic_cable = std::dynamic_pointer_cast<FrDynamicCable>(item)) {
-      AddDynamicCable(dynamic_cable, dynamic_cable->GetChronoMesh());
-      m_pathManager->RegisterTreeNode(dynamic_cable.get());
 
       // UNKNOWN
     } else {

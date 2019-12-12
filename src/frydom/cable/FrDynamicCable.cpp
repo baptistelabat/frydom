@@ -141,7 +141,7 @@ namespace frydom {
         if (!elastic) { // distance between the nodes is smaller thant the unstrained length of the line
           // Initializing the finite element model so that it fits the catenary line to get close from the
           // equilibrium solution
-          catenaryLine = make_catenary_line("",
+          catenaryLine = make_catenary_line("dynamicCableInitialization",
                                             m_frydomCable->GetSystem(),
                                             m_frydomCable->GetStartingNode(),
                                             m_frydomCable->GetEndingNode(),

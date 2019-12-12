@@ -13,77 +13,72 @@
 
 using namespace frydom;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
-    /** This demo presents basic features of FRyDoM, with EasyBody (box and spheres). The makeIt* functions set-up the
-     * collision box, corresponding asset and inertia tensor. We simulate the free fall of several balls with
-     * an initial velocity on a floor, with collisions between the balls.
-     */
+  /** This demo presents basic features of FRyDoM, with EasyBody (box and spheres). The makeIt* functions set-up the
+   * collision box, corresponding asset and inertia tensor. We simulate the free fall of several balls with
+   * an initial velocity on a floor, with collisions between the balls.
+   */
 
-    // Define the frame convention (NWU for North-West-Up or NED for North-East-Down)
-    FRAME_CONVENTION fc = NWU;
-    // Define the wave direction convention (GOTO or COMEFROM), can be used also for current and wind direction definition.
-    DIRECTION_CONVENTION dc = GOTO;
+  // Define the frame convention (NWU for North-West-Up or NED for North-East-Down)
+  FRAME_CONVENTION fc = NWU;
+  // Define the wave direction convention (GOTO or COMEFROM), can be used also for current and wind direction definition.
+  DIRECTION_CONVENTION dc = GOTO;
 
-    // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
-    FrOffshoreSystem system;
+  // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
+  FrOffshoreSystem system("demo_Ballistic");
 
-    // Hide the free surface and seabed visual assets.
-    system.GetEnvironment()->GetOcean()->ShowFreeSurface(false);
-    system.GetEnvironment()->GetOcean()->ShowSeabed(false);
+  // Hide the free surface and seabed visual assets.
+  system.GetEnvironment()->GetOcean()->ShowFreeSurface(false);
+  system.GetEnvironment()->GetOcean()->ShowSeabed(false);
 
-    // ------------------ Floor ------------------ //
+  // ------------------ Floor ------------------ //
 
-    // Create the floor box (with a collision box already defined from makeItBox)
-    auto floorBox = system.NewBody();
-    floorBox->SetName("Floor");
-    makeItBox(floorBox,100.,100.,2.,1000.);
-    floorBox->SetColor(Green);
-    floorBox->SetPosition(Position(0.,0.,0.),fc);
-    floorBox->SetFixedInWorld(true);
+  // Create the floor box (with a collision box already defined from makeItBox)
+  auto floorBox = system.NewBody("floor");
+  makeItBox(floorBox, 100., 100., 2., 1000.);
+  floorBox->SetColor(Green);
+  floorBox->SetPosition(Position(0., 0., 0.), fc);
+  floorBox->SetFixedInWorld(true);
 
-    // ------------------ Balls ------------------ //
+  // ------------------ Balls ------------------ //
 
-    // Set the number of balls you want, their radius and density.
-    int n_balls = 10;
-    double dtheta = 2*M_PI/n_balls;
-    double radius = 1.;
-    double density = 250;
+  // Set the number of balls you want, their radius and density.
+  int n_balls = 10;
+  double dtheta = 2 * M_PI / n_balls;
+  double radius = 1.;
+  double density = 250;
 
-    // Create as many balls as specified
-    for (int ib=0;ib<n_balls;++ib){
-        // A new ball is created in the offshore system
-        auto ball = system.NewBody();
+  // Create as many balls as specified
+  for (int ib = 0; ib < n_balls; ++ib) {
+    // A new ball is created in the offshore system
+    std::string ballName = "Ball_" + std::to_string(ib);
+    auto ball = system.NewBody(ballName);
 
-        // Give it a name
-        std::stringstream concatenation;
-        concatenation<<"Ball"<<ib;
-        ball->SetName(concatenation.str().c_str());
+    // Make it a sphere, with a collision box, spheric asset and inertia tensor automatically calculated
+    makeItSphere(ball, radius, density);
 
-        // Make it a sphere, with a collision box, spheric asset and inertia tensor automatically calculated
-        makeItSphere(ball,radius,density);
+    // Set the color
+    ball->SetColor(Red);
 
-        // Set the color
-        ball->SetColor(Red);
+    // Set the initial position and velocity
+    ball->SetPosition(Position(100 * cos(ib * dtheta), 100 * sin(ib * dtheta), 30.), fc);
+    ball->SetVelocityInWorldNoRotation(Velocity(-20. * cos(ib * dtheta), -20. * sin(ib * dtheta), 20.), fc);
+  }
 
-        // Set the initial position and velocity
-        ball->SetPosition(Position(100*cos(ib * dtheta),100*sin(ib * dtheta),30.),fc);
-        ball->SetVelocityInWorldNoRotation(Velocity(-20.*cos(ib * dtheta),-20.*sin(ib * dtheta),20.),fc);
-    }
+  // ------------------ Run ------------------ //
 
-    // ------------------ Run ------------------ //
+  // You can change the dynamical simulation time step using.
+  system.SetTimeStep(0.04);
 
-    // You can change the dynamical simulation time step using.
-    system.SetTimeStep(0.04);
+  // Don't forget to initialize the offshore system : it will initialize every physical objects and environmental
+  // components it contains.
+  system.Initialize();
 
-    // Don't forget to initialize the offshore system : it will initialize every physical objects and environmental
-    // components it contains.
-    system.Initialize();
-
-    // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
-    // the time length of the simulation (here 15) and the distance from the camera to the objectif (75m).
-    // For saving snapshots of the simulation, just turn the boolean to true.
-    system.RunInViewer(15, 75, false);
+  // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
+  // the time length of the simulation (here 15) and the distance from the camera to the objectif (75m).
+  // For saving snapshots of the simulation, just turn the boolean to true.
+  system.RunInViewer(15, 75, false);
 
 
 }
