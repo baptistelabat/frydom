@@ -170,4 +170,13 @@ namespace frydom {
 
   }
 
+  std::shared_ptr<FrWaveDriftForce>
+  make_wave_drift_force(const std::string &name,
+                        std::shared_ptr<FrBody> body,
+                        std::shared_ptr<FrHydroDB> HDB) {
+    auto force = std::make_shared<FrWaveDriftForce>(name, body.get(), HDB);
+    body->AddExternalForce(force);
+    return force;
+  }
+
 }  // end namespace frydom

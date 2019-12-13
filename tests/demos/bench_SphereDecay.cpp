@@ -21,18 +21,14 @@ int main(int argc, char* argv[]) {
 
     // -- System
 
-    FrOffshoreSystem system;
-    system.SetName("Sphere_Decay");
-    system.GetPathManager()->SetLogFrameConvention(NWU);
-    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
+    FrOffshoreSystem system("Sphere_Decay");
 
     auto Ocean = system.GetEnvironment()->GetOcean();
     Ocean->SetDensity(1000);
 
     // -- Body
 
-    auto body = system.NewBody();
-    body->SetName("Sphere");
+    auto body = system.NewBody("sphere");
 
     Position COGPosition(0., 0., -2.);
 
@@ -59,7 +55,8 @@ int main(int argc, char* argv[]) {
     // -- Hydrodynamics
 
     //auto hdb = make_hydrodynamic_database(resources_path.resolve("sphere_hdb.h5").path());
-    auto hdb = make_hydrodynamic_database(system.GetDataPath("sphere_hdb.h5"));
+    auto sphere_HDB = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/sphere/sphere_hdb.h5"});
+    auto hdb = make_hydrodynamic_database(sphere_HDB);
 
     auto eqFrame = make_equilibrium_frame("EqFrame", &system, body);
 
@@ -68,7 +65,7 @@ int main(int argc, char* argv[]) {
 
     // -- Linear hydrostatics
 
-    auto forceHst = make_linear_hydrostatic_force(hdb, body);
+    auto forceHst = make_linear_hydrostatic_force("linear_hydrostatic", body, hdb);
 
     // Nonlinear hydrostatics
     //auto bodyMesh = make_hydro_mesh(body,"Sphere_10000_faces.obj",FrFrame(),FrHydroMesh::ClippingSupport::WAVESURFACE);
@@ -78,7 +75,7 @@ int main(int argc, char* argv[]) {
 
     // -- Radiation
 
-    auto radiationModel = make_radiation_convolution_model(hdb, &system);
+    auto radiationModel = make_radiation_convolution_model("radiation_convolution", &system, hdb);
     radiationModel->SetImpulseResponseSize(body.get(), 6., 0.01);
 
     // -- Simulation

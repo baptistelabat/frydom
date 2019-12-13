@@ -11,30 +11,26 @@ using namespace frydom;
 // Buoyancy force
 // --------------------------------------------------------------------
 
-namespace frydom {
-  class FrDiffBuoyancyForce : public FrForce {
+class FrDiffBuoyancyForce : public FrForce {
 
-   public:
+ public:
 
-    FrDiffBuoyancyForce(const std::string &name, FrBody *body) :
-        FrForce(name, TypeToString(this), body) {};
+  FrDiffBuoyancyForce(const std::string &name, FrBody *body) :
+      FrForce(name, "DiffBuoyancyForce", body) {};
 
-    void Compute(double time) override {
+  void Compute(double time) override {
 
-      double grav = GetSystem()->GetEnvironment()->GetGravityAcceleration();
-      double massPTO = 1.e5;
-      double mg = massPTO * grav;
+    double grav = GetSystem()->GetEnvironment()->GetGravityAcceleration();
+    double massPTO = 1.e5;
+    double mg = massPTO * grav;
 
-      SetForceInWorldAtCOG(Force(0., 0., mg), NWU);
+    SetForceInWorldAtCOG(Force(0., 0., mg), NWU);
 
-    }
+  }
 
-    void StepFinalize() override {}
+  void StepFinalize() override {}
 
-  };
-
-  TYPE_TO_STRING(FrDiffBuoyancyForce, "DiffBuoyancyForce")
-}
+};
 // --------------------------------------------------------------------
 // Main
 // --------------------------------------------------------------------
