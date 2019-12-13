@@ -21,6 +21,7 @@
 #include "frydom/core/body/FrBody.h"
 #include "frydom/core/common/FrFEAMesh.h"
 #include "frydom/cable/FrDynamicCable.h"
+#include "frydom/cable/FrCatenaryLine.h"
 #include "frydom/core/force/FrForce.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/utils/FrIrrApp.h"
@@ -1223,6 +1224,12 @@ namespace frydom {
       AddLink(link, link->GetChronoLink());
       m_pathManager->RegisterTreeNode(link.get());
 
+      // CATENARY LINE
+      // MUST BE BEFORE PHYSICS ITEM
+    } else if (auto catenary_line = std::dynamic_pointer_cast<FrCatenaryLine>(item)) {
+      AddPhysicsItem(catenary_line, catenary_line->GetChronoPhysicsItem());
+      m_pathManager->RegisterTreeNode(catenary_line.get());
+
       //PHYSICS ITEM
     } else if (auto physics_item = std::dynamic_pointer_cast<FrPrePhysicsItem>(item)) {
       AddPhysicsItem(physics_item, physics_item->GetChronoPhysicsItem());
@@ -1233,6 +1240,7 @@ namespace frydom {
     } else if (auto dynamic_cable = std::dynamic_pointer_cast<FrDynamicCable>(item)) {
       AddDynamicCable(dynamic_cable, dynamic_cable->GetChronoMesh());
       m_pathManager->RegisterTreeNode(dynamic_cable.get());
+
 
       // FEA MESH
     } else if (auto fea_mesh = std::dynamic_pointer_cast<FrFEAMesh>(item)) {
