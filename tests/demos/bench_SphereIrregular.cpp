@@ -129,11 +129,11 @@ int main(int argc, char *argv[]) {
 //  double Hs = param[1];
 //  double Tp = param[0];
 
+  auto waveField = ocean->GetFreeSurface()->SetAiryIrregularWaveField();
 //  double Hs = 0.5;
 //  double Tp = 4.4;
 //  double gamma = 1.0;
 //
-  auto waveField = ocean->GetFreeSurface()->SetAiryIrregularWaveField();
 //  auto Jonswap = waveField->SetJonswapWaveSpectrum(Hs, Tp, gamma);
 //  double w1 = 0.5;
 //  double w2 = 2;
@@ -145,7 +145,7 @@ int main(int argc, char *argv[]) {
 //  waveField->SetDirectionalParameters(nbDir, spreadingFactor);
 //  waveField->GenerateRandomWavePhases(0);
 //
-  waveField->WriteToJSON("bench_sphere_irregular_sea_state.json");
+//  waveField->WriteToJSON("bench_sphere_irregular_sea_state.json");
 
   auto seastate = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/sphere/bench_sphere_irregular_sea_state.json"});
   waveField->LoadJSON(seastate);
@@ -197,7 +197,7 @@ int main(int argc, char *argv[]) {
   auto radiationModel = make_radiation_convolution_model("radiation_convolution", &system, hdb);
   radiationModel->SetImpulseResponseSize(body.get(), 6., 0.1);
 
-  bool linear = false;
+  bool linear = true;
 
   if (linear) {
 
@@ -248,6 +248,8 @@ int main(int argc, char *argv[]) {
 
   system.SetTimeStep(dt);
   system.Initialize();
+
+  waveField->WriteToJSON("bench_sphere_irregular_sea_state.json");
 
   auto time = -dt;
 
