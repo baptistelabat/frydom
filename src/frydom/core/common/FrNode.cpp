@@ -60,7 +60,28 @@ namespace frydom {
   }
 
   void FrNode::DefineLogMessages() {
-    // TODO
+
+    auto msg = NewMessage("State", "State message");
+
+    msg->AddField<double>("time", "s", "Current time of the simulation",
+                          [this]() { return GetSystem()->GetTime(); });
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+    ("PositionInWorld", "m", fmt::format("Node position in world reference frame in {}", GetLogFC()),
+            [this]() { return GetPositionInWorld(GetLogFC()); });
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+    ("VelocityInWorld","m/s", fmt::format("Node velocity in world reference frame in {}",GetLogFC()),
+            [this]() {return GetVelocityInWorld(GetLogFC());});
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+    ("AccelerationInWorld","m/s²", fmt::format("Node acceleration in world reference frame in {}",GetLogFC()),
+            [this]() {return GetAccelerationInWorld(GetLogFC());});
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+    ("NodePositionInBody","m", fmt::format("Node position in body reference frame in {}",GetLogFC()),
+            [this]() {return GetNodePositionInBody(GetLogFC());});
+
   }
 
   FrFrame FrNode::GetFrameInWorld() const {
@@ -267,34 +288,6 @@ namespace frydom {
     }
 
   }
-
-//    void FrNode::AddFields() {
-//
-////        if (IsLogged()) {
-////
-////            // Add the fields to be logged here
-////            m_message->AddField<double>("time", "s", "Current time of the simulation",
-////                                        [this]() { return m_chronoMarker->GetChTime(); });
-////
-////            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////            ("PositionInWorld","m", fmt::format("Node position in world reference frame in {}",GetLogFrameConvention()),
-////                    [this]() {return GetPositionInWorld(GetLogFrameConvention());});
-////
-////            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////            ("VelocityInWorld","m/s", fmt::format("Node velocity in world reference frame in {}",GetLogFrameConvention()),
-////                    [this]() {return GetVelocityInWorld(GetLogFrameConvention());});
-////
-////            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////            ("AccelerationInWorld","m/s²", fmt::format("Node acceleration in world reference frame in {}",GetLogFrameConvention()),
-////                    [this]() {return GetAccelerationInWorld(GetLogFrameConvention());});
-////
-////            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////            ("NodePositionInBody","m", fmt::format("Node position in body reference frame in {}",GetLogFrameConvention()),
-////                    [this]() {return GetNodePositionInBody(GetLogFrameConvention());});
-////
-////        }
-//
-//    }
 
   void FrNode::ShowAsset(bool showAsset) {
     m_showAsset = showAsset;

@@ -41,7 +41,25 @@ namespace frydom {
   }
 
   void FrCatenaryLine::DefineLogMessages() {
-    // TODO !!
+
+    auto msg = NewMessage("State", "State messages");
+
+    msg->AddField<double>("time", "s", "Current time of the simulation",
+                          [this]() { return GetSystem()->GetTime(); });
+
+    msg->AddField<double>("StrainedLength", "m", "Strained length of the catenary line",
+                          [this]() { return GetStrainedLength(); });
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("StartingNodeTension", "N", fmt::format("Starting node tension in world reference frame in {}", GetLogFC()),
+            [this]() { return GetStartingNodeTension(GetLogFC()); });
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("EndingNodeTension", "N", fmt::format("Ending node tension in world reference frame in {}", GetLogFC()),
+            [this]() { return GetEndingNodeTension(GetLogFC()); });
+
+    // TODO : logger la position de la ligne pour un ensemble d'abscisse curvilignes ?
+
   }
 
   void FrCatenaryLine::SetSolverTolerance(double tol) {
@@ -288,46 +306,14 @@ namespace frydom {
   }
 
   void FrCatenaryLine::UpdateState() {
-
     FrCable::UpdateState();
     solve();
-
   }
 
-//    void FrCatenaryLine::AddFields() {
-//
-//////        if (IsLogged()) {
-////
-////            // Add the fields to be logged here
-////            m_message->AddField<double>("time", "s", "Current time of the simulation",
-////                                        [this]() { return m_system->GetTime(); });
-////
-////            m_message->AddField<double>("StrainedLength", "m", "Strained length of the catenary line",
-////                                        [this]() { return GetStrainedLength(); });
-////
-////            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////            ("StartingNodeTension","N", fmt::format("Starting node tension in world reference frame in {}",GetLogFrameConvention()),
-////                    [this]() {return GetStartingNodeTension(GetLogFrameConvention());});
-////
-////            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////            ("EndingNodeTension","N", fmt::format("Ending node tension in world reference frame in {}",GetLogFrameConvention()),
-////                    [this]() {return GetEndingNodeTension(GetLogFrameConvention());});
-////
-////            //TODO : logger la position de la ligne pour un ensemble d'abscisses curvilignes?
-////
-//////        }
-//
-//    }
-
   void FrCatenaryLine::StepFinalize() {
-
     FrAssetOwner::UpdateAsset();
-
     FrPhysicsItem::StepFinalize();
-
-    // Serialize and send the log message
     FrObject::StepFinalize();
-
   }
 
   internal::FrPhysicsItemBase *FrCatenaryLine::GetChronoItem_ptr() const { return m_chronoPhysicsItem.get(); }

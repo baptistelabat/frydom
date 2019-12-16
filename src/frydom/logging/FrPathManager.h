@@ -36,6 +36,8 @@ namespace frydom {
 
   class FrActuator;
 
+  class FrCatenaryLine;
+
 
   // TODO : renommer en TreeManager ??
   class FrPathManager {

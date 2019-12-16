@@ -40,7 +40,7 @@ namespace frydom {
   };
 
   // Forward declarations
-  class FrNode;
+  class  FrNode;
 
   class FrBody;
 

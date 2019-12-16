@@ -303,7 +303,7 @@ namespace frydom {
       m_nbElements(nbElements) {
 
     m_chronoCable = std::make_shared<internal::FrDynamicCableBase>(this);
-//        SetLogged(true);
+    LogThis(true);
 
   }
 
@@ -330,7 +330,23 @@ namespace frydom {
   }
 
   void FrDynamicCable::DefineLogMessages() {
-    // TODO !!
+
+    auto msg = NewMessage("State", "State message");
+
+    msg->AddField<double>("time", "s", "Current time of the simulation",
+                          [this]() { return GetSystem()->GetTime(); });
+
+    msg->AddField<double>("StrainedLength", "m", "Strained Length of the dynamic cable",
+                          [this]() { return GetStrainedLength(); });
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("StartingNodeTension", "N", fmt::format("Starting node tension in world reference frame in {}", GetLogFC()),
+            [this]() { return GetTension(0., GetLogFC()); });
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("EndingNodeTension", "N", fmt::format("Ending node tension in world reference frame in {}", GetLogFC()),
+            [this]() { return - GetTension(GetUnstrainedLength(), GetLogFC()); });
+
   }
 
   void FrDynamicCable::SetBreakingTension(double tension) {
