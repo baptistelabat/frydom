@@ -150,6 +150,7 @@ namespace frydom {
    * to set the linkType LINK_TYPE for the instance of the FrLinkLockBase.
    * For one DOF links (REVOLUTE, PRISMATIC ,etc.), a motorisation of the DOF is possible.
    */
+  // FIXME :: pass the FrLoggable from FrLinkBase to FrLink ( don't forget constraints and actuators)
   class FrLink : public FrLinkBase {
 
    protected:

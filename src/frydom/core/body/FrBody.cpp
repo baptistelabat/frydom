@@ -1055,7 +1055,8 @@ namespace frydom {
     bodyNode->SetFrameInWorld(bodyNodeFrameInWorld);
 
     // World Marker placed at the current COG body position
-    auto worldNode = GetSystem()->GetWorldBody()->NewNode("world_body_locking_node");
+    auto node_numbers = GetSystem()->GetWorldBody()->GetNodeList().size();
+    auto worldNode = GetSystem()->GetWorldBody()->NewNode("world_body_locking_node" + std::to_string(node_numbers));
     worldNode->SetFrameInBody(bodyNodeFrameInWorld);
 
     // Creating the link
