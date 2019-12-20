@@ -90,6 +90,12 @@ namespace frydom {
 
   class FrLinkBase;
 
+  class FrLink;
+
+  class FrConstraint;
+
+  class FrActuator;
+
   class FrNode;
 
   class FrPhysicsItem;
@@ -229,13 +235,17 @@ namespace frydom {
 
     // Container: definition.
     using BodyContainer = std::vector<std::shared_ptr<FrBody>>;
-    using LinkContainer = std::vector<std::shared_ptr<FrLinkBase>>;
+    using LinkContainer = std::vector<std::shared_ptr<FrLink>>;
+    using ConstraintContainer = std::vector<std::shared_ptr<FrConstraint>>;
+    using ActuatorContainer = std::vector<std::shared_ptr<FrActuator>>;
     using PrePhysicsContainer = std::vector<std::shared_ptr<FrPrePhysicsItem>>;
     using FEAMeshContainer = std::vector<std::shared_ptr<FrFEAMesh>>;
 
     // Container: list of objects.
-    BodyContainer m_bodyList;   ///< list of bodies managed by this offshore system
-    LinkContainer m_linkList;   ///< list of links between bodies managed by this offhsore system
+    BodyContainer m_bodyList;               ///< list of bodies managed by this offshore system
+    LinkContainer m_linkList;               ///< list of links between bodies managed by this offshore system
+    ConstraintContainer m_constraintList;   ///< list of constraints between bodies managed by this offshore system
+    ActuatorContainer m_actuatorList;       ///< list of actuators between bodies managed by this offshore system
     PrePhysicsContainer m_PrePhysicsList;   ///< list of physics items, updated before the bodies
     FEAMeshContainer m_feaMeshList;         ///< list of FEA mesh items, managed by this offshore system
 
@@ -295,6 +305,26 @@ namespace frydom {
 
     /// Remove all bodies from the system
     void RemoveAllLinks();
+
+
+    // ***** Constraints *****
+
+    /// Get the list of constraints added to the system
+    /// \return List of the constraints added to the system
+    ConstraintContainer GetConstraintList() { return m_constraintList; }
+
+    /// Remove all bodies from the system
+    void RemoveAllConstraints();
+
+
+    // ***** Actuator *****
+
+    /// Get the list of actuators added to the system
+    /// \return List of the actuators added to the system
+    ActuatorContainer GetActuatorList() { return m_actuatorList; }
+
+    /// Remove all bodies from the system
+    void RemoveAllActuators();
 
 
     // ***** Pre Physics Item *****
@@ -695,11 +725,27 @@ namespace frydom {
 
     /// Add a link between bodies to the offshore system
     /// \param link link to be added
-    void AddLink(std::shared_ptr<FrLinkBase> link, std::shared_ptr<chrono::ChLink> chrono_link);
+    void AddLink(std::shared_ptr<FrLink> link, std::shared_ptr<chrono::ChLink> chrono_link);
 
     /// Remove a link from the system
     /// \param link Link removed from the system
-    void RemoveLink(std::shared_ptr<FrLinkBase> link, std::shared_ptr<chrono::ChLink> chrono_link);
+    void RemoveLink(std::shared_ptr<FrLink> link, std::shared_ptr<chrono::ChLink> chrono_link);
+
+    /// Add a constraint between bodies to the offshore system
+    /// \param constraint constraint to be added
+    void AddConstraint(std::shared_ptr<FrConstraint> constraint, std::shared_ptr<chrono::ChLink> chrono_constraint);
+
+    /// Remove a constraint from the system
+    /// \param constraint Constraint removed from the system
+    void RemoveConstraint(std::shared_ptr<FrConstraint> constraint, std::shared_ptr<chrono::ChLink> chrono_constraint);
+
+    /// Add a actuator between bodies to the offshore system
+    /// \param actuator actuator to be added
+    void AddActuator(std::shared_ptr<FrActuator> actuator, std::shared_ptr<chrono::ChLink> chrono_actuator);
+
+    /// Remove a actuator from the system
+    /// \param actuator Actuator removed from the system
+    void RemoveActuator(std::shared_ptr<FrActuator> actuator, std::shared_ptr<chrono::ChLink> chrono_actuator);
 
     /// Add other physics item to the offshore system
     /// \param otherPhysics other physic item to be added
@@ -754,6 +800,12 @@ namespace frydom {
     using LinkIter      = LinkContainer::iterator;
     using ConstLinkIter = LinkContainer::const_iterator;
 
+    using ConstraintIter      = ConstraintContainer::iterator;
+    using ConstConstraintIter = ConstraintContainer::const_iterator;
+
+    using ActuatorIter      = ActuatorContainer::iterator;
+    using ConstActuatorIter = ActuatorContainer::const_iterator;
+
     using PrePhysicsIter = PrePhysicsContainer::iterator;
     using ConstPrePhysicsIter = PrePhysicsContainer::const_iterator;
 
@@ -775,6 +827,22 @@ namespace frydom {
     LinkIter link_end();
 
     ConstLinkIter link_end() const;
+
+    ConstraintIter constraint_begin();
+
+    ConstConstraintIter constraint_begin() const;
+
+    ConstraintIter constraint_end();
+
+    ConstConstraintIter constraint_end() const;
+
+    ActuatorIter actuator_begin();
+
+    ConstActuatorIter actuator_begin() const;
+
+    ActuatorIter actuator_end();
+
+    ConstActuatorIter actuator_end() const;
 
   };
 

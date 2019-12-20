@@ -286,13 +286,13 @@ namespace frydom {
 
 // ***** Link *****
 
-  void FrOffshoreSystem::AddLink(std::shared_ptr<FrLinkBase> link, std::shared_ptr<chrono::ChLink> chrono_link) {
+  void FrOffshoreSystem::AddLink(std::shared_ptr<FrLink> link, std::shared_ptr<chrono::ChLink> chrono_link) {
     m_chronoSystem->AddLink(chrono_link);
     m_linkList.push_back(link);
     event_logger::info(GetTypeName(), GetName(), "Link {} has been ADDED to the system", link->GetName());
   }
 
-  void FrOffshoreSystem::RemoveLink(std::shared_ptr<FrLinkBase> link, std::shared_ptr<chrono::ChLink> chrono_link) {
+  void FrOffshoreSystem::RemoveLink(std::shared_ptr<FrLink> link, std::shared_ptr<chrono::ChLink> chrono_link) {
 
     m_chronoSystem->RemoveLink(chrono_link);
 
@@ -300,7 +300,7 @@ namespace frydom {
     assert(it != link_end());
     if (it == link_end()) {
       event_logger::error(GetTypeName(), GetName(),
-          "Fail to remove link {} as it is not registered", link->GetName());
+                          "Fail to remove link {} as it is not registered", link->GetName());
       return;
     }
 
@@ -312,6 +312,68 @@ namespace frydom {
 
     for (auto &link: m_linkList)
       Remove(link);
+  }
+
+
+// ***** Constraint *****
+
+  void FrOffshoreSystem::AddConstraint(std::shared_ptr<FrConstraint> constraint, std::shared_ptr<chrono::ChLink> chrono_link) {
+    m_chronoSystem->AddLink(chrono_link);
+    m_constraintList.push_back(constraint);
+    event_logger::info(GetTypeName(), GetName(), "Constraint {} has been ADDED to the system", constraint->GetName());
+  }
+
+  void FrOffshoreSystem::RemoveConstraint(std::shared_ptr<FrConstraint> constraint, std::shared_ptr<chrono::ChLink> chrono_link) {
+
+    m_chronoSystem->RemoveLink(chrono_link);
+
+    auto it = std::find(constraint_begin(), constraint_end(), constraint);
+    assert(it != constraint_end());
+    if (it == constraint_end()) {
+      event_logger::error(GetTypeName(), GetName(),
+                          "Fail to remove constraint {} as it is not registered", constraint->GetName());
+      return;
+    }
+
+    m_constraintList.erase(it);
+    event_logger::info(GetTypeName(), GetName(), "Constraint {} has been REMOVED from the system", constraint->GetName());
+  }
+
+  void FrOffshoreSystem::RemoveAllConstraints() {
+
+    for (auto &constraint: m_constraintList)
+      Remove(constraint);
+  }
+
+
+// ***** Actuator *****
+
+  void FrOffshoreSystem::AddActuator(std::shared_ptr<FrActuator> actuator, std::shared_ptr<chrono::ChLink> chrono_link) {
+    m_chronoSystem->AddLink(chrono_link);
+    m_actuatorList.push_back(actuator);
+    event_logger::info(GetTypeName(), GetName(), "Actuator {} has been ADDED to the system", actuator->GetName());
+  }
+
+  void FrOffshoreSystem::RemoveActuator(std::shared_ptr<FrActuator> actuator, std::shared_ptr<chrono::ChLink> chrono_link) {
+
+    m_chronoSystem->RemoveLink(chrono_link);
+
+    auto it = std::find(actuator_begin(), actuator_end(), actuator);
+    assert(it != actuator_end());
+    if (it == actuator_end()) {
+      event_logger::error(GetTypeName(), GetName(),
+                          "Fail to remove actuator {} as it is not registered", actuator->GetName());
+      return;
+    }
+
+    m_actuatorList.erase(it);
+    event_logger::info(GetTypeName(), GetName(), "Actuator {} has been REMOVED from the system", actuator->GetName());
+  }
+
+  void FrOffshoreSystem::RemoveAllActuators() {
+
+    for (auto &actuator: m_actuatorList)
+      Remove(actuator);
   }
 
 
@@ -457,6 +519,14 @@ namespace frydom {
       item->Initialize();
     }
 
+    for (auto &item : m_constraintList) {
+      item->Initialize();
+    }
+
+    for (auto &item : m_actuatorList) {
+      item->Initialize();
+    }
+
     for (auto &item : m_feaMeshList) {
       item->Initialize();
     }
@@ -516,6 +586,14 @@ namespace frydom {
     }
 
     for (auto &item : m_linkList) {
+      item->StepFinalize();
+    }
+
+    for (auto &item : m_constraintList) {
+      item->StepFinalize();
+    }
+
+    for (auto &item : m_actuatorList) {
       item->StepFinalize();
     }
 
@@ -978,6 +1056,8 @@ namespace frydom {
 
     m_bodyList.clear();
     m_linkList.clear();
+    m_constraintList.clear();
+    m_actuatorList.clear();
     m_feaMeshList.clear();
     m_PrePhysicsList.clear();
 
@@ -1114,6 +1194,38 @@ namespace frydom {
     return m_linkList.cend();
   }
 
+  FrOffshoreSystem::ConstraintIter FrOffshoreSystem::constraint_begin() {
+    return m_constraintList.begin();
+  }
+
+  FrOffshoreSystem::ConstConstraintIter FrOffshoreSystem::constraint_begin() const {
+    return m_constraintList.cbegin();
+  }
+
+  FrOffshoreSystem::ConstraintIter FrOffshoreSystem::constraint_end() {
+    return m_constraintList.end();
+  }
+
+  FrOffshoreSystem::ConstConstraintIter FrOffshoreSystem::constraint_end() const {
+    return m_constraintList.cend();
+  }
+
+  FrOffshoreSystem::ActuatorIter FrOffshoreSystem::actuator_begin() {
+    return m_actuatorList.begin();
+  }
+
+  FrOffshoreSystem::ConstActuatorIter FrOffshoreSystem::actuator_begin() const {
+    return m_actuatorList.cbegin();
+  }
+
+  FrOffshoreSystem::ActuatorIter FrOffshoreSystem::actuator_end() {
+    return m_actuatorList.end();
+  }
+
+  FrOffshoreSystem::ConstActuatorIter FrOffshoreSystem::actuator_end() const {
+    return m_actuatorList.cend();
+  }
+
 //    void FrOffshoreSystem::InitializeLog_Dependencies(const std::string& systemPath) {
 //
 //        if (IsLogged()) {
@@ -1222,18 +1334,19 @@ namespace frydom {
       m_pathManager->RegisterTreeNode(body.get());
 
       // LINK
-    } else if (auto link = std::dynamic_pointer_cast<FrLinkBase>(item)) {
+    } else if (auto link = std::dynamic_pointer_cast<FrLink>(item)) {
       AddLink(link, link->GetChronoLink());
+      m_pathManager->RegisterTreeNode(link.get());
 
-      if (auto kinematic_link = std::dynamic_pointer_cast<FrLink>(item)) {
-        m_pathManager->RegisterTreeNode(kinematic_link.get());
-      }else if (auto constraint = std::dynamic_pointer_cast<FrConstraint>(item)) {
-        m_pathManager->RegisterTreeNode(constraint.get());
-      }else if (auto actuator = std::dynamic_pointer_cast<FrActuator>(item)) {
-        m_pathManager->RegisterTreeNode(actuator.get());
-      }
+      // CONSTRAINT
+    } else if (auto constraint = std::dynamic_pointer_cast<FrConstraint>(item)) {
+      AddConstraint(constraint, constraint->GetChronoLink());
+      m_pathManager->RegisterTreeNode(constraint.get());
 
-//      m_pathManager->RegisterTreeNode(link.get());
+      // ACTUATOR
+    } else if (auto actuator = std::dynamic_pointer_cast<FrActuator>(item)) {
+      AddActuator(actuator, actuator->GetChronoLink());
+      m_pathManager->RegisterTreeNode(actuator.get());
 
       // CATENARY LINE
       // MUST BE BEFORE PHYSICS ITEM
@@ -1277,8 +1390,16 @@ namespace frydom {
       RemoveBody(body, body->GetChronoBody());
 
       // LINK
-    } else if (auto link = std::dynamic_pointer_cast<FrLinkBase>(item)) {
+    } else if (auto link = std::dynamic_pointer_cast<FrLink>(item)) {
       RemoveLink(link, link->GetChronoLink());
+
+      // CONSTRAINT
+    } else if (auto constraint = std::dynamic_pointer_cast<FrConstraint>(item)) {
+      RemoveConstraint(constraint, constraint->GetChronoLink());
+
+      // ACTUATOR
+    } else if (auto actuator = std::dynamic_pointer_cast<FrActuator>(item)) {
+      RemoveActuator(actuator, actuator->GetChronoLink());
 
       //PHYSICS ITEM
     } else if (auto physics_item = std::dynamic_pointer_cast<FrPrePhysicsItem>(item)) {
