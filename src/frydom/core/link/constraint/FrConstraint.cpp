@@ -69,7 +69,7 @@ namespace frydom {
   }
 
   void FrConstraint::SetDisabled(bool disabled) {
-        m_chronoConstraint->SetDisabled(disabled);
+    m_chronoConstraint->SetDisabled(disabled);
   }
 
   bool FrConstraint::IsActive() const {
@@ -85,37 +85,46 @@ namespace frydom {
   }
 
   void FrConstraint::DefineLogMessages() {
-    // TODO
-  }
 
-//    void FrConstraint::AddFields() {
-////        m_message->AddField<double>("time", "s", "Current time of the simulation",
-////                                    [this]() { return m_system->GetTime(); });
-////
-////        // Constraint position and orientation
-////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                ("ConstraintPositionInWorld","m", fmt::format("Constraint reference frame position, relatively to the world reference frame, in {}",GetLogFrameConvention()),
-////                 [this]() {return GetConstraintReferenceFrameInWorld().GetPosition(GetLogFrameConvention());});
-////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                ("ConstraintOrientationInWorld","deg", fmt::format("Constraint reference frame orientation, relatively to the world reference frame, in {}",GetLogFrameConvention()),
-////                 [this]() { double phi, theta, psi; GetConstraintReferenceFrameInWorld().GetRotation().GetCardanAngles_DEGREES(phi, theta, psi, GetLogFrameConvention()) ;
-////                    return Position(phi, theta, psi);});
-////
-////        // Constraint reaction force and torque
-////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                ("GetForceInWorld","N", fmt::format("Constraint reaction force in world reference frame, in {}",GetLogFrameConvention()),
-////                 [this]() {return GetForceInWorld(GetLogFrameConvention());});
-////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                ("GetTorqueInWorldAtConstraint","Nm", fmt::format("Constraint reaction torque at constraint reference frame origin, in world reference frame, in {}",GetLogFrameConvention()),
-////                 [this]() {return GetTorqueInWorldAtConstraint(GetLogFrameConvention());});
-////
-////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                ("GetForceInBody1","N", fmt::format("Constraint reaction force in first body reference frame, in {}",GetLogFrameConvention()),
-////                 [this]() {return GetForceInBody1(GetLogFrameConvention());});
-////        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                ("GetTorqueInBody1AtCOG","Nm", fmt::format("Constraint reaction torque at COG, in first body reference frame, in {}",GetLogFrameConvention()),
-////                 [this]() {return GetTorqueInBody1AtCOG(GetLogFrameConvention());});
-//    }
+    auto msg = NewMessage("State", "State message");
+
+    msg->AddField<double>("time", "s", "Current time of the simulation",
+                          [this]() { return GetSystem()->GetTime(); });
+
+    // Constraint position and orientation
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("ConstraintPositionInWorld", "m",
+         fmt::format("Constraint reference frame position, relatively to the world reference frame, in {}", GetLogFC()),
+         [this]() { return GetConstraintReferenceFrameInWorld().GetPosition(GetLogFC()); });
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("ConstraintOrientationInWorld", "deg",
+         fmt::format("Constraint reference frame orientation, relatively to the world reference frame, in {}",
+                     GetLogFC()),
+         [this]() {
+           double phi, theta, psi;
+           GetConstraintReferenceFrameInWorld().GetRotation().GetCardanAngles_DEGREES(phi, theta, psi, GetLogFC());
+           return Position(phi, theta, psi);
+         });
+
+    // Constraint reaction force and torque
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("GetForceInWorld", "N", fmt::format("Constraint reaction force in world reference frame, in {}", GetLogFC()),
+         [this]() { return GetForceInWorld(GetLogFC()); });
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("GetTorqueInWorldAtConstraint", "Nm",
+         fmt::format("Constraint reaction torque at constraint reference frame origin, in world reference frame, in {}",
+                     GetLogFC()),
+         [this]() { return GetTorqueInWorldAtConstraint(GetLogFC()); });
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("GetForceInBody1", "N",
+         fmt::format("Constraint reaction force in first body reference frame, in {}", GetLogFC()),
+         [this]() { return GetForceInBody1(GetLogFC()); });
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("GetTorqueInBody1AtCOG", "Nm",
+         fmt::format("Constraint reaction torque at COG, in first body reference frame, in {}", GetLogFC()),
+         [this]() { return GetTorqueInBody1AtCOG(GetLogFC()); });
+  }
 
   //------------------------------------------------------------------------------------------------------------------
 

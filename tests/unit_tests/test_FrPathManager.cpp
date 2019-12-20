@@ -31,14 +31,27 @@ TEST(FrPathManager, path) {
   auto force1 = make_manoeuvring_model("man_model", body1); // TODO : changer en maneuvring force...
 
   auto revolute_link = make_revolute_link("revolute_link", &system, node1, node3);
+  revolute_link->Motorize("motor", ACTUATOR_CONTROL::POSITION);
+
+  auto plane2 = std::make_shared<FrCPlane>(node2);
+  auto plane3 = std::make_shared<FrCPlane>(node3);
+  auto planeConstraint = make_constraint_plane_on_plane("plane_on_plane", &system, plane2, plane3);
+
+  system.Initialize();
 
   EXPECT_TRUE(path_manager->GetPath(&system) == "FRYDOM_test_FrPathManager/");
   EXPECT_TRUE(path_manager->GetPath(body1.get()) == "FRYDOM_test_FrPathManager/BODIES/BODY_myBody1/");
-  EXPECT_TRUE(path_manager->GetPath(node1.get()) == "FRYDOM_test_FrPathManager/BODIES/BODY_myBody1/NODES/NODE_myNode1/");
-  EXPECT_TRUE(path_manager->GetPath(node2.get()) == "FRYDOM_test_FrPathManager/BODIES/BODY_myBody1/NODES/NODE_myNode2/");
+  EXPECT_TRUE(
+      path_manager->GetPath(node1.get()) == "FRYDOM_test_FrPathManager/BODIES/BODY_myBody1/NODES/NODE_myNode1/");
+  EXPECT_TRUE(
+      path_manager->GetPath(node2.get()) == "FRYDOM_test_FrPathManager/BODIES/BODY_myBody1/NODES/NODE_myNode2/");
   EXPECT_TRUE(path_manager->GetPath(body2.get()) == "FRYDOM_test_FrPathManager/BODIES/BODY_myBody2/");
-  EXPECT_TRUE(path_manager->GetPath(node3.get()) == "FRYDOM_test_FrPathManager/BODIES/BODY_myBody2/NODES/NODE_myNode3/");
-  // FIXME !!!
-//  EXPECT_TRUE(path_manager->GetPath(revolute_link.get()) == "FRYDOM_test_FrPathManager/LINKS/LINK_revolute_link/");
+  EXPECT_TRUE(
+      path_manager->GetPath(node3.get()) == "FRYDOM_test_FrPathManager/BODIES/BODY_myBody2/NODES/NODE_myNode3/");
+  EXPECT_TRUE(path_manager->GetPath(std::dynamic_pointer_cast<FrLink>(revolute_link).get()) ==
+              "FRYDOM_test_FrPathManager/LINKS/LINK_revolute_link/");
+
+  EXPECT_TRUE(path_manager->GetPath(std::dynamic_pointer_cast<FrConstraint>(planeConstraint).get()) ==
+              "FRYDOM_test_FrPathManager/CONSTRAINTS/CONSTRAINT_plane_on_plane/");
 
 }

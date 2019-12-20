@@ -339,7 +339,8 @@ namespace frydom {
 
     // Node Position
     msg->AddField<Eigen::Matrix<double, 3, 1>>
-            ("PositionOfNode2WRTNode1","m", fmt::format("Node 2 position relatively to Node 1, in Node 1 reference frame in {}", GetLogFC()),
+            ("PositionOfNode2WRTNode1","m", fmt::format("Node 2 position relatively to Node 1, in Node 1 reference frame in {}",
+                                                        GetLogFC()),
              [this]() {return GetNode2PositionWRTNode1(GetLogFC());});
     // Node Velocity
     msg->AddField<Eigen::Matrix<double, 3, 1>>

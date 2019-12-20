@@ -18,6 +18,8 @@
 #include "chrono/solver/ChIterativeSolver.h"
 
 #include "frydom/core/link/links_lib/FrLink.h"
+#include "frydom/core/link/links_lib/actuators/FrActuator.h"
+#include "frydom/core/link/constraint/FrConstraint.h"
 #include "frydom/core/body/FrBody.h"
 #include "frydom/core/common/FrFEAMesh.h"
 #include "frydom/cable/FrDynamicCable.h"
@@ -1222,7 +1224,16 @@ namespace frydom {
       // LINK
     } else if (auto link = std::dynamic_pointer_cast<FrLinkBase>(item)) {
       AddLink(link, link->GetChronoLink());
-      m_pathManager->RegisterTreeNode(link.get());
+
+      if (auto kinematic_link = std::dynamic_pointer_cast<FrLink>(item)) {
+        m_pathManager->RegisterTreeNode(kinematic_link.get());
+      }else if (auto constraint = std::dynamic_pointer_cast<FrConstraint>(item)) {
+        m_pathManager->RegisterTreeNode(constraint.get());
+      }else if (auto actuator = std::dynamic_pointer_cast<FrActuator>(item)) {
+        m_pathManager->RegisterTreeNode(actuator.get());
+      }
+
+//      m_pathManager->RegisterTreeNode(link.get());
 
       // CATENARY LINE
       // MUST BE BEFORE PHYSICS ITEM

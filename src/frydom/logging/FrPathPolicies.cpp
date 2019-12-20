@@ -19,8 +19,17 @@ namespace frydom {
   class FrNode;
   TYPE_TO_NORMALIZED_PATH_PREFIX(FrNode, "NODES/NODE_");
 
-  class FrLinkBase;
-  TYPE_TO_NORMALIZED_PATH_PREFIX(FrLinkBase, "LINKS/LINK_"); // TODO: voir aussi avec les actuateurs...
+//  class FrLinkBase;
+//  TYPE_TO_NORMALIZED_PATH_PREFIX(FrLinkBase, "LINKS/LINK_"); // TODO: voir aussi avec les actuateurs...
+
+  class FrLink;
+  TYPE_TO_NORMALIZED_PATH_PREFIX(FrLink, "LINKS/LINK_");
+
+  class FrConstraint;
+  TYPE_TO_NORMALIZED_PATH_PREFIX(FrConstraint, "CONSTRAINTS/CONSTRAINT_");
+
+  class FrActuator;
+  TYPE_TO_NORMALIZED_PATH_PREFIX(FrActuator, "ACTUATORS/ACTUATOR_");
 
   class FrRootNode;
   TYPE_TO_NORMALIZED_PATH_PREFIX(FrRootNode, "ROOT_");
