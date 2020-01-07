@@ -725,7 +725,7 @@ class pyHDB():
         dset.attrs['Description'] = 'Number of hydrodynamic bodies.'
 
         # Solver.
-        dset = writer.create_dataset('Solver', data=self.solver)
+        dset = writer.create_dataset('Solver', data=self.solver.encode('utf-8'))
         dset.attrs['Description'] = 'Hydrodynamic solver used for computing the hydrodynamic database.'
 
     def write_discretization(self, writer):
@@ -1106,7 +1106,7 @@ class pyHDB():
         dset = writer.create_group(body_path)
 
         # Body name.
-        dset = writer.create_dataset(body_path + "/BodyName", data=body.name)
+        dset = writer.create_dataset(body_path + "/BodyName", data=body.name.encode('utf-8'))
         dset.attrs['Description'] = "Body name"
 
         # Index of the body.
@@ -1163,7 +1163,7 @@ class pyHDB():
 
         # Loop over the degrees of freedom.
         for key, mode in self.wave_drift.modes.items():
-            grp_modes = dg.require_group(mode.name)
+            grp_modes = dg.require_group(mode.name.encode('utf-8'))
 
             # Loop over the wave directions.
             for i_angle, angle in enumerate(mode.heading):

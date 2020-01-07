@@ -15,6 +15,9 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import copy
+
+import meshmagick.MMviewer
 
 Dof_notation = [r'x', r'y', r'z', r'\phi', r'\theta', r'\psi']
 Dof_name = ["surge", "sway", "heave", "roll", "pitch", "yaw"]
@@ -426,3 +429,16 @@ def plot_filering(data, time, SpeedOrNot, coeff, ibody_force, iforce, ibody_moti
     plt.legend()
     plt.grid()
     plt.show()
+
+def Meshmagick_viewer(mesh):
+    """This function plots a mesh."""
+
+    mesh_vizu = copy.deepcopy(mesh)
+    vtk_polydata = mesh_vizu._vtk_polydata()
+    mesh_vizu.viewer = meshmagick.MMviewer.MMViewer()
+    mesh_vizu.viewer.add_polydata(vtk_polydata)
+    mesh_vizu.viewer.renderer.ResetCamera()
+    mesh_vizu.viewer.render_window.Render()
+    mesh_vizu.viewer.render_window_interactor.Start()
+    mesh_vizu.viewer.finalize()
+

@@ -268,6 +268,26 @@ class HDB5(object):
         # Plots.
         plot_db.plot_irf(data, time, 1, ibody_force, iforce, ibody_motion, idof)
 
+    def Plot_Mesh(self, ibody = -1):
+        """This function plots a mesh."""
+
+        # Data.
+        mesh = self._pyHDB.bodies[ibody].mesh
+
+        # Plot.
+        plot_db.Meshmagick_viewer(mesh)
+
+    def Plot_Meshes(self):
+        """This function plots all meshes."""
+
+        # Data.
+        MultibodyMesh = self._pyHDB.bodies[0].mesh # Initialization by using the first body which always exists because they are several bodies.
+        for id in range(1, self._pyHDB.nb_bodies): # Loop over all bodies except the first one.
+            MultibodyMesh += self._pyHDB.bodies[id].mesh
+
+        # Plot.
+        plot_db.Meshmagick_viewer(MultibodyMesh)
+
     def Cutoff_scaling_IRF(self, tc, ibody_force, iforce, ibody_motion, idof, auto_apply=False):
         """This function applies a filter to the impule response functions without forward speed and plot the result.
 
