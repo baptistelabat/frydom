@@ -2,6 +2,8 @@
 // Created by frongere on 30/09/19.
 //
 
+#include <type_traits>
+
 #include "frydom/frydom.h"
 #include "frydom/logging/FrPathManager.h"
 
@@ -46,6 +48,7 @@ TEST(FrPathManager, path) {
   EXPECT_TRUE(
       path_manager->GetPath(node2.get()) == "FRYDOM_test_FrPathManager/BODIES/BODY_myBody1/NODES/NODE_myNode2/");
   EXPECT_TRUE(path_manager->GetPath(body2.get()) == "FRYDOM_test_FrPathManager/BODIES/BODY_myBody2/");
+//<<<<<<< HEAD
   EXPECT_TRUE(
       path_manager->GetPath(node3.get()) == "FRYDOM_test_FrPathManager/BODIES/BODY_myBody2/NODES/NODE_myNode3/");
   EXPECT_TRUE(path_manager->GetPath(std::dynamic_pointer_cast<FrLink>(revolute_link).get()) ==
@@ -56,5 +59,9 @@ TEST(FrPathManager, path) {
 
   EXPECT_TRUE(path_manager->GetPath(std::dynamic_pointer_cast<FrConstraint>(planeConstraint).get()) ==
               "FRYDOM_test_FrPathManager/CONSTRAINTS/CONSTRAINT_plane_on_plane/");
+//=======
+//  EXPECT_TRUE(path_manager->GetPath(node3.get()) == "FRYDOM_test_FrPathManager/BODIES/BODY_myBody2/NODES/NODE_myNode3/");
+//  EXPECT_TRUE(path_manager->GetPath(revolute_link.get()) == "FRYDOM_test_FrPathManager/LINKS/LINK_revolute_link/");
+//>>>>>>> develop
 
 }
