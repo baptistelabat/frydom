@@ -18,7 +18,8 @@ namespace frydom {
                              FrOffshoreSystem *system,
                              const std::shared_ptr<FrNode> &node1,
                              const std::shared_ptr<FrNode> &node2) :
-      FrLinkBase(name, type_name, system, node1, node2) {
+      FrLoggable(name, type_name, system),
+      FrLinkBase(node1, node2) {
   }
 
   FrFrame FrConstraint::GetConstraintReferenceFrameInWorld() const {

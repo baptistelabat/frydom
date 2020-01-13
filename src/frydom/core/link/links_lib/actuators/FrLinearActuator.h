@@ -35,6 +35,8 @@ namespace frydom {
 
    protected:
 
+    void DefineLogMessages() override;
+
     std::shared_ptr<chrono::ChLink> GetChronoLink() override;
 
     chrono::ChLinkMotorLinear *GetChronoItem_ptr() const override;

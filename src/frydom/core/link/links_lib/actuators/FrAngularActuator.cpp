@@ -76,5 +76,30 @@ namespace frydom {
     return {0., 0., m_chronoActuator->GetMotorTorque()};
   }
 
+  void FrAngularActuator::DefineLogMessages() {
+
+    auto msg = NewMessage("State", "State message");
+
+    msg->AddField<double>
+        ("MotorPower", "kW", "power delivered by the motor", [this]() { return GetMotorPower(); });
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("MotorTorqueInBody1(", "Nm",
+         fmt::format("Torque applied by the motor on body 1, in body 1 reference frame {}", GetLogFC()),
+         [this]() { return GetMotorTorqueInBody1(GetLogFC()); });
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("MotorTorqueInBody2(", "Nm",
+         fmt::format("Torque applied by the motor on body 2, in body 2 reference frame {}", GetLogFC()),
+         [this]() { return GetMotorTorqueInBody2(GetLogFC()); });
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("MotorTorqueAtCOGInBody1(", "Nm",
+         fmt::format("Torque applied by the motor at COG on body 1, in body 1 reference frame {}", GetLogFC()),
+         [this]() { return GetMotorTorqueAtCOGInBody1(GetLogFC()); });
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("MotorTorqueAtCOGInBody2(", "Nm",
+         fmt::format("Torque applied by the motor at COG on body 2, in body 2 reference frame {}", GetLogFC()),
+         [this]() { return GetMotorTorqueAtCOGInBody2(GetLogFC()); });
+
+  }
+
 
 } // end namespace frydom

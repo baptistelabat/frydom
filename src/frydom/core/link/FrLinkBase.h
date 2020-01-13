@@ -50,7 +50,7 @@ namespace frydom {
    * \brief Pure abstract class for every FRyDoM constraints (FrLink, FrConstraint_, FrActuator_).
    */
    // FIXME :: pass the FrLoggable from FrLinkBase to FrLink ( don't forget constraints and actuators)
-  class FrLinkBase : public FrObject, public FrAssetOwner, public FrLoggable<FrOffshoreSystem> {
+  class FrLinkBase : public FrObject, public FrAssetOwner {
 
    protected:
 
@@ -59,16 +59,8 @@ namespace frydom {
 
    public:
 
-    FrLinkBase(const std::string &name,
-               const std::string &type_name,
-               FrOffshoreSystem *system,
-               const std::shared_ptr<FrNode> &node1,
+    FrLinkBase(const std::shared_ptr<FrNode> &node1,
                const std::shared_ptr<FrNode> &node2);
-
-    /// \return Pointer to the offshore system
-    inline FrOffshoreSystem *GetSystem() const {
-      return GetParent();
-    }
 
     /// Tells if all constraints of this link are currently turned on or off by the user.
     virtual bool IsDisabled() const = 0;

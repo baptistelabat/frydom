@@ -17,7 +17,7 @@ namespace frydom {
 
   class FrFunctionBase;
 
-  class FrActuator : public FrLinkBase {
+  class FrActuator : public FrLinkBase, public FrLoggable<FrLink>  {
 
    protected:
 
@@ -27,6 +27,11 @@ namespace frydom {
    public:
 
     FrActuator(const std::string &name, const std::string &type_name, FrLink *actuatedLink);
+
+    /// \return Pointer to the offshore system
+    inline FrLink *GetSystem() const {
+      return GetParent();
+    }
 
     /// Tells if all constraints of this link are currently turned on or off by the user.
     bool IsDisabled() const override;
@@ -96,8 +101,6 @@ namespace frydom {
     virtual Torque GetMotorTorqueInBody2(FRAME_CONVENTION fc) const;
 
    protected:
-
-    void DefineLogMessages() override;
 
     chrono::ChLinkBase *GetChronoItem_ptr() const override = 0;
 

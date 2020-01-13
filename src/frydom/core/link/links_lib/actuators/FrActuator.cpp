@@ -14,11 +14,8 @@ namespace frydom {
 
 
   FrActuator::FrActuator(const std::string &name, const std::string &type_name, FrLink *actuatedLink) :
-      FrLinkBase(name,
-                 type_name,
-                 actuatedLink->GetSystem(),
-                 actuatedLink->GetNode1(),
-                 actuatedLink->GetNode2()
+      FrLoggable(name, type_name, actuatedLink),
+      FrLinkBase(actuatedLink->GetNode1(), actuatedLink->GetNode2()
       ),
       m_actuatedLink(actuatedLink) {}
 
@@ -32,10 +29,6 @@ namespace frydom {
 
   bool FrActuator::IsActive() const {
     return true;
-  }
-
-  void FrActuator::DefineLogMessages() {
-    // TODO
   }
 
   Force FrActuator::GetMotorForceInBody1(FRAME_CONVENTION fc) const {

@@ -28,10 +28,10 @@ TEST(FrPathManager, path) {
   auto body2 = system.NewBody("myBody2");
   auto node3 = body2->NewNode("myNode3");
 
-  auto force1 = make_manoeuvring_model("man_model", body1); // TODO : changer en maneuvring force...
+  auto force1 = make_manoeuvring_model("man_model", body1); // TODO : changer en manoeuvring force...
 
   auto revolute_link = make_revolute_link("revolute_link", &system, node1, node3);
-  revolute_link->Motorize("motor", ACTUATOR_CONTROL::POSITION);
+  auto motor = revolute_link->Motorize("motor", ACTUATOR_CONTROL::POSITION);
 
   auto plane2 = std::make_shared<FrCPlane>(node2);
   auto plane3 = std::make_shared<FrCPlane>(node3);
@@ -50,6 +50,9 @@ TEST(FrPathManager, path) {
       path_manager->GetPath(node3.get()) == "FRYDOM_test_FrPathManager/BODIES/BODY_myBody2/NODES/NODE_myNode3/");
   EXPECT_TRUE(path_manager->GetPath(std::dynamic_pointer_cast<FrLink>(revolute_link).get()) ==
               "FRYDOM_test_FrPathManager/LINKS/LINK_revolute_link/");
+  std::cout<<path_manager->GetPath(dynamic_cast<FrActuator*>(motor))<<std::endl;
+  EXPECT_TRUE(path_manager->GetPath(dynamic_cast<FrActuator*>(motor)) ==
+              "FRYDOM_test_FrPathManager/LINKS/LINK_revolute_link/ACTUATORS/ACTUATOR_motor/");
 
   EXPECT_TRUE(path_manager->GetPath(std::dynamic_pointer_cast<FrConstraint>(planeConstraint).get()) ==
               "FRYDOM_test_FrPathManager/CONSTRAINTS/CONSTRAINT_plane_on_plane/");

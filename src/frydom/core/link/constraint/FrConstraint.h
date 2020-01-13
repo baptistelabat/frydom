@@ -28,7 +28,7 @@ namespace frydom {
    * \class FrConstraint
    * \brief Class to deal with constraints. Derived from FrConstraintBase
    */
-  class FrConstraint : public FrLinkBase {
+  class FrConstraint : public FrLinkBase, public FrLoggable<FrOffshoreSystem>  {
 
    protected:
 
@@ -45,6 +45,11 @@ namespace frydom {
                  FrOffshoreSystem *system,
                  const std::shared_ptr<FrNode> &node1,
                  const std::shared_ptr<FrNode> &node2);
+
+    /// \return Pointer to the offshore system
+    inline FrOffshoreSystem *GetSystem() const {
+      return GetParent();
+    }
 
     /// Get the constraint reference frame, relatively to the world reference frame
     /// \return constraint reference frame, relatively to the world reference frame

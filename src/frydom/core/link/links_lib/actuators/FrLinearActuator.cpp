@@ -79,5 +79,22 @@ namespace frydom {
     return {};
   }
 
+  void FrLinearActuator::DefineLogMessages() {
+
+    auto msg = NewMessage("State", "State message");
+
+    msg->AddField<double>
+        ("MotorPower", "kW", "power delivered by the motor", [this]() { return GetMotorPower(); });
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("MotorForceInBody1", "N",
+         fmt::format("Force applied by the motor on body 1, in body 1 reference frame {}", GetLogFC()),
+         [this]() { return GetMotorForceInBody1(GetLogFC()); });
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("MotorForceInBody2", "N",
+         fmt::format("Force applied by the motor on body 1, in body 2 reference frame {}", GetLogFC()),
+         [this]() { return GetMotorForceInBody2(GetLogFC()); });
+
+  }
+
 
 } // end namespace frydom

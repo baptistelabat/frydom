@@ -151,7 +151,7 @@ namespace frydom {
    * For one DOF links (REVOLUTE, PRISMATIC ,etc.), a motorisation of the DOF is possible.
    */
   // FIXME :: pass the FrLoggable from FrLinkBase to FrLink ( don't forget constraints and actuators)
-  class FrLink : public FrLinkBase {
+  class FrLink : public FrLinkBase, public FrLoggable<FrOffshoreSystem> {
 
    protected:
 
@@ -171,6 +171,11 @@ namespace frydom {
            FrOffshoreSystem *system,
            const std::shared_ptr<FrNode> &node1,
            const std::shared_ptr<FrNode> &node2);
+
+    /// \return Pointer to the offshore system
+    inline FrOffshoreSystem *GetSystem() const {
+      return GetParent();
+    }
 
     /// Tells if all constraints of this link are currently turned on or off by the user.
     bool IsDisabled() const override;
