@@ -17,8 +17,8 @@ from distutils.spawn import find_executable
 
 ffmpeg = find_executable('ffmpeg')
 
-if __name__ == '__main__':
 
+def main():
     if sys.argv[1] is not None:
         filename = str(sys.argv[1])
     else:
@@ -34,3 +34,7 @@ if __name__ == '__main__':
           "-vf", "scale=256:-1",  # 256 for lowRes
           filename
           ])
+
+if __name__ == '__main__':
+    main()
+    
