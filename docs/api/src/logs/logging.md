@@ -15,7 +15,26 @@ Event file
 
 The *events* file contains all the execution log information of the simulation. An example of the begining of this file is given in the next figure.
 
-![](Event_file_example.png "event file")
+    [2020-01-16 14:56:13.272] [FRYDOM] [info] ***************** FRyDoM-CE (Community Edition) *****************
+    [2020-01-16 14:56:13.272] [FRYDOM] [info] Copyright D-ICE Engineering & Ecole Centrale de Nantes
+    [2020-01-16 14:56:13.272] [FRYDOM] [info] Log level set to INFO
+    [0.0] [info] [OffshoreSystem] [demo_HexagonalArticulatedBuoy] Time stepper set to EULER_IMPLICIT_LINEARIZED
+    [0.0] [info] [OffshoreSystem] [demo_HexagonalArticulatedBuoy] Gravity acceleration set to 9.81 m/s2
+    [0.0] [info] [Body] [world_body] Body created
+    [0.0] [info] [Body] [world_body] Body set to fixed in world
+    [0.0] [info] [OffshoreSystem] [demo_HexagonalArticulatedBuoy] Body world_body has been ADDED to the system
+    [0.0] [info] [Seabed] [Flat seabed] Set to -7.5 meters
+    [0.0] [info] [Body] [cyl1] Body created
+    [0.0] [info] [OffshoreSystem] [demo_HexagonalArticulatedBuoy] Body cyl1 has been ADDED to the system
+    [0.0] [info] [Body] [cyl1] Set body position (in world reference frame NWU) to [-2.498	0.0	0.0]
+    [0.0] [info] [Body] [cyl1] Center of gravity set (in body reference frame) to [0.0	0.0	-0.1]
+    [0.0] [info] [Body] [cyl1] Set inertia tensor with mass = 805.033 kg, G = [0.0	0.0	-0.1], Ixx = 310.61, Iyy = 92.5797, Izz = 318.66, Ixy = 0.0, Ixz = 0.0, Iyz = 0.0
+    [0.0] [info] [Body] [cyl2] Body created
+    [0.0] [info] [OffshoreSystem] [demo_HexagonalArticulatedBuoy] Body cyl2 has been ADDED to the system
+    [0.0] [info] [Body] [cyl2] Set body position (in world reference frame NWU) to [-1.25	2.165	0.0]
+    [0.0] [info] [Body] [cyl2] Center of gravity set (in body reference frame) to [0.0	0.0	-0.1]
+
+
 
 The first three lines corresponds to general information for the execution logging.
 
@@ -86,5 +105,45 @@ The csv files relative to the bodies are stored in the folder of the type BODY_"
 
 **Note** : The convention NED/NWU used for the vector is defined in the .frydom_config file.
 
+
+Config file 
+-----------
+
+A .frydom_config file, in JSON, to be placed in home folder, is used to specify the location of the logs root folder. The frame convention to be used in the logs (NED or NWU) is also defined in this config file. If no config file is provided, the logs are in NED and located in the execution folder.
+
+    {
+        "frydom_config": {            
+            "log_folder": "/path/to/logs/",
+            "frame_convention": "NED"
+        }    
+    }
+
+
+Adding logs to an object
+------------------------
+
+To add logs to new classes, you need to implement the following steps:
+
+- derive from FrLoggable<ParentType>
+
+
+    class FrDummy : public FrLoggable<ParentType> {}
+    
+    
+- activate the logs either at the class scope or the instance scope, using the method 
+
+
+    FrLoggable<>::LogThis(true);
+    
+    
+- define the log message by overriding the method *FrLoggable<>::DefineLogMessage()* in the new class. In this method you need to create a new message with a name and description and add field variables as the following example:
+
+
+    auto msg = NewMessage("Name", "Description");
+    
+    msg->AddField<double>("time", "s", "Current time of the simulation", [this]() { return GetSystem()->GetTime(); })
+    
+    msg->AddField<Eigen::Matrix<double, 3, 1>>("Position", "m", fmt::format("body position in the world reference frame in {}", GetLogFC()), [this]() { return GetPosition(GetLogFC()); });
+    
 
 
