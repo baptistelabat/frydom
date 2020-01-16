@@ -41,6 +41,18 @@ namespace frydom {
 
     const std::string& GetTypeName() const;
 
+    using MessageContainer = std::vector<std::unique_ptr<hermes::Message>>;
+    using MessageIter = MessageContainer::iterator;
+
+    MessageIter begin_message() {
+      return m_messages.begin();
+    }
+
+    MessageIter end_message() {
+      return m_messages.end();
+    }
+
+
    protected:
     hermes::Message *NewMessage(const std::string &name, const std::string &description);
 
@@ -62,7 +74,7 @@ namespace frydom {
 
     FRAME_CONVENTION m_log_frame_convention;
 
-    std::vector<std::unique_ptr<hermes::Message>> m_messages;
+    MessageContainer m_messages;
 
     std::string m_type_name;
 
