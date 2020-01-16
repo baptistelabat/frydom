@@ -19,7 +19,7 @@ Start here to learn more about FRyDoM.
 
 ---
 
-@subpage logs
+@subpage logging
 
 Description of the logs philosophy, architecture. Instructions to add logs to new classes. 
 
