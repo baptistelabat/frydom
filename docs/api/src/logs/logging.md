@@ -1,11 +1,11 @@
 Output/Logging {#logging}
 ==============
 
-Logs outputs are .csv file format, with a two lines header (name and unit of the variables). Each object class generate its own log file. Logs are organized into folders according to the tree architecture (#tree), ie the logs of the forces and nodes are stored into boy folders and the body's, link's, cables's log are stored in the system folder. Loggind output for the test DTMB5512 (test_DTMB5512.cpp) and a part of the hexagonal articulated buoy demo (demo_HexagonalArticulatedBuoy.cpp) are represented in next figures.
+Logs outputs are .csv file format, with a two lines header (name and unit of the variables). Each object class generate its own log file. Logs are organised into folders according to the [tree architecture](#tree-architecture), ie the logs of the forces and nodes are stored into body folders and the body's, link's, cables's log are stored in the system folder. Logging output for the [test DTMB5512](#tutorial_bench_DTMB) and a part of the [hexagonal articulated buoy demo](#tutorial_demo_HexagonalArticulatedBuoy) are represented in next figures.
 
 ![Figure : Representation of the logs output architecture](TreeLog_Merge_w300.png "TreeLog_DTMB5512") 
 
-The logging output are written in a folder with the date and time of the simulation. This folder is created in the data folder defined in the .frydom_config (#ref). 
+The logging output are written in a folder with the date and time of the simulation. This folder is created in the data folder defined in the [.frydom_config](#config-file). 
 
 Definition of the different files are the following.
 
@@ -14,6 +14,7 @@ Event file
 ----------
 
 The *events* file contains all the execution log information of the simulation. An example of the begining of this file is given in the next figure.
+
 
     [2020-01-16 14:56:13.272] [FRYDOM] [info] ***************** FRyDoM-CE (Community Edition) *****************
     [2020-01-16 14:56:13.272] [FRYDOM] [info] Copyright D-ICE Engineering & Ecole Centrale de Nantes
@@ -67,17 +68,17 @@ The *OffshoreSystemsolver.csv* file contains information for the solver converge
 States logging
 --------------
 
-The csv files relative to force are stored in folder of the type FORCE_"Name". Standard output variables for the force are listed in the following table.
+**Force**
 
 | Variables | Unit | Description |
 |-----------|:-----:|:---------------------------:|
 | time | s | Current time of the simulation |
-| ForceInBody | N | Force in vody reference frame |
+| ForceInBody | N | Force in body reference frame |
 | TorqueInBodyAtCOG | N.m | Torque at COG in body reference frame |
 | ForceInWorld | N | Force in world reference frame | 
 | TorqueInWorldAtCOG | N.m | Torque at COG in world reference frame |
 
-The csv files relative to node are stored in the folder of the type NODE_"Name". Standard output variables for the node are listed in the following table.
+**Node**
 
 | Variables | Unit | Description |
 |-----------|:----:|:-----------:|
@@ -87,8 +88,7 @@ The csv files relative to node are stored in the folder of the type NODE_"Name".
 | AccelerationInWorld | m/s^2 | Node acceleration in world reference frame |
 | NodePositionInBody | m | Node position in body reference frame |
 
-
-The csv files relative to the bodies are stored in the folder of the type BODY_"Name". Standard output variables for the body are listed in the following table.
+**Body**
 
 | Variables | Unit | Description |
 |-----------|:----:|:-----------:|
@@ -102,6 +102,46 @@ The csv files relative to the bodies are stored in the folder of the type BODY_"
 | LinearAccelerationInWorld | m/s^2 | Body linear acceleration in the world reference frame |
 | COGLinearAccelerationInWorld | m/s^2 | COG body linear acceleration in the world reference frame |
 | AngularAccelerationInWorld | rad/s^2 | Body angular acceleration in the world reference frame | 
+
+**Cable (Caterany/Dynamic)**
+
+| Variables | Unit | Description |
+|-----------|:----:|:-----------:|
+[ time | s | Current time of the simulation |
+| StrainedLength | m | Strained length of the line |
+| StartingNodeTension | N | Starting node tension in world reference frame |
+| EndingNodeTension | N | Ending node tension in world reference frame |
+
+**Link**
+
+| Variables | Unit | Description |
+|-----------|:----:|:-----------:|
+| time | s | Current time of the simulation |
+| PositionOfNode2WRTNode1 | m | Node 2 position relatively to Node 1, in Node1 reference frame |
+| VelocityOfNode2WRTNode1 | m/s | Node 2 velocity relatively to Node 1, in Node 1 reference frame |
+| AccelerationOfNode2WRTNode1 | m/s^2 | Node 2 acceleration relatively to Node 1, in Node 1 reference frame |
+| OrientationOfNOde2WRTNode1 | rad | Node 2 orientation relatively to Node 1, in Node 1 reference frame | 
+| AngularVelocityOfNode2WRTNode1 | rad/s | Node 2 angular velocity relatively to Node 1, in Node 1 reference frame |
+| AngularAccelerationOfNode2WRTNode1 | rad/s^2 | Node 2 angular acceleration relatively to Node 1, in Node 1 reference frame |
+| LinkReactionForceOnBody1 | N | Link reaction force applied at Node 1, expressed in body 1 reference frame |
+| LinkReactionForceOnBody2 | N | Link reaction force applied at Node 2, expressed in body 2 reference frame |
+| LinkReactionTorqueOnBody1 | N.m | Link reaction torque at Node 1, expressed in Node 1 reference frame |
+| LinkReactionTorqueOnBody2 | N.m | Link reaction torque at Node 2, expressed in Node 2 reference frame | 
+| LinkReactionTorqueOnBody1AtCOG | N.m | Link reaction torque at COG applied at Node 1, expressed in body 1 reference frame |
+| LinkReactionTorqueOnBody2AtCOG | N.m | Link reaction torque at COG applied at Node 2, expressed in body 2 reference frame |
+| LinkPower | kW | Power delivered into the link |
+
+**Actuator (of link)**
+
+| Variables | Unit | Description |
+|-----------|:----:|:-----------:|
+| MotorPower | kW | Power delivered by the motor |
+| MotorForceInBody1 | N | Force applied by the motor on body 1, in body 1 reference frame | 
+| MotorForceInBody2 | N | Force applied by the motor on body 2, in body 2 reference frame |
+| MotorTorqueInBody1 | N.m | Torque applied by the motor on body 1, in body 1 reference frame |
+| MotorTorqueInBody2 | N.m | Torque applied by the motor on body 2, in body 2 reference frame |
+| MotorTorqueAtCOGInBody1 | N.m | Torque applied by the motor at COG on body 1, in body 1 reference frame | 
+| MotorTorqueAtCOGInBody2 | N.m | Torque applied by the motor at COG on body 2, in body 2 reference frame |
 
 **Note** : The convention NED/NWU used for the vector is defined in the .frydom_config file.
 
