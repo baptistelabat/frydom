@@ -11,6 +11,8 @@
 
 #include "FrHydrostaticsProperties.h"
 
+#include "frydom/core/body/FrBody.h"
+#include "frydom/mesh/FrHydroMesh.h"
 
 namespace frydom {
 
@@ -37,6 +39,14 @@ namespace frydom {
       m_gravityAcceleration(gravityAcceleration),
       m_clippedMesh(clipped_mesh),
       m_centerOfGravity(cog) {}
+
+  FrHydrostaticsProperties::FrHydrostaticsProperties(double waterDensity, double gravityAcceleration,
+                                                     mesh::FrMesh &clipped_mesh, Position cog, Position out) :
+      m_waterDensity(waterDensity),
+      m_gravityAcceleration(gravityAcceleration),
+      m_clippedMesh(clipped_mesh),
+      m_centerOfGravity(cog),
+      m_outerPoint(out) {}
 
   void FrHydrostaticsProperties::Process() {
     CalcGeometricProperties();
@@ -85,23 +95,23 @@ namespace frydom {
 
     for (auto &polygon : m_clippedMesh.GetBoundaryPolygonSet()) {
 
-      assert(polygon.GetPlane().GetFrame().GetRotation().GetQuaternion().GetRotationMatrix().IsIdentity());
+//      assert(polygon.GetPlane().GetFrame().GetRotation().GetQuaternion().GetRotationMatrix().IsIdentity());
 
       auto BoundaryPolygonsSurfaceIntegral = polygon.GetSurfaceIntegrals();
 
       m_waterPlaneArea += BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_1);
 
       m_hydrostaticTensor.K33 += rg * m_waterPlaneArea;
-      m_hydrostaticTensor.K34 += rg * (BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_Y)
-                                       - m_centerOfGravity[1] * m_waterPlaneArea);
-      m_hydrostaticTensor.K35 += -rg * (BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_X)
-                                        - m_centerOfGravity[0] * m_waterPlaneArea);
-      m_hydrostaticTensor.K45 += -rg * (BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_XY)
-                                        - m_centerOfGravity[1] *
-                                          BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_X)
-                                        - m_centerOfGravity[0] *
-                                          BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_Y)
-                                        + m_centerOfGravity[0] * m_centerOfGravity[1] * m_waterPlaneArea);
+      m_hydrostaticTensor.K34 += rg * (BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_Y));
+//                                       - m_centerOfGravity[1] * m_waterPlaneArea);
+      m_hydrostaticTensor.K35 += -rg * (BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_X));
+//                                        - m_centerOfGravity[0] * m_waterPlaneArea);
+      m_hydrostaticTensor.K45 += -rg * (BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_XY));
+//                                        - m_centerOfGravity[1] *
+//                                          BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_X)
+//                                        - m_centerOfGravity[0] *
+//                                          BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_Y)
+//                                        + m_centerOfGravity[0] * m_centerOfGravity[1] * m_waterPlaneArea);
 
       m_waterPlaneCenter += Position( // FIXME: valable uniquement avant les corrections precedentes sur le point de calcul !!!
           -m_hydrostaticTensor.K35 / m_hydrostaticTensor.K33,
@@ -109,15 +119,23 @@ namespace frydom {
           0.
       );
 
+      m_hydrostaticTensor.K34 += rg * (- m_outerPoint[1] * m_waterPlaneArea);
+      m_hydrostaticTensor.K35 += -rg * (- m_outerPoint[0] * m_waterPlaneArea);
+      m_hydrostaticTensor.K45 += -rg * (- m_outerPoint[1] *
+                                        BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_X)
+                                        - m_outerPoint[0] *
+                                        BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_Y)
+                                        + m_outerPoint[0] * m_outerPoint[1] * m_waterPlaneArea);
+
       m_transversalMetacentricRadius +=
           (BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_Y2)
-           - 2. * m_centerOfGravity[1] * BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_Y)
-           + m_centerOfGravity[1] * m_centerOfGravity[1] * m_waterPlaneArea)
+           - 2. * m_outerPoint[1] * BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_Y)
+           + m_outerPoint[1] * m_outerPoint[1] * m_waterPlaneArea)
           / m_volumeDisplacement;
       m_longitudinalMetacentricRadius +=
           (BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_X2)
-           - 2. * m_centerOfGravity[0] * BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_X)
-           + m_centerOfGravity[0] * m_centerOfGravity[0] * m_waterPlaneArea)
+           - 2. * m_outerPoint[0] * BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_X)
+           + m_outerPoint[0] * m_outerPoint[0] * m_waterPlaneArea)
           / m_volumeDisplacement;
 
       m_hullWetArea -= polygon.GetArea();
@@ -161,6 +179,157 @@ namespace frydom {
 
   double FrHydrostaticsProperties::GetLongitudinalMetacentricHeight() const {
     return m_longitudinalMetacentricHeight;
+  }
+
+
+  int solve_hydrostatic_equilibrium(std::shared_ptr<FrBody> body,
+                                    const std::string &meshFile,
+                                    FrFrame meshOffset) {
+
+    // Create a hydroMesh, to set up the mesh in the body frame and then clip it
+    auto hydroMesh = make_hydro_mesh("mesh" + body->GetName(),
+                                     body,
+                                     meshFile,
+                                     meshOffset,
+                                     FrHydroMesh::ClippingSupport::PLANESURFACE);
+
+    hydroMesh->Initialize();
+
+    int itermax = 200;
+    double reltol = 1e-2;
+    double z_relax = 0.1;
+    double thetax_relax = 2*DEG2RAD;
+    double thetay_relax = 2*DEG2RAD;
+
+    Vector3d<double> residual;
+    residual.SetNull();
+    int iter = 0;
+
+    double rhog =
+        body->GetSystem()->GetEnvironment()->GetFluidDensity(WATER) * body->GetSystem()->GetGravityAcceleration();
+    double mg = body->GetMass() * body->GetSystem()->GetGravityAcceleration();
+
+    Vector3d<double> DZ;
+    DZ.SetNull();
+    FrRotation bodyRotation;
+    bodyRotation.SetNullRotation();
+    int code = 0;
+
+    while (true) {
+
+      body->TranslateInWorld(0., 0., DZ.at(0), NWU);
+      bodyRotation.SetCardanAngles_RADIANS(DZ.at(1), DZ.at(2), 0., NWU);
+      body->Rotate(bodyRotation);
+
+      std::cout<<"iteration : "<<iter<<std::endl;
+
+      std::cout << "    Body COG position : ("
+                << body->GetCOGPositionInWorld(NWU).GetX() << ","
+                << body->GetCOGPositionInWorld(NWU).GetY() << ","
+                << body->GetCOGPositionInWorld(NWU).GetZ() << ")"
+                << std::endl;
+
+      hydroMesh->Update(0.);
+
+      if (hydroMesh->GetClippedMesh().GetVolume() <= 1E-6) {
+        std::cout<<"    body not in water"<<std::endl;
+        break;
+      }
+
+      auto rhog_v = rhog * hydroMesh->GetClippedMesh().GetVolume();
+      auto bodyPosition = body->GetPosition(NWU);
+      auto bodyCOGPosition = body->GetCOG(NWU);
+
+      // Compute all hydrostatics properties
+      FrHydrostaticsProperties hsp(body->GetSystem()->GetEnvironment()->GetFluidDensity(WATER),
+                                   body->GetSystem()->GetGravityAcceleration(),
+                                   hydroMesh->GetClippedMesh(),
+                                   body->GetCOGPositionInWorld(NWU));
+      hsp.Process();
+
+      residual = {rhog_v - mg,
+                  rhog_v * hsp.GetBuoyancyCenter().GetY() - mg * bodyCOGPosition.GetY(),
+                  -rhog_v * hsp.GetBuoyancyCenter().GetX() + mg * bodyCOGPosition.GetX()};
+
+      auto scale = Vector3d<double>(mg, mg * hsp.GetBreadthOverallSubmerged(), mg * hsp.GetLengthOverallSubmerged());
+
+      if (iter > itermax) {
+        std::cout << "no convergence reached : (" << residual.at(0) << "," << residual.at(1) << "," << residual.at(2)
+                  << ")" << std::endl;
+        code = 0;
+        break;
+      }
+
+      if (abs(residual.at(0)/scale.at(0)) < reltol and abs(residual.at(1)/scale.at(1)) < reltol and abs(residual.at(2)/scale.at(2)) < reltol) {
+        // convergence at a stable equilibrium
+        if (hsp.GetLongitudinalMetacentricHeight() > 0 and hsp.GetTransversalMetacentricHeight() > 0) {
+          std::cout << "convergence at a stable equilibrium" << std::endl;
+          code = 1;
+          break;
+        }
+
+        // convergence at an unstable equilibrium
+        std::cout << "convergence at an unstable equilibrium : GMx = " << hsp.GetLongitudinalMetacentricHeight()
+                  << ", GMy = " << hsp.GetTransversalMetacentricHeight() << std::endl;
+        code = 2;
+        break;
+      }
+
+      // Set the stiffness matrix
+      auto stiffnessMatrix = hsp.GetHydrostaticMatrix();
+
+      std::cout<<"    residual : "<<residual.cwiseQuotient(scale)<<std::endl;
+
+      std::cout<<"    stiffnessMatrix : "<<stiffnessMatrix<<std::endl;
+
+      DZ = stiffnessMatrix.LUSolver<Vector3d<double>, Vector3d<double>>(residual);
+
+      std::cout<<"    DZ : ("<<DZ.at(0)<<","<<DZ.at(1)<<","<<DZ.at(2)<<")"<<std::endl;
+
+      if (abs(DZ.at(0)) > z_relax) {
+        DZ.at(0) = std::copysign(z_relax,DZ.at(0));
+      }
+      if (abs(DZ.at(1)) > thetax_relax) {
+        DZ.at(1) = std::copysign(thetax_relax,DZ.at(1));
+      }
+      if (abs(DZ.at(2)) > thetay_relax) {
+        DZ.at(2) = std::copysign(thetay_relax,DZ.at(2));
+      }
+
+
+      iter++;
+
+    }
+
+    // Compute all hydrostatics properties and files a report
+    FrHydrostaticsProperties hsp(body->GetSystem()->GetEnvironment()->GetFluidDensity(WATER),
+                                 body->GetSystem()->GetGravityAcceleration(),
+                                 hydroMesh->GetClippedMesh(),
+                                 body->GetCOGPositionInWorld(NWU), body->GetCOGPositionInWorld(NWU));
+    hsp.Process();
+    std::cout << hsp.GetReport() << std::endl;
+
+
+    // To check the clipped mesh, uncomment the following line
+    hydroMesh->GetClippedMesh().Write("Clipped_Mesh.obj");
+
+
+    // Remove the temporary hydroMesh from the system
+    body->GetSystem()->Remove(hydroMesh);
+
+    std::cout << "Body position : (" << body->GetPosition(NWU).GetX() << "," << body->GetPosition(NWU).GetY() << ","
+              << body->GetPosition(NWU).GetZ() << ")" << std::endl;
+
+    std::cout << "Body COG position : ("
+              << body->GetCOGPositionInWorld(NWU).GetX() << ","
+              << body->GetCOGPositionInWorld(NWU).GetY() << ","
+              << body->GetCOGPositionInWorld(NWU).GetZ() << ")"
+              << std::endl;
+
+    std::cout << "iter : " << iter << std::endl;
+
+    return code;
+
   }
 
 }  // end namespace frydom

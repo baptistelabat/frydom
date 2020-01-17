@@ -31,7 +31,7 @@ set(hermes_TAG FR_log_frydom_refactoring)
 
 # MathUtils
 set(mathutils_URL git@frydom-ce.org:ce/mathutils.git)
-set(mathutils_TAG master)
+set(mathutils_TAG develop)
 
 
 # TimeZone

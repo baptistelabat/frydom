@@ -72,6 +72,8 @@ namespace frydom {
 
     FrHydrostaticMatrixTensor m_hydrostaticTensor;
 
+    Position m_outerPoint = {0., 0., 0.};
+
    public:
 
     /// Constructors.
@@ -80,6 +82,8 @@ namespace frydom {
     FrHydrostaticsProperties(double waterDensity, double gravityAcceleration);
 
     FrHydrostaticsProperties(double waterDensity, double gravityAcceleration, mesh::FrMesh &clipped_mesh, Position cog);
+
+    FrHydrostaticsProperties(double waterDensity, double gravityAcceleration, mesh::FrMesh &clipped_mesh, Position cog, Position out);
 
     /// Compute the geometric and hydrostatic properties
     void Process();
@@ -103,6 +107,12 @@ namespace frydom {
     /// Get the longitudinal metacentric height
     /// \return longitudinal metacentric height
     double GetLongitudinalMetacentricHeight() const;
+
+    double GetLengthOverallSubmerged() const {return m_lengthOverallSubmerged;}
+
+    double GetBreadthOverallSubmerged() const {return m_breadthOverallSubmerged;}
+
+    Position GetBuoyancyCenter() const {return m_buoyancyCenter;}
 
    private:
 
@@ -193,6 +203,12 @@ namespace frydom {
     }
 
   };
+
+
+  int solve_hydrostatic_equilibrium(std::shared_ptr<FrBody> body,
+                                     const std::string& meshFile,
+                                     FrFrame meshOffset);
+
 }
 
 #endif //FRYDOM_DICE_HYDROSTATICSPROPERTIES_H
