@@ -181,6 +181,15 @@ To add logs to new classes, you need to implement the following steps:
     msg->AddField<double>("time", "s", "Current time of the simulation", [this]() { return GetSystem()->GetTime(); })
     
     msg->AddField<Eigen::Matrix<double, 3, 1>>("Position", "m", fmt::format("body position in the world reference frame in {}", GetLogFC()), [this]() { return GetPosition(GetLogFC()); });
+
+    
+- adding a new definition TYPE_TO_STRING macro for this class in frydom/logging/FrTypeNames.cpp
+
+
+    class FrDummy;
+    TYPE_TO_STRING(FrDummy, "Dummy");
+    
+
     
 
 
