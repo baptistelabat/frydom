@@ -58,8 +58,12 @@ int main(int argc, char *argv[]) {
 
   event_logger::info("main", "test_HS_equilibrium", "Body COG position : {}", body->GetCOGPositionInWorld(NWU));
 
-  auto staticEquilibrium = solve_hydrostatic_equilibrium(body, boxMesh, FrFrame());
+  auto staticEquilibrium = solve_hydrostatic_equilibrium(body, boxMesh, FrFrame(), mass, body->GetCOG(NWU));
 
   event_logger::info("main", "test_HS_equilibrium", "Body orientation : {}", body->GetRotation());
+
+  staticEquilibrium.GetHydroMesh()->GetClippedMesh().Write("Clipped_Mesh.obj");
+
+  event_logger::info("main", "test_HS_equilibrium", staticEquilibrium.GetReport(body->GetCOG(NWU), body->GetCOG(NWU), NWU));
 
 }

@@ -32,9 +32,13 @@ namespace frydom {
                              const std::string &meshFile,
                              FrFrame meshOffset);
 
-    FrHydroStaticEquilibrium(std::shared_ptr<FrBody> body, std::shared_ptr<FrHydroMesh> hydroMesh);
+    ~FrHydroStaticEquilibrium();
 
-    bool Compute();
+    bool Solve(double mass, const Position &COGPosInBody);
+
+    FrHydroMesh *GetHydroMesh() const;
+
+    std::string GetReport(const Position &COGPosInBody, const Position &refPosInBody, FRAME_CONVENTION fc) const;
 
     void SetMaxIterations(unsigned int max_iterations);
 
@@ -75,10 +79,8 @@ namespace frydom {
   FrHydroStaticEquilibrium
   solve_hydrostatic_equilibrium(const std::shared_ptr<FrBody> &body,
                                 const std::string &meshFile,
-                                FrFrame meshOffset);
-
-  FrHydroStaticEquilibrium
-  solve_hydrostatic_equilibrium(const std::shared_ptr<FrBody> &body, const std::shared_ptr<FrHydroMesh> &hydroMesh);
+                                FrFrame meshOffset,
+                                double mass, const Position &COGPosInBody);
 
 
 } //end namespace frydom

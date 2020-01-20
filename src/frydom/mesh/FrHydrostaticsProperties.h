@@ -83,7 +83,7 @@ namespace frydom {
 
     FrHydrostaticsProperties(double waterDensity, double gravityAcceleration, mesh::FrMesh &clipped_mesh, Position cog);
 
-    FrHydrostaticsProperties(double waterDensity, double gravityAcceleration, mesh::FrMesh &clipped_mesh, Position cog, Position out);
+    FrHydrostaticsProperties(double waterDensity, double gravityAcceleration, mesh::FrMesh &clipped_mesh, Position cog, Position out, FRAME_CONVENTION fc);
 
     /// Compute the geometric and hydrostatic properties
     void Process();
@@ -191,13 +191,14 @@ namespace frydom {
       AddBlankLine();
 
       AddLine("HYDROSTATIC STIFFNESS COEFFICIENTS:");
-      AddLine("\t(Expressed above the center of gravity, on the free surface)");
       AddLine("K33", "N/M", hp.m_hydrostaticTensor.K33);
       AddLine("K34", "N", hp.m_hydrostaticTensor.K34);
       AddLine("K35", "N", hp.m_hydrostaticTensor.K35);
       AddLine("K44", "N.M", hp.m_hydrostaticTensor.K44);
       AddLine("K45", "N.M", hp.m_hydrostaticTensor.K45);
       AddLine("K55", "N.M", hp.m_hydrostaticTensor.K55);
+      AddLine("\t(Expressed at :");
+      AddLine("EXPRESSED POINT", "M", hp.m_outerPoint);
 
       return fmt::to_string(m_buffer);
     }

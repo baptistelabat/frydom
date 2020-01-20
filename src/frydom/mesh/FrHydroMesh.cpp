@@ -63,13 +63,9 @@ namespace frydom {
     // Clipping surface.
     switch (m_clippingSupport) {
       case ClippingSupport::PLANESURFACE: {
-//                c_nodeForClippingPlane = m_body->GetSystem()->GetWorldBody()->NewNode();
         Position Tide(0., 0.,
                       m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(
                           NWU));
-//                c_nodeForClippingPlane->SetPositionInBody(Tide, NWU);
-//
-//                auto plane = std::make_shared<FrCPlane>(c_nodeForClippingPlane);
 
         c_clippingPlane = std::make_shared<geom::FrPlane>(Tide, Direction(0, 0, 1), NWU);
         auto clippingSurface = std::make_shared<mesh::FrClippingPlane>(c_clippingPlane);
@@ -117,11 +113,10 @@ namespace frydom {
     // Set the body position for horizontal correction in the clipping surface
     m_clipper->GetClippingSurface()->SetBodyPosition(m_body->GetPosition(NWU));
 
-    // Update the node vertical position for the clippingplane to the position of the tidal height (mean free surface position)
+    // Update the node vertical position for the clipping plane to the position of the tidal height (mean free surface position)
     if (m_clippingSupport == ClippingSupport::PLANESURFACE) {
       Position Tide(0., 0.,
                     m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU));
-//            c_nodeForClippingPlane->SetPositionInBody(Tide, NWU);
       c_clippingPlane->SetOrigin(Tide, NWU);
     }
 
@@ -147,29 +142,31 @@ namespace frydom {
   }
 
   void FrHydroMesh::StepFinalize() {
-        FrObject::StepFinalize();
-        
-        if (m_showAsset and GetSystem()->GetIrrApp()) {
+    FrObject::StepFinalize();
 
-            // Remove former asset
-            RemoveAssets();
+    if (m_showAsset and GetSystem()->GetIrrApp()) {
 
-            // Get the clipped mesh and translate it to the horizontal body position
-            auto tempMesh = m_clippedMesh;
-            auto bodyPos = m_body->GetPosition(NWU); bodyPos.GetZ() = 0.;
-            tempMesh.Translate(mesh::Vector3dToOpenMeshPoint(bodyPos));
+      // Remove former asset
+      RemoveAssets();
 
-            // Convert the clipped mesh to FrTriangleMeshConnected and add it to the asset owner
-            auto triangleMesh = tempMesh.ConvertToTriangleMeshConnected();
-            AddMeshAsset(triangleMesh);
+      // Get the clipped mesh and translate it to the horizontal body position
+      auto tempMesh = m_clippedMesh;
+      auto bodyPos = m_body->GetPosition(NWU);
+      bodyPos.GetZ() = 0.;
+      tempMesh.Translate(mesh::Vector3dToOpenMeshPoint(bodyPos));
 
-            // Bind and update the new asset
-            auto irrApp = GetSystem()->GetIrrApp();
-            irrApp->AssetBind(GetChronoPhysicsItem());
-            irrApp->AssetUpdate(GetChronoPhysicsItem());
+      // Convert the clipped mesh to FrTriangleMeshConnected and add it to the asset owner
+      auto triangleMesh = tempMesh.ConvertToTriangleMeshConnected();
+      AddMeshAsset(triangleMesh);
 
-        }
+      // Bind and update the new asset
+      auto irrApp = GetSystem()->GetIrrApp();
+      irrApp->AssetBind(GetChronoPhysicsItem());
+      irrApp->AssetUpdate(GetChronoPhysicsItem());
+
+    }
   }
+
   std::shared_ptr<FrHydroMesh>
   make_hydro_mesh(const std::string &name,
                   const std::shared_ptr<FrBody> &body,
