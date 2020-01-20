@@ -36,6 +36,22 @@ namespace frydom {
 
     bool Compute();
 
+    void SetMaxIterations(unsigned int max_iterations);
+
+    unsigned int GetMaxIterations() const;
+
+    void SetRelativeTolerance(double tolerance);
+
+    double GetRelativeTOlerance() const;
+
+    void SetLinearRelaxation(double relaxation);
+
+    void SetAngularRelaxation(double relaxation);
+
+    void SetRelaxation(Vector3d<double> &relaxation);
+
+    Vector3d<double> GetRelaxation() const;
+
     FrFrame GetEquilibriumFrame() const;
 
    private:
@@ -48,8 +64,8 @@ namespace frydom {
 //    Vector3d<double> c_scale;
 
 
-    int m_iteration = 0;
-    int m_iterations_max = 100;
+    unsigned int m_iteration = 0;
+    unsigned int m_iterations_max = 100;
     double m_relative_tolerance = 1e-3;
 
     Vector3d<double> m_relax;

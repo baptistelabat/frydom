@@ -13,6 +13,7 @@
 #include "frydom/core/body/FrBody.h"
 #include "frydom/mesh/FrHydroMesh.h"
 #include "frydom/mesh/FrHydrostaticsProperties.h"
+#include "frydom/logging/FrEventLogger.h"
 
 namespace frydom {
 
@@ -36,6 +37,41 @@ namespace frydom {
         m_relax(0.1, 2 * DEG2RAD, 2 * DEG2RAD),
         m_hydroMesh(hydroMesh) {}
 
+
+  void FrHydroStaticEquilibrium::SetMaxIterations(unsigned int max_iterations) {
+    m_iterations_max = max_iterations;
+  }
+
+  unsigned int FrHydroStaticEquilibrium::GetMaxIterations() const {
+    return m_iterations_max;
+  }
+
+  void FrHydroStaticEquilibrium::SetRelativeTolerance(double tolerance) {
+    m_relative_tolerance = tolerance;
+  }
+
+  double FrHydroStaticEquilibrium::GetRelativeTOlerance() const {
+    return m_relative_tolerance;
+  }
+
+  void FrHydroStaticEquilibrium::SetLinearRelaxation(double relaxation) {
+    m_relax.at(0) = relaxation;
+  }
+
+  void FrHydroStaticEquilibrium::SetAngularRelaxation(double relaxation) {
+    m_relax.at(1) = relaxation;
+    m_relax.at(2) = relaxation;
+  }
+
+  void FrHydroStaticEquilibrium::SetRelaxation(Vector3d<double> &relaxation) {
+    m_relax = relaxation;
+  }
+
+  Vector3d<double> FrHydroStaticEquilibrium::GetRelaxation() const {
+    return m_relax;
+  }
+
+
   bool FrHydroStaticEquilibrium::Compute() {
 
     m_residual.SetNull();
@@ -55,13 +91,13 @@ namespace frydom {
       m_bodyRotation.SetCardanAngles_RADIANS(m_solution.at(1), m_solution.at(2), 0., NWU);
       m_body->Rotate(m_bodyRotation);
 
-      std::cout << "iteration : " << m_iteration << std::endl;
+      event_logger::debug("Hydrostatic equilibrium", "", "iteration : {}", m_iteration);
 
-      std::cout << "    m_body COG position : ("
-                << m_body->GetCOGPositionInWorld(NWU).GetX() << ","
-                << m_body->GetCOGPositionInWorld(NWU).GetY() << ","
-                << m_body->GetCOGPositionInWorld(NWU).GetZ() << ")"
-                << std::endl;
+//      std::cout << "    m_body COG position : ("
+//                << m_body->GetCOGPositionInWorld(NWU).GetX() << ","
+//                << m_body->GetCOGPositionInWorld(NWU).GetY() << ","
+//                << m_body->GetCOGPositionInWorld(NWU).GetZ() << ")"
+//                << std::endl;
 
       m_hydroMesh->Update(0.);
 
@@ -70,7 +106,7 @@ namespace frydom {
       clippedMesh.Translate(OpenMesh::VectorT<double, 3>(0., 0., -m_body->GetPosition(NWU).GetZ()));
 
       if (clippedMesh.GetVolume() <= 1E-6) {
-        std::cout << "    m_body not in water" << std::endl;
+        event_logger::info("Hydrostatic equilibrium", "", "body not in water");
         convergence = false;
         break;
       }
@@ -94,9 +130,8 @@ namespace frydom {
       auto scale = Vector3d<double>(mg, mg * hsp.GetBreadthOverallSubmerged(), mg * hsp.GetLengthOverallSubmerged());
 
       if (m_iteration > m_iterations_max) {
-        std::cout << "no convergence reached : (" << m_residual.at(0) << "," << m_residual.at(1) << ","
-                  << m_residual.at(2)
-                  << ")" << std::endl;
+        event_logger::info("Hydrostatic equilibrium", "", "no convergence reached : ({},{},{})", m_residual.at(0),
+                           m_residual.at(1), m_residual.at(2));
         convergence = false;
         break;
       }
@@ -106,14 +141,14 @@ namespace frydom {
           abs(m_residual.at(2) / scale.at(2)) < m_relative_tolerance) {
         // convergence at a stable equilibrium
         if (hsp.GetLongitudinalMetacentricHeight() > 0 and hsp.GetTransversalMetacentricHeight() > 0) {
-          std::cout << "convergence at a stable equilibrium" << std::endl;
+          event_logger::info("Hydrostatic equilibrium", "", "convergence at a stable equilibrium");
           convergence = true;
           break;
         }
 
         // convergence at an unstable equilibrium
-        std::cout << "convergence at an unstable equilibrium : GMx = " << hsp.GetLongitudinalMetacentricHeight()
-                  << ", GMy = " << hsp.GetTransversalMetacentricHeight() << std::endl;
+        event_logger::info("Hydrostatic equilibrium", "", "convergence at an unstable equilibrium : GMx = {}, GMy = {}",
+                           hsp.GetLongitudinalMetacentricHeight(), hsp.GetTransversalMetacentricHeight());
         convergence = true;
         break;
       }
@@ -121,14 +156,13 @@ namespace frydom {
       // Set the stiffness matrix
       auto stiffnessMatrix = hsp.GetHydrostaticMatrix();
 
-      std::cout << "    m_residual : " << m_residual.cwiseQuotient(scale) << std::endl;
+      event_logger::debug("Hydrostatic equilibrium", "", "residual : {}", m_residual.cwiseQuotient(scale));
 
-      std::cout << "    stiffnessMatrix : " << stiffnessMatrix << std::endl;
+      event_logger::debug("Hydrostatic equilibrium", "", "stiffnessMatrix : {}", stiffnessMatrix);
 
       m_solution = stiffnessMatrix.LUSolver<Vector3d<double>, Vector3d<double>>(m_residual);
 
-      std::cout << "    m_solution : (" << m_solution.at(0) << "," << m_solution.at(1) << "," << m_solution.at(2) << ")"
-                << std::endl;
+      event_logger::debug("Hydrostatic equilibrium", "", "solution : ({},{},{})", m_solution.at(0), m_solution.at(1), m_solution.at(2));
 
       // Relaxing solution
       for (unsigned int j = 0; j < 3; j++) {
@@ -154,29 +188,28 @@ namespace frydom {
                                  clippedMesh,
                                  m_body->GetCOG(NWU), m_body->GetCOG(NWU));
     hsp.Process();
-    std::cout << hsp.GetReport() << std::endl;
-
+    event_logger::info("Hydrostatic equilibrium", "", hsp.GetReport());
 
     // Remove the temporary m_hydroMesh from the system
     m_body->GetSystem()->Remove(m_hydroMesh);
 
-    std::cout << "m_body position : (" << m_body->GetPosition(NWU).GetX() << "," << m_body->GetPosition(NWU).GetY()
-              << ","
-              << m_body->GetPosition(NWU).GetZ() << ")" << std::endl;
+//    std::cout << "m_body position : (" << m_body->GetPosition(NWU).GetX() << "," << m_body->GetPosition(NWU).GetY()
+//              << ","
+//              << m_body->GetPosition(NWU).GetZ() << ")" << std::endl;
+//
+//    std::cout << "m_body COG position : ("
+//              << m_body->GetCOGPositionInWorld(NWU).GetX() << ","
+//              << m_body->GetCOGPositionInWorld(NWU).GetY() << ","
+//              << m_body->GetCOGPositionInWorld(NWU).GetZ() << ")"
+//              << std::endl;
 
-    std::cout << "m_body COG position : ("
-              << m_body->GetCOGPositionInWorld(NWU).GetX() << ","
-              << m_body->GetCOGPositionInWorld(NWU).GetY() << ","
-              << m_body->GetCOGPositionInWorld(NWU).GetZ() << ")"
-              << std::endl;
-
-    std::cout << "m_iteration : " << m_iteration << std::endl;
+    event_logger::info("Hydrostatic equilibrium", "", "iterations : {}", m_iteration);
 
     return convergence;
   }
 
   FrHydroStaticEquilibrium
-  solve_hydrostatic_equilibrium(const std::shared_ptr<FrBody>& body,
+  solve_hydrostatic_equilibrium(const std::shared_ptr<FrBody> &body,
                                 const std::string &meshFile,
                                 FrFrame meshOffset) {
     auto staticEquilibrium = FrHydroStaticEquilibrium(body, meshFile, meshOffset);
@@ -188,7 +221,7 @@ namespace frydom {
   }
 
   FrHydroStaticEquilibrium
-  solve_hydrostatic_equilibrium(const std::shared_ptr<FrBody>& body,const std::shared_ptr<FrHydroMesh>& hydroMesh) {
+  solve_hydrostatic_equilibrium(const std::shared_ptr<FrBody> &body, const std::shared_ptr<FrHydroMesh> &hydroMesh) {
     auto staticEquilibrium = FrHydroStaticEquilibrium(body, hydroMesh);
 
     staticEquilibrium.Compute();

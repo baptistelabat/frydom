@@ -10,6 +10,7 @@
 // ==========================================================================
 
 #include "frydom/frydom.h"
+#include "frydom/logging/FrEventLogger.h"
 
 
 using namespace frydom;
@@ -49,21 +50,16 @@ int main(int argc, char *argv[]) {
 
 //  body->Rotate(FrRotation(Direction(1,0,0), 70*DEG2RAD, NWU));
 
-  std::cout << "mass : "<< mass << std::endl;
+  event_logger::info("main", "test_HS_equilibrium", "box mass : {}", mass);
 
 //    body->RemoveAssets();
   auto boxMesh = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/box/box_385_t.obj"});
 //  auto boxMesh = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/box/box_385.obj"});
 
-
-  std::cout << "Body COG position : ("
-            << body->GetCOGPositionInWorld(NWU).GetX() << ","
-            << body->GetCOGPositionInWorld(NWU).GetY() << ","
-            << body->GetCOGPositionInWorld(NWU).GetZ() << ")"
-            << std::endl;
+  event_logger::info("main", "test_HS_equilibrium", "Body COG position : {}", body->GetCOGPositionInWorld(NWU));
 
   auto staticEquilibrium = solve_hydrostatic_equilibrium(body, boxMesh, FrFrame());
 
+  event_logger::info("main", "test_HS_equilibrium", "Body orientation : {}", body->GetRotation());
 
-  std::cout<<"Body orientation : "<< body->GetRotation()<<std::endl;
 }
