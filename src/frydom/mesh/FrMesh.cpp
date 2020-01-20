@@ -547,12 +547,12 @@ namespace frydom {
 
       Point p = point(*vertices_begin());
 
-      bbox.xmin = fmin(bbox.xmin, p[0]);
-      bbox.xmax = fmax(bbox.xmax, p[0]);
-      bbox.ymin = fmin(bbox.ymin, p[1]);
-      bbox.ymax = fmax(bbox.ymax, p[1]);
-      bbox.zmin = fmin(bbox.zmin, p[2]);
-      bbox.zmax = fmax(bbox.zmax, p[2]);
+      bbox.xmin = p[0];
+      bbox.xmax = p[0];
+      bbox.ymin = p[1];
+      bbox.ymax = p[1];
+      bbox.zmin = p[2];
+      bbox.zmax = p[2];
 
       for (VertexIter v_iter = vertices_begin(); v_iter != vertices_end(); ++v_iter) {
         p = point(*v_iter);

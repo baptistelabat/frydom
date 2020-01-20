@@ -205,9 +205,9 @@ namespace frydom {
   };
 
 
-  int solve_hydrostatic_equilibrium(std::shared_ptr<FrBody> body,
-                                     const std::string& meshFile,
-                                     FrFrame meshOffset);
+//  int solve_hydrostatic_equilibrium(std::shared_ptr<FrBody> body,
+//                                     const std::string& meshFile,
+//                                     FrFrame meshOffset);
 
 }
 

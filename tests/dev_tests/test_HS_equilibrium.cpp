@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
   auto mass = L * H * B * c * system.GetEnvironment()->GetFluidDensity(WATER);
   makeItBox(body, L, B, H, mass);
 
-  body->TranslateInWorld(0,0,2.5,NWU);
+  body->TranslateInWorld(0,0,0.75*2.5,NWU);
 
   double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
   auto inertia = body->GetInertiaTensor();
@@ -53,6 +53,7 @@ int main(int argc, char *argv[]) {
 
 //    body->RemoveAssets();
   auto boxMesh = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/box/box_385_t.obj"});
+//  auto boxMesh = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/box/box_385.obj"});
 
 
   std::cout << "Body COG position : ("
@@ -61,7 +62,7 @@ int main(int argc, char *argv[]) {
             << body->GetCOGPositionInWorld(NWU).GetZ() << ")"
             << std::endl;
 
-  auto code = solve_hydrostatic_equilibrium(body, boxMesh, FrFrame());
+  auto staticEquilibrium = solve_hydrostatic_equilibrium(body, boxMesh, FrFrame());
 
 
   std::cout<<"Body orientation : "<< body->GetRotation()<<std::endl;
