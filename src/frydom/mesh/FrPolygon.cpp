@@ -61,7 +61,7 @@ namespace frydom {
 
       assert(IsPlanar());
 
-            double Int1, IntX, IntY, IntXY, IntX2, IntY2, IntX2Y, IntY2X, IntX3, IntY3;
+      double Int1, IntX, IntY, IntXY, IntX2, IntY2, IntX2Y, IntY2X, IntX3, IntY3;
       Int1 = IntX = IntY = IntXY = IntX2 = IntY2 = 0;
 
       Position pos0, pos1;
@@ -91,14 +91,18 @@ namespace frydom {
         Int1 += dy * px;
         IntX += dy * (px * px - x0 * x1);
         IntY += dx * (py * py - y0 * y1);
-//                    IntXY += dy * (py * a + 2 * px * (x0 * y0 + x1 * y1));
-        IntXY += dy * (py * px * px + y0 * x0 * x0 + y1 * x1 * x1);
+//        IntXY += dy * (py * a + 2 * px * (x0 * y0 + x1 * y1)); missing terms from FR analytical dev.
+        IntXY += dy * (py * px * px + 2 *( y0 * x0 * x0 + y1 * x1 * x1));
         IntX2 += dy * a * px;
         IntY2 += dx * b * py;
-                IntX2Y += dy * (py* std::pow(px,3.) + 3.*std::pow(x0,3.)*y0 + 3.*std::pow(x1,3.)*y1 - x0*x0*x1*y1 - x0*x1*x1*y0);
-                IntY2X += dx * (px* std::pow(py,3.) + 3.*std::pow(y0,3.)*x0 + 3.*std::pow(y1,3.)*x1 - y0*y0*y1*x1 - y0*y1*y1*x0);
-                IntX3 += dy * (std::pow(x0,4.) + std::pow(x0,3.)*x1 + x0*std::pow(x1,3.) + std::pow(x1,4.));
-                IntY3 += dx * (std::pow(y0,4.) + std::pow(y0,3.)*y1 + y0*std::pow(y1,3.) + std::pow(y1,4.));
+        IntX2Y += dy *
+                  (py * std::pow(px, 3.) + 3. * std::pow(x0, 3.) * y0 + 3. * std::pow(x1, 3.) * y1 - x0 * x0 * x1 * y1 -
+                   x0 * x1 * x1 * y0);
+        IntY2X += dx *
+                  (px * std::pow(py, 3.) + 3. * std::pow(y0, 3.) * x0 + 3. * std::pow(y1, 3.) * x1 - y0 * y0 * y1 * x1 -
+                   y0 * y1 * y1 * x0);
+        IntX3 += dy * (std::pow(x0, 4.) + std::pow(x0, 3.) * x1 + x0 * std::pow(x1, 3.) + std::pow(x1, 4.));
+        IntY3 += dx * (std::pow(y0, 4.) + std::pow(y0, 3.) * y1 + y0 * std::pow(y1, 3.) + std::pow(y1, 4.));
 
         pos0 = pos1;
 
@@ -110,12 +114,12 @@ namespace frydom {
       IntXY /= 24.;
       IntX2 /= 12.;
       IntY2 /= -12.;
-            IntX2Y /= 60.;
-            IntY2X /= -60.;
-            IntX3 /= 20.;
-            IntY3 /= -20.;
+      IntX2Y /= 60.;
+      IntY2X /= -60.;
+      IntX3 /= 20.;
+      IntY3 /= -20.;
 
-            c_surfaceIntegrals = PolygonSurfaceIntegrals(Int1, IntX, IntY, IntXY, IntX2, IntY2, IntX2Y, IntY2X, IntX3, IntY3);
+      c_surfaceIntegrals = PolygonSurfaceIntegrals(Int1, IntX, IntY, IntXY, IntX2, IntY2, IntX2Y, IntY2X, IntX3, IntY3);
 
     }
 
