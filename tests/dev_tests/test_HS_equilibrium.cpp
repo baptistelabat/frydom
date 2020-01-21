@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
 
   event_logger::info("main", "test_HS_equilibrium", "Body COG position : {}", body->GetCOGPositionInWorld(NWU));
 
-  auto staticEquilibrium = solve_hydrostatic_equilibrium(body, boxMesh, FrFrame(), mass, body->GetCOG(NWU));
+  auto staticEquilibrium = solve_hydrostatic_equilibrium(body, boxMesh, FrFrame(), body->GetInertiaTensor());
 
   event_logger::info("main", "test_HS_equilibrium", "Body orientation : {}", body->GetRotation());
 

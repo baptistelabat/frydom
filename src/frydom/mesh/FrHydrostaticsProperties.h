@@ -81,7 +81,7 @@ namespace frydom {
 
     FrHydrostaticsProperties(double waterDensity, double gravityAcceleration);
 
-    FrHydrostaticsProperties(double waterDensity, double gravityAcceleration, mesh::FrMesh &clipped_mesh, Position cog);
+    FrHydrostaticsProperties(double waterDensity, double gravityAcceleration, mesh::FrMesh &clipped_mesh, Position cog, FRAME_CONVENTION fc);
 
     FrHydrostaticsProperties(double waterDensity, double gravityAcceleration, mesh::FrMesh &clipped_mesh, Position cog, Position out, FRAME_CONVENTION fc);
 

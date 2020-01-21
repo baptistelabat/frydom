@@ -34,11 +34,15 @@ namespace frydom {
       m_gravityAcceleration(gravityAcceleration) {}
 
   FrHydrostaticsProperties::FrHydrostaticsProperties(double waterDensity, double gravityAcceleration,
-                                                     mesh::FrMesh &clipped_mesh, Position cog) :
+                                                     mesh::FrMesh &clipped_mesh, Position cog, FRAME_CONVENTION fc) :
       m_waterDensity(waterDensity),
       m_gravityAcceleration(gravityAcceleration),
       m_clippedMesh(clipped_mesh),
-      m_centerOfGravity(cog) {}
+      m_centerOfGravity(cog) {
+    if (IsNED(fc)) {
+      internal::SwapFrameConvention(m_centerOfGravity);
+    }
+  }
 
   FrHydrostaticsProperties::FrHydrostaticsProperties(double waterDensity, double gravityAcceleration,
                                                      mesh::FrMesh &clipped_mesh, Position cog, Position out, FRAME_CONVENTION fc) :

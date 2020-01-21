@@ -155,7 +155,7 @@ namespace frydom {
     FrHydrostaticsProperties hsp(body->GetSystem()->GetEnvironment()->GetFluidDensity(WATER),
                                  body->GetSystem()->GetGravityAcceleration(),
                                  hydroMesh->GetClippedMesh(),
-                                 body->GetCOGPositionInWorld(NWU));
+                                 body->GetCOGPositionInWorld(NWU), NWU);
     hsp.Process();
 
     // For visualizing the report, uncomment the following line

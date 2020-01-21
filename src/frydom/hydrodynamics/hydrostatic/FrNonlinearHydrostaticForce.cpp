@@ -184,7 +184,7 @@ namespace frydom {
     FrHydrostaticsProperties hsp(system->GetEnvironment()->GetFluidDensity(WATER),
                                  system->GetGravityAcceleration(),
                                  clippedMesh,
-                                 body->GetCOGPositionInWorld(NWU));
+                                 body->GetCOGPositionInWorld(NWU), NWU);
     hsp.Process();
 
     return {hsp.GetTransversalMetacentricHeight(), hsp.GetLongitudinalMetacentricHeight(), 0.};
