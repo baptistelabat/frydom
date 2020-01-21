@@ -32,8 +32,9 @@ namespace frydom {
         m_frame(),
         c_prevTime(0.),
         m_initPositionFromBody(true),
-        m_initSpeedFromBody(false) {}
-
+        m_initSpeedFromBody(false) {
+    m_bodyNode = GetBody()->NewNode("equilibrium_frame_node_on_body");
+  }
 
   FrBody *FrEquilibriumFrame::GetBody() const {
     return GetParent();
@@ -155,17 +156,18 @@ namespace frydom {
     return m_frame.ProjectVectorParentInFrame<AngularVelocity>(worldAngularVelocity, fc);
   }
 
+  void FrEquilibriumFrame::SetNodeToEquilibriumPosition() {
+    m_bodyNode->SetFrameInWorld(m_frame);
+  }
+
   void FrEquilibriumFrame::Initialize() {
 
-    if (!GetBody()) { throw FrException("error : the body is not defined in equilibrium frame"); }
+    c_prevTime = 0.;
 
     if (m_initPositionFromBody) this->SetPositionToBodyCOGPosition();
     if (m_initSpeedFromBody) this->SetVelocityToBodyCOGVelocity();
 
-    c_prevTime = 0.;
-
-    // Declare this object to the log manager
-//    GetSystem()->GetLogManager()->Add(this);
+    this->SetNodeToEquilibriumPosition();
   }
 
   void FrEquilibriumFrame::Compute(double time) {
@@ -188,61 +190,45 @@ namespace frydom {
     c_prevTime = time;
   }
 
-//    void FrEquilibriumFrame::AddFields() {
-//
-////        if (IsLogged()) {
-////
-////            // Add the fields to be logged here
-////            m_message->AddField<double>("time", "s", "Current time of the simulation",
-////                                        [this]() { return m_system->GetTime(); });
-////
-////            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                    ("Position","m", fmt::format("Equilibrium frame position in the world reference frame in {}", GetLogFrameConvention()),
-////                     [this]() {return m_frame.GetPosition(GetLogFrameConvention());});
-////
-////            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                    ("CardanAngles","rad", fmt::format("Equilibrium frame orientation in the world reference frame in {}", GetLogFrameConvention()),
-////                     [this]() {double phi, theta, psi; m_frame.GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, GetLogFrameConvention()); return Vector3d<double>(phi, theta, psi);});
-////
-////            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                    ("VelocityInWorld","m/s", fmt::format("Equilibrium frame velocity in the world reference frame in {}", GetLogFrameConvention()),
-////                     [this]() {return GetVelocityInWorld(GetLogFrameConvention());});
-////
-////            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                    ("AngularVelocity","rad/s", fmt::format("Equilibrium frame angular velocity in the world reference frame in {}", GetLogFrameConvention()),
-////                     [this]() {return GetAngularVelocity(GetLogFrameConvention());});
-////
-////
-////            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                    ("PerturbationPosition","m", fmt::format("Perturbation position between the equilibrium frame and the body frame in the world reference frame in {}", GetLogFrameConvention()),
-////                     [this]() {return GetPerturbationFrame().GetPosition(GetLogFrameConvention());});
-////
-////            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-////                    ("PerturbationOrientation","m", fmt::format("Perturbation orientation between the equilibrium frame and the body frame in the world reference frame in {}", GetLogFrameConvention()),
-////                     [this]() {double phi, theta, psi;
-////                     GetPerturbationFrame().GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, GetLogFrameConvention());
-////                     return Vector3d<double>(phi, theta, psi);});
-////
-////        }
-//    }
-
   void FrEquilibriumFrame::StepFinalize() {
 
     FrPhysicsItem::StepFinalize();
 
-    // Serialize and send the message log
-//        FrObject::SendLog();
-
   }
 
   void FrEquilibriumFrame::DefineLogMessages() {
-    // TODO
+
+    auto msg = NewMessage("State", "Equilibrium frame message");
+
+    msg->AddField<double>("time", "s", "Current time of the simulation",
+        [this]() { return GetSystem()->GetTime(); });
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("Position", "m", fmt::format("Equilibrium frame position in the world reference frame in {}", GetLogFC()),
+            [this]() { return m_frame.GetPosition(GetLogFC()); });
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("CardanAngles", "rad", fmt::format("Equilibrium frame orientation in the world reference frame {}", GetLogFC()),
+            [this]() { double phi, theta, psi; m_frame.GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, GetLogFC()); return Vector3d<double>(phi, theta, psi);});
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("VelocityInWorld", "m/s", fmt::format("Equilibrium frame velocity in the world reference frame in {}", GetLogFC()),
+            [this]() { return GetVelocityInWorld(GetLogFC()); });
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("AngularVelocity", "rad/s", fmt::format("Equilibrium frame angular velocity in world reference frame in {}", GetLogFC()),
+            [this]() { return GetAngularVelocity(GetLogFC()); });
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("PerturbationPosition", "m", fmt::format("Perturbation position between the equilibrium frame and the body in the world reference frame in {}", GetLogFC()),
+            [this]() { return GetPerturbationFrame().GetPosition(GetLogFC()); });
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("PerturbationOrientation", "rad", fmt::format("Perturbation orientation between the equilibrium frame and the body frame in the world reference frame in {}", GetLogFC()),
+            [this]() { double phi, theta, psi;
+             GetPerturbationFrame().GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, GetLogFC());
+             return Vector3d<double>(phi, theta, psi); });
   }
-
-//  FrOffshoreSystem *FrEquilibriumFrame::GetSystem() const {
-//    return GetParent()->GetSystem();
-//  }
-
 
   void FrEquilibriumFrame::InitSpeedFromBody(bool is_init) {
     m_initSpeedFromBody = is_init;

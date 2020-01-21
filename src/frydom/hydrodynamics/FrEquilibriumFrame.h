@@ -42,11 +42,10 @@ namespace frydom {
 
    protected:
 
-//      FrBody *m_body;                ///< Link to the body to which the equilibrium frame if applied
-
     FrFrame m_frame;
-    Velocity m_velocity;                     ///< translational velocity of the frame in world coordinates
-    double m_angularVelocity;                ///< angular velocity of the frame around Z-direction
+    std::shared_ptr<FrNode>  m_bodyNode;  ///< Node fixed to the body corresponding to the equilibrium frame when the body is at equilibrium.
+    Velocity m_velocity;             ///< translational velocity of the frame in world coordinates
+    double m_angularVelocity;        ///< angular velocity of the frame around Z-direction
 
     bool m_initSpeedFromBody;        ///< Initialize the frame position, orientation and velocity according
     bool m_initPositionFromBody;     ///< to the body during the initialization stage
@@ -97,7 +96,7 @@ namespace frydom {
     void SetFrameInWorld(const FrFrame &frame);
 
     /// Get the equilibrium reference frame relatively to the word reference frame
-    /// \param fc frame convention (NED/NWU
+    /// \param fc frame convention (NED/NWU)
     /// \return equilibrium reference frame
     FrFrame GetFrameInWorld() const;
 
@@ -160,6 +159,8 @@ namespace frydom {
     AngularVelocity GetAngularPerturbationVelocity(FRAME_CONVENTION fc) const;
 
     AngularVelocity GetAngularPerturbationVelocityInFrame(FRAME_CONVENTION fc) const;
+
+    void SetNodeToEquilibriumPosition();
 
     /// Initialization of the position and velocity of the equilibrium frame
     void Initialize() override;
