@@ -30,40 +30,76 @@ int main(int argc, char *argv[]) {
   Ocean->SetDensity(1023.);
 
   // -- Body
+  auto body = system.NewBody("body");
+  std::string meshFilename;
 
-  auto body = system.NewBody("box");
+  enum bench_cases {
+    box, DTMB, platform
+  };
 
-  double L, B, H, c;
-  L = H = B = 5.;
-  c = 0.5;
+  bench_cases featuredCase = platform;
+
+  switch (featuredCase) {
+    case box: {
+
+      double L, B, H, c;
+      L = H = B = 5.;
+      c = 0.5;
 //    L = 8; B = 4; H = 2; c = 0.5;
 
-  auto mass = L * H * B * c * system.GetEnvironment()->GetFluidDensity(WATER);
-  makeItBox(body, L, B, H, mass);
+      auto mass = L * H * B * c * system.GetEnvironment()->GetFluidDensity(WATER);
+      makeItBox(body, L, B, H, mass);
 
-  body->TranslateInWorld(0,0,0.75*2.5,NWU);
+      body->TranslateInWorld(0, 0, 0.75 * 2.5, NWU);
 
-  double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
-  auto inertia = body->GetInertiaTensor();
-  inertia.GetInertiaCoeffsAtCOG(Ixx, Iyy, Izz, Ixy, Ixz, Iyz, NWU);
-  body->SetInertiaTensor(FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, Position(-2.5,-2.5,-2.5), NWU));
+      double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
+      auto inertia = body->GetInertiaTensor();
+      inertia.GetInertiaCoeffsAtCOG(Ixx, Iyy, Izz, Ixy, Ixz, Iyz, NWU);
+      body->SetInertiaTensor(FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, Position(-2.5, -2.5, -2.5), NWU));
 
-//  body->Rotate(FrRotation(Direction(1,0,0), 70*DEG2RAD, NWU));
+      event_logger::info("main", "test_HS_equilibrium", "box mass : {}", mass);
 
-  event_logger::info("main", "test_HS_equilibrium", "box mass : {}", mass);
+      meshFilename = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/box/box_385_t.obj"});
+//    meshFilename = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/box/box_385.obj"});
+      break;
+    }
+    case DTMB: {
+      body->SetInertiaTensor(FrInertiaTensor(86.0, 1.98, 53.88, 49.99, 0., 0., 0., Position(0., 0., 0.03), NWU));
+      meshFilename = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/DTMB5512/DTMB5512.obj"});
+      break;
+    }
+    case platform: {
+      body->SetInertiaTensor(
+          FrInertiaTensor(3.22114e7, 2.4e11, 2.3e11, 2e12, 0., 0., 0., Position(0.22, 0.22, 2.92), NWU));
+      meshFilename = FrFileSystem::join(
+          {system.config_file().GetDataFolder(), "ce/platform/mesh_Platform_GVA7500_Sym.obj"});
+      body->TranslateInWorld(0, 0, -14.5, NWU);
+      break;
+    }
+  }
 
-//    body->RemoveAssets();
-  auto boxMesh = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/box/box_385_t.obj"});
-//  auto boxMesh = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/box/box_385.obj"});
+  // At initial state
+//  auto HydroMesh = make_hydro_mesh("hydroMesh", body, meshFilename, FrFrame(), FrHydroMesh::ClippingSupport::PLANESURFACE);
+//  HydroMesh->Initialize();
+//  HydroMesh->Update(0.);
+//  FrHydrostaticsProperties hsp(system.GetEnvironment()->GetFluidDensity(WATER),
+//                               system.GetGravityAcceleration(),
+//                               HydroMesh->GetClippedMesh(),
+//                               Position(), Position(), NWU);
+//  hsp.Process();
+//  event_logger::info("main", "test_HS_equilibrium", hsp.GetReport());
+//  HydroMesh->GetClippedMesh().Write("Initial_Clipped_Mesh.obj");
 
+  // At equilibrium
   event_logger::info("main", "test_HS_equilibrium", "Body COG position : {}", body->GetCOGPositionInWorld(NWU));
 
-  auto staticEquilibrium = solve_hydrostatic_equilibrium(body, boxMesh, FrFrame(), body->GetInertiaTensor());
+  auto staticEquilibrium = solve_hydrostatic_equilibrium(body, meshFilename, FrFrame(), body->GetInertiaTensor());
 
   event_logger::info("main", "test_HS_equilibrium", "Body orientation : {}", body->GetRotation());
 
   staticEquilibrium.GetHydroMesh()->GetClippedMesh().Write("Clipped_Mesh.obj");
 
-  event_logger::info("main", "test_HS_equilibrium", staticEquilibrium.GetReport(body->GetCOG(NWU), body->GetCOG(NWU), NWU));
+  event_logger::info("main", "test_HS_equilibrium",
+                     staticEquilibrium.GetReport(body->GetCOG(NWU), body->GetCOG(NWU), NWU));
 
 }

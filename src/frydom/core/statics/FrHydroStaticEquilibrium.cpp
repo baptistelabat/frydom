@@ -75,6 +75,8 @@ namespace frydom {
 
   bool FrHydroStaticEquilibrium::Solve(const FrInertiaTensor &tensor) {
 
+    //TODO: HS equilibrium in displacement first
+
     double rho = m_body->GetSystem()->GetEnvironment()->GetFluidDensity(WATER);
     double g = m_body->GetSystem()->GetGravityAcceleration();
     double mg = tensor.GetMass() * g;
@@ -131,7 +133,6 @@ namespace frydom {
         clippedMesh.Translate(OpenMesh::VectorT<double, 3>(0., 0., -m_body->GetPosition(NWU).GetZ()));
         FrHydrostaticsProperties hsp(rho, g, clippedMesh, tensor.GetCOGPosition(NWU), tensor.GetCOGPosition(NWU), NWU);
         hsp.Process();
-        event_logger::info("Hydrostatic", "", hsp.GetReport());
         // convergence at a stable equilibrium
         if (hsp.GetLongitudinalMetacentricHeight() > 0 and hsp.GetTransversalMetacentricHeight() > 0) {
           event_logger::info("Hydrostatic equilibrium", "", "convergence at a stable equilibrium");

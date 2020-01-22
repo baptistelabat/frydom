@@ -112,7 +112,7 @@ namespace frydom {
 
     unsigned int m_iteration = 0;               ///< number of Newton-Raphson iterations
     unsigned int m_iterations_max = 100;        ///< number of maximum Newton-Raphson iterations
-    double m_relative_tolerance = 1e-3;         ///< relative tolerance for stopping the Newton-Raphson solver
+    double m_relative_tolerance = 1e-2;         ///< relative tolerance for stopping the Newton-Raphson solver
 
     Vector3d<double> m_relax;                   ///< relaxation vector, to ensure that the evolution of the solution is
     ///< not to large
