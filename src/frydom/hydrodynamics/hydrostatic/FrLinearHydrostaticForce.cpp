@@ -57,7 +57,7 @@ namespace frydom {
     deltaFrame.GetRotation().GetCardanAngles_RADIANS(state[1], state[2], temp, NWU);
 
     // Fh = -Kh*X. in the equilibrium frame: only heave, roll and pitch are considered here.
-    auto forceState = -(m_stiffnessMatrix * state); // m_stiffnessMatrix is a 3x3 matrix.
+    mathutils::Vector3d<double> forceState = -(m_stiffnessMatrix * state); // m_stiffnessMatrix is a 3x3 matrix.
 
     // Linear hydrostatic force: assumed in the world frame.
     auto worldForce = Force(0., 0.,
