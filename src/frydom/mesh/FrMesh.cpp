@@ -821,10 +821,10 @@ namespace frydom {
                        2 * e * normal.Getuz() * (R.at(0, 2) * mux + R.at(1, 2) * muy);
 
 
-        Gcorr = Inv2Volume * Gcorr.cwiseProduct(normal);
+        G += Inv2Volume * Gcorr.cwiseProduct(normal);
       }
 
-      return G + Gcorr;
+      return G;
     }
 
     bool

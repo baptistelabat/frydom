@@ -252,7 +252,7 @@ namespace frydom {
 
     auto clippedMesh = m_hydroMesh->GetClippedMesh();
     // To transform the clipped mesh back into the body reference frame
-//    clippedMesh.Translate(OpenMesh::VectorT<double, 3>(0., 0., -m_body->GetPosition(NWU).GetZ()));
+    clippedMesh.Translate(OpenMesh::VectorT<double, 3>(0., 0., -m_body->GetPosition(NWU).GetZ()));
     // Compute all hydrostatics properties and files a report
     FrHydrostaticsProperties hsp(m_body->GetSystem()->GetEnvironment()->GetFluidDensity(WATER),
                                  m_body->GetSystem()->GetGravityAcceleration(),

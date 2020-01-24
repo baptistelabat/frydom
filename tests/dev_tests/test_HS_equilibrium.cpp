@@ -105,6 +105,6 @@ int main(int argc, char *argv[]) {
   staticEquilibrium.GetHydroMesh()->GetClippedMesh().Write("Clipped_Mesh.obj");
 
   event_logger::info("main", "test_HS_equilibrium",
-                     staticEquilibrium.GetReport({0.22,0.22,17.420}, {}, NWU));
+                     staticEquilibrium.GetReport(body->GetInertiaTensor().GetCOGPosition(NWU), {}, NWU));
 
 }
