@@ -45,7 +45,8 @@ namespace frydom {
   }
 
   FrHydrostaticsProperties::FrHydrostaticsProperties(double waterDensity, double gravityAcceleration,
-                                                     mesh::FrMesh &clipped_mesh, Position cog, Position out, FRAME_CONVENTION fc) :
+                                                     mesh::FrMesh &clipped_mesh, Position cog, Position out,
+                                                     FRAME_CONVENTION fc) :
       m_waterDensity(waterDensity),
       m_gravityAcceleration(gravityAcceleration),
       m_clippedMesh(clipped_mesh),
@@ -99,6 +100,8 @@ namespace frydom {
 
     m_hullWetArea = m_clippedMesh.GetArea();
 
+    double Poly1 = 0, PolyX = 0, PolyY = 0, PolyXY = 0, PolyX2 = 0, PolyY2 = 0;
+
     for (auto &polygon : m_clippedMesh.GetBoundaryPolygonSet()) {
 
       //FIXME: to check that the mesh is clipped by a horizontal plane
@@ -106,42 +109,40 @@ namespace frydom {
 
       auto BoundaryPolygonsSurfaceIntegral = polygon.GetSurfaceIntegrals();
 
-      m_waterPlaneArea += BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_1);
-
-      m_hydrostaticTensor.K33 += rg * m_waterPlaneArea;
-      m_hydrostaticTensor.K34 += rg * (BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_Y));
-      m_hydrostaticTensor.K35 += -rg * (BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_X));
-      m_hydrostaticTensor.K45 += -rg * (BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_XY));
-
-      m_waterPlaneCenter += Position(
-          -m_hydrostaticTensor.K35 / m_hydrostaticTensor.K33,
-          m_hydrostaticTensor.K34 / m_hydrostaticTensor.K33,
-          m_clippedMesh.GetBoundingBox().zmax
-      );
-
-      // Corrections to express the stiffness matrix in a given point
-      m_hydrostaticTensor.K34 += rg * (- m_outerPoint[1] * m_waterPlaneArea);
-      m_hydrostaticTensor.K35 += -rg * (- m_outerPoint[0] * m_waterPlaneArea);
-      m_hydrostaticTensor.K45 += -rg * (- m_outerPoint[1] *
-                                        BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_X)
-                                        - m_outerPoint[0] *
-                                        BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_Y)
-                                        + m_outerPoint[0] * m_outerPoint[1] * m_waterPlaneArea);
-
-      m_transversalMetacentricRadius +=
-          (BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_Y2)
-           - 2. * m_outerPoint[1] * BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_Y)
-           + m_outerPoint[1] * m_outerPoint[1] * m_waterPlaneArea)
-          / m_volumeDisplacement;
-      m_longitudinalMetacentricRadius +=
-          (BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_X2)
-           - 2. * m_outerPoint[0] * BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_X)
-           + m_outerPoint[0] * m_outerPoint[0] * m_waterPlaneArea)
-          / m_volumeDisplacement;
+      Poly1 += BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_1);
+      PolyX += BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_X);
+      PolyY += BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_Y);
+      PolyXY += BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_XY);
+      PolyX2 += BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_X2);
+      PolyY2 += BoundaryPolygonsSurfaceIntegral.GetSurfaceIntegral(mesh::POLY_Y2);
 
       m_hullWetArea -= polygon.GetArea();
 
     }
+
+    m_waterPlaneArea += Poly1;
+
+    m_hydrostaticTensor.K33 = rg * Poly1;
+    m_hydrostaticTensor.K34 = rg * PolyY;
+    m_hydrostaticTensor.K35 = -rg * PolyX;
+    m_hydrostaticTensor.K45 = -rg * PolyXY;
+
+    m_waterPlaneCenter = Position(
+        -m_hydrostaticTensor.K35 / m_hydrostaticTensor.K33,
+        m_hydrostaticTensor.K34 / m_hydrostaticTensor.K33,
+        m_clippedMesh.GetBoundingBox().zmax
+    );
+
+    // Corrections to express the stiffness matrix in a given point
+    m_hydrostaticTensor.K34 += rg * (-m_outerPoint[1] * Poly1);
+    m_hydrostaticTensor.K35 += -rg * (-m_outerPoint[0] * Poly1);
+    m_hydrostaticTensor.K45 +=
+        -rg * (-m_outerPoint[1] * PolyX - m_outerPoint[0] * PolyY + m_outerPoint[0] * m_outerPoint[1] * Poly1);
+
+    m_transversalMetacentricRadius +=
+        (PolyY2 - 2. * m_outerPoint[1] * PolyY + m_outerPoint[1] * m_outerPoint[1] * Poly1) / m_volumeDisplacement;
+    m_longitudinalMetacentricRadius +=
+        (PolyX2 - 2. * m_outerPoint[0] * PolyX + m_outerPoint[0] * m_outerPoint[0] * Poly1) / m_volumeDisplacement;
 
     double zb_zg = m_buoyancyCenter[2] - m_centerOfGravity[2];
 

@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
           FrInertiaTensor(3.22114e7, 2.4e11, 2.3e11, 2e12, 0., 0., 0., Position(0.22, 0.22, 2.92), NWU));
       meshFilename = FrFileSystem::join(
           {system.config_file().GetDataFolder(), "ce/platform/mesh_Platform_GVA7500_Sym.obj"});
-      body->TranslateInWorld(0, 0, -14.5, NWU);
+      body->TranslateInWorld(0, 0, 10, NWU);
       break;
     }
   }
@@ -93,13 +93,18 @@ int main(int argc, char *argv[]) {
   // At equilibrium
   event_logger::info("main", "test_HS_equilibrium", "Body COG position : {}", body->GetCOGPositionInWorld(NWU));
 
-  auto staticEquilibrium = solve_hydrostatic_equilibrium(body, meshFilename, FrFrame(), body->GetInertiaTensor());
+  auto staticEquilibrium = FrHydroStaticEquilibrium(body, meshFilename, FrFrame());
+  staticEquilibrium.SetLinearRelaxation(1.);
 
-  event_logger::info("main", "test_HS_equilibrium", "Body orientation : {}", body->GetRotation());
+  staticEquilibrium.Solve(body->GetInertiaTensor());
+
+//  auto staticEquilibrium = solve_hydrostatic_equilibrium(body, meshFilename, FrFrame(), body->GetInertiaTensor());
+
+  event_logger::info("main", "test_HS_equilibrium", "Body frame : {}", body->GetFrame());
 
   staticEquilibrium.GetHydroMesh()->GetClippedMesh().Write("Clipped_Mesh.obj");
 
   event_logger::info("main", "test_HS_equilibrium",
-                     staticEquilibrium.GetReport(body->GetCOG(NWU), body->GetCOG(NWU), NWU));
+                     staticEquilibrium.GetReport({0.22,0.22,17.420}, {}, NWU));
 
 }

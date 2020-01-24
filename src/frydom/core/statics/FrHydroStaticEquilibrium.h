@@ -49,6 +49,8 @@ namespace frydom {
     /// FrHydrostaticEquilibrium destructor to ensure that the HydroMesh created for the solving is removed to the system.
     ~FrHydroStaticEquilibrium();
 
+    bool Solve(double mass);
+
     /// Solve the hydrostatic equilibrium of a body, modeled by a mesh, subject to an inertia tensor.
     /// \param tensor inertia tensor for which the hydrostatic equilibrium is solved
     /// \return true if the solver reaches a convergence, even an unstable configuration.
