@@ -114,8 +114,6 @@ Here are the main features of Irrlicht:
 
 All others packages can be installed simply :
 
-    sudo apt-get install libeigen3-dev
-    sudo apt-get install libblas-dev
     sudo apt-get install libhdf5-dev
     sudo apt-get install libboost-all-dev
 

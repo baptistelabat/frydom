@@ -55,6 +55,16 @@ namespace frydom {
 
     void NoCSVLlog();  // TODO: permettre de ne pas logger en CSV... -> perf !
 
+    using LoggableList = std::list<FrLoggableBase *>;
+    using LoggableIter = LoggableList::iterator;
+
+    LoggableIter begin() {
+      return m_loggable_list.begin();
+    };
+
+    LoggableIter end() {
+      return m_loggable_list.end();
+    }
 
    private:
     bool Has(FrLoggableBase *obj) const;
@@ -69,11 +79,10 @@ namespace frydom {
 
     static std::string now();
 
-
    private:
     std::string m_log_folder;
 
-    std::list<FrLoggableBase *> m_loggable_list;
+    LoggableList m_loggable_list;
 
     FrOffshoreSystem *m_system;
 

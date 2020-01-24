@@ -8,7 +8,19 @@ High level overview of FRyDoM's features and capabilities.
 
 @subpage tutorial_table_of_content_installation 
 
-Instructions for installaing, configuring, and building FRyDoM. Detailed lists of necessary dependencies. 
+Instructions for installing, configuring, and building FRyDoM. Detailed lists of necessary dependencies. 
+
+---
+
+@subpage tree
+
+Description of the tree organisation of class in FRyDoM
+
+---
+
+@subpage logging
+
+Description of the logs philosophy, architecture. Instructions to add logs to new classes. 
 
 ---
 
@@ -16,11 +28,5 @@ Instructions for installaing, configuring, and building FRyDoM. Detailed lists o
 
 Examples of how to use FRyDoM features, demo of particular application cases and benchmarks.
 Start here to learn more about FRyDoM.
-
----
-
-@subpage logs
-
-Description of the logs philosophy, architecture. Instructions to add logs to new classes. 
 
 ---
