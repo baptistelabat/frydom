@@ -24,7 +24,8 @@ namespace frydom {
   // Equilibrium frame
   // ---------------------------------------------------------------------
 
-  FrEquilibriumFrame::FrEquilibriumFrame(const std::string &name, FrBody *body)
+  FrEquilibriumFrame::FrEquilibriumFrame(const std::string &name, FrBody *body,
+      const Position& localPos, const double& rot, FRAME_CONVENTION fc)
       : FrLoggable(name, TypeToString(this), body),
         FrPrePhysicsItem(),
         m_velocity(),
@@ -32,8 +33,13 @@ namespace frydom {
         m_frame(),
         c_prevTime(0.),
         m_initPositionFromBody(true),
-        m_initSpeedFromBody(false) {
+        m_initSpeedFromBody(false)
+  {
     m_bodyNode = GetBody()->NewNode("equilibrium_frame_node_on_body");
+    m_frame.SetIdentity();
+    SetPositionInBody(localPos, fc);
+    ApplyFrameProjection();
+    SetAngleRotation(rot, fc);
   }
 
   FrBody *FrEquilibriumFrame::GetBody() const {
@@ -41,8 +47,13 @@ namespace frydom {
   }
 
   void FrEquilibriumFrame::SetPositionToBodyCOGPosition() {
+    m_frame.SetIdentity();
     m_frame.SetPosition(GetBody()->GetCOGPositionInWorld(NWU), NWU);
-    m_frame.SetRotation(GetBody()->GetRotation());
+    // Apply same yaw as body rotation
+    double phi, theta, psi;
+    GetBody()->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
+    m_frame.RotZ_RADIANS(psi, NWU, true);
+
     m_initPositionFromBody = false;
   }
 
@@ -53,6 +64,11 @@ namespace frydom {
 
   Position FrEquilibriumFrame::GetPositionInWorld(FRAME_CONVENTION fc) const {
     return m_frame.GetPosition(fc);
+  }
+
+  void FrEquilibriumFrame::SetPositionInBody(Position pos, FRAME_CONVENTION fc) {
+    m_bodyNode->SetPositionInBody(pos, fc);
+    m_frame.SetPosition(m_bodyNode->GetPositionInWorld(NWU), NWU);
   }
 
   void FrEquilibriumFrame::SetRotation(const FrRotation &rotation) {
@@ -108,12 +124,12 @@ namespace frydom {
   }
 
   FrFrame FrEquilibriumFrame::GetPerturbationFrame() {
-    return m_frame.GetInverse() * GetBody()->GetFrameAtCOG(NWU);;
+    return m_frame.GetInverse() * m_bodyNode->GetFrameInWorld();
   }
 
   Velocity FrEquilibriumFrame::GetPerturbationVelocityInWorld(FRAME_CONVENTION fc) const {
     auto frameVelocity = this->GetVelocityInWorld(fc);
-    auto bodyVelocity = GetBody()->GetCOGLinearVelocityInWorld(fc);
+    auto bodyVelocity = m_bodyNode->GetVelocityInWorld(fc);
     return bodyVelocity - frameVelocity;
   }
 
@@ -147,7 +163,7 @@ namespace frydom {
 
   AngularVelocity FrEquilibriumFrame::GetAngularPerturbationVelocity(FRAME_CONVENTION fc) const {
     auto frameAngularVelocity = GetAngularVelocity(fc);
-    auto bodyAngularVelocity = GetBody()->GetAngularVelocityInWorld(fc);
+    auto bodyAngularVelocity = m_bodyNode->GetAngularVelocityInWorld(fc);
     return bodyAngularVelocity - frameAngularVelocity;
   }
 
@@ -191,9 +207,7 @@ namespace frydom {
   }
 
   void FrEquilibriumFrame::StepFinalize() {
-
     FrPhysicsItem::StepFinalize();
-
   }
 
   void FrEquilibriumFrame::DefineLogMessages() {
@@ -230,6 +244,18 @@ namespace frydom {
              return Vector3d<double>(phi, theta, psi); });
   }
 
+  void FrEquilibriumFrame::ApplyFrameProjection() {
+    m_frame.GetRotation().SetNullRotation();
+    // Apply same yaw as body rotation
+    double phi, theta, psi;
+    GetBody()->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
+    m_frame.RotZ_RADIANS(psi, NWU, true);
+  }
+
+  void FrEquilibriumFrame::SetAngleRotation(const double angle, FRAME_CONVENTION fc) {
+    m_frame.RotZ_RADIANS(angle, fc, true);
+  }
+
   void FrEquilibriumFrame::InitSpeedFromBody(bool is_init) {
     m_initSpeedFromBody = is_init;
   }
@@ -239,10 +265,18 @@ namespace frydom {
   }
 
   std::shared_ptr<FrEquilibriumFrame>
-  make_equilibrium_frame(const std::string &name, FrOffshoreSystem *system, const std::shared_ptr<FrBody> &body) {
-    auto eqframe = std::make_shared<FrEquilibriumFrame>(name, body.get());
+  make_equilibrium_frame(const std::string &name, FrOffshoreSystem *system, const std::shared_ptr<FrBody> &body,
+      const Position& localPos, const double& rot, FRAME_CONVENTION fc) {
+    auto eqframe = std::make_shared<FrEquilibriumFrame>(name, body.get(), localPos, rot, fc);
     system->Add(eqframe);
     return eqframe;
+  }
+
+  std::shared_ptr<FrEquilibriumFrame>
+  make_equilibrium_frame(const std::string& name, FrOffshoreSystem* system, const std::shared_ptr<FrBody>& body) {
+    auto eqFrame = std::make_shared<FrEquilibriumFrame>(name, body.get(), body->GetCOG(NWU), 0., NWU);
+    system->Add(eqFrame);
+    return eqFrame;
   }
 
   // -----------------------------------------------------------------------
@@ -251,9 +285,12 @@ namespace frydom {
 
   FrEqFrameSpringDamping::FrEqFrameSpringDamping(const std::string &name,
                                                  FrBody *body,
+                                                 const Position& localPos,
+                                                 const double& rot,
+                                                 FRAME_CONVENTION fc,
                                                  double cutoffTime,
                                                  double dampingRatio)
-      : FrEquilibriumFrame(name, body) {
+      : FrEquilibriumFrame(name, body, localPos, rot, fc) {
     this->SetSpringDamping(cutoffTime, dampingRatio);
   }
 
@@ -269,8 +306,8 @@ namespace frydom {
 
     if (std::abs(time - m_prevTime) < FLT_EPSILON) return;
 
-    auto bodyPosition = GetBody()->GetCOGPositionInWorld(NWU);
-    auto bodyVelocity = GetBody()->GetCOGLinearVelocityInWorld(NWU);
+    auto bodyPosition = m_bodyNode->GetPositionInWorld(NWU);
+    auto bodyVelocity = m_bodyNode->GetVelocityInWorld(NWU);
     auto position = m_frame.GetPosition(NWU);
 
     Force force;
@@ -280,8 +317,8 @@ namespace frydom {
     double temp1, temp2;
     double bodyPsi, psi;
     m_frame.GetRotation().GetCardanAngles_RADIANS(temp1, temp2, psi, NWU);
-    GetBody()->GetRotation().GetCardanAngles_RADIANS(temp1, temp2, bodyPsi, NWU);
-    auto bodyAngularVelocity = GetBody()->GetAngularVelocityInWorld(NWU).GetWz();
+    m_bodyNode->GetFrameInWorld().GetRotation().GetCardanAngles_RADIANS(temp1, temp2, bodyPsi, NWU);
+    auto bodyAngularVelocity = m_bodyNode->GetAngularVelocityInWorld(NWU).GetWz();
 
     double torque;
     torque = (bodyPsi - psi) * m_stiffness + (bodyAngularVelocity - m_angularVelocity) * m_damping;
@@ -300,12 +337,28 @@ namespace frydom {
   std::shared_ptr<FrEqFrameSpringDamping>
   make_spring_damping_equilibrium_frame(const std::string &name,
                                         const std::shared_ptr<FrBody> &body,
+                                        const Position& localPos,
+                                        const double& rot,
+                                        FRAME_CONVENTION fc,
                                         FrOffshoreSystem *system,
                                         double cutoffTime,
                                         double dampingRatio) {
-    auto eqframe = std::make_shared<FrEqFrameSpringDamping>(name, body.get(), cutoffTime, dampingRatio);
+    auto eqframe = std::make_shared<FrEqFrameSpringDamping>(name, body.get(),
+        localPos, rot, fc, cutoffTime, dampingRatio);
     system->Add(eqframe);
     return eqframe;
+  }
+
+  std::shared_ptr<FrEqFrameSpringDamping>
+  make_spring_damping_equilibrium_frame(const std::string& name,
+                                        const std::shared_ptr<FrBody>& body,
+                                        FrOffshoreSystem* system,
+                                        double cutoffTime,
+                                        double dampingRatio) {
+    auto eqFrame = std::make_shared<FrEqFrameSpringDamping>(name, body.get(),
+        body->GetCOG(NWU), 0., NWU, cutoffTime, dampingRatio);
+    system->Add(eqFrame);
+    return eqFrame;
   }
 
   // ----------------------------------------------------------------
@@ -314,12 +367,14 @@ namespace frydom {
 
   FrEqFrameMeanMotion::FrEqFrameMeanMotion(const std::string &name,
                                            FrBody *body,
+                                           const Position& localPos,
+                                           const double& rot,
+                                           FRAME_CONVENTION fc,
                                            double timePersistence,
                                            double timeStep)
-      : FrEquilibriumFrame(name, body) {
+      : FrEquilibriumFrame(name, body, localPos, rot, fc) {
     this->SetRecorders(timePersistence, timeStep);
   }
-
 
   void FrEqFrameMeanMotion::SetRecorders(double timePersistence, double timeStep) {
     m_TrSpeedRec = std::make_unique<FrTimeRecorder<Velocity>>(timePersistence, timeStep);
@@ -342,8 +397,8 @@ namespace frydom {
 
     if (std::abs(time - m_prevTime) < FLT_EPSILON) return;
 
-    m_TrSpeedRec->Record(time, GetBody()->GetCOGLinearVelocityInWorld(NWU));
-    m_AglSpeedRec->Record(time, GetBody()->GetAngularVelocityInWorld(NWU).GetWz());
+    m_TrSpeedRec->Record(time, m_bodyNode->GetVelocityInWorld(NWU));
+    m_AglSpeedRec->Record(time, m_bodyNode->GetAngularVelocityInWorld(NWU).GetWz());
 
     m_velocity = m_TrSpeedRec->GetMean();
     m_angularVelocity = m_AglSpeedRec->GetMean();
@@ -355,12 +410,12 @@ namespace frydom {
 
     if (m_ErrPositionRec and m_ErrAngleRec) {
 
-      m_ErrPositionRec->Record(time, GetBody()->GetCOGPositionInWorld(NWU) - m_frame.GetPosition(NWU));
+      m_ErrPositionRec->Record(time, m_bodyNode->GetPositionInWorld(NWU) - m_frame.GetPosition(NWU));
       auto errMeanPosition = m_ErrPositionRec->GetMean();
       position += errMeanPosition * m_errPosCoeff;
 
       double temp1, temp2, bodyAngle, frameAngle;
-      GetBody()->GetRotation().GetCardanAngles_RADIANS(temp1, temp2, bodyAngle, NWU);
+      m_bodyNode->GetFrameInWorld().GetRotation().GetCardanAngles_RADIANS(temp1, temp2, bodyAngle, NWU);
       m_frame.GetRotation().GetCardanAngles_RADIANS(temp1, temp2, frameAngle, NWU);
       m_ErrAngleRec->Record(time, bodyAngle - frameAngle);
       auto errMeanAngle = m_ErrAngleRec->GetMean();
@@ -375,11 +430,27 @@ namespace frydom {
 
   std::shared_ptr<FrEqFrameMeanMotion>
   make_mean_motion_equilibrium_frame(const std::string &name,
-                                     const std::shared_ptr<FrBody> &body,
                                      FrOffshoreSystem *system,
+                                     const std::shared_ptr<FrBody> &body,
                                      double timePersistence,
                                      double timeStep) {
-    auto eqframe = std::make_shared<FrEqFrameMeanMotion>(name, body.get(), timePersistence, timeStep);
+    auto eqframe = std::make_shared<FrEqFrameMeanMotion>(name, body.get(),
+        body->GetCOG(NWU), 0., NWU, timePersistence, timeStep);
+    system->Add(eqframe);
+    return eqframe;
+  }
+
+  std::shared_ptr<FrEqFrameMeanMotion>
+  make_mean_motion_equilibrium_frame(const std::string &name,
+                                     FrOffshoreSystem *system,
+                                     const std::shared_ptr<FrBody> &body,
+                                     const Position& localPos,
+                                     const double& rot,
+                                     FRAME_CONVENTION fc,
+                                     double timePersistence,
+                                     double timeStep) {
+    auto eqframe = std::make_shared<FrEqFrameMeanMotion>(name, body.get(),
+        localPos, rot, fc, timePersistence, timeStep);
     system->Add(eqframe);
     return eqframe;
   }
