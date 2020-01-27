@@ -37,30 +37,31 @@ int main(int argc, char *argv[]) {
     box, DTMB, platform
   };
 
-  bench_cases featuredCase = platform;
+  bench_cases featuredCase = box;
 
   switch (featuredCase) {
     case box: {
 
       double L, B, H, c;
       L = H = B = 5.;
-      c = 0.5;
+      c = 0.75;
 //    L = 8; B = 4; H = 2; c = 0.5;
 
       auto mass = L * H * B * c * system.GetEnvironment()->GetFluidDensity(WATER);
       makeItBox(body, L, B, H, mass);
 
-      body->TranslateInWorld(0, 0, 0.75 * 2.5, NWU);
+      body->TranslateInWorld(0, 0, 0, NWU);
 
       double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
       auto inertia = body->GetInertiaTensor();
       inertia.GetInertiaCoeffsAtCOG(Ixx, Iyy, Izz, Ixy, Ixz, Iyz, NWU);
-      body->SetInertiaTensor(FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, Position(-2.5, -2.5, -2.5), NWU));
+//      body->SetInertiaTensor(FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, Position(-2.5, -2., -3.), NWU));
+      body->SetInertiaTensor(FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, Position(0.5, 0.5, -1.5), NWU));
 
       event_logger::info("main", "test_HS_equilibrium", "box mass : {}", mass);
 
-      meshFilename = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/box/box_385_t.obj"});
-//    meshFilename = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/box/box_385.obj"});
+//      meshFilename = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/box/box_385_t.obj"});
+    meshFilename = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/box/box_385.obj"});
       break;
     }
     case DTMB: {
@@ -94,7 +95,7 @@ int main(int argc, char *argv[]) {
   event_logger::info("main", "test_HS_equilibrium", "Body COG position : {}", body->GetCOGPositionInWorld(NWU));
 
   auto staticEquilibrium = FrHydroStaticEquilibrium(body, meshFilename, FrFrame());
-  staticEquilibrium.SetLinearRelaxation(1.);
+//  staticEquilibrium.SetLinearRelaxation(1.);
 
   staticEquilibrium.Solve(body->GetInertiaTensor());
 
@@ -104,7 +105,9 @@ int main(int argc, char *argv[]) {
 
   staticEquilibrium.GetHydroMesh()->GetClippedMesh().Write("Clipped_Mesh.obj");
 
+  auto COGPosInWorld = body->GetPointPositionInWorld(body->GetInertiaTensor().GetCOGPosition(NWU), NWU);
+
   event_logger::info("main", "test_HS_equilibrium",
-                     staticEquilibrium.GetReport(body->GetInertiaTensor().GetCOGPosition(NWU), {}, NWU));
+                     staticEquilibrium.GetReport(COGPosInWorld, COGPosInWorld, NWU));
 
 }

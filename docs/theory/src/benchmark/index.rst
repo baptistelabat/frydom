@@ -3,17 +3,8 @@
 Benchmark cases
 ===============
 
-Heaving sphere
-~~~~~~~~~~~~~~
-.. toctree::
-    :maxdepth: 2
 
-    heaving_sphere_decay_test
-    heaving_sphere_regular_wave
-    heaving_sphere_irregular_wave
-
-
-Hydrostatics and stability of a box
+Hydrostatics and stability
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. toctree::
     :maxdepth: 2
@@ -21,22 +12,34 @@ Hydrostatics and stability of a box
     hydrostatics_equilibrium
     stability_analysis
 
-DTM5512
-~~~~~~~
+Hydrodynamics
+~~~~~~~~~~~~~
+
+Heaving sphere - validation of the potential theory models
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+.. toctree::
+    :maxdepth: 2
+
+    heaving_sphere_decay_test
+    heaving_sphere_regular_wave
+    heaving_sphere_irregular_wave
+
+DTM5512 - validation of the forward speed effects
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 .. toctree::
     :maxdepth: 2
 
     dtmb5512_test
 
-Langlee
-~~~~~~~
+Langlee - validation of the multibody hydrodynamic interactions
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 .. toctree::
     :maxdepth: 2
 
     langlee
 
-Cables
-~~~~~~
+Cables and mooring
+~~~~~~~~~~~~~~~~~~
 .. toctree::
     :maxdepth: 2
 

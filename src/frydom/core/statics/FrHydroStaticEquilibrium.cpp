@@ -118,7 +118,7 @@ namespace frydom {
 
       if (abs(residual / mg) < m_relative_tolerance) {
         event_logger::info("Hydrostatic equilibrium", "",
-                           "convergence reached : (residuals: absolute = {}, relative = {})", residual, residual / mg);
+                           "convergence reached in {} iterations : (residuals: absolute = {}, relative = {})", m_iteration, residual, residual / mg);
         convergence = true;
         break;
       }
@@ -147,8 +147,6 @@ namespace frydom {
 
   bool FrHydroStaticEquilibrium::Solve(const FrInertiaTensor &tensor) {
 
-
-    //TODO: HS equilibrium in displacement first
     Solve(tensor.GetMass());
 
     double rho = m_body->GetSystem()->GetEnvironment()->GetFluidDensity(WATER);
@@ -163,16 +161,19 @@ namespace frydom {
 
     while (true) {
 
-      event_logger::debug("Hydrostatic equilibrium", "", "iteration : {}", m_iteration);
+      event_logger::info("Hydrostatic equilibrium", "", "iteration : {}", m_iteration);
 
       m_body->TranslateInWorld(0., 0., m_solution.at(0), NWU);
       m_bodyRotation.SetCardanAngles_RADIANS(m_solution.at(1), m_solution.at(2), 0., NWU);
       m_body->Rotate(m_bodyRotation);
 
+      auto COGPosInWorld = m_body->GetPointPositionInWorld(tensor.GetCOGPosition(NWU), NWU);
+
       // Clipping of the mesh, according to the new frame of the body
       m_hydroMesh->Update(0.);
 
       auto clippedMesh = m_hydroMesh->GetClippedMesh();
+//      clippedMesh.Write("Clipped_Mesh.obj");
 
       if (clippedMesh.GetVolume() <= 1E-6) {
         event_logger::info("Hydrostatic equilibrium", "", "body not in water");
@@ -181,14 +182,14 @@ namespace frydom {
       }
 
       // Compute all hydrostatics properties
-      FrHydrostaticsProperties hsp(rho, g, clippedMesh, tensor.GetCOGPosition(NWU), NWU);
+      FrHydrostaticsProperties hsp(rho, g, clippedMesh, COGPosInWorld, NWU);
       hsp.Process();
 
       auto rhog_v = rho * g * m_hydroMesh->GetClippedMesh().GetVolume();
 
       m_residual = {rhog_v - mg,
-                    rhog_v * hsp.GetBuoyancyCenter().GetY() - mg * tensor.GetCOGPosition(NWU).GetY(),
-                    -rhog_v * hsp.GetBuoyancyCenter().GetX() + mg * tensor.GetCOGPosition(NWU).GetX()};
+                    rhog_v * hsp.GetBuoyancyCenter().GetY() - mg * COGPosInWorld.GetY(),
+                    -rhog_v * hsp.GetBuoyancyCenter().GetX() + mg * COGPosInWorld.GetX()};
 
       auto scale = Vector3d<double>(mg, mg * hsp.GetBreadthOverallSubmerged(), mg * hsp.GetLengthOverallSubmerged());
 
@@ -203,10 +204,6 @@ namespace frydom {
       if (abs(m_residual.at(0) / scale.at(0)) < m_relative_tolerance and
           abs(m_residual.at(1) / scale.at(1)) < m_relative_tolerance and
           abs(m_residual.at(2) / scale.at(2)) < m_relative_tolerance) {
-        // to transform the clipped mesh back into the body reference frame
-        clippedMesh.Translate(OpenMesh::VectorT<double, 3>(0., 0., -m_body->GetPosition(NWU).GetZ()));
-        FrHydrostaticsProperties hsp(rho, g, clippedMesh, tensor.GetCOGPosition(NWU), tensor.GetCOGPosition(NWU), NWU);
-        hsp.Process();
         // convergence at a stable equilibrium
         if (hsp.GetLongitudinalMetacentricHeight() > 0 and hsp.GetTransversalMetacentricHeight() > 0) {
           event_logger::info("Hydrostatic equilibrium", "", "convergence at a stable equilibrium");
@@ -228,9 +225,9 @@ namespace frydom {
 
       m_solution = stiffnessMatrix.LUSolver<Vector3d<double>, Vector3d<double>>(m_residual);
 
-      event_logger::debug("Hydrostatic equilibrium", "", "residual : {}", m_residual.cwiseQuotient(scale));
-      event_logger::debug("Hydrostatic equilibrium", "", "stiffnessMatrix : {}", stiffnessMatrix);
-      event_logger::debug("Hydrostatic equilibrium", "", "solution : ({},{},{})", m_solution.at(0), m_solution.at(1),
+      event_logger::info("Hydrostatic equilibrium", "", "residual : {}", m_residual.cwiseQuotient(scale));
+      event_logger::info("Hydrostatic equilibrium", "", "stiffnessMatrix : {}", stiffnessMatrix);
+      event_logger::info("Hydrostatic equilibrium", "", "solution : ({},{},{})", m_solution.at(0), m_solution.at(1),
                           m_solution.at(2));
 
       // Relaxing solution
@@ -247,17 +244,14 @@ namespace frydom {
     return convergence;
   }
 
-  std::string FrHydroStaticEquilibrium::GetReport(const Position &COGPosInBody, const Position &refPosInBody,
+  std::string FrHydroStaticEquilibrium::GetReport(const Position &COGPosInWorld, const Position &refPosInWorld,
                                                   FRAME_CONVENTION fc) const {
 
-    auto clippedMesh = m_hydroMesh->GetClippedMesh();
-    // To transform the clipped mesh back into the body reference frame
-    clippedMesh.Translate(OpenMesh::VectorT<double, 3>(0., 0., -m_body->GetPosition(NWU).GetZ()));
     // Compute all hydrostatics properties and files a report
     FrHydrostaticsProperties hsp(m_body->GetSystem()->GetEnvironment()->GetFluidDensity(WATER),
                                  m_body->GetSystem()->GetGravityAcceleration(),
-                                 clippedMesh,
-                                 COGPosInBody, refPosInBody, fc);
+                                 m_hydroMesh->GetClippedMesh(),
+                                 COGPosInWorld, refPosInWorld, fc);
     hsp.Process();
 
     return hsp.GetReport();
