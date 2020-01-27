@@ -32,67 +32,52 @@ namespace frydom {
         m_angularVelocity(0.),
         m_frame(),
         c_prevTime(0.),
-        m_initPositionFromBody(true),
         m_initSpeedFromBody(false)
   {
     m_bodyNode = GetBody()->NewNode("equilibrium_frame_node_on_body");
-    m_frame.SetIdentity();
-    SetPositionInBody(localPos, fc);
-    ApplyFrameProjection();
-    SetAngleRotation(rot, fc);
+    SetEqFramePositionOrientation(localPos, rot, fc);
   }
 
   FrBody *FrEquilibriumFrame::GetBody() const {
     return GetParent();
   }
 
-  void FrEquilibriumFrame::SetPositionToBodyCOGPosition() {
-    m_frame.SetIdentity();
-    m_frame.SetPosition(GetBody()->GetCOGPositionInWorld(NWU), NWU);
-    // Apply same yaw as body rotation
-    double phi, theta, psi;
-    GetBody()->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
-    m_frame.RotZ_RADIANS(psi, NWU, true);
-
-    m_initPositionFromBody = false;
+  void FrEquilibriumFrame::InitializeVelocityFromBody(bool is_init) {
+    m_initSpeedFromBody = is_init;
   }
 
-  void FrEquilibriumFrame::SetPositionInWorld(Position pos, FRAME_CONVENTION fc) {
-    m_frame.SetPosition(pos, fc);
-    InitPositionFromBody(false);
+  void FrEquilibriumFrame::SetEqFramePositionOrientation() {
+    // Frame
+    m_frame.SetIdentity();
+    m_frame.SetPosition(m_bodyNode->GetPositionInWorld(NWU), NWU);
+    // Project to the horizontal plane
+    ApplyFrameProjection();
+    // Node
+    m_bodyNode->SetFrameInWorld(m_frame);
+  }
+
+  void FrEquilibriumFrame::SetEqFramePositionOrientation(const Position& localPos, const double& rot, FRAME_CONVENTION fc) {
+    m_bodyNode->SetPositionInBody(localPos, fc);
+    // Frame
+    m_frame.SetIdentity();
+    m_frame.SetPosition(m_bodyNode->GetPositionInWorld(NWU), NWU);
+    // Project to the horizontal plane
+    ApplyFrameProjection();
+    m_frame.RotZ_RADIANS(rot, fc, true);
+    // Node
+    m_bodyNode->SetFrameInWorld(m_frame);
   }
 
   Position FrEquilibriumFrame::GetPositionInWorld(FRAME_CONVENTION fc) const {
     return m_frame.GetPosition(fc);
   }
 
-  void FrEquilibriumFrame::SetPositionInBody(Position pos, FRAME_CONVENTION fc) {
-    m_bodyNode->SetPositionInBody(pos, fc);
-    m_frame.SetPosition(m_bodyNode->GetPositionInWorld(NWU), NWU);
-  }
-
-  void FrEquilibriumFrame::SetRotation(const FrRotation &rotation) {
-    m_frame.SetRotation(rotation);
-    InitPositionFromBody(false);
-  }
-
   FrRotation FrEquilibriumFrame::GetRotation() const {
     return m_frame.GetRotation();
   }
 
-  void FrEquilibriumFrame::SetFrameInWorld(const FrFrame &frame) {
-    m_frame = frame;
-    InitPositionFromBody(false);
-  }
-
-  FrFrame FrEquilibriumFrame::GetFrameInWorld() const {
+  FrFrame FrEquilibriumFrame::GetFrame() const {
     return m_frame;
-  }
-
-  void FrEquilibriumFrame::SetVelocityToBodyCOGVelocity() {
-    m_velocity = GetBody()->GetCOGLinearVelocityInWorld(NWU);
-    m_angularVelocity = 0.;
-    m_initSpeedFromBody = false;
   }
 
   void FrEquilibriumFrame::SetVelocityInWorld(const Velocity &velocity, FRAME_CONVENTION fc) {
@@ -107,19 +92,18 @@ namespace frydom {
     m_initSpeedFromBody = false;
   }
 
-  void FrEquilibriumFrame::SetAngularVelocityAroundZ(const double &angularVelocity, FRAME_CONVENTION fc) {
+  void FrEquilibriumFrame::SetAngularVelocity(const double &angularVelocity, FRAME_CONVENTION fc) {
     m_angularVelocity = angularVelocity;
     if (IsNED(fc)) { m_angularVelocity = -m_angularVelocity; }
-    m_initSpeedFromBody = false;
   }
 
-  Velocity FrEquilibriumFrame::GetVelocityInWorld(FRAME_CONVENTION fc) const {
+  Velocity FrEquilibriumFrame::GetFrameVelocityInWorld(FRAME_CONVENTION fc) const {
     Velocity velocity = m_velocity;
     if (IsNED(fc)) internal::SwapFrameConvention(velocity);
     return velocity;
   }
 
-  Velocity FrEquilibriumFrame::GetVelocityInFrame(FRAME_CONVENTION fc) const {
+  Velocity FrEquilibriumFrame::GetFrameVelocityInFrame(FRAME_CONVENTION fc) const {
     return m_frame.ProjectVectorParentInFrame<Velocity>(m_velocity, fc);
   }
 
@@ -128,7 +112,7 @@ namespace frydom {
   }
 
   Velocity FrEquilibriumFrame::GetPerturbationVelocityInWorld(FRAME_CONVENTION fc) const {
-    auto frameVelocity = this->GetVelocityInWorld(fc);
+    auto frameVelocity = this->GetPerturbationVelocityInWorld(fc);
     auto bodyVelocity = m_bodyNode->GetVelocityInWorld(fc);
     return bodyVelocity - frameVelocity;
   }
@@ -140,50 +124,38 @@ namespace frydom {
 
   GeneralizedVelocity FrEquilibriumFrame::GetPerturbationGeneralizedVelocityInWorld(FRAME_CONVENTION fc) const {
     auto velocity = GetPerturbationVelocityInWorld(fc);
-    auto angularVelocity = GetAngularPerturbationVelocity(fc);
+    auto angularVelocity = GetPerturbationAngularVelocity(fc);
     return GeneralizedVelocity(velocity, angularVelocity);
   }
 
   GeneralizedVelocity FrEquilibriumFrame::GetPerturbationGeneralizedVelocityInFrame(FRAME_CONVENTION fc) const {
     auto velocity = GetPerturbationVelocityInFrame(fc);
-    auto angularVelocity = GetAngularPerturbationVelocityInFrame(fc);
+    auto angularVelocity = GetPerturbationAngularVelocityInFrame(fc);
     return GeneralizedVelocity(velocity, angularVelocity);
   }
 
-  double FrEquilibriumFrame::GetAngularVelocityAroundZ(FRAME_CONVENTION fc) const {
-    double result = m_angularVelocity;
-    if (IsNED(fc)) { result = -result; }
-    return result;
+  AngularVelocity FrEquilibriumFrame::GetFrameAngularVelocity(FRAME_CONVENTION fc) const{
+    auto w_vel = m_angularVelocity;
+    if (IsNED(fc)) { w_vel *= -1.; }
+    return {0., 0., w_vel};
   }
 
-  AngularVelocity FrEquilibriumFrame::GetAngularVelocity(FRAME_CONVENTION fc) const {
-    auto wvel = GetAngularVelocityAroundZ(fc);
-    return AngularVelocity(0., 0., wvel);
-  }
-
-  AngularVelocity FrEquilibriumFrame::GetAngularPerturbationVelocity(FRAME_CONVENTION fc) const {
-    auto frameAngularVelocity = GetAngularVelocity(fc);
+  AngularVelocity FrEquilibriumFrame::GetPerturbationAngularVelocity(FRAME_CONVENTION fc) const {
+    auto frameAngularVelocity = GetFrameAngularVelocity(fc);
     auto bodyAngularVelocity = m_bodyNode->GetAngularVelocityInWorld(fc);
     return bodyAngularVelocity - frameAngularVelocity;
   }
 
-  AngularVelocity FrEquilibriumFrame::GetAngularPerturbationVelocityInFrame(FRAME_CONVENTION fc) const {
-    auto worldAngularVelocity = this->GetAngularPerturbationVelocity(fc);
+  AngularVelocity FrEquilibriumFrame::GetPerturbationAngularVelocityInFrame(FRAME_CONVENTION fc) const {
+    auto worldAngularVelocity = this->GetPerturbationAngularVelocity(fc);
     return m_frame.ProjectVectorParentInFrame<AngularVelocity>(worldAngularVelocity, fc);
   }
 
-  void FrEquilibriumFrame::SetNodeToEquilibriumPosition() {
-    m_bodyNode->SetFrameInWorld(m_frame);
-  }
-
   void FrEquilibriumFrame::Initialize() {
-
     c_prevTime = 0.;
-
-    if (m_initPositionFromBody) this->SetPositionToBodyCOGPosition();
-    if (m_initSpeedFromBody) this->SetVelocityToBodyCOGVelocity();
-
-    this->SetNodeToEquilibriumPosition();
+    if (m_initSpeedFromBody) {
+      m_velocity = m_bodyNode->GetVelocityInWorld(NWU);
+    }
   }
 
   void FrEquilibriumFrame::Compute(double time) {
@@ -227,11 +199,11 @@ namespace frydom {
 
     msg->AddField<Eigen::Matrix<double, 3, 1>>
         ("VelocityInWorld", "m/s", fmt::format("Equilibrium frame velocity in the world reference frame in {}", GetLogFC()),
-            [this]() { return GetVelocityInWorld(GetLogFC()); });
+            [this]() { return GetFrameVelocityInWorld(GetLogFC()); });
 
     msg->AddField<Eigen::Matrix<double, 3, 1>>
         ("AngularVelocity", "rad/s", fmt::format("Equilibrium frame angular velocity in world reference frame in {}", GetLogFC()),
-            [this]() { return GetAngularVelocity(GetLogFC()); });
+            [this]() { return GetFrameAngularVelocity(GetLogFC()); });
 
     msg->AddField<Eigen::Matrix<double, 3, 1>>
         ("PerturbationPosition", "m", fmt::format("Perturbation position between the equilibrium frame and the body in the world reference frame in {}", GetLogFC()),
@@ -252,17 +224,11 @@ namespace frydom {
     m_frame.RotZ_RADIANS(psi, NWU, true);
   }
 
-  void FrEquilibriumFrame::SetAngleRotation(const double angle, FRAME_CONVENTION fc) {
+  void FrEquilibriumFrame::SetAngleRotation(const double& angle, FRAME_CONVENTION fc) {
     m_frame.RotZ_RADIANS(angle, fc, true);
   }
 
-  void FrEquilibriumFrame::InitSpeedFromBody(bool is_init) {
-    m_initSpeedFromBody = is_init;
-  }
-
-  void FrEquilibriumFrame::InitPositionFromBody(bool is_init) {
-    m_initPositionFromBody = is_init;
-  }
+  // Makers
 
   std::shared_ptr<FrEquilibriumFrame>
   make_equilibrium_frame(const std::string &name, FrOffshoreSystem *system, const std::shared_ptr<FrBody> &body,
@@ -292,14 +258,6 @@ namespace frydom {
                                                  double dampingRatio)
       : FrEquilibriumFrame(name, body, localPos, rot, fc) {
     this->SetSpringDamping(cutoffTime, dampingRatio);
-  }
-
-  void FrEqFrameSpringDamping::SetSpringDamping(double cutoffTime, double dampingRatio) {
-
-    auto w0 = 2. * MU_PI / cutoffTime;
-    m_damping = 2. * dampingRatio * w0;
-    m_stiffness = w0 * w0;
-
   }
 
   void FrEqFrameSpringDamping::Compute(double time) {
@@ -333,6 +291,16 @@ namespace frydom {
 
     m_prevTime = time;
   }
+
+  void FrEqFrameSpringDamping::SetSpringDamping(double cutoffTime, double dampingRatio) {
+
+    auto w0 = 2. * MU_PI / cutoffTime;
+    m_damping = 2. * dampingRatio * w0;
+    m_stiffness = w0 * w0;
+
+  }
+
+  // Makers
 
   std::shared_ptr<FrEqFrameSpringDamping>
   make_spring_damping_equilibrium_frame(const std::string &name,
@@ -374,13 +342,6 @@ namespace frydom {
                                            double timeStep)
       : FrEquilibriumFrame(name, body, localPos, rot, fc) {
     this->SetRecorders(timePersistence, timeStep);
-  }
-
-  void FrEqFrameMeanMotion::SetRecorders(double timePersistence, double timeStep) {
-    m_TrSpeedRec = std::make_unique<FrTimeRecorder<Velocity>>(timePersistence, timeStep);
-    m_TrSpeedRec->Initialize();
-    m_AglSpeedRec = std::make_unique<FrTimeRecorder<double>>(timePersistence, timeStep);
-    m_AglSpeedRec->Initialize();
   }
 
   void FrEqFrameMeanMotion::SetPositionCorrection(double timePersistence, double timeStep,
@@ -427,6 +388,15 @@ namespace frydom {
 
     m_prevTime = time;
   }
+
+  void FrEqFrameMeanMotion::SetRecorders(double timePersistence, double timeStep) {
+    m_TrSpeedRec = std::make_unique<FrTimeRecorder<Velocity>>(timePersistence, timeStep);
+    m_TrSpeedRec->Initialize();
+    m_AglSpeedRec = std::make_unique<FrTimeRecorder<double>>(timePersistence, timeStep);
+    m_AglSpeedRec->Initialize();
+  }
+
+  // Makers
 
   std::shared_ptr<FrEqFrameMeanMotion>
   make_mean_motion_equilibrium_frame(const std::string &name,

@@ -48,7 +48,6 @@ namespace frydom {
     double m_angularVelocity;        ///< angular velocity of the frame around Z-direction
 
     bool m_initSpeedFromBody;        ///< Initialize the frame position, orientation and velocity according
-    bool m_initPositionFromBody;     ///< to the body during the initialization stage
 
     double c_prevTime;
 
@@ -59,54 +58,32 @@ namespace frydom {
     explicit FrEquilibriumFrame(const std::string &name, FrBody *body,
         const Position& localPos, const double& rot, FRAME_CONVENTION fc);
 
+    void SetEqFramePositionOrientation();
+
+    void SetEqFramePositionOrientation(const Position& localPos, const double& rot, FRAME_CONVENTION fc);
+
     /// Get a pointer to the body to which this frame is attached
     inline FrBody *GetBody() const;
 
     /// The velocity of the frame is initialized from the body velocity
     /// \param is_init Boolean True/Flase
-    void InitSpeedFromBody(bool is_init);
-
-    /// The position of the frame is initialized from the body position
-    /// \param is_init Boolean True/False
-    void InitPositionFromBody(bool is_init);
-
-    /// Set the position of the equilibrium frame equals to the body COG position
-    void SetPositionToBodyCOGPosition();
-
-    /// Set the position of the equilibrium frame, in the world reference frame
-    /// \param Pos position of the equilibrium frame
-    /// \param fc frame convention (NED/NWU)
-    void SetPositionInWorld(Position Pos, FRAME_CONVENTION fc);
+    void InitializeVelocityFromBody(bool is_init);
 
     /// Get the position of the equilibrium frame in the word reference frame
     /// \param fc frame convention (NED/NWU)
     /// \return equilibrium frame position
     Position GetPositionInWorld(FRAME_CONVENTION fc) const;
 
-    void SetPositionInBody(Position Pos, FRAME_CONVENTION fc);
-
     //Position GetPositionInBody(FRAME_CONVENTION fc) const;
-
-    /// Set the rotation of the equilibrium frame, in the world reference frame
-    /// \param rotation rotation of the equilibrium frame
-    void SetRotation(const FrRotation &rotation);
 
     /// Get the rotation of the equilibrium frame in the word reference frame
     /// \return equilibrium frame rotation
     FrRotation GetRotation() const;
 
-    /// Set the equilibrium reference frame relatively to the world reference frame
-    /// \param Pos position of the equilibrium frame
-    /// \param fc frame convention (NED/NWU)
-    void SetFrameInWorld(const FrFrame &frame);
-
     /// Get the equilibrium reference frame relatively to the word reference frame
     /// \param fc frame convention (NED/NWU)
     /// \return equilibrium reference frame
-    FrFrame GetFrameInWorld() const;
-
-    /// Set the velocity of the equilibrium frame equal to the body COG velocity
-    void SetVelocityToBodyCOGVelocity();
+    FrFrame GetFrame() const;
 
     /// Set velocity of the equilibrium frame in the world reference frame
     /// \param velocity Velocity vector in the world reference frame
@@ -120,16 +97,16 @@ namespace frydom {
     /// Set angular velocity around Z-direction
     /// \param angularVelocity Angular velocity, in rad/s
     /// \param fc Frame convention
-    void SetAngularVelocityAroundZ(const double &angularVelocity, FRAME_CONVENTION fc);
+    void SetAngularVelocity(const double &angularVelocity, FRAME_CONVENTION fc);
 
     /// Get the linear velocity of the equilibrium frame in world coordinates
     /// \param fc Frame convention
     /// \return Velocity vector
-    Velocity GetVelocityInWorld(FRAME_CONVENTION fc) const;
+    Velocity GetFrameVelocityInWorld(FRAME_CONVENTION fc) const;
 
     /// Get the linear velocity of the equilibrium frame in frame coordinates
     /// \return Velocity vector
-    Velocity GetVelocityInFrame(FRAME_CONVENTION fc) const;
+    Velocity GetFrameVelocityInFrame(FRAME_CONVENTION fc) const;
 
     FrFrame GetPerturbationFrame();
 
@@ -151,21 +128,14 @@ namespace frydom {
     /// \return Perturbation generalized velocity in local frame
     GeneralizedVelocity GetPerturbationGeneralizedVelocityInFrame(FRAME_CONVENTION fc) const;
 
-    /// Get the angular velocity of the equilibrium frame around the Z-axis
-    /// \param fc Frame convention
-    /// \return Angular velocity around Z (vertical)
-    double GetAngularVelocityAroundZ(FRAME_CONVENTION fc) const;
-
     /// Get the angular velocity of the equilibrium frame
     /// \param fc Frame convention
     /// \return Angular velocity vector
-    AngularVelocity GetAngularVelocity(FRAME_CONVENTION fc) const;
+    AngularVelocity GetFrameAngularVelocity(FRAME_CONVENTION fc) const;
 
-    AngularVelocity GetAngularPerturbationVelocity(FRAME_CONVENTION fc) const;
+    AngularVelocity GetPerturbationAngularVelocity(FRAME_CONVENTION fc) const;
 
-    AngularVelocity GetAngularPerturbationVelocityInFrame(FRAME_CONVENTION fc) const;
-
-    void SetNodeToEquilibriumPosition();
+    AngularVelocity GetPerturbationAngularVelocityInFrame(FRAME_CONVENTION fc) const;
 
     /// Initialization of the position and velocity of the equilibrium frame
     void Initialize() override;
@@ -179,7 +149,7 @@ namespace frydom {
 
     void ApplyFrameProjection();
 
-    void SetAngleRotation(const double angle, FRAME_CONVENTION fc);
+    void SetAngleRotation(const double& angle, FRAME_CONVENTION fc);
 
    private:
 
@@ -224,31 +194,20 @@ namespace frydom {
         const Position& localPos, const double& rot, FRAME_CONVENTION fc,
         double cutoffTime, double dampingRatio);
 
-    /// Set the spring-damping parameters
-    /// \param cutoffTime Cutoff time period
-    /// \param dampingRatio Damping ratio
-    void SetSpringDamping(double cutoffTime = 60., double dampingRatio = 0.5);
-
     /// Get the damping coefficient of the spring-damping system
     /// \return Damping coefficient
     double GetDamping() const { return m_damping; };
 
-    /// Set damping coefficient to the spring-damping system
-    /// \param damping Damping coefficient
-    void SetDamping(double damping) { m_damping = damping; }
-
     /// Get stiffness coefficient of the spring-damping system
     double GetStiffness() const { return m_stiffness; }
-
-    /// Set the stiffness coefficient of the spring-damping system
-    /// \param stiffness Stiffness coefficient
-    void SetStiffness(double stiffness) { m_stiffness = stiffness; }
 
    private:
 
     /// Update velocity and position of the equilibrium frame
     /// \param time Current time of the simulation from beginning
     void Compute(double time) override;
+
+    void SetSpringDamping(double cutoffTime, double dampingRatio);
 
   };
 

@@ -40,7 +40,7 @@ namespace frydom {
 
     // Wave encounter frequencies
     auto eqFrame = m_hdb->GetMapper()->GetEquilibriumFrame(body);
-    auto waveFrequencies = GetEncounterWaveFrequencies(eqFrame->GetVelocityInWorld(NWU));
+    auto waveFrequencies = GetEncounterWaveFrequencies(eqFrame->GetFrameVelocityInWorld(NWU));
     auto nbFreq = waveFrequencies[0].size();
 
     // Wave direction
@@ -127,7 +127,7 @@ namespace frydom {
     auto eqFrame = m_hdb->GetMapper()->GetEquilibriumFrame(BEMBody);
 
     double phi, theta, psi;
-    eqFrame->GetFrameInWorld().GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
+    eqFrame->GetFrame().GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
 
     for (auto &val: waveDir) { val -= psi; }
 

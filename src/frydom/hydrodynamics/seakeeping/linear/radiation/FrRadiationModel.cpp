@@ -198,14 +198,14 @@ namespace frydom {
       }
 
       auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBody->first);
-      auto meanSpeed = eqFrame->GetVelocityInFrame(NWU);
+      auto meanSpeed = eqFrame->GetFrameVelocityInFrame(NWU);
 
       if (meanSpeed.squaredNorm() > FLT_EPSILON) {
         radiationForce += ConvolutionKu(meanSpeed.norm());
       }
 
-      auto forceInWorld = eqFrame->GetFrameInWorld().ProjectVectorFrameInParent(radiationForce.GetForce(), NWU);
-      auto TorqueInWorld = eqFrame->GetFrameInWorld().ProjectVectorFrameInParent(radiationForce.GetTorque(), NWU);
+      auto forceInWorld = eqFrame->GetFrame().ProjectVectorFrameInParent(radiationForce.GetForce(), NWU);
+      auto TorqueInWorld = eqFrame->GetFrame().ProjectVectorFrameInParent(radiationForce.GetTorque(), NWU);
 
       m_radiationForce[BEMBody->first] = -GeneralizedForce(forceInWorld, TorqueInWorld);
     }
@@ -255,7 +255,7 @@ namespace frydom {
         }
 
         auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBodyMotion->first);
-        auto angular = eqFrame->GetAngularPerturbationVelocityInFrame(NWU);
+        auto angular = eqFrame->GetPerturbationAngularVelocityInFrame(NWU);
 
         auto damping = Ainf.col(2) * angular.y() - Ainf.col(1) * angular.z();
         radiationForce += meanSpeed * damping;
