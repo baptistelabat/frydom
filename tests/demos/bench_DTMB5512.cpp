@@ -193,7 +193,7 @@ int main(int argc, char *argv[]) {
   double Tk = atof(argv[3]);      // Wave period (s)
   char *name = argv[4];     // Output director prefix name
 
-  bool captive_test = true;      // fixed heave and pitch motions
+  bool captive_test = false;      // fixed heave and pitch motions
 
   // -- System
 

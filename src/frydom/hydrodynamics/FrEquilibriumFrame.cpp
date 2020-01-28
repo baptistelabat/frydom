@@ -112,7 +112,7 @@ namespace frydom {
   }
 
   Velocity FrEquilibriumFrame::GetPerturbationVelocityInWorld(FRAME_CONVENTION fc) const {
-    auto frameVelocity = this->GetPerturbationVelocityInWorld(fc);
+    auto frameVelocity = this->GetFrameVelocityInWorld(fc);
     auto bodyVelocity = m_bodyNode->GetVelocityInWorld(fc);
     return bodyVelocity - frameVelocity;
   }
