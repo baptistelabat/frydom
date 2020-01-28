@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
     box, DTMB, platform
   };
 
-  bench_cases featuredCase = box;
+  bench_cases featuredCase = platform;
 
   switch (featuredCase) {
     case box: {
@@ -45,7 +45,6 @@ int main(int argc, char *argv[]) {
       double L, B, H, c;
       L = H = B = 5.;
       c = 0.75;
-//    L = 8; B = 4; H = 2; c = 0.5;
 
       auto mass = L * H * B * c * system.GetEnvironment()->GetFluidDensity(WATER);
       makeItBox(body, L, B, H, mass);
@@ -55,13 +54,13 @@ int main(int argc, char *argv[]) {
       double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
       auto inertia = body->GetInertiaTensor();
       inertia.GetInertiaCoeffsAtCOG(Ixx, Iyy, Izz, Ixy, Ixz, Iyz, NWU);
-//      body->SetInertiaTensor(FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, Position(-2.5, -2., -3.), NWU));
-      body->SetInertiaTensor(FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, Position(0.5, 0.5, -1.5), NWU));
+//      body->SetInertiaTensor(FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, Position(-2.5, -2.5, -2.5), NWU));
+//      body->SetInertiaTensor(FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, Position(0.5, 0.5, -1.5), NWU));
 
       event_logger::info("main", "test_HS_equilibrium", "box mass : {}", mass);
 
-//      meshFilename = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/box/box_385_t.obj"});
     meshFilename = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/box/box_385.obj"});
+//      meshFilename = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/box/box_385_t.obj"});
       break;
     }
     case DTMB: {
@@ -70,11 +69,13 @@ int main(int argc, char *argv[]) {
       break;
     }
     case platform: {
+//      body->SetInertiaTensor(
+//          FrInertiaTensor(3.22114e7, 2.4e11, 2.3e11, 2e12, 0., 0., 0., Position(0., 0., 2.92), NWU));
       body->SetInertiaTensor(
-          FrInertiaTensor(3.22114e7, 2.4e11, 2.3e11, 2e12, 0., 0., 0., Position(0.22, 0.22, 2.92), NWU));
+          FrInertiaTensor(5.4e7, 2.4e11, 2.3e11, 2e12, 0., 0., 0., Position(10., 10., 2.92), NWU));
       meshFilename = FrFileSystem::join(
           {system.config_file().GetDataFolder(), "ce/platform/mesh_Platform_GVA7500_Sym.obj"});
-      body->TranslateInWorld(0, 0, 10, NWU);
+//      body->TranslateInWorld(0, 0, 10, NWU);
       break;
     }
   }

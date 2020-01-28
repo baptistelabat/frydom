@@ -9,8 +9,7 @@ Hydrostatics and stability
 .. toctree::
     :maxdepth: 2
 
-    hydrostatics_equilibrium
-    stability_analysis
+    hydrostatics/index
 
 Hydrodynamics
 ~~~~~~~~~~~~~
@@ -32,7 +31,7 @@ DTM5512 - validation of the forward speed effects
     dtmb5512_test
 
 Langlee - validation of the multibody hydrodynamic interactions
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 .. toctree::
     :maxdepth: 2
 

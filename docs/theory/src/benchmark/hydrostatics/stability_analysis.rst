@@ -71,7 +71,7 @@ For a box of dimensions :math:`(L,B,H) = (5,5,5)m`, the conditions are true only
 figure :numref:`fig_stab_conditions`.
 
 .. _fig_stab_conditions:
-.. figure:: _static/hydrostatics/boxStabConditions.png
+.. figure:: _static/stability/boxStabConditions.png
     :align: center
     :alt: stability conditions of a box
 
@@ -98,7 +98,7 @@ where :math:`V` is the displacement volume.
 The roll solution in linear approximation is given in the figure :numref:`fig_stab_linear`
 
 .. _fig_stab_linear:
-.. figure:: _static/hydrostatics/stab_linear.png
+.. figure:: _static/stability/stab_linear.png
     :align: center
     :alt: roll solution in linear approximation
 
@@ -113,7 +113,7 @@ This means that the metacentric heights can be computed also for each position. 
 induce a roll and a pitch motion to reach a stable position, see below and figure :numref:`fig_stab_nonlinear_angles`
 
 .. _fig_stab_gif:
-.. figure:: _static/hydrostatics/stabBox.gif
+.. figure:: _static/stability/stabBox.gif
     :align: center
     :alt: stabilization of the box
 
@@ -122,7 +122,7 @@ induce a roll and a pitch motion to reach a stable position, see below and figur
 The damping coefficients are taken at :math:`1E5` for the rotation degrees of freedom, in order to reduce the computation time.
 
 .. _fig_stab_nonlinear_angles:
-.. figure:: _static/hydrostatics/stab_Nonlinear_angles.png
+.. figure:: _static/stability/stab_Nonlinear_angles.png
     :align: center
     :alt: roll (orange), pitch (blue) and yaw (green) solutions in nonlinear approximation
 
@@ -133,7 +133,7 @@ given above, and finish at a positive value, indicating that the box reached a s
 
 
 .. _fig_stab_nonlinear_heights:
-.. figure:: _static/hydrostatics/stab_Nonlinear_heights.png
+.. figure:: _static/stability/stab_Nonlinear_heights.png
     :align: center
     :alt: transversal (red) and longitudinal (violet) metacentric heights in nonlinear approximation
 
@@ -158,21 +158,21 @@ observed (roll at 45 degrees and pitch around 33 degrees). For the second turn o
 
 
 .. _fig_stab_density_gif:
-.. figure:: _static/hydrostatics/stabBox_density.gif
+.. figure:: _static/stability/stabBox_density.gif
     :align: center
     :alt: stabilization of the box
 
     Stabilization of the box, with varying density
 
 .. _fig_stab_density_pos:
-.. figure:: _static/hydrostatics/stab_density_pos.png
+.. figure:: _static/stability/stab_density_pos.png
     :align: center
     :alt: heave (blue), roll (orange), pitch (green) and yaw (red) solutions with varying density
 
     heave (blue), roll (orange), pitch (green) and yaw (red) solutions with varying density
 
 .. _fig_stab_density_heights:
-.. figure:: _static/hydrostatics/stab_density_heights.png
+.. figure:: _static/stability/stab_density_heights.png
     :align: center
     :alt: box density (violet), transversal (pink) and longitudinal (brown) metacentric heights with varying density
 
