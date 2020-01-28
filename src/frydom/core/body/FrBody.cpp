@@ -1077,7 +1077,7 @@ namespace frydom {
   void FrBody::DefineLogMessages() {
 
 
-    auto msg = NewMessage("States", "Body states");
+    auto msg = NewMessage("FrBody", "Body states");
 
     msg->AddField<double>("Time", "s", "Current time of the simulation", [this]() { return GetSystem()->GetTime(); });
 

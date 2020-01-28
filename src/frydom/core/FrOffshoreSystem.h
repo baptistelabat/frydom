@@ -215,7 +215,7 @@ namespace frydom {
       MULTI_STEP  ///< use contact history (from contact initiation)
     };
 
-   private:
+   protected:
 
     std::unique_ptr<chrono::ChSystem> m_chronoSystem;   ///< The real Chrono system (may be SMC or NSC)
 
@@ -273,7 +273,7 @@ namespace frydom {
                      SOLVER solver = BARZILAIBORWEIN);
 
     /// Destructor
-    ~FrOffshoreSystem();
+    ~FrOffshoreSystem() override;
 
     const FrConfig& config_file();
 
@@ -366,7 +366,7 @@ namespace frydom {
 
     // FIXME: Get sure Initialize is not called twice !!
     /// Initialize the state of the offshore system and its components (Environment, systemBase)
-    void Initialize();
+    virtual void Initialize();
 
     /// Force the Initialization of the state of the offshore system and its components (Environment, systemBase)
     /// Make sure you really want to do it. It may have unpredictable effects

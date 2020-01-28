@@ -52,13 +52,17 @@ namespace frydom {
       return m_messages.end();
     }
 
+    virtual const hermes::Message* GetInitializationMessage() const {
+      return nullptr;
+    }
+
+    virtual const std::string &GetTreePath() const = 0;
+
 
    protected:
     hermes::Message *NewMessage(const std::string &name, const std::string &description);
 
     virtual void DefineLogMessages() = 0;
-
-    virtual const std::string &GetTreePath() const = 0;
 
     inline FRAME_CONVENTION GetLogFC() const { return m_log_frame_convention; }
 
