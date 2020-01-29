@@ -97,8 +97,7 @@ int main(int argc, char *argv[]) {
 
   auto inertia = body->GetInertiaTensor();
 
-  auto staticEquilibrium = FrHydroStaticEquilibrium(body, meshFilename, FrFrame(), inertia.GetMass(),
-                                                    inertia.GetCOGPosition(NWU), NWU);
+  auto staticEquilibrium = FrHydroStaticEquilibrium(body, meshFilename, FrFrame());
 //  staticEquilibrium.SetLinearRelaxation(1.);
 
   staticEquilibrium.SolveEquilibrium();

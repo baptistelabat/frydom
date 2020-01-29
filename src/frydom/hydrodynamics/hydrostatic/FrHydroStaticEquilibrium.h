@@ -42,6 +42,16 @@ namespace frydom {
     /// \param body body for which is solved the hydrostatic equilibrium
     /// \param meshFile name of the file containing the mesh
     /// \param meshOffset mesh frame offset, relatively to the body reference frame
+    FrHydroStaticEquilibrium(std::shared_ptr<FrBody> body,
+                             const std::string &meshFile,
+                             FrFrame meshOffset);
+
+    /// Constructor for the FrHydrostaticEquilibrium, applied to a body, using a mesh, given in the meshFile, which can
+    /// have a reference frame different than the body reference frame. The transformation frame from the mesh reference
+    /// frame to the body frame is given by meshOffset.
+    /// \param body body for which is solved the hydrostatic equilibrium
+    /// \param meshFile name of the file containing the mesh
+    /// \param meshOffset mesh frame offset, relatively to the body reference frame
     /// \param mass mass for which the displacement/equilibrium is solved
     /// \param COGPosInBody COG position, in body reference frame, for which the equilibrium is solved
     /// \param fc frame convention (NED/NWU)
@@ -141,6 +151,16 @@ namespace frydom {
   /// \param body body for which is solved the hydrostatic equilibrium
   /// \param meshFile name of the file containing the mesh
   /// \param meshOffset mesh frame offset, relatively to the body reference frame
+  /// \return FrHydrostaticEquilibrium object, containing hydrostatic quantities and solver parameters
+  FrHydroStaticEquilibrium
+  solve_hydrostatic_equilibrium(const std::shared_ptr<FrBody> &body,
+                                const std::string &meshFile,
+                                FrFrame meshOffset);
+
+  /// maker of the hydrostatic equilibrium solver
+  /// \param body body for which is solved the hydrostatic equilibrium
+  /// \param meshFile name of the file containing the mesh
+  /// \param meshOffset mesh frame offset, relatively to the body reference frame
   /// \param mass mass for which the displacement/equilibrium is solved
   /// \param COGPosInBody position of the center of gravity, in body reference frame, for which the equilibrium is solved
   /// \param fc frame convention (NED/NWU)
@@ -152,7 +172,6 @@ namespace frydom {
                                 double mass,
                                 const Position &COGPosInBody,
                                 FRAME_CONVENTION fc);
-
 
 } //end namespace frydom
 

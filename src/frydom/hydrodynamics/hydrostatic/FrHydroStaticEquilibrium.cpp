@@ -21,6 +21,23 @@ namespace frydom {
 
 
   FrHydroStaticEquilibrium::FrHydroStaticEquilibrium(std::shared_ptr<FrBody> body, const std::string &meshFile,
+                                                     FrFrame meshOffset) :
+      m_body(body), m_mass(body->GetMass()), m_COG(body->GetCOG(NWU)),
+      m_relax(0.1, 2 * DEG2RAD, 2 * DEG2RAD) {
+
+    // Create a hydroMesh, to set up the mesh in the body frame and then clip it
+
+    m_hydroMesh = make_hydro_mesh("mesh" + body->GetName(),
+                                  body,
+                                  meshFile,
+                                  meshOffset,
+                                  FrHydroMesh::ClippingSupport::PLANESURFACE);
+
+    m_hydroMesh->Initialize();
+  }
+
+
+  FrHydroStaticEquilibrium::FrHydroStaticEquilibrium(std::shared_ptr<FrBody> body, const std::string &meshFile,
                                                      FrFrame meshOffset,
                                                      double mass, const Position &COGPosInBody, FRAME_CONVENTION fc) :
       m_body(body), m_mass(mass), m_COG(COGPosInBody),
@@ -297,6 +314,18 @@ namespace frydom {
     hsp.ComputeProperties();
 
     return hsp.GetHydrostaticMatrix();
+  }
+
+  FrHydroStaticEquilibrium
+  solve_hydrostatic_equilibrium(const std::shared_ptr<FrBody> &body,
+                                const std::string &meshFile,
+                                FrFrame meshOffset) {
+    auto staticEquilibrium = FrHydroStaticEquilibrium(body, meshFile, meshOffset);
+
+    staticEquilibrium.SolveEquilibrium();
+
+    return staticEquilibrium;
+
   }
 
   FrHydroStaticEquilibrium
