@@ -39,4 +39,9 @@ namespace frydom {
   class FrCatenaryLine;
   TYPE_TO_NORMALIZED_PATH_PREFIX(FrCatenaryLine, "CABLES/DYN_CABLE_");
 
+  //
+
+  class FrEquilibriumFrame;
+  TYPE_TO_NORMALIZED_PATH_PREFIX(FrEquilibriumFrame, "")
+
 }  // end namespace frydom

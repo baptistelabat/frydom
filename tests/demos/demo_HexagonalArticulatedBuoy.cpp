@@ -119,13 +119,6 @@ SetUpHydrodynamicModel(FrOffshoreSystem *system, std::vector<std::shared_ptr<FrB
   auto eqFrame4 = make_equilibrium_frame("eqFrame4", system, bodyList[4]);
   auto eqFrame5 = make_equilibrium_frame("eqFrame5", system, bodyList[5]);
 
-  eqFrame0->SetPositionInWorld(Position(-2.498, 0., 0.), NWU);
-  eqFrame1->SetPositionInWorld(Position(-1.25, 2.165, 0.), NWU);
-  eqFrame2->SetPositionInWorld(Position(1.25, 2.165, 0.), NWU);
-  eqFrame3->SetPositionInWorld(Position(2.498, 0., 0.), NWU);
-  eqFrame4->SetPositionInWorld(Position(1.25, -2.165, 0.), NWU);
-  eqFrame5->SetPositionInWorld(Position(-1.25, -2.165, 0.), NWU);
-
   hdb->Map(0, bodyList[0].get(), eqFrame0);
   hdb->Map(1, bodyList[1].get(), eqFrame1);
   hdb->Map(2, bodyList[2].get(), eqFrame2);

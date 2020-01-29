@@ -28,6 +28,7 @@
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/utils/FrIrrApp.h"
 #include "frydom/core/statics/FrStaticAnalysis.h"
+#include "frydom/hydrodynamics/FrEquilibriumFrame.h"
 
 #include "frydom/core/math/functions/ramp/FrCosRampFunction.h"
 
@@ -1353,6 +1354,10 @@ namespace frydom {
     } else if (auto catenary_line = std::dynamic_pointer_cast<FrCatenaryLine>(item)) {
       AddPhysicsItem(catenary_line, catenary_line->GetChronoPhysicsItem());
       m_pathManager->RegisterTreeNode(catenary_line.get());
+
+    } else if (auto equilibrium_frame = std::dynamic_pointer_cast<FrEquilibriumFrame>(item)) {
+      AddPhysicsItem(equilibrium_frame, equilibrium_frame->GetChronoPhysicsItem());
+      m_pathManager->RegisterTreeNode(equilibrium_frame.get());
 
       //PHYSICS ITEM
     } else if (auto physics_item = std::dynamic_pointer_cast<FrPrePhysicsItem>(item)) {

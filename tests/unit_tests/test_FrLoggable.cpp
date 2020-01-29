@@ -26,5 +26,4 @@ TEST(FrLogManager, registering) {
 
   system.GetLogManager()->Initialize();
 
-
 }
