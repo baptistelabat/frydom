@@ -91,6 +91,6 @@ int main(int argc, char *argv[]) {
 
   staticEquilibrium.GetHydroMesh()->GetClippedMesh().Write("Clipped_Mesh.obj");
 
-  event_logger::info("main", "test_HS_equilibrium", staticEquilibrium.GetReport();
+  event_logger::info("main", "test_HS_equilibrium", staticEquilibrium.GetReport());
 
 }
