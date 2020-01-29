@@ -197,7 +197,6 @@ namespace frydom {
       m_hydroMesh->Update(0.);
 
       auto clippedMesh = m_hydroMesh->GetClippedMesh();
-//      clippedMesh.Write("Clipped_Mesh.obj");
 
       if (clippedMesh.GetVolume() <= 1E-6) {
         event_logger::info("Hydrostatic equilibrium", "", "body not in water");

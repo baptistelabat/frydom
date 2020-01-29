@@ -80,36 +80,17 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  // At initial state
-//  auto HydroMesh = make_hydro_mesh("hydroMesh", body, meshFilename, FrFrame(), FrHydroMesh::ClippingSupport::PLANESURFACE);
-//  HydroMesh->Initialize();
-//  HydroMesh->Update(0.);
-//  FrHydrostaticsProperties hsp(system.GetEnvironment()->GetFluidDensity(WATER),
-//                               system.GetGravityAcceleration(),
-//                               HydroMesh->GetClippedMesh(),
-//                               Position(), Position(), NWU);
-//  hsp.Process();
-//  event_logger::info("main", "test_HS_equilibrium", hsp.GetReport());
-//  HydroMesh->GetClippedMesh().Write("Initial_Clipped_Mesh.obj");
-
   // At equilibrium
   event_logger::info("main", "test_HS_equilibrium", "Body COG position : {}", body->GetCOGPositionInWorld(NWU));
 
   auto inertia = body->GetInertiaTensor();
 
-  auto staticEquilibrium = FrHydroStaticEquilibrium(body, meshFilename, FrFrame());
-//  staticEquilibrium.SetLinearRelaxation(1.);
-
-  staticEquilibrium.SolveEquilibrium();
-
-//  auto staticEquilibrium = solve_hydrostatic_equilibrium(body, meshFilename, FrFrame(), body->GetInertiaTensor());
+  auto staticEquilibrium = solve_hydrostatic_equilibrium(body, meshFilename, FrFrame());
 
   event_logger::info("main", "test_HS_equilibrium", "Body frame : {}", body->GetFrame());
 
   staticEquilibrium.GetHydroMesh()->GetClippedMesh().Write("Clipped_Mesh.obj");
 
-  auto COGPosInWorld = body->GetPointPositionInWorld(body->GetInertiaTensor().GetCOGPosition(NWU), NWU);
-
-  event_logger::info("main", "test_HS_equilibrium", staticEquilibrium.GetReport(COGPosInWorld, NWU));
+  event_logger::info("main", "test_HS_equilibrium", staticEquilibrium.GetReport();
 
 }
