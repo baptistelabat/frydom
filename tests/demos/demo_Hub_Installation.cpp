@@ -342,5 +342,5 @@ int main(int argc, char *argv[]) {
   // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
   // the time length of the simulation (here 30) and the distance from the camera to the objectif (75m).
   // For saving snapshots of the simulation, just turn the boolean to true.
-  system.RunInViewer(0, 175, false);
+  system.RunInViewer(60, 175, true);
 }

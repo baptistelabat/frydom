@@ -70,24 +70,24 @@ namespace frydom{
         m_system->GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0.,0.,1.,0.);
 
         for (auto& body : m_system->GetBodyList()) {
-//            m_map.emplace(body.get(),std::make_pair(body->IsActive(),body->IsLogged()));
+            m_map.emplace(body.get(),std::make_pair(body->IsActive(),body->IsLogged()));
             body->SetSleeping(!body->IncludedInStaticAnalysis());
 //            body->SetLogged(body->IncludedInStaticAnalysis() && body->IsLogged());
             for (auto& force : body->GetForceList()) {
-//                m_map.emplace(force.get(),std::make_pair(force->IsActive(),force->IsLogged()));
+                m_map.emplace(force.get(),std::make_pair(force->IsActive(),force->IsLogged()));
                 force->SetActive(force->IncludedInStaticAnalysis());
 //                force->SetLogged(force->IncludedInStaticAnalysis() && force->IsLogged());
             }
         }
 
         for (auto& link : m_system->GetLinkList()) {
-//            m_map.emplace(link.get(),std::make_pair(link->IsActive(),link->IsLogged()));
+            m_map.emplace(link.get(),std::make_pair(link->IsActive(),link->IsLogged()));
             link->SetDisabled(!link->IncludedInStaticAnalysis());
 //            link->SetLogged(link->IncludedInStaticAnalysis() && link->IsLogged());
         }
 
         for (auto& pi : m_system->GetPrePhysicsItemList()) {
-//            m_map.emplace(pi.get(),std::make_pair(pi->IsActive(),pi->IsLogged()));
+            m_map.emplace(pi.get(),std::make_pair(pi->IsActive(),true));
             pi->SetActive(pi->IncludedInStaticAnalysis());
 //            pi->SetLogged(pi->IncludedInStaticAnalysis() && pi->IsLogged());
         }
