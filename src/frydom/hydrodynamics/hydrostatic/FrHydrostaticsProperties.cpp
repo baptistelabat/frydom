@@ -16,23 +16,6 @@
 
 namespace frydom {
 
-  mathutils::MatrixMN<double> FrHydrostaticMatrixTensor::GetHydrostaticMatrix() const {
-    mathutils::MatrixMN<double> tensor(3, 3);
-    tensor(0, 0) = K33;
-    tensor(1, 1) = K44;
-    tensor(2, 2) = K55;
-    tensor(0, 1) = tensor(1, 0) = K34;
-    tensor(0, 2) = tensor(2, 0) = K35;
-    tensor(1, 2) = tensor(2, 1) = K45;
-    return tensor;
-  }
-
-  FrHydrostaticsProperties::FrHydrostaticsProperties() : m_waterDensity(1023.), m_gravityAcceleration(9.81) {}
-
-  FrHydrostaticsProperties::FrHydrostaticsProperties(double waterDensity, double gravityAcceleration) :
-      m_waterDensity(waterDensity),
-      m_gravityAcceleration(gravityAcceleration) {}
-
   FrHydrostaticsProperties::FrHydrostaticsProperties(double waterDensity, double gravityAcceleration,
                                                      mesh::FrMesh &clipped_mesh, Position cog, FRAME_CONVENTION fc) :
       m_waterDensity(waterDensity),
@@ -51,14 +34,14 @@ namespace frydom {
       m_gravityAcceleration(gravityAcceleration),
       m_clippedMesh(clipped_mesh),
       m_centerOfGravity(cog),
-      m_outerPoint(out) {
+      m_reductionPoint(out) {
     if (IsNED(fc)) {
       internal::SwapFrameConvention(m_centerOfGravity);
-      internal::SwapFrameConvention(m_outerPoint);
+      internal::SwapFrameConvention(m_reductionPoint);
     }
   }
 
-  void FrHydrostaticsProperties::Process() {
+  void FrHydrostaticsProperties::ComputeProperties() {
     CalcGeometricProperties();
     CalcHydrostaticProperties();
   }
@@ -84,12 +67,6 @@ namespace frydom {
   }
 
   void FrHydrostaticsProperties::CalcHydrostaticProperties() {
-
-    // validation node:
-    // emoh donne un resultat different d'un ordre pour K34
-
-    // TODO: Voir la doc DIODORE par rapoprt aux conventions qu'ils ont pour le roll pitch yaw a facon euler et le roll
-    // pitch yaw a axe fixe et les relations entre ces angles.
 
     m_volumeDisplacement = m_clippedMesh.GetVolume();
 
@@ -122,27 +99,27 @@ namespace frydom {
 
     m_waterPlaneArea += Poly1;
 
-    m_hydrostaticTensor.K33 = rg * Poly1;
-    m_hydrostaticTensor.K34 = rg * PolyY;
-    m_hydrostaticTensor.K35 = -rg * PolyX;
-    m_hydrostaticTensor.K45 = -rg * PolyXY;
+    double K33 = rg * Poly1;
+    double K34 = rg * PolyY;
+    double K35 = -rg * PolyX;
+    double K45 = -rg * PolyXY;
 
     m_waterPlaneCenter = Position(
-        -m_hydrostaticTensor.K35 / m_hydrostaticTensor.K33,
-        m_hydrostaticTensor.K34 / m_hydrostaticTensor.K33,
+        -K35 / K33,
+        K34 / K33,
         m_clippedMesh.GetBoundingBox().zmax
     );
 
     // Corrections to express the stiffness matrix in a given point
-    m_hydrostaticTensor.K34 += rg * (-m_outerPoint[1] * Poly1);
-    m_hydrostaticTensor.K35 += -rg * (-m_outerPoint[0] * Poly1);
-    m_hydrostaticTensor.K45 +=
-        -rg * (-m_outerPoint[1] * PolyX - m_outerPoint[0] * PolyY + m_outerPoint[0] * m_outerPoint[1] * Poly1);
+    K34 += rg * (-m_reductionPoint[1] * Poly1);
+    K35 += -rg * (-m_reductionPoint[0] * Poly1);
+    K45 +=
+        -rg * (-m_reductionPoint[1] * PolyX - m_reductionPoint[0] * PolyY + m_reductionPoint[0] * m_reductionPoint[1] * Poly1);
 
     m_transversalMetacentricRadius +=
-        (PolyY2 - 2. * m_outerPoint[1] * PolyY + m_outerPoint[1] * m_outerPoint[1] * Poly1) / m_volumeDisplacement;
+        (PolyY2 - 2. * m_reductionPoint[1] * PolyY + m_reductionPoint[1] * m_reductionPoint[1] * Poly1) / m_volumeDisplacement;
     m_longitudinalMetacentricRadius +=
-        (PolyX2 - 2. * m_outerPoint[0] * PolyX + m_outerPoint[0] * m_outerPoint[0] * Poly1) / m_volumeDisplacement;
+        (PolyX2 - 2. * m_reductionPoint[0] * PolyX + m_reductionPoint[0] * m_reductionPoint[0] * Poly1) / m_volumeDisplacement;
 
     double zb_zg = m_buoyancyCenter[2] - m_centerOfGravity[2];
 
@@ -150,8 +127,11 @@ namespace frydom {
     m_longitudinalMetacentricHeight = m_longitudinalMetacentricRadius + zb_zg;
 
     double rgV = rg * m_volumeDisplacement;
-    m_hydrostaticTensor.K44 = rgV * m_transversalMetacentricHeight;
-    m_hydrostaticTensor.K55 = rgV * m_longitudinalMetacentricHeight;
+    double K44 = rgV * m_transversalMetacentricHeight;
+    double K55 = rgV * m_longitudinalMetacentricHeight;
+
+    m_hydrostaticMatrix.SetDiagonal(K33,K44,K55);
+    m_hydrostaticMatrix.SetNonDiagonal(K34,K35,K45);
 
   }
 
@@ -160,15 +140,8 @@ namespace frydom {
     return reporter(*this);
   }
 
-  mathutils::MatrixMN<double> FrHydrostaticsProperties::GetHydrostaticMatrix() const {
-    mathutils::MatrixMN<double> mat(3, 3);
-    mat(0, 0) = m_hydrostaticTensor.K33;
-    mat(1, 1) = m_hydrostaticTensor.K44;
-    mat(2, 2) = m_hydrostaticTensor.K55;
-    mat(0, 1) = mat(1, 0) = m_hydrostaticTensor.K34;
-    mat(0, 2) = mat(2, 0) = m_hydrostaticTensor.K35;
-    mat(1, 2) = mat(2, 1) = m_hydrostaticTensor.K45;
-    return mat;
+  FrLinearHydrostaticStiffnessMatrix FrHydrostaticsProperties::GetHydrostaticMatrix() const {
+    return m_hydrostaticMatrix;
   }
 
   const mesh::FrMesh &FrHydrostaticsProperties::GetHydrostaticMesh() const {

@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
     box, DTMB, platform
   };
 
-  bench_cases featuredCase = platform;
+  bench_cases featuredCase = box;
 
   switch (featuredCase) {
     case box: {
@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
 
       event_logger::info("main", "test_HS_equilibrium", "box mass : {}", mass);
 
-    meshFilename = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/box/box_385.obj"});
+      meshFilename = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/box/box_385.obj"});
 //      meshFilename = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/box/box_385_t.obj"});
       break;
     }
@@ -95,10 +95,13 @@ int main(int argc, char *argv[]) {
   // At equilibrium
   event_logger::info("main", "test_HS_equilibrium", "Body COG position : {}", body->GetCOGPositionInWorld(NWU));
 
-  auto staticEquilibrium = FrHydroStaticEquilibrium(body, meshFilename, FrFrame());
+  auto inertia = body->GetInertiaTensor();
+
+  auto staticEquilibrium = FrHydroStaticEquilibrium(body, meshFilename, FrFrame(), inertia.GetMass(),
+                                                    inertia.GetCOGPosition(NWU), NWU);
 //  staticEquilibrium.SetLinearRelaxation(1.);
 
-  staticEquilibrium.Solve(body->GetInertiaTensor());
+  staticEquilibrium.SolveEquilibrium();
 
 //  auto staticEquilibrium = solve_hydrostatic_equilibrium(body, meshFilename, FrFrame(), body->GetInertiaTensor());
 
@@ -108,7 +111,6 @@ int main(int argc, char *argv[]) {
 
   auto COGPosInWorld = body->GetPointPositionInWorld(body->GetInertiaTensor().GetCOGPosition(NWU), NWU);
 
-  event_logger::info("main", "test_HS_equilibrium",
-                     staticEquilibrium.GetReport(COGPosInWorld, COGPosInWorld, NWU));
+  event_logger::info("main", "test_HS_equilibrium", staticEquilibrium.GetReport(COGPosInWorld, NWU));
 
 }

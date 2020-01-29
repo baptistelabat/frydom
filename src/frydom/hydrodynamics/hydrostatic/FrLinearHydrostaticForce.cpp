@@ -156,7 +156,7 @@ namespace frydom {
                                  body->GetSystem()->GetGravityAcceleration(),
                                  hydroMesh->GetClippedMesh(),
                                  body->GetCOGPositionInWorld(NWU), NWU);
-    hsp.Process();
+    hsp.ComputeProperties();
 
     // For visualizing the report, uncomment the following line
 //      std::cout << hsp.GetReport() << std::endl;

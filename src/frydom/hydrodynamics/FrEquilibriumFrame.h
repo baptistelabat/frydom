@@ -58,10 +58,6 @@ namespace frydom {
     explicit FrEquilibriumFrame(const std::string &name, FrBody *body,
         const Position& localPos, const double& rot, FRAME_CONVENTION fc);
 
-    void SetEqFramePositionOrientation();
-
-    void SetEqFramePositionOrientation(const Position& localPos, const double& rot, FRAME_CONVENTION fc);
-
     /// Get a pointer to the body to which this frame is attached
     inline FrBody *GetBody() const;
 
@@ -152,6 +148,10 @@ namespace frydom {
     void SetAngleRotation(const double& angle, FRAME_CONVENTION fc);
 
    private:
+
+    void SetEqFramePositionOrientation();
+
+    void SetEqFramePositionOrientation(const Position& localPos, const double& rot, FRAME_CONVENTION fc);
 
     /// Update the velocity and position of the frame
     /// \param time Current time of the simulation from the beginning

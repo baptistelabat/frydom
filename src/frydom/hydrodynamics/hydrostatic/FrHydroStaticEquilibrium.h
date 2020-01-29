@@ -15,7 +15,7 @@
 #include <memory>
 #include "MathUtils/Constants.h"
 #include "frydom/core/common/FrFrame.h"
-//#include <frydom/mesh/FrHydrostaticsProperties.h>
+#include "FrLinearHydrostaticStiffnessMatrix.h"
 
 namespace frydom {
 
@@ -42,29 +42,45 @@ namespace frydom {
     /// \param body body for which is solved the hydrostatic equilibrium
     /// \param meshFile name of the file containing the mesh
     /// \param meshOffset mesh frame offset, relatively to the body reference frame
+    /// \param mass mass for which the displacement/equilibrium is solved
+    /// \param COGPosInBody COG position, in body reference frame, for which the equilibrium is solved
+    /// \param fc frame convention (NED/NWU)
     FrHydroStaticEquilibrium(std::shared_ptr<FrBody> body,
                              const std::string &meshFile,
-                             FrFrame meshOffset);
+                             FrFrame meshOffset,
+                             double mass,
+                             const Position& COGPosInBody, FRAME_CONVENTION fc);
 
     /// FrHydrostaticEquilibrium destructor to ensure that the HydroMesh created for the solving is removed to the system.
     ~FrHydroStaticEquilibrium();
 
-    bool Solve(double mass);
+    /// Solve the displacement, according to the mass specified
+    /// \return true of the solver reaches a convergence.
+    bool SolveDisplacement();
 
-    /// Solve the hydrostatic equilibrium of a body, modeled by a mesh, subject to an inertia tensor.
-    /// \param tensor inertia tensor for which the hydrostatic equilibrium is solved
+    /// Solve the hydrostatic equilibrium of a body, modeled by a mesh, according to the mass and COG position specified.
     /// \return true if the solver reaches a convergence, even an unstable configuration.
-    bool Solve(const FrInertiaTensor &tensor);
+    bool SolveEquilibrium();
 
     /// Get the hydroMesh containing the clipped mesh, resulting from the solving
     FrHydroMesh *GetHydroMesh() const;
 
     /// Get the hydrostatic report, containing all hydrostatic information of the clipped mesh, resulting from the solver
-    /// \param COGPosInBody COG position given in the body reference frame
-    /// \param refPosInBody expression point for the stiffness matrix and other hydrostatic quantities
-    /// \param fc frame convention (NED/NWU) for thez two positions
     /// \return report
-    std::string GetReport(const Position &COGPosInBody, const Position &refPosInBody, FRAME_CONVENTION fc) const;
+    std::string GetReport() const;
+
+    /// Get the hydrostatic report, containing all hydrostatic information of the clipped mesh, resulting from the solver
+    /// \param reductionPoint reduction point for the stiffness matrix and other hydrostatic quantities, expressed in
+    /// the world reference frame
+    /// \param fc frame convention (NED/NWU)
+    /// \return report
+    std::string GetReport(const Position &reductionPoint, FRAME_CONVENTION fc) const;
+
+    /// Get the hydrostatic stiffness matrix, at the specified COG position.
+    FrLinearHydrostaticStiffnessMatrix GetHydrostaticMatrix() const;
+
+    /// Get the hydrostatic stiffness matrix, at the specified reduction point.
+    FrLinearHydrostaticStiffnessMatrix GetHydrostaticMatrix(const Position& reductionPoint, FRAME_CONVENTION fc) const;
 
     /// Set the maximum number of iterations for the Newton-Raphson solver
     /// \param max_iterations maximum iterations
@@ -80,7 +96,7 @@ namespace frydom {
 
     /// Get the relative tolerance for stopping the Newton-Raphson solver
     /// \return relative tolerance
-    double GetRelativeTOlerance() const;
+    double GetRelativeTolerance() const;
 
     /// Set the linear part of the relaxation applied to the solution of the Newton-Raphson, in meters. The evolution of
     /// the linear part of the solution, between two iterations, cannot exceed the relaxation given.
@@ -102,11 +118,11 @@ namespace frydom {
     /// \return relaxation vector
     Vector3d<double> GetRelaxation() const;
 
-    FrFrame GetEquilibriumFrame() const;
-
    private:
     std::shared_ptr<FrBody> m_body;            ///< body for which the hydrostatic equilibrium is solved
     std::shared_ptr<FrHydroMesh> m_hydroMesh;  ///< hydroMesh containing the original body mesh and the clipping process
+    double m_mass;                             ///< mass for which the displacement/equilibrium is solved
+    Position m_COG;                            ///< COG for which the equilibrium is solved, in body reference frame
 
     // Newton-Raphson quantities
     Vector3d<double> m_residual;                ///< residual of the Newton-Raphson solver
@@ -121,17 +137,21 @@ namespace frydom {
 
   };
 
-  /// maker of the hydrostatic equilibrium solver, for a body
-  /// \param body
-  /// \param meshFile
-  /// \param meshOffset
-  /// \param tensor
-  /// \return
+  /// maker of the hydrostatic equilibrium solver
+  /// \param body body for which is solved the hydrostatic equilibrium
+  /// \param meshFile name of the file containing the mesh
+  /// \param meshOffset mesh frame offset, relatively to the body reference frame
+  /// \param mass mass for which the displacement/equilibrium is solved
+  /// \param COGPosInBody position of the center of gravity, in body reference frame, for which the equilibrium is solved
+  /// \param fc frame convention (NED/NWU)
+  /// \return FrHydrostaticEquilibrium object, containing hydrostatic quantities and solver parameters
   FrHydroStaticEquilibrium
   solve_hydrostatic_equilibrium(const std::shared_ptr<FrBody> &body,
                                 const std::string &meshFile,
                                 FrFrame meshOffset,
-                                const FrInertiaTensor &tensor);
+                                double mass,
+                                const Position &COGPosInBody,
+                                FRAME_CONVENTION fc);
 
 
 } //end namespace frydom

@@ -14,6 +14,5 @@
 #define FRYDOM_FRSTATICSINC_H
 
 #include "FrStaticAnalysis.h"
-#include "FrHydroStaticEquilibrium.h"
 
 #endif //FRYDOM_FRSTATICSINC_H
