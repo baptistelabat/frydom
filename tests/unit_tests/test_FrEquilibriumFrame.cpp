@@ -70,7 +70,7 @@ class TestFrEquilibriumFrame : public testing::Test {
 
 //    void TestInitPositionFromBody();
 //    void TestSetPositionToBodyPosition();
-  void TestSetVelocityToBodyVelocity();
+//  void TestSetVelocityToBodyVelocity();
 };
 
 template<class Vector>
@@ -87,15 +87,13 @@ void TestFrEquilibriumFrame::SetUp() {
   body->SetPosition(m_PositionInWorld, fc);
   body->SetRotation(m_quat);
 
-  m_eqFrame = make_equilibrium_frame("eqFrame", &system, body);
-  m_eqFrame->SetPositionInWorld(m_PositionInWorld, fc);
-  m_eqFrame->SetRotation(FrRotation(m_quat));
+  m_eqFrame = make_equilibrium_frame("eqFrame", &system, body, {0., 0., 0.}, 0., NWU);
 
   system.Initialize();
 }
 
 void TestFrEquilibriumFrame::CheckVelocity() {
-  auto velocity = m_eqFrame->GetVelocityInWorld(fc);
+  auto velocity = m_eqFrame->GetFrameVelocityInWorld(fc);
   EXPECT_FLOAT_EQ(m_VelocityInWorld.GetVx(), velocity.GetVx());
   EXPECT_FLOAT_EQ(m_VelocityInWorld.GetVy(), velocity.GetVy());
   EXPECT_FLOAT_EQ(m_VelocityInWorld.GetVz(), velocity.GetVz());
@@ -130,13 +128,13 @@ void TestFrEquilibriumFrame::TestSetVelocityInFrame() {
 }
 
 void TestFrEquilibriumFrame::TestAngularVelocityAroundZ(double val) {
-  m_eqFrame->SetAngularVelocityAroundZ(val, fc);
-  EXPECT_FLOAT_EQ(val, m_eqFrame->GetAngularVelocityAroundZ(fc));
+  m_eqFrame->SetAngularVelocity(val, fc);
+  EXPECT_FLOAT_EQ(val, m_eqFrame->GetFrameAngularVelocity(fc).GetWz());
 }
 
 void TestFrEquilibriumFrame::TestGetVelocityInWorld() {
   m_eqFrame->SetVelocityInWorld(m_VelocityInWorld, fc);
-  auto velocity = m_eqFrame->GetVelocityInWorld(fc);
+  auto velocity = m_eqFrame->GetFrameVelocityInWorld(fc);
   EXPECT_FLOAT_EQ(m_VelocityInWorld.GetVx(), velocity.GetVx());
   EXPECT_FLOAT_EQ(m_VelocityInWorld.GetVy(), velocity.GetVy());
   EXPECT_FLOAT_EQ(m_VelocityInWorld.GetVz(), velocity.GetVz());
@@ -144,15 +142,15 @@ void TestFrEquilibriumFrame::TestGetVelocityInWorld() {
 
 void TestFrEquilibriumFrame::TestGetVelocityInFrame() {
   m_eqFrame->SetVelocityInWorld(m_VelocityInWorld, fc);
-  auto velocity = m_eqFrame->GetVelocityInFrame(fc);
+  auto velocity = m_eqFrame->GetFrameVelocityInFrame(fc);
   EXPECT_FLOAT_EQ(m_VelocityInFrame.GetVx(), velocity.GetVx());
   EXPECT_FLOAT_EQ(m_VelocityInFrame.GetVy(), velocity.GetVy());
   EXPECT_FLOAT_EQ(m_VelocityInFrame.GetVz(), velocity.GetVz());
 }
 
 void TestFrEquilibriumFrame::TestGetAngularVelocity(double val) {
-  m_eqFrame->SetAngularVelocityAroundZ(val, fc);
-  auto angularVelocity = m_eqFrame->GetAngularVelocity(fc);
+  m_eqFrame->SetAngularVelocity(val, fc);
+  auto angularVelocity = m_eqFrame->GetFrameAngularVelocity(fc);
   EXPECT_FLOAT_EQ(0., angularVelocity.GetWx());
   EXPECT_FLOAT_EQ(0., angularVelocity.GetWy());
   EXPECT_FLOAT_EQ(val, angularVelocity.GetWz());
@@ -160,11 +158,11 @@ void TestFrEquilibriumFrame::TestGetAngularVelocity(double val) {
 
 void TestFrEquilibriumFrame::TestDefaultInitialization() {
 //    m_eqFrame->Initialize();
-  auto velocity = m_eqFrame->GetVelocityInWorld(fc);
+  auto velocity = m_eqFrame->GetFrameVelocityInWorld(fc);
   EXPECT_FLOAT_EQ(0., velocity.GetVx());
   EXPECT_FLOAT_EQ(0., velocity.GetVy());
   EXPECT_FLOAT_EQ(0., velocity.GetVz());
-  EXPECT_FLOAT_EQ(0., m_eqFrame->GetAngularVelocityAroundZ(fc));
+  EXPECT_FLOAT_EQ(0., m_eqFrame->GetFrameAngularVelocity(fc).GetWz());
 
   auto position = m_eqFrame->GetPositionInWorld(fc);
   EXPECT_FLOAT_EQ(m_PositionInWorld.GetX(), position.GetX());
@@ -179,51 +177,14 @@ void TestFrEquilibriumFrame::TestDefaultInitialization() {
   EXPECT_FLOAT_EQ(q1, qr1);
   EXPECT_FLOAT_EQ(q2, qr2);
   EXPECT_FLOAT_EQ(q3, qr3);
-
 }
 
 void TestFrEquilibriumFrame::TestInitSpeedFromBody() {
   body->SetGeneralizedVelocityInWorld(m_VelocityInWorld, AngularVelocity(0., 0., m_angularVelocity), fc);
-  m_eqFrame->InitSpeedFromBody(true);
+  m_eqFrame->InitializeVelocityFromBody(true);
   m_eqFrame->Initialize();
   CheckVelocity();
-  EXPECT_FLOAT_EQ(0., m_eqFrame->GetAngularVelocityAroundZ(fc));
-}
-
-//void TestFrEquilibriumFrame::TestInitPositionFromBody() {
-////    m_eqFrame->InitPositionFromBody(true);
-//    m_eqFrame->Initialize();
-//
-//    auto position = m_eqFrame->GetPositionInWorld(fc);
-//    EXPECT_FLOAT_EQ(m_PositionInWorld.GetX(), position.GetX());
-//    EXPECT_FLOAT_EQ(m_PositionInWorld.GetY(), position.GetY());
-//    EXPECT_FLOAT_EQ(m_PositionInWorld.GetZ(), position.GetZ());
-//}
-//
-//
-//void TestFrEquilibriumFrame::TestSetPositionToBodyPosition() {
-//    m_eqFrame->SetPositionToBodyCOGPosition();
-//
-//    auto position = m_eqFrame->GetPosition(fc);
-//    EXPECT_FLOAT_EQ(m_PositionInWorld.GetX(), position.GetX());
-//    EXPECT_FLOAT_EQ(m_PositionInWorld.GetY(), position.GetY());
-//    EXPECT_FLOAT_EQ(m_PositionInWorld.GetZ(), position.GetZ());
-//
-//    double q0, q1, q2, q3;
-//    double qr0, qr1, qr2, qr3;
-//    m_eqFrame->GetRotation().GetQuaternion().Get(q0, q1, q2, q3, fc);
-//    m_quat.Get(qr0, qr1, qr2, qr3, fc);
-//    EXPECT_FLOAT_EQ(q0, qr0);
-//    EXPECT_FLOAT_EQ(q1, qr1);
-//    EXPECT_FLOAT_EQ(q2, qr2);
-//    EXPECT_FLOAT_EQ(q3, qr3);
-//}
-
-void TestFrEquilibriumFrame::TestSetVelocityToBodyVelocity() {
-  body->SetGeneralizedVelocityInWorld(m_VelocityInWorld, AngularVelocity(0., 0., m_angularVelocity), fc);
-  m_eqFrame->SetVelocityToBodyCOGVelocity();
-  CheckVelocity();
-  EXPECT_FLOAT_EQ(0., m_eqFrame->GetAngularVelocityAroundZ(fc));
+  EXPECT_FLOAT_EQ(0., m_eqFrame->GetFrameAngularVelocity(fc).GetWz());
 }
 
 TEST_F(TestFrEquilibriumFrame, SetVelocityInWorld) {
@@ -265,11 +226,6 @@ TEST_F(TestFrEquilibriumFrame, InitSpeedFromBody) {
 //TEST_F(TestFrEquilibriumFrame, SetPositionToBodyPosition) {
 //    TestSetPositionToBodyPosition();
 //}
-
-TEST_F(TestFrEquilibriumFrame, SetVelocityToBodyVelocity) {
-  TestSetVelocityToBodyVelocity();
-}
-
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);

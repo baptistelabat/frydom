@@ -29,6 +29,7 @@ set(BENCH
         DTMB5512
         Cables
         NonlinearHydrostaticBox
+        HS_equilibrium
         )
 
 # Compile target

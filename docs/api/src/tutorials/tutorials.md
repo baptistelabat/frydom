@@ -52,6 +52,8 @@ Benchmarks
 
 -   @subpage tutorial_bench_HSNL_box
 
+-   @subpage tutorial_bench_HS_equilibrium
+
 -   @subpage tutorial_bench_sphere_decay
 
 -   @subpage tutorial_bench_sphere_regular

@@ -8,7 +8,6 @@ set(REFACTORING_TESTS
         test_logging
         test_FrFileSystem
         test_spdlog
-        test_HS_equilibrium
         )
 
 foreach(test ${REFACTORING_TESTS})

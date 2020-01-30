@@ -15,7 +15,7 @@
 
 #include "FrTriangleMeshConnected.h"
 #include "FrCache.h"
-#include "FrHydrostaticsProperties.h"
+#include "frydom/hydrodynamics/hydrostatic/FrHydrostaticsProperties.h"
 #include "FrMesh.h"
 #include "FrMeshClipper.h"
 #include "FrTriangleMeshConnected.h"

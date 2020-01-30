@@ -193,7 +193,7 @@ int main(int argc, char *argv[]) {
   double Tk = atof(argv[3]);      // Wave period (s)
   char *name = argv[4];     // Output director prefix name
 
-  bool captive_test = true;      // fixed heave and pitch motions
+  bool captive_test = false;      // fixed heave and pitch motions
 
   // -- System
 
@@ -235,9 +235,8 @@ int main(int argc, char *argv[]) {
   auto DTMB_hdb = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/DTMB5512/DTMB5512.hdb5"});
   auto hdb = make_hydrodynamic_database(DTMB_hdb);
 
-  auto eqFrame = make_equilibrium_frame("EqFrame", &system, body);
-  eqFrame->SetPositionInWorld(Position(0., 0., 0.03), NWU);
-  eqFrame->SetVelocityInWorld(Velocity(speed, 0., 0.), NWU);
+  auto eqFrame = make_equilibrium_frame("EqFrame", &system, body, {0., 0., 0.03}, 0., NWU);
+  eqFrame->SetVelocityInWorld({speed, 0., 0.}, NWU);
 
   hdb->Map(0, body.get(), eqFrame);
 

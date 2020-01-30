@@ -86,7 +86,7 @@ list(APPEND SRC_FILES
 # STATICS
 list(APPEND SRC_FILES
         statics/FrStaticAnalysis.cpp
-        statics/FrHydroStaticEquilibrium.cpp
+        ../hydrodynamics/hydrostatic/FrHydroStaticEquilibrium.cpp
         )
 
 

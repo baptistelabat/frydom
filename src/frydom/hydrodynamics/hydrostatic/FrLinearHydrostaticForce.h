@@ -19,7 +19,7 @@
 #include "frydom/core/force/FrForce.h"
 #include "FrLinearHydrostaticStiffnessMatrix.h"
 #include "frydom/hydrodynamics/seakeeping/linear/hdb/FrLinearHDBInc.h"
-#include "frydom/mesh/FrHydrostaticsProperties.h"
+#include "FrHydrostaticsProperties.h"
 
 namespace frydom {
 

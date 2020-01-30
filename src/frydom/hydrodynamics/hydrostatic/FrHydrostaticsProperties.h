@@ -18,21 +18,9 @@
 #include "frydom/mesh/FrMesh.h"
 #include "frydom/mesh/FrMeshClipper.h"
 #include "frydom/core/math/FrVector.h"
+#include "FrLinearHydrostaticStiffnessMatrix.h"
 
 namespace frydom {
-
-  struct FrHydrostaticMatrixTensor {
-
-    double K33 = 0.;
-    double K34 = 0.;
-    double K35 = 0.;
-    double K44 = 0.;
-    double K45 = 0.;
-    double K55 = 0.;
-
-    mathutils::MatrixMN<double> GetHydrostaticMatrix() const;
-
-  };
 
   class FrHydrostaticReporter;
 
@@ -41,9 +29,53 @@ namespace frydom {
    * \brief Class for computing the linear hydrostatic properties.
    */
   class FrHydrostaticsProperties {
+
+   public:
+
+    /// Constructors.
+
+    FrHydrostaticsProperties(double waterDensity, double gravityAcceleration, mesh::FrMesh &clipped_mesh, Position cog, FRAME_CONVENTION fc);
+
+    FrHydrostaticsProperties(double waterDensity, double gravityAcceleration, mesh::FrMesh &clipped_mesh, Position cog, Position out, FRAME_CONVENTION fc);
+
+    /// Compute the geometric and hydrostatic properties
+    void ComputeProperties();
+
+    /// Get the hydrostatic report as a string
+    /// \return hydrostatic report
+    std::string GetReport() const;
+
+    /// Get the mesh used for the hydrostatic computations
+    /// \return mesh used for computations
+    const mesh::FrMesh &GetHydrostaticMesh() const;
+
+    /// Get the reduced hydrostatic matrix (K33 to K55)
+    /// \return reduced hydrostatic matrix
+    FrLinearHydrostaticStiffnessMatrix GetHydrostaticMatrix() const;
+
+    /// Get the tranversal metacentric height
+    /// \return tranversal metacentric height
+    double GetTransversalMetacentricHeight() const;
+
+    /// Get the longitudinal metacentric height
+    /// \return longitudinal metacentric height
+    double GetLongitudinalMetacentricHeight() const;
+
+    double GetLengthOverallSubmerged() const {return m_lengthOverallSubmerged;}
+
+    double GetBreadthOverallSubmerged() const {return m_breadthOverallSubmerged;}
+
+    Position GetBuoyancyCenter() const {return m_buoyancyCenter;}
+
    private:
 
-    friend class FrHydrostaticReporter;
+    /// Compute the geometric properties
+    void CalcGeometricProperties();
+
+    /// Compute the hydrostatic properties
+    void CalcHydrostaticProperties();
+
+    // attributes
 
     mesh::FrMesh m_clippedMesh;
 
@@ -70,57 +102,11 @@ namespace frydom {
     double m_transversalMetacentricHeight = 0.;
     double m_longitudinalMetacentricHeight = 0.;
 
-    FrHydrostaticMatrixTensor m_hydrostaticTensor;
+    FrLinearHydrostaticStiffnessMatrix m_hydrostaticMatrix;
 
-    Position m_outerPoint = {0., 0., 0.};
+    Position m_reductionPoint = {0., 0., 0.};
 
-   public:
-
-    /// Constructors.
-    FrHydrostaticsProperties();
-
-    FrHydrostaticsProperties(double waterDensity, double gravityAcceleration);
-
-    FrHydrostaticsProperties(double waterDensity, double gravityAcceleration, mesh::FrMesh &clipped_mesh, Position cog, FRAME_CONVENTION fc);
-
-    FrHydrostaticsProperties(double waterDensity, double gravityAcceleration, mesh::FrMesh &clipped_mesh, Position cog, Position out, FRAME_CONVENTION fc);
-
-    /// Compute the geometric and hydrostatic properties
-    void Process();
-
-    /// Get the hydrostatic report as a string
-    /// \return hydrostatic report
-    std::string GetReport() const;
-
-    /// Get the mesh used for the hydrostatic computations
-    /// \return mesh used for computations
-    const mesh::FrMesh &GetHydrostaticMesh() const;
-
-    /// Get the reduced hydrostatic matrix (K33 to K55)
-    /// \return reduced hydrostatic matrix
-    mathutils::MatrixMN<double> GetHydrostaticMatrix() const;
-
-    /// Get the tranversal metacentric height
-    /// \return tranversal metacentric height
-    double GetTransversalMetacentricHeight() const;
-
-    /// Get the longitudinal metacentric height
-    /// \return longitudinal metacentric height
-    double GetLongitudinalMetacentricHeight() const;
-
-    double GetLengthOverallSubmerged() const {return m_lengthOverallSubmerged;}
-
-    double GetBreadthOverallSubmerged() const {return m_breadthOverallSubmerged;}
-
-    Position GetBuoyancyCenter() const {return m_buoyancyCenter;}
-
-   private:
-
-    /// Compute the geometric properties
-    void CalcGeometricProperties();
-
-    /// Compute the hydrostatic properties
-    void CalcHydrostaticProperties();
+    friend class FrHydrostaticReporter;
 
   };
 
@@ -191,14 +177,14 @@ namespace frydom {
       AddBlankLine();
 
       AddLine("HYDROSTATIC STIFFNESS COEFFICIENTS:");
-      AddLine("K33", "N/M", hp.m_hydrostaticTensor.K33);
-      AddLine("K34", "N", hp.m_hydrostaticTensor.K34);
-      AddLine("K35", "N", hp.m_hydrostaticTensor.K35);
-      AddLine("K44", "N.M", hp.m_hydrostaticTensor.K44);
-      AddLine("K45", "N.M", hp.m_hydrostaticTensor.K45);
-      AddLine("K55", "N.M", hp.m_hydrostaticTensor.K55);
+      AddLine("K33", "N/M", hp.m_hydrostaticMatrix.GetK33());
+      AddLine("K34", "N", hp.m_hydrostaticMatrix.GetK34());
+      AddLine("K35", "N", hp.m_hydrostaticMatrix.GetK35());
+      AddLine("K44", "N.M", hp.m_hydrostaticMatrix.GetK44());
+      AddLine("K45", "N.M", hp.m_hydrostaticMatrix.GetK45());
+      AddLine("K55", "N.M", hp.m_hydrostaticMatrix.GetK55());
       AddLine("\t(Expressed at :");
-      AddLine("EXPRESSED POINT", "M", hp.m_outerPoint);
+      AddLine("REDUCTION POINT", "M", hp.m_reductionPoint);
 
       return fmt::to_string(m_buffer);
     }

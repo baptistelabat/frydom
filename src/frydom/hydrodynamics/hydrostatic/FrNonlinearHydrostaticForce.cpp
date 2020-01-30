@@ -15,7 +15,7 @@
 
 #include "frydom/mesh/FrMesh.h"
 #include "frydom/mesh/FrHydroMesh.h"
-#include "frydom/mesh/FrHydrostaticsProperties.h"
+#include "FrHydrostaticsProperties.h"
 
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOcean.h"
@@ -185,7 +185,7 @@ namespace frydom {
                                  system->GetGravityAcceleration(),
                                  clippedMesh,
                                  body->GetCOGPositionInWorld(NWU), NWU);
-    hsp.Process();
+    hsp.ComputeProperties();
 
     return {hsp.GetTransversalMetacentricHeight(), hsp.GetLongitudinalMetacentricHeight(), 0.};
   }
