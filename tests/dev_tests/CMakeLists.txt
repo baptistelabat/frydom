@@ -8,6 +8,7 @@ set(REFACTORING_TESTS
         test_logging
         test_FrFileSystem
         test_spdlog
+        test_lumped_mass_cable
         )
 
 foreach(test ${REFACTORING_TESTS})
