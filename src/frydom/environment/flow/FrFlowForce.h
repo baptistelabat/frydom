@@ -35,6 +35,10 @@ namespace frydom {
     Velocity m_fluxVelocityInBody;             ///< relative velocity of the flow in the body frame
     mathutils::LookupTable1D<double, mathutils::Vector3d<double>> m_table;  ///< Table of polar coefficient
 
+    double m_frontal_area;
+    double m_lateral_area;
+    double m_length;
+
    public:
 
     /// Default constructor
@@ -57,6 +61,8 @@ namespace frydom {
     /// \param time Current time of the simulation
     void Compute(double time) override;
 
+    virtual double GetFluidDensity() const = 0;
+
   };
 
 
@@ -74,6 +80,8 @@ namespace frydom {
    private:
 
     void Compute(double time) override;
+
+    double GetFluidDensity() const override;
 
   };
 
@@ -94,6 +102,8 @@ namespace frydom {
     /// Compute thd wind force
     /// \param time Current time of the simulation from beginning, in seconds
     void Compute(double time) override;
+
+    double GetFluidDensity() const override;
 
   };
 

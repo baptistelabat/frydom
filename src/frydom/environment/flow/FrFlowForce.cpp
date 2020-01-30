@@ -25,7 +25,11 @@ namespace frydom {
                            const std::string &type_name,
                            FrBody *body,
                            const std::string &jsonFile) :
-      FrForce(name, type_name, body) {
+      FrForce(name, type_name, body),
+      m_frontal_area(1.),
+      m_lateral_area(1.),
+      m_length(1.) {
+
     this->ReadTable(jsonFile);
   }
 
@@ -37,7 +41,10 @@ namespace frydom {
     FRAME_CONVENTION fc;
     DIRECTION_CONVENTION dc;
 
-    LoadFlowPolarCoeffFromJson(jsonFile, polar, angle_unit, fc, dc);
+    LoadFlowPolarCoeffFromJson(jsonFile,
+                               polar,
+                               m_frontal_area, m_lateral_area, m_length,
+                               angle_unit, fc, dc);
 
     if (angle_unit == mathutils::DEG) {
       for (auto it = polar.begin(); it != polar.end(); ++it) { it->first *= DEG2RAD; }
@@ -116,8 +123,16 @@ namespace frydom {
     alpha = mathutils::Normalize_0_2PI(alpha);
 
     auto coeff = m_table.Eval("coeff", alpha);
+    double cx = coeff[0];
+    double cy = coeff[1];
+    double cz = coeff[2];
+
     double SquaredVelocity = m_fluxVelocityInBody.squaredNorm();
-    auto res = coeff * SquaredVelocity;
+    double rho = GetFluidDensity();
+
+    double fx = 0.5 * rho * cx * m_frontal_area * SquaredVelocity;
+    double fy = 0.5 * rho * cy * m_lateral_area * SquaredVelocity;
+    double fz = 0.5 * rho * cz * m_lateral_area * m_length * SquaredVelocity;
 
     // Build the projected rotation in the XoY plane.
     double phi, theta, psi;
@@ -126,8 +141,8 @@ namespace frydom {
     auto frame = FrFrame(body->GetCOGPositionInWorld(NWU), bodyRotation, NWU);
 
 //        auto frame = m_body->GetFrameAtCOG(NWU).ProjectToXYPlane(NWU);
-    auto worldForce = frame.ProjectVectorFrameInParent(Force(res[0], res[1], 0), NWU);
-    auto worldTorque = frame.ProjectVectorFrameInParent(Torque(0., 0., res[2]), NWU);
+    auto worldForce = frame.ProjectVectorFrameInParent(Force(fx, fy, 0), NWU);
+    auto worldTorque = frame.ProjectVectorFrameInParent(Torque(0., 0., fz), NWU);
 
     SetForceTorqueInWorldAtCOG(worldForce, worldTorque, NWU);
   }
@@ -143,7 +158,6 @@ namespace frydom {
         body->GetSystem()->GetEnvironment()->GetOcean()->GetCurrent()->GetRelativeVelocityInFrame(FrameAtCOG,
                                                                                                   VelocityInWorldAtCOG,
                                                                                                   NWU);
-
     FrFlowForce::Compute(time);
   }
 
@@ -151,6 +165,10 @@ namespace frydom {
                                  FrBody *body,
                                  const std::string &jsonFile) :
       FrFlowForce(name, TypeToString(this), body, jsonFile) {}
+
+  double FrCurrentForce::GetFluidDensity() const {
+    return GetBody()->GetSystem()->GetEnvironment()->GetOcean()->GetDensity();
+  }
 
   void FrWindForce::Compute(double time) {
 
@@ -171,6 +189,10 @@ namespace frydom {
                            FrBody *body,
                            const std::string &jsonFile) :
       FrFlowForce(name, TypeToString(this), body, jsonFile) {}
+
+  double FrWindForce::GetFluidDensity() const {
+    return GetBody()->GetSystem()->GetEnvironment()->GetAtmosphere()->GetDensity();
+  }
 
   std::shared_ptr<FrCurrentForce> make_current_force(const std::string &name,
                                                      std::shared_ptr<FrBody> body,

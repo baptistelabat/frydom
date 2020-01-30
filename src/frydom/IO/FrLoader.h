@@ -44,6 +44,9 @@ namespace frydom {
                                   std::vector<double> &cx,
                                   std::vector<double> &cy,
                                   std::vector<double> &cn,
+                                  double &frontal_area,
+                                  double &lateral_area,
+                                  double &length,
                                   ANGLE_UNIT &unit,
                                   FRAME_CONVENTION &fc,
                                   DIRECTION_CONVENTION &dc);
@@ -51,6 +54,9 @@ namespace frydom {
   /// This function reads the flow polar coefficients from a Json input file.
   void LoadFlowPolarCoeffFromJson(const std::string &jsonFile,
                                   std::vector<std::pair<double, mathutils::Vector3d<double>>> &polar,
+                                  double &frontal_area,
+                                  double &lateral_area,
+                                  double &length,
                                   ANGLE_UNIT &unit,
                                   FRAME_CONVENTION &fc,
                                   DIRECTION_CONVENTION &dc);
