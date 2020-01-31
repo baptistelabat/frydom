@@ -30,6 +30,8 @@ namespace frydom {
       m_body(body),
       m_clippingSupport(support) {
 
+    // FIXME: ne semble pas fonctionner !!! Pas de maillage de specifier dans ce constructeur...
+
     m_clipper = std::make_unique<mesh::FrMeshClipper>();
 
     m_clippedMesh = mesh::FrMesh();

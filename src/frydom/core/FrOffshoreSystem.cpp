@@ -234,7 +234,7 @@ namespace frydom {
 //    }
 //
 //  }
-  const FrConfig& FrOffshoreSystem::config_file() {
+  const FrConfig &FrOffshoreSystem::config_file() {
     return m_config_file;
   }
 
@@ -318,13 +318,15 @@ namespace frydom {
 
 // ***** Constraint *****
 
-  void FrOffshoreSystem::AddConstraint(std::shared_ptr<FrConstraint> constraint, std::shared_ptr<chrono::ChLink> chrono_link) {
+  void FrOffshoreSystem::AddConstraint(std::shared_ptr<FrConstraint> constraint,
+                                       std::shared_ptr<chrono::ChLink> chrono_link) {
     m_chronoSystem->AddLink(chrono_link);
     m_constraintList.push_back(constraint);
     event_logger::info(GetTypeName(), GetName(), "Constraint {} has been ADDED to the system", constraint->GetName());
   }
 
-  void FrOffshoreSystem::RemoveConstraint(std::shared_ptr<FrConstraint> constraint, std::shared_ptr<chrono::ChLink> chrono_link) {
+  void FrOffshoreSystem::RemoveConstraint(std::shared_ptr<FrConstraint> constraint,
+                                          std::shared_ptr<chrono::ChLink> chrono_link) {
 
     m_chronoSystem->RemoveLink(chrono_link);
 
@@ -337,7 +339,8 @@ namespace frydom {
     }
 
     m_constraintList.erase(it);
-    event_logger::info(GetTypeName(), GetName(), "Constraint {} has been REMOVED from the system", constraint->GetName());
+    event_logger::info(GetTypeName(), GetName(), "Constraint {} has been REMOVED from the system",
+                       constraint->GetName());
   }
 
   void FrOffshoreSystem::RemoveAllConstraints() {
@@ -349,13 +352,15 @@ namespace frydom {
 
 // ***** Actuator *****
 
-  void FrOffshoreSystem::AddActuator(std::shared_ptr<FrActuator> actuator, std::shared_ptr<chrono::ChLink> chrono_link) {
+  void
+  FrOffshoreSystem::AddActuator(std::shared_ptr<FrActuator> actuator, std::shared_ptr<chrono::ChLink> chrono_link) {
     m_chronoSystem->AddLink(chrono_link);
     m_actuatorList.push_back(actuator);
     event_logger::info(GetTypeName(), GetName(), "Actuator {} has been ADDED to the system", actuator->GetName());
   }
 
-  void FrOffshoreSystem::RemoveActuator(std::shared_ptr<FrActuator> actuator, std::shared_ptr<chrono::ChLink> chrono_link) {
+  void
+  FrOffshoreSystem::RemoveActuator(std::shared_ptr<FrActuator> actuator, std::shared_ptr<chrono::ChLink> chrono_link) {
 
     m_chronoSystem->RemoveLink(chrono_link);
 
@@ -792,7 +797,7 @@ namespace frydom {
     if (m_systemType == SMOOTH_CONTACT) {
       dynamic_cast<chrono::ChSystemSMC *>(m_chronoSystem.get())->SetStiffContact(isStiff);
       event_logger::info(GetTypeName(), GetName(),
-          "Stiff contact {}", (isStiff) ? "activated" : "deactivated");
+                         "Stiff contact {}", (isStiff) ? "activated" : "deactivated");
     } else {
       event_logger::error(GetTypeName(), GetName(),
                           "StiffContact is only for SMOOTH_CONTACT systems. Action ignored");
@@ -814,10 +819,10 @@ namespace frydom {
     if (m_systemType == SMOOTH_CONTACT) {
       dynamic_cast<chrono::ChSystemSMC *>(m_chronoSystem.get())->SetCharacteristicImpactVelocity(velocity);
       event_logger::info(GetTypeName(), GetName(),
-                          "Characteristic Impact Velocity set to {} m/s", velocity);
+                         "Characteristic Impact Velocity set to {} m/s", velocity);
     } else {
       event_logger::error(GetTypeName(), GetName(),
-          "Characteristic Impact Velocity is only for SMOOTH_CONTACT systems. Action ignored");
+                          "Characteristic Impact Velocity is only for SMOOTH_CONTACT systems. Action ignored");
     }
   }
 
@@ -1015,7 +1020,7 @@ namespace frydom {
       if (!AdvanceTo(nextTime))
         return false;
     }
-        return true;
+    return true;
   }
 
   void FrOffshoreSystem::CreateWorldBody() {
@@ -1068,7 +1073,7 @@ namespace frydom {
 
 // Irrlicht visualization
 
-  FrIrrApp* FrOffshoreSystem::GetIrrApp() const {
+  FrIrrApp *FrOffshoreSystem::GetIrrApp() const {
     return m_irrApp.get();
   }
 
@@ -1325,9 +1330,11 @@ namespace frydom {
   }
 
 
-  void FrOffshoreSystem::Add(std::shared_ptr<FrTreeNodeBase> item) {
+  bool FrOffshoreSystem::Add(std::shared_ptr<FrTreeNodeBase> item) {
 
     // FIXME : mettre des gardes au cas ou RegisterTreeNode renvoie false !!!
+
+    bool added = true;
 
     // BODY
     if (auto body = std::dynamic_pointer_cast<FrBody>(item)) {
@@ -1378,14 +1385,22 @@ namespace frydom {
 
       // UNKNOWN
     } else {
-      std::cerr << "Unknown object type " << std::endl;
-      exit(EXIT_FAILURE);
+      added = false;
+    }
+//    else {
+//      std::cerr << "Unknown object type " << std::endl;
+//      event_logger::error(GetTypeName(), GetName(),
+//          "Trying to add object {} with unknown type", item->GetName());
+//      exit(EXIT_FAILURE);
+//    }
+
+    if (added) {
+      if (auto loggable = std::dynamic_pointer_cast<FrLoggableBase>(item)) {
+        m_LogManager->Add(loggable);
+      }
     }
 
-    if (auto loggable = std::dynamic_pointer_cast<FrLoggableBase>(item)) {
-      m_LogManager->Add(loggable);
-    }
-
+    return added;
   }
 
   void FrOffshoreSystem::Remove(std::shared_ptr<FrTreeNodeBase> item) {

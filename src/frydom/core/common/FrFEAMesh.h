@@ -44,7 +44,7 @@ namespace frydom {
     virtual void Relax() = 0;
 
 
-    friend void FrOffshoreSystem::Add(std::shared_ptr<FrTreeNodeBase> item);
+    friend bool FrOffshoreSystem::Add(std::shared_ptr<FrTreeNodeBase> item);
     friend void FrOffshoreSystem::Remove(std::shared_ptr<FrTreeNodeBase> item);
 
   };

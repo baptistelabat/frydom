@@ -249,9 +249,6 @@ namespace frydom {
     /// \param time time of the simulation
     void Update(double time) override {};
 
-//      /// Initialize the log for the dynamic cable
-//      void AddFields() override;
-
     double GetStaticResidual() override;
 
     void Relax() override;
@@ -259,12 +256,9 @@ namespace frydom {
 
     // Friend definitions
 
-    friend void FrOffshoreSystem::Add(std::shared_ptr<FrTreeNodeBase> item);
+    friend bool FrOffshoreSystem::Add(std::shared_ptr<FrTreeNodeBase> item);
     friend void FrOffshoreSystem::Remove(std::shared_ptr<FrTreeNodeBase> item);
 
-//    friend void FrOffshoreSystem::AddDynamicCable(std::shared_ptr<FrDynamicCable>);
-//
-//    friend void FrOffshoreSystem::Remove(std::shared_ptr<FrDynamicCable>);
 
   };
 
