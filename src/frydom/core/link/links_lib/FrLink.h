@@ -383,7 +383,7 @@ namespace frydom {
     virtual void UpdateCache();
 
 
-    friend void FrOffshoreSystem::Add(std::shared_ptr<FrTreeNodeBase>);
+    friend bool FrOffshoreSystem::Add(std::shared_ptr<FrTreeNodeBase>);
 
     friend void FrOffshoreSystem::Remove(std::shared_ptr<FrTreeNodeBase>);
 

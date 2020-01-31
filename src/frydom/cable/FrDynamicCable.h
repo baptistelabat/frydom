@@ -259,12 +259,8 @@ namespace frydom {
 
     // Friend definitions
 
-    friend void FrOffshoreSystem::Add(std::shared_ptr<FrTreeNodeBase> item);
+    friend bool FrOffshoreSystem::Add(std::shared_ptr<FrTreeNodeBase> item);
     friend void FrOffshoreSystem::Remove(std::shared_ptr<FrTreeNodeBase> item);
-
-//    friend void FrOffshoreSystem::AddDynamicCable(std::shared_ptr<FrDynamicCable>);
-//
-//    friend void FrOffshoreSystem::Remove(std::shared_ptr<FrDynamicCable>);
 
   };
 
