@@ -28,7 +28,7 @@ pages:
 #    stage: deploy
     script:
         - cd docs/api
-        - tag=$(git describe)
+        - tag=$(python ../../cmake/getversion.py normalized)
         - sed -i "s/GIT_TAG_VERSION/$tag/g" Doxyfile
         - doxygen Doxyfile
         - mv build/html/ ../../public/
@@ -52,7 +52,7 @@ theory:
        - echo "$GITLAB_CI_SSH_KNOWN_HOST" | tr -d '\r' > ~/.ssh/known_hosts
     script:
         - cd docs/theory
-        - tag=$(git describe)
+        - tag=$(python ../../cmake/getversion.py normalized)
         - sed -i "s/GIT_TAG_VERSION/$tag/g" conf.py
         - make html
         - scp -r ./build/html/* frydomusqo@ssh.cluster027.hosting.ovh.net:/homez.363/frydomusqo/theory-guide
