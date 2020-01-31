@@ -105,6 +105,7 @@ namespace frydom {
     chrono::ChLinkBase *GetChronoItem_ptr() const override = 0;
 
 
+    // Fiends
     friend bool FrOffshoreSystem::Add(std::shared_ptr<FrTreeNodeBase>);
 
     friend void FrOffshoreSystem::Remove(std::shared_ptr<FrTreeNodeBase>);

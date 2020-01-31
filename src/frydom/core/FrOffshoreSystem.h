@@ -280,7 +280,7 @@ namespace frydom {
 
     /// Add an item (body, link, etc.) to the offshore sytem
     /// \param item item to be added to the offshore system
-    void Add(std::shared_ptr<FrTreeNodeBase> item);
+    virtual bool Add(std::shared_ptr<FrTreeNodeBase> item);
 
     /// Remove an item (body, link, etc.) from the offshore sytem
     /// \param item item to be added to the offshore system
@@ -373,7 +373,7 @@ namespace frydom {
     void ForceInitialize();
 
     /// Method called at the send of a time step. Logging may be used here
-    void StepFinalize();
+    virtual void StepFinalize();
 
     // Logging
 

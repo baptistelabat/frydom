@@ -387,8 +387,6 @@ namespace frydom {
 
     friend void FrOffshoreSystem::Remove(std::shared_ptr<FrTreeNodeBase>);
 
-//      /// Add the fields to the Hermes message
-//      void AddFields() override;
 
   };
 
