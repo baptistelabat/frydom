@@ -71,11 +71,11 @@ namespace frydom {
 
 //    std::string InitializeLogFolder();
 
-    static std::string LogFolderFromFrydomConfigFile(const std::string &path_to_config_file);
+//    static std::string LogFolderFromFrydomConfigFile(const std::string &path_to_config_file);
 
     static std::string GetDateFolder();
 
-    void WriteMetaDataFile(const std::string &log_folder);
+    void WriteMetaDataFile() const;
 
     static std::string now();
 
