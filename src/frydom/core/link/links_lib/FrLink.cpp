@@ -333,7 +333,7 @@ namespace frydom {
 
   void FrLink::DefineLogMessages() {
 
-    auto msg = NewMessage("State", "State message");
+    auto msg = NewMessage("FrLink", "State message");
 
     msg->AddField<double>("time", "s", "Current time of the simulation",
                           [this]() { return GetSystem()->GetTime(); });

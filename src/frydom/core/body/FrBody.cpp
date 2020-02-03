@@ -1076,7 +1076,7 @@ namespace frydom {
 
   void FrBody::DefineLogMessages() {
 
-
+    // TODO : changer le nom du message. Le message protobuf associe doit avoir le nom frydom_msg.FrBody
     auto msg = NewMessage("FrBody", "Body states");
 
     msg->AddField<double>("Time", "s", "Current time of the simulation", [this]() { return GetSystem()->GetTime(); });
