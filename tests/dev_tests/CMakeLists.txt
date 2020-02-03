@@ -5,7 +5,6 @@ set(REFACTORING_TESTS
         test_FrLinks
         test_cylinder_interaction
         test_FrFunction
-        test_logging
         test_FrFileSystem
         test_spdlog
         )
