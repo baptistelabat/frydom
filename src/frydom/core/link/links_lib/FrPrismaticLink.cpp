@@ -16,111 +16,117 @@
 
 #include "frydom/core/link/links_lib/actuators/FrLinearActuator.h"
 
-//#include <chrono/physics/ChLinkLock.h>
-
+#include "frydom/logging/FrTypeNames.h"
 
 namespace frydom {
 
-    FrPrismaticLink::FrPrismaticLink(std::shared_ptr<frydom::FrNode> node1, std::shared_ptr<frydom::FrNode> node2,
-                                     frydom::FrOffshoreSystem *system) : FrLink(node1, node2, system) {
-        m_chronoLink->SetLinkType(PRISMATIC);
-    }
+  FrPrismaticLink::FrPrismaticLink(const std::string &name,
+                                   FrOffshoreSystem *system,
+                                   std::shared_ptr<frydom::FrNode> node1,
+                                   std::shared_ptr<frydom::FrNode> node2) :
+      FrLink(name, TypeToString(this), system, node1, node2) {
 
-    void FrPrismaticLink::SetSpringDamper(double stiffness, double damping) {
-        m_stiffness = stiffness;
-        m_damping = damping;
-    }
+    m_chronoLink->SetLinkType(PRISMATIC);
+  }
 
-    void FrPrismaticLink::SetRestLength(double restLength) {
-        m_frame2WRT1_reference.SetZ(restLength, NWU);
-        UpdateCache();
-    }
+  void FrPrismaticLink::SetSpringDamper(double stiffness, double damping) {
+    m_stiffness = stiffness;
+    m_damping = damping;
+  }
 
-    double FrPrismaticLink::GetRestLength() const {
-        return m_restLength;
-    }
+  void FrPrismaticLink::SetRestLength(double restLength) {
+    m_frame2WRT1_reference.SetZ(restLength, NWU);
+    UpdateCache();
+  }
 
-    const Direction FrPrismaticLink::GetLinkDirectionInWorld(FRAME_CONVENTION fc) const {
-        return GetNode1()->GetFrameInWorld().GetZAxisInParent(fc);
-    }
+  double FrPrismaticLink::GetRestLength() const {
+    return m_restLength;
+  }
 
-    double FrPrismaticLink::GetLinkPosition() const {
-        return m_linkPosition - m_restLength;
-    }
+  const Direction FrPrismaticLink::GetLinkDirectionInWorld(FRAME_CONVENTION fc) const {
+    return GetNode1()->GetFrameInWorld().GetZAxisInParent(fc);
+  }
 
-    double FrPrismaticLink::GetLinkVelocity() const {
-        return m_linkVelocity;
-    }
+  double FrPrismaticLink::GetLinkPosition() const {
+    return m_linkPosition - m_restLength;
+  }
 
-    double FrPrismaticLink::GetLinkAcceleration() const {
-        return m_linkAcceleration;
-    }
+  double FrPrismaticLink::GetLinkVelocity() const {
+    return m_linkVelocity;
+  }
 
-    double FrPrismaticLink::GetLinkForce() const {
-        return GetLinkForceOnBody2InFrame2AtOrigin2(NWU).GetFz();
-    }
+  double FrPrismaticLink::GetLinkAcceleration() const {
+    return m_linkAcceleration;
+  }
 
-    double FrPrismaticLink::GetLinkPower() const {
-        return GetLinkVelocity() * GetLinkForce();
-    }
+  double FrPrismaticLink::GetLinkForce() const {
+      return GetSpringDamperForceOnNode2(NWU).GetFz();
+  }
 
-    void FrPrismaticLink::Update(double time) {
-        FrLink::Update(time); // It is mandatory to invoke this before all update operations from frydom
+  double FrPrismaticLink::GetLinkPower() const {
+    return GetLinkVelocity() * GetLinkForce();
+  }
 
-        // Update total link measure
-        m_linkPosition = GetNode2PositionWRTNode1(NWU).GetZ();
-        m_linkVelocity = GetVelocityOfNode2WRTNode1(NWU).GetVz();
-        m_linkAcceleration = GetAccelerationOfNode2WRTNode1(NWU).GetAccZ();
+  void FrPrismaticLink::Update(double time) {
+    FrLink::Update(time); // It is mandatory to invoke this before all update operations from frydom
 
-        UpdateForces(time);
+    // Update total link measure
+    m_linkPosition = GetNode2PositionWRTNode1(NWU).GetZ();
+    m_linkVelocity = GetVelocityOfNode2WRTNode1(NWU).GetVz();
+    m_linkAcceleration = GetAccelerationOfNode2WRTNode1(NWU).GetAccZ();
 
-    }
+    UpdateForces(time);
 
-    void FrPrismaticLink::UpdateForces(double time) {
+  }
 
-        if (IsMotorized()) return;
+  void FrPrismaticLink::UpdateForces(double time) {
 
-        Force force;
-        Torque torque;
-        force.GetFz() = - m_stiffness * GetLinkPosition() - m_damping * GetLinkVelocity();
+    if (IsMotorized()) return;
 
-        SetLinkForceTorqueOnBody2InFrame2AtOrigin2(force, torque);
-    }
+    Force force;
+    Torque torque;
+        force.GetFz() = m_stiffness * GetLinkPosition() + m_damping * GetLinkVelocity();
 
-    void FrPrismaticLink::UpdateCache() {
-        m_restLength = m_frame2WRT1_reference.GetZ(NWU);
-        // FIXME : attention si la liaison n'est pas resolue !!! Ca ne fonctionne pas
-    }
+    SetLinkForceTorqueOnBody2InFrame2AtOrigin2(force, torque);
+  }
 
-    FrLinearActuator* FrPrismaticLink::Motorize(ACTUATOR_CONTROL control) {
+  void FrPrismaticLink::UpdateCache() {
+    m_restLength = m_frame2WRT1_reference.GetZ(NWU);
+    // FIXME : attention si la liaison n'est pas resolue !!! Ca ne fonctionne pas
+  }
 
-        m_actuator = std::make_shared<FrLinearActuator>(this, control);
-        GetSystem()->Add(m_actuator);
-        return dynamic_cast<FrLinearActuator*>(m_actuator.get());
+  FrLinearActuator *FrPrismaticLink::Motorize(const std::string &name, ACTUATOR_CONTROL control) {
 
-    }
+    m_actuator = std::make_shared<FrLinearActuator>(name, this, control);
+    GetSystem()->Add(m_actuator);
+    return dynamic_cast<FrLinearActuator *>(m_actuator.get());
 
-    void FrPrismaticLink::Clamp() {
+  }
 
-        if (IsMotorized()) GetSystem()->RemoveLink(m_actuator);
+  void FrPrismaticLink::Clamp(const std::string &name) {
 
-        // brake motorization instantiation
-        m_actuator = std::make_shared<FrLinearActuator>(this, POSITION);
-        m_actuator->Initialize();
-        GetSystem()->Add(m_actuator);
+    if (IsMotorized()) GetSystem()->Remove(m_actuator);
 
-        m_actuator->SetMotorFunction(FrConstantFunction(GetNode2PositionWRTNode1(NWU).GetZ()));
+    // brake motorization instantiation
+    m_actuator = std::make_shared<FrLinearActuator>(name, this, POSITION);
+    m_actuator->Initialize();
+    GetSystem()->Add(m_actuator);
 
-    }
+    m_actuator->SetMotorFunction(FrConstantFunction(GetNode2PositionWRTNode1(NWU).GetZ()));
 
-    std::shared_ptr<FrPrismaticLink>
-    make_prismatic_link(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2, FrOffshoreSystem *system) {
-        auto link = std::make_shared<FrPrismaticLink>(node1, node2, system);
-        system->AddLink(link);
+  }
 
+  std::shared_ptr<FrPrismaticLink>
+  make_prismatic_link(const std::string &name,
+                      FrOffshoreSystem *system,
+                      std::shared_ptr<FrNode> node1,
+                      std::shared_ptr<FrNode> node2) {
 
-        return link;
-    }
+    auto link = std::make_shared<FrPrismaticLink>(name, system, node1, node2);
+    system->Add(link);
+
+    return link;
+  }
 
 
 }  // end namespace frydom

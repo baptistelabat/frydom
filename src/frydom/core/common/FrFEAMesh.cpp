@@ -10,7 +10,9 @@
 //    GetChronoMesh()->SetupInitial();
 //}
 
-void frydom::FrFEAMesh::Initialize() {
-    // FIXME
-//    GetChronoMesh()->SetupInitial();
+namespace frydom {
+
+
 }
+
+

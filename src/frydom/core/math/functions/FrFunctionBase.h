@@ -248,8 +248,6 @@ namespace frydom {
         FrVarXFunction* Clone() const override;
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "VarXFunction"; }
-
     protected:
         void Eval(double x) const;
 
@@ -276,8 +274,6 @@ namespace frydom {
         double& operator()();
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "ConstantFunction"; }
-
     protected:
         void Eval(double x) const override;
 
@@ -299,8 +295,6 @@ namespace frydom {
         FrUnaryOpFunction(const FrUnaryOpFunction& other);
         FrUnaryOpFunction* Clone() const;
         std::string GetRepr() const override;
-
-        std::string GetTypeName() const override { return "UnaryOpFunction"; }
 
     protected:
         void Eval(double x) const override;
@@ -349,8 +343,6 @@ namespace frydom {
         FrAddFunction* Clone() const;
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "AddFunction"; }
-
     protected:
         void Eval(double x) const override;
 
@@ -363,8 +355,6 @@ namespace frydom {
         FrSubFunction(const FrSubFunction& other);
         FrSubFunction* Clone() const;
         std::string GetRepr() const override;
-
-        std::string GetTypeName() const override { return "SubFunction"; }
 
     protected:
         void Eval(double x) const override;
@@ -380,8 +370,6 @@ namespace frydom {
         FrMulFunction* Clone() const;
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "MulFunction"; }
-
     protected:
         void Eval(double x) const override;
 
@@ -396,8 +384,6 @@ namespace frydom {
         FrDivFunction* Clone() const;
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "divFunction"; }
-
     protected:
         void Eval(double x) const override;
 
@@ -411,8 +397,6 @@ namespace frydom {
         FrCompFunction(const FrCompFunction& other);
         FrCompFunction* Clone() const;
         std::string GetRepr() const override;
-
-        std::string GetTypeName() const override { return "CompFunction"; }
 
     protected:
         void Eval(double x) const override;

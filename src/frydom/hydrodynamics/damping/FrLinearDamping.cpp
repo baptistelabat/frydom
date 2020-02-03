@@ -15,101 +15,112 @@
 #include "frydom/core/common/FrFrame.h"
 #include "frydom/core/body/FrBody.h"
 #include "frydom/environment/FrEnvironment.h"
-
-
+#include "frydom/logging/FrTypeNames.h"
 
 namespace frydom {
 
-    FrLinearDamping::FrLinearDamping(FLUID_TYPE ft, bool relativeToFluid) : m_fluidType(ft), m_relativeToFluid(relativeToFluid) {
-        SetNull();
+  FrLinearDamping::FrLinearDamping(const std::string &name,
+                                   FrBody *body,
+                                   FLUID_TYPE ft,
+                                   bool relativeToFluid) :
+
+      FrForce(name, TypeToString(this), body),
+      m_fluidType(ft),
+      m_relativeToFluid(relativeToFluid) {
+    SetNull();
+  }
+
+  void FrLinearDamping::SetNull() {
+    m_dampingMatrix.SetNull();
+  }
+
+  void FrLinearDamping::SetDampingMatrix(const FrLinearDamping::DampingMatrix &dampingMatrix) {
+    m_dampingMatrix = dampingMatrix;
+  }
+
+  void FrLinearDamping::SetDiagonalDamping(double Du, double Dv, double Dw, double Dp, double Dq, double Dr) {
+    SetDiagonalTranslationDamping(Du, Dv, Dw);
+    SetDiagonalRotationDamping(Dp, Dq, Dr);
+  }
+
+  void FrLinearDamping::SetDiagonalTranslationDamping(double Du, double Dv, double Dw) {
+    m_dampingMatrix(0, 0) = Du;
+    m_dampingMatrix(1, 1) = Dv;
+    m_dampingMatrix(2, 2) = Dw;
+  }
+
+  void FrLinearDamping::SetDiagonalRotationDamping(double Dp, double Dq, double Dr) {
+    m_dampingMatrix(3, 3) = Dp;
+    m_dampingMatrix(4, 4) = Dq;
+    m_dampingMatrix(5, 5) = Dr;
+  }
+
+  void FrLinearDamping::SetDampingCoeff(unsigned int iRow, unsigned int iCol, double coeff) {
+    m_dampingMatrix(iRow, iCol) = coeff;
+  }
+
+  void FrLinearDamping::SetRelativeToFluid(bool isRelative) {
+    m_relativeToFluid = isRelative;
+  }
+
+  bool FrLinearDamping::GetRelativeToFluid() { return m_relativeToFluid; }
+
+  void FrLinearDamping::Compute(double time) {
+
+    auto body = GetBody();
+
+    // Body Velocity at COG in body coordinates
+    Velocity cogRelVel;
+    if (m_relativeToFluid) {
+      FrFrame cogFrame = body->GetFrameAtCOG(NWU);
+      cogRelVel = -body->GetSystem()->GetEnvironment()->GetRelativeVelocityInFrame(
+          cogFrame, body->GetCOGLinearVelocityInWorld(NWU), m_fluidType, NWU);
+
+    } else {
+      cogRelVel = body->GetCOGVelocityInBody(NWU);
     }
 
-    void FrLinearDamping::SetNull() {
-        m_dampingMatrix.SetNull();
-    }
+    AngularVelocity rotVel = body->GetAngularVelocityInBody(NWU);
 
-    void FrLinearDamping::SetDampingMatrix(const FrLinearDamping::DampingMatrix &dampingMatrix) {
-        m_dampingMatrix = dampingMatrix;
-    }
+    GeneralizedVelocity genRelVel(cogRelVel, rotVel);
 
-    void FrLinearDamping::SetDiagonalDamping(double Du, double Dv, double Dw, double Dp, double Dq, double Dr) {
-        SetDiagonalTranslationDamping(Du, Dv, Dw);
-        SetDiagonalRotationDamping(Dp, Dq, Dr);
-    }
+    GeneralizedForce genForce = -m_dampingMatrix * genRelVel;
 
-    void FrLinearDamping::SetDiagonalTranslationDamping(double Du, double Dv, double Dw) {
-        m_dampingMatrix(0,0) = Du;
-        m_dampingMatrix(1,1) = Dv;
-        m_dampingMatrix(2,2) = Dw;
-    }
+    SetForceTorqueInBodyAtCOG(genForce.GetForce(), genForce.GetTorque(), NWU);
 
-    void FrLinearDamping::SetDiagonalRotationDamping(double Dp, double Dq, double Dr) {
-        m_dampingMatrix(3,3) = Dp;
-        m_dampingMatrix(4,4) = Dq;
-        m_dampingMatrix(5,5) = Dr;
-    }
+  }
 
-    void FrLinearDamping::SetDampingCoeff(unsigned int iRow, unsigned int iCol, double coeff) {
-        m_dampingMatrix(iRow, iCol) = coeff;
-    }
+  void FrLinearDamping::Initialize() {
+    FrForce::Initialize();
+    Check();
+  }
 
-    void FrLinearDamping::SetRelativeToFluid(bool isRelative) {
-        m_relativeToFluid = isRelative;
-    }
-
-    bool FrLinearDamping::GetRelativeToFluid() {return m_relativeToFluid;}
-
-    void FrLinearDamping::Compute(double time) {
-
-        // Body Velocity at COG in body coordinates
-        Velocity cogRelVel;
-        if (m_relativeToFluid) {
-            FrFrame cogFrame = m_body->GetFrameAtCOG(NWU);
-            cogRelVel = -m_body->GetSystem()->GetEnvironment()->GetRelativeVelocityInFrame(
-                    cogFrame, m_body->GetCOGLinearVelocityInWorld(NWU), m_fluidType, NWU);
-
-        } else {
-            cogRelVel = m_body->GetCOGVelocityInBody(NWU);
+  void FrLinearDamping::Check() const {
+    // Here we check if every damping coefficient is positive
+    for (unsigned int iRow = 0; iRow < 6; iRow++) {
+      for (unsigned int iCol = 0; iCol < 6; iCol++) {
+        if (m_dampingMatrix(iRow, iCol) < 0.) { // FIXME : utiliser eigen pour le check !!!
+          throw FrException("Damping coefficients cannot be negative !");
         }
-
-        AngularVelocity rotVel = m_body->GetAngularVelocityInBody(NWU);
-
-        GeneralizedVelocity genRelVel(cogRelVel, rotVel);
-
-        GeneralizedForce genForce = - m_dampingMatrix * genRelVel;
-
-        SetForceTorqueInBodyAtCOG(genForce.GetForce(), genForce.GetTorque(), NWU);
-
+      }
     }
+  }
 
-    void FrLinearDamping::Initialize() {
-        FrForce::Initialize();
-        Check();
-    }
+  std::shared_ptr<FrLinearDamping>
+  make_linear_damping_force(const std::string &name,
+                            std::shared_ptr<FrBody> body,
+                            FLUID_TYPE ft,
+                            bool relativeToFluid) {
 
-    void FrLinearDamping::Check() const {
-        // Here we check if every damping coefficient is positive
-        for (unsigned int iRow=0; iRow<6; iRow++) {
-            for (unsigned int iCol=0; iCol<6; iCol++) {
-                if (m_dampingMatrix(iRow, iCol) < 0.) {
-                    throw FrException("Damping coefficients cannot be negative !");
-                }
-            }
-        }
-    }
+    // This function creates a linear damping force.
 
-    std::shared_ptr<FrLinearDamping>
-    make_linear_damping_force(std::shared_ptr<FrBody> body, FLUID_TYPE ft, bool relativeToFluid){
+    // Construction of the linear damping force object.
+    auto forceLinearDamping = std::make_shared<FrLinearDamping>(name, body.get(), ft, relativeToFluid);
 
-        // This function creates a linear damping force.
+    // Add the linear damping force object as an external force to the body.
+    body->AddExternalForce(forceLinearDamping);
 
-        // Construction of the linear damping force object.
-        auto forceLinearDamping = std::make_shared<FrLinearDamping>(ft, relativeToFluid);
-
-        // Add the linear damping force object as an external force to the body.
-        body->AddExternalForce(forceLinearDamping);
-
-        return forceLinearDamping;
-    }
+    return forceLinearDamping;
+  }
 
 }  // end namespace frydom

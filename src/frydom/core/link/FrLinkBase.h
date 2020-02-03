@@ -18,50 +18,55 @@
 #include <vector>
 
 #include "frydom/core/math/FrVector.h"
+#include "frydom/core/math/Torsor.h"
 #include "frydom/core/common/FrConvention.h"
 #include "frydom/core/common/FrFrame.h"
+#include "frydom/core/common/FrTreeNode.h"
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/asset/FrAssetOwner.h"
+#include "frydom/logging/FrLoggable.h"
 
 
 namespace chrono {
-    class ChLink;
+  class ChLink;
 }
 
 namespace frydom {
 
-    enum ACTUATOR_CONTROL {POSITION, VELOCITY, FORCE};
+  enum ACTUATOR_CONTROL {
+    POSITION,
+    VELOCITY,
+    FORCE
+  };
 
-    // Forward declarations
-    class FrNode;
-    class FrBody;
+  // Forward declarations
+  class  FrNode;
+
+  class FrBody;
 
 
-    /**
-     * \class FrLinkBase
-     * \brief Pure abstract class for every FRyDoM constraints (FrLink, FrConstraint_, FrActuator_).
-     */
-    class FrLinkBase : public FrObject, public FrAssetOwner {
+  /**
+   * \class FrLinkBase
+   * \brief Pure abstract class for every FRyDoM constraints (FrLink, FrConstraint_, FrActuator_).
+   */
+   // FIXME :: pass the FrLoggable from FrLinkBase to FrLink ( don't forget constraints and actuators)
+  class FrLinkBase : public FrObject, public FrAssetOwner {
 
-    protected:
+   protected:
 
-        FrOffshoreSystem* m_system;     ///< pointer to the system containing this physics item
+    std::shared_ptr<FrNode> m_node1;   ///< the node on body 1 of the link
+    std::shared_ptr<FrNode> m_node2;   ///< the node on body 2 of the link
 
-        std::shared_ptr<FrNode> m_node1;   ///< the node on body 1 of the link
-        std::shared_ptr<FrNode> m_node2;   ///< the node on body 2 of the link
+   public:
 
-    public:
-        FrLinkBase(const std::shared_ptr<FrNode>& node1, const std::shared_ptr<FrNode>& node2, FrOffshoreSystem* system);
+    FrLinkBase(const std::shared_ptr<FrNode> &node1,
+               const std::shared_ptr<FrNode> &node2);
 
-        /// Get the pointer to the system containing this linkbase item
-        /// \return Pointer to the system containing this linkbase item
-        FrOffshoreSystem* GetSystem();
+    /// Tells if all constraints of this link are currently turned on or off by the user.
+    virtual bool IsDisabled() const = 0;
 
-        /// Tells if all constraints of this link are currently turned on or off by the user.
-        virtual bool IsDisabled() const = 0;
-
-        /// User can use this to enable/disable all the constraint of the link as desired.
-        virtual void SetDisabled(bool disabled) = 0;
+    /// User can use this to enable/disable all the constraint of the link as desired.
+    virtual void SetDisabled(bool disabled) = 0;
 
 //        /// Tells if the link is broken, for excess of pulling/pushing.
 //        virtual bool IsBroken() const = 0;
@@ -69,43 +74,48 @@ namespace frydom {
 //        /// Set the 'broken' status vof this link.
 //        virtual void SetBroken(bool broken) = 0;
 
-        /// Tells if the link is currently active, in general,
-        /// that is tells if it must be included into the system solver or not.
-        /// This method cumulates the effect of various flags (so a link may
-        /// be not active either because disabled, or broken, or not valid)
-        virtual bool IsActive() const = 0;
+    /// Tells if the link is currently active, in general,
+    /// that is tells if it must be included into the system solver or not.
+    /// This method cumulates the effect of various flags (so a link may
+    /// be not active either because disabled, or broken, or not valid)
+    virtual bool IsActive() const = 0;
 
-        /// Return true if the link is included in the static analysis
-        bool IncludedInStaticAnalysis() const {return true;}
+    /// Return true if the link is included in the static analysis
+    bool IncludedInStaticAnalysis() const { return true; }
 
 
-        /// Returns the first node of the link
-        std::shared_ptr<FrNode> GetNode1();
-        const std::shared_ptr<FrNode> GetNode1() const;
+    /// Returns the first node of the link
+    std::shared_ptr<FrNode> GetNode1();
 
-        /// Returns the second node of the link
-        std::shared_ptr<FrNode> GetNode2();
-        const std::shared_ptr<FrNode> GetNode2() const;
+    const std::shared_ptr<FrNode> GetNode1() const;
 
-        /// Returns the first body of the link
-        FrBody* GetBody1();
+    /// Returns the second node of the link
+    std::shared_ptr<FrNode> GetNode2();
+
+    const std::shared_ptr<FrNode> GetNode2() const;
+
+    /// Returns the first body of the link
+    FrBody *GetBody1();
 //        const FrBody* GetBody1() const;
 
-        /// Returns the second body of the link
-        FrBody* GetBody2();
+    /// Returns the second body of the link
+    FrBody *GetBody2();
 //        const  FrBody* GetBody2() const;
 
-    protected:  // TODO : voir si on rend cela private
+   protected:  // TODO : voir si on rend cela private
 
 
-        friend void FrOffshoreSystem::AddLink(std::shared_ptr<FrLinkBase> link);
-        friend void FrOffshoreSystem::RemoveLink(std::shared_ptr<FrLinkBase> link);
-        virtual std::shared_ptr<chrono::ChLink> GetChronoLink() = 0;
+    virtual std::shared_ptr<chrono::ChLink> GetChronoLink() = 0;
 
-        std::shared_ptr<chrono::ChBody> GetChronoBody1();
-        std::shared_ptr<chrono::ChBody> GetChronoBody2();
-    };
+    std::shared_ptr<chrono::ChBody> GetChronoBody1();
 
+    std::shared_ptr<chrono::ChBody> GetChronoBody2();
+
+
+    std::shared_ptr<chrono::ChBody> c_chrono_body_1;
+    std::shared_ptr<chrono::ChBody> c_chrono_body_2;
+
+  };
 
 
 }  // end namespace frydom

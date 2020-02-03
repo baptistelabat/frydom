@@ -162,7 +162,7 @@ namespace frydom {
 
         virtual std::vector<double> GetWaveFrequencies(FREQUENCY_UNIT unit) const = 0;
 
-        virtual std::vector<double> GetWaveNumbers() const = 0;
+      virtual std::vector<double> GetWaveNumbers() const = 0;
 
         virtual std::vector<std::vector<double>> GetWaveAmplitudes() const = 0;
 
@@ -195,10 +195,6 @@ namespace frydom {
 
     public:
         explicit FrNullWaveField(FrFreeSurface* freeSurface);
-
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "NullWaveField"; }
 
         /// Get the wave elevation on the horizontal position (x,y)
         /// \param x x position

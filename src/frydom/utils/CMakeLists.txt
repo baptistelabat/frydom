@@ -3,7 +3,8 @@ message(STATUS "    ...utils")
 set(SRC_FILES
         FrIrrApp.cpp
         FrIrrCamera.cpp
-        ../environment/geographicServices/FrGeographicServices.cpp
+        FrFileSystem.cpp
+        FrConfig.cpp
 )
 
 set(FRYDOM_UTILS_SOURCES "")

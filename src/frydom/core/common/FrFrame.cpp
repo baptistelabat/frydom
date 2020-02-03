@@ -147,6 +147,22 @@ namespace frydom {
         m_chronoFrame >>= otherFrame.m_chronoFrame;  // TODO : verifier !!
     }
 
+  bool FrFrame::operator==(const FrFrame &otherFrame) const {
+      return GetPosition(NWU) == otherFrame.GetPosition(NWU) && GetQuaternion() == otherFrame.GetQuaternion();
+  }
+
+  bool FrFrame::operator!=(const FrFrame &otherFrame) const {
+    return !(*this==otherFrame);
+  }
+
+  bool FrFrame::IsApprox(const FrFrame &otherFrame, const double &prec) const {
+    return GetPosition(NWU).isApprox(otherFrame.GetPosition(NWU), prec) && GetQuaternion().IsApprox(otherFrame.GetQuaternion(), prec);
+  }
+
+  bool FrFrame::IsZero(const double &prec) const {
+    return GetPosition(NWU).isZero(prec) && GetRotation().GetQuaternion().IsZero(prec);
+  }
+
     FrFrame FrFrame::GetOtherFrameRelativeTransform_WRT_ThisFrame(const frydom::FrFrame &otherFrame) const {  // OK
         return this->GetInverse() * otherFrame;
     }

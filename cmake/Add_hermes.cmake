@@ -7,7 +7,7 @@ if (NOT hermes_FOUND)
 
     FetchContent_Declare(hermes
             GIT_REPOSITORY ${hermes_URL}
-            GIT_TAG master
+            GIT_TAG feature/FR_log_frydom_refactoring
             )
 
     FetchContent_GetProperties(hermes)

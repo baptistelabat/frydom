@@ -75,7 +75,7 @@ namespace frydom {
         m_table->AddData(name, coeffs);
     }
 
-    double FrWaveDriftPolarData::Eval(const std::string name, double x, double y) const {
+    double FrWaveDriftPolarData::Eval(const std::string &name, double x, double y) const {
         return m_table->Eval(name, x, y);
     }
 

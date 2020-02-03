@@ -18,46 +18,40 @@
 
 #include "MathUtils/Matrix66.h"
 #include "frydom/core/force/FrForce.h"
-#include "FrLinearExcitationForceBase.h"
+#include "FrLinearHDBForce.h"
 
 namespace frydom {
 
-    // Forward declaration
-    class FrHydroDB;
-    class FrBody;
-    class FrEquilibriumFrame;
+  // Forward declaration
+  class FrHydroDB;
 
-    /**
-     * \class FrLinearFroudeKrylovForce
-     * \brief Class for computing the linear Froude-Krylov loads.
-     */
-    class FrLinearFroudeKrylovForce : public FrLinearExcitationForceBase {
+  class FrBody;
 
-    public:
+  class FrEquilibriumFrame;
 
-        /// Constructor.
-        explicit FrLinearFroudeKrylovForce(std::shared_ptr<FrHydroDB> HDB) : FrLinearExcitationForceBase(HDB) {};
+  /**
+   * \class FrLinearFroudeKrylovForce
+   * \brief Class for computing the linear Froude-Krylov loads.
+   */
+  class FrLinearFroudeKrylovForce : public FrLinearHDBForce {
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "LinearFroudeKrylovForce"; }
+   public:
 
-        void Initialize() override;
+    /// Constructor.
+    FrLinearFroudeKrylovForce(const std::string &name,
+                              FrBody *body,
+                              const std::shared_ptr<FrHydroDB> &HDB);;
 
-        Eigen::MatrixXcd GetHDBData(unsigned int iangle) const override;
+    Eigen::MatrixXcd GetHDBData(unsigned int iangle) const override;
 
-        Eigen::VectorXcd GetHDBData(unsigned int iangle, unsigned int iforce) const override;
+    Eigen::VectorXcd GetHDBData(unsigned int iangle, unsigned int iforce) const override;
 
-    private:
+  };
 
-        /// Compute the linear Froude-Krylov force
-        /// \param time Current time of the simulation from beginning, in seconds
-        void Compute(double time) override;
-
-    };
-
-    std::shared_ptr<FrLinearFroudeKrylovForce>
-    make_linear_froude_krylov_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body);
+  std::shared_ptr<FrLinearFroudeKrylovForce>
+  make_linear_froude_krylov_force(const std::string &name,
+                                  std::shared_ptr<FrBody> body,
+                                  std::shared_ptr<FrHydroDB> HDB);
 
 
 }  // end namespace frydom

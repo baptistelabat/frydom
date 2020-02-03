@@ -22,6 +22,7 @@ from meshmagick.mesh import Mesh
 import frydom.HDB5tool.body_db as body_db
 import frydom.HDB5tool.wave_drift_db as wave_drift_db
 
+
 class HDB5reader():
     """
         Class for reading HDB5 file.
@@ -50,7 +51,7 @@ class HDB5reader():
             self.read_discretization(reader, pyHDB)
 
             # Bodies
-            if(pyHDB.version == 1.0):
+            if (pyHDB.version == 1.0):
                 HDB5reader_v1(reader, pyHDB)
             else:
                 HDB5reader_v2(reader, pyHDB)
@@ -70,7 +71,7 @@ class HDB5reader():
         """
 
         # Date.
-        self.Creation_data_hdf5file = np.array(reader['CreationDate']) # Date of creation of the hdf5file.
+        self.Creation_data_hdf5file = np.array(reader['CreationDate'])  # Date of creation of the hdf5file.
 
         # Gravity acceleration.
         pyHDB.grav = np.array(reader['GravityAcc'])
@@ -120,9 +121,9 @@ class HDB5reader():
         wave_direction_path = discretization_path + "/WaveDirections"
 
         pyHDB.nb_wave_dir = np.array(reader[wave_direction_path + "/NbWaveDirections"])
-        pyHDB.min_wave_dir = np.array(reader[wave_direction_path + "/MinAngle"]) # Deg.
-        pyHDB.max_wave_dir = np.array(reader[wave_direction_path + "/MaxAngle"]) # Deg.
-        pyHDB.set_wave_directions() # Definition of beta in rad.
+        pyHDB.min_wave_dir = np.array(reader[wave_direction_path + "/MinAngle"])  # Deg.
+        pyHDB.max_wave_dir = np.array(reader[wave_direction_path + "/MaxAngle"])  # Deg.
+        pyHDB.set_wave_directions()  # Definition of beta in rad.
 
         # Time sample.
 
@@ -178,13 +179,13 @@ class HDB5reader():
         try:
             body.Motion_mask = np.array(reader[mask_path + "/MotionMask"])
         except:
-            body.Motion_mask = np.ones(6, dtype = np.int)
+            body.Motion_mask = np.ones(6, dtype=np.int)
 
         # Force mask.
         try:
             body.Force_mask = np.array(reader[mask_path + "/ForceMask"])
         except:
-            body.Force_mask = np.ones(6, dtype = np.int)
+            body.Force_mask = np.ones(6, dtype=np.int)
 
     def read_hydrostatic(self, reader, body, hydrostatic_path):
 
@@ -225,7 +226,7 @@ class HDB5reader():
             pyHDB._wave_drift = wave_drift_db.WaveDriftDB()
 
             # sym_x.
-            if(int(np.array(reader[wave_drift_path + "/sym_x"])) == 0):
+            if (int(np.array(reader[wave_drift_path + "/sym_x"])) == 0):
                 pyHDB._wave_drift.sym_x = False
             else:
                 pyHDB._wave_drift.sym_x = True
@@ -251,21 +252,27 @@ class HDB5reader():
                         heading_path = wave_drift_path + mode + "/heading_%u" % ibeta
 
                         # Check wave direction.
-                        assert pyHDB.wave_dir[ibeta] == np.array(reader[heading_path + "/heading"])
+                        assert(abs(pyHDB.wave_dir[ibeta] - np.array(reader[heading_path + "/heading"])) < pow(10,-5))
 
                         # Wave drift coefficients.
-                        if(mode == "/surge"):
-                            pyHDB._wave_drift.add_cx(pyHDB._wave_drift.discrete_frequency, list(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
-                        elif(mode == "/sway"):
-                            pyHDB._wave_drift.add_cy(pyHDB._wave_drift.discrete_frequency, list(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
-                        elif(mode == "/heave"):
-                            pyHDB._wave_drift.add_cz(pyHDB._wave_drift.discrete_frequency, list(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
-                        elif(mode == "/roll"):
-                            pyHDB._wave_drift.add_cr(pyHDB._wave_drift.discrete_frequency, list(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
-                        elif(mode == "/pitch"):
-                            pyHDB._wave_drift.add_cm(pyHDB._wave_drift.discrete_frequency, list(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
-                        else: # Yaw.
-                            pyHDB._wave_drift.add_cn(pyHDB._wave_drift.discrete_frequency, list(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
+                        if (mode == "/surge"):
+                            pyHDB._wave_drift.add_cx(pyHDB._wave_drift.discrete_frequency,
+                                                     list(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
+                        elif (mode == "/sway"):
+                            pyHDB._wave_drift.add_cy(pyHDB._wave_drift.discrete_frequency,
+                                                     list(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
+                        elif (mode == "/heave"):
+                            pyHDB._wave_drift.add_cz(pyHDB._wave_drift.discrete_frequency,
+                                                     list(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
+                        elif (mode == "/roll"):
+                            pyHDB._wave_drift.add_cr(pyHDB._wave_drift.discrete_frequency,
+                                                     list(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
+                        elif (mode == "/pitch"):
+                            pyHDB._wave_drift.add_cm(pyHDB._wave_drift.discrete_frequency,
+                                                     list(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
+                        else:  # Yaw.
+                            pyHDB._wave_drift.add_cn(pyHDB._wave_drift.discrete_frequency,
+                                                     list(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
 
                 except:
                     pass
@@ -289,6 +296,7 @@ class HDB5reader():
             pyHDB.version = np.array(reader['Version'])
         except:
             pyHDB.version = 1.0
+
 
 class HDB5reader_v2(HDB5reader):
     """
@@ -357,7 +365,7 @@ class HDB5reader_v2(HDB5reader):
             wave_dir_path = fk_path + "/Angle_%u" % idir
 
             # Check of the wave direction.
-            assert pyHDB.wave_dir[idir] == np.radians(np.array(reader[wave_dir_path + "/Angle"]))
+            assert(abs(pyHDB.wave_dir[idir] - np.radians(np.array(reader[wave_dir_path + "/Angle"]))) < pow(10,-5))
 
             # Real parts.
             body.Froude_Krylov[:, :, idir].real = np.array(reader[wave_dir_path + "/RealCoeffs"])
@@ -373,7 +381,7 @@ class HDB5reader_v2(HDB5reader):
             wave_dir_path = diffraction_path + "/Angle_%u" % idir
 
             # Check of the wave direction.
-            assert pyHDB.wave_dir[idir] == np.radians(np.array(reader[wave_dir_path + "/Angle"]))
+            assert(abs(pyHDB.wave_dir[idir] - np.radians(np.array(reader[wave_dir_path + "/Angle"]))) < pow(10, -5))
 
             # Real parts.
             body.Diffraction[:, :, idir].real = np.array(reader[wave_dir_path + "/RealCoeffs"])
@@ -412,16 +420,17 @@ class HDB5reader_v2(HDB5reader):
             irf_ku_path = radiation_body_motion_path + "/ImpulseResponseFunctionKU"
 
             # Infinite added mass.
-            body.Inf_Added_mass[:, 6 * j:6 * (j + 1)] = np.array(reader[radiation_body_motion_path + "/InfiniteAddedMass"])
+            body.Inf_Added_mass[:, 6 * j:6 * (j + 1)] = np.array(
+                reader[radiation_body_motion_path + "/InfiniteAddedMass"])
 
             # Radiation mask.
             try:
-                body.Radiation_mask[:, 6 * j:6 * (j + 1)] = np.array(reader[radiation_body_motion_path + "/RadiationMask"])
+                body.Radiation_mask[:, 6 * j:6 * (j + 1)] = np.array(
+                    reader[radiation_body_motion_path + "/RadiationMask"])
             except:
                 pass
 
             for imotion in range(0, 6):
-
                 # Added mass.
                 body.Added_mass[:, 6 * j + imotion, :] = np.array(reader[added_mass_path + "/DOF_%u" % imotion])
 
@@ -480,7 +489,7 @@ class HDB5reader_v2(HDB5reader):
                 wave_dir_path = RAO_path + "/Angle_%u" % idir
 
                 # Check of the wave direction.
-                assert pyHDB.wave_dir[idir] == np.radians(np.array(reader[wave_dir_path + "/Angle"]))
+                assert(abs(pyHDB.wave_dir[idir] - np.radians(np.array(reader[wave_dir_path + "/Angle"])) < pow(10,-5)))
 
                 # Amplitude.
                 Abs_RAO = np.array(reader[wave_dir_path + "/Amplitude"])
@@ -558,6 +567,7 @@ class HDB5reader_v2(HDB5reader):
             # Add body to pyHDB.
             pyHDB.append(body)
 
+
 class HDB5reader_v1(HDB5reader):
     """
         Class for reading HDB5 file of version 1.
@@ -594,7 +604,7 @@ class HDB5reader_v1(HDB5reader):
 
         j = 0
         for iforce in range(0, 6):
-            if (ForceOrMotion == 0): # Force.
+            if (ForceOrMotion == 0):  # Force.
                 if (body.Motion_mask[iforce] == 1):
                     mode_path = body_modes_path + "/ForceModes/Mode_%u" % j
                     j = j + 1
@@ -604,10 +614,10 @@ class HDB5reader_v1(HDB5reader):
                     j = j + 1
 
             if (iforce >= 3):
-                if (ForceOrMotion == 0): # Force.
-                    if(body.Motion_mask[iforce] == 1):
+                if (ForceOrMotion == 0):  # Force.
+                    if (body.Motion_mask[iforce] == 1):
                         body.point[iforce - 3, :] = np.array(reader[mode_path + "/Point"])
-                else: # Motion.
+                else:  # Motion.
                     if (body.Force_mask[iforce] == 1):
                         body.point[iforce - 3, :] = np.array(reader[mode_path + "/Point"])
 
@@ -635,7 +645,7 @@ class HDB5reader_v1(HDB5reader):
             wave_dir_path = fk_path + "/Angle_%u" % idir
 
             # Check of the wave direction.
-            assert pyHDB.wave_dir[idir] == np.radians(np.array(reader[wave_dir_path + "/Angle"]))
+            assert(abs(pyHDB.wave_dir[idir] - np.radians(np.array(reader[wave_dir_path + "/Angle"]))) < pow(10,-5))
 
             # Real parts.
             data = np.array(reader[wave_dir_path + "/RealCoeffs"])
@@ -650,7 +660,7 @@ class HDB5reader_v1(HDB5reader):
             irow = 0
             for iforce in range(0, 6):
                 if (body.Force_mask[iforce] == 1):
-                    body.Froude_Krylov[iforce, :, idir].imag  = data[irow, :]
+                    body.Froude_Krylov[iforce, :, idir].imag = data[irow, :]
                     irow = irow + 1
 
         # Diffraction loads.
@@ -661,7 +671,7 @@ class HDB5reader_v1(HDB5reader):
             wave_dir_path = diffraction_path + "/Angle_%u" % idir
 
             # Check of the wave direction.
-            assert pyHDB.wave_dir[idir] == np.radians(np.array(reader[wave_dir_path + "/Angle"]))
+            assert(abs(pyHDB.wave_dir[idir] - np.radians(np.array(reader[wave_dir_path + "/Angle"]))) < pow(10,-5))
 
             # Real parts.
             data = np.array(reader[wave_dir_path + "/RealCoeffs"])
@@ -715,10 +725,10 @@ class HDB5reader_v1(HDB5reader):
             data = np.array(reader[radiation_body_motion_path + "/InfiniteAddedMass"])
             irow = 0
             for iforce in range(0, 6):
-                if (body.Force_mask[iforce] == 1): # Force activated.
+                if (body.Force_mask[iforce] == 1):  # Force activated.
                     icolumn = 0
-                    for imotion in range(0,6):
-                        if (body_j.Motion_mask[imotion]): # Dof of body_j activated.
+                    for imotion in range(0, 6):
+                        if (body_j.Motion_mask[imotion]):  # Dof of body_j activated.
                             body.Inf_Added_mass[iforce, 6 * body_j.i_body + imotion] = data[irow, icolumn]
                             icolumn = icolumn + 1
                     irow = irow + 1
@@ -726,7 +736,7 @@ class HDB5reader_v1(HDB5reader):
             # Added mass.
             icolumn = 0
             for imotion in range(0, 6):
-                if (body_j.Motion_mask[imotion]): # Dof of body_j activated.
+                if (body_j.Motion_mask[imotion]):  # Dof of body_j activated.
                     data = np.array(reader[added_mass_path + "/DOF_%u" % icolumn])
                     irow = 0
                     for iforce in range(0, 6):
@@ -785,7 +795,7 @@ class HDB5reader_v1(HDB5reader):
             pyHDB object for storing the hydrodynamic database.
         """
 
-        for ibody in xrange(pyHDB.nb_bodies):
+        for ibody in range(pyHDB.nb_bodies):
             body_path = '/Bodies/Body_%u' % ibody
 
             # Index of the body.
@@ -823,7 +833,6 @@ class HDB5reader_v1(HDB5reader):
             pyHDB.append(body)
 
         for body in pyHDB.bodies:
-
             # Diffraction and Froude-Krylov loads.
             self.read_excitation(reader, pyHDB, body, body_path + "/Excitation")
 

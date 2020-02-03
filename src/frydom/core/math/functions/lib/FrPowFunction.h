@@ -23,8 +23,6 @@ namespace frydom {
 
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "PowFunction"; }
-
     protected:
         void Eval(double x) const;
 

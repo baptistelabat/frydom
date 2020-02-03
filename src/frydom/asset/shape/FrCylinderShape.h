@@ -17,26 +17,34 @@
 #include "frydom/asset/FrAssetOwner.h"
 
 namespace chrono {
-    class ChAsset;
-    class ChCylinderShape;
+  class ChAsset;
+
+  class ChCylinderShape;
 }  // end namespace chrono
 
 
 namespace frydom {
 
-    class FrCylinderShape {
-      public:
-        FrCylinderShape(double radius, double height);
-        double radius() const;
-        double height() const;
+  class FrCylinderShape {
 
-      protected:
-        std::shared_ptr<chrono::ChAsset> GetChronoAsset();
+   public:
 
-      private:
-          friend void FrAssetOwner::AddCylinderShape(double, double);
-          std::shared_ptr<chrono::ChCylinderShape> m_cylinder;
-    };
+    FrCylinderShape(double radius, double height);
+
+    double radius() const;
+
+    double height() const;
+
+   protected:
+    std::shared_ptr<chrono::ChAsset> GetChronoAsset();
+
+   private:
+
+    friend void FrAssetOwner::AddCylinderShape(double, double);
+
+    std::shared_ptr<chrono::ChCylinderShape> m_cylinder;
+
+  };
 
 }  // end namespace frydom
 

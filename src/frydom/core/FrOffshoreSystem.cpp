@@ -18,74 +18,82 @@
 #include "chrono/solver/ChIterativeSolver.h"
 
 #include "frydom/core/link/links_lib/FrLink.h"
+#include "frydom/core/link/links_lib/actuators/FrActuator.h"
+#include "frydom/core/link/constraint/FrConstraint.h"
 #include "frydom/core/body/FrBody.h"
 #include "frydom/core/common/FrFEAMesh.h"
 #include "frydom/cable/FrDynamicCable.h"
+#include "frydom/cable/FrCatenaryLine.h"
 #include "frydom/core/force/FrForce.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/utils/FrIrrApp.h"
 #include "frydom/core/statics/FrStaticAnalysis.h"
+#include "frydom/hydrodynamics/FrEquilibriumFrame.h"
 
 #include "frydom/core/math/functions/ramp/FrCosRampFunction.h"
-#include "frydom/utils/FrSerializerFactory.h"
 
+#include "frydom/logging/FrLogManager.h"
+#include "frydom/logging/FrPathManager.h"
+
+#include "frydom/logging/FrTypeNames.h"
+
+#include "frydom/logging/FrEventLogger.h"
+#include "frydom/logging/FrSerializerFactory.h"
 
 namespace frydom {
 
-    namespace internal {
 
-        FrSystemBaseSMC::FrSystemBaseSMC(frydom::FrOffshoreSystem *offshoreSystem) :
-                chrono::ChSystemSMC(), m_offshoreSystem_(offshoreSystem) {}
+  namespace internal {
 
-        void FrSystemBaseSMC::Update(bool update_assets) {
+    FrSystemBaseSMC::FrSystemBaseSMC(frydom::FrOffshoreSystem *offshoreSystem) :
+        chrono::ChSystemSMC(),
+        m_offshoreSystem(offshoreSystem) {}
 
-            CH_PROFILE("Update");
+    void FrSystemBaseSMC::Update(bool update_assets) {
 
-            timer_update.start();  // Timer for profiling
+      // Note : there is no ChAssembly::Update() as it is better expanded here...
 
-            // Pre updates that are not about multibody dynamics
-            m_offshoreSystem_->PreUpdate();
+      CH_PROFILE("Update");
 
-            // Executes the "forUpdate" in all controls of controlslist
-            ExecuteControlsForUpdate();
+      timer_update.start();  // Timer for profiling
 
-            // Physics item that have to be updated before all
-            m_offshoreSystem_->PrePhysicsUpdate(ChTime, update_assets);
+      // Pre updates that are not about multibody dynamics
+      m_offshoreSystem->PreUpdate();
 
-            // Bodies updates  // FIXME : appeler les updates directement des objets frydom !
-            for (auto &body : bodylist) {
-                body->Update(ChTime, update_assets);
-                body->Update(ChTime, update_assets);
-            }
+      // Executes the "forUpdate" in all controls of controlslist
+      ExecuteControlsForUpdate();
 
-            // Physics items that have to be updated between bodies and links
-            m_offshoreSystem_->MidPhysicsUpdate(ChTime, update_assets);
+      // Physics item that have to be updated before all
+      m_offshoreSystem->PrePhysicsUpdate(ChTime, update_assets);
 
-            // Links updates  // FIXME : appeler les updates directement des objets frydom !
-            for (auto &link : linklist) {
-                link->Update(ChTime, update_assets);
-            }
+      // Bodies updates  // FIXME : appeler les updates directement des objets frydom !
+      for (auto &body : bodylist) {
+        body->Update(ChTime, update_assets);
+//            body->Update(ChTime, update_assets);  // FIXME : Appel redondant
+      }
 
-            for (auto &mesh : meshlist) {
-                mesh->Update(ChTime, update_assets);
-            }
+      // Links updates  // FIXME : appeler les updates directement des objets frydom !
+      for (auto &link : linklist) {
+        link->Update(ChTime, update_assets);
+      }
 
-            // Physics items that have to be updated after all
-            m_offshoreSystem_->PostPhysicsUpdate(ChTime, update_assets);
+      for (auto &mesh : meshlist) {
+        mesh->Update(ChTime, update_assets);
+      }
 
-            // Update all contacts, if any
-            contact_container->Update(ChTime, update_assets);
+      // Update all contacts, if any
+      contact_container->Update(ChTime, update_assets);
 
-            // Post updates that are not about multibody dynamics
-            m_offshoreSystem_->PostUpdate();
+      // Post updates that are not about multibody dynamics
+      m_offshoreSystem->PostUpdate();
 
-            timer_update.stop();
+      timer_update.stop();
 
-        }
+    }
 
-        void FrSystemBaseSMC::CustomEndOfStep() {
-            m_offshoreSystem_->StepFinalize();
-        }
+//    void FrSystemBaseSMC::CustomEndOfStep() {
+//      m_offshoreSystem->StepFinalize();
+//    }
 
 //        // -----------------------------------------------------------------------------
 //        // **** PERFORM THE STATIC ANALYSIS, FINDING THE STATIC
@@ -125,1040 +133,1316 @@ namespace frydom {
 //            return reach_tolerance;
 //        }
 
-        bool FrSystemBaseSMC::DoStaticLinear() {
-            // Set no speed and accel. on bodies, meshes and other physics items
-            for (auto &body : bodylist) {
-                body->SetNoSpeedNoAcceleration();
-            }
-            for (auto& mesh : meshlist) {
-                mesh->SetNoSpeedNoAcceleration();
-            }
-            for (auto &ip : otherphysicslist) {
-                ip->SetNoSpeedNoAcceleration();
-            }
-        }
 
-    }  // end namespace frydom::internal
 
-    /// Default constructor
-    /// \param systemType contact method system (SMOOTH_CONTACT/NONSMOOTH_CONTACT)
-    /// \param timeStepper time stepper type
-    /// \param solver solver type
-    FrOffshoreSystem::FrOffshoreSystem(SYSTEM_TYPE systemType, TIME_STEPPER timeStepper, SOLVER solver) {
 
-        SetLogged(true);
+    bool FrSystemBaseSMC::DoStaticLinear() {
+      // Set no speed and accel. on bodies, meshes and other physics items
+      for (auto &body : bodylist) {
+        body->SetNoSpeedNoAcceleration();
+      }
+      for (auto &mesh : meshlist) {
+        mesh->SetNoSpeedNoAcceleration();
+      }
+      for (auto &ip : otherphysicslist) {
+        ip->SetNoSpeedNoAcceleration();
+      }
+      return true;
+    }
 
-        // Creating the chrono System backend. It drives the way contact are modelled
-        SetSystemType(systemType, false);
+//    int FrSystemBaseSMC::DoStepDynamics(double m_step) {
+//      chrono::ChSystem::DoStepDynamics(m_step);
+//      m_offshoreSystem->StepFinalize();
+//    }
 
-        // Setting the time stepper
-        SetTimeStepper(timeStepper, false);
+    bool FrSystemBaseSMC::Integrate_Y() {
+      auto output = chrono::ChSystem::Integrate_Y();
+      m_offshoreSystem->StepFinalize();
+      return output;
+    }
 
-        // Setting the constraints solver
-        SetSolver(solver, false);
+  }  // end namespace frydom::internal
 
-        // Check compatibility between system contact model, time stepper and constraint solver
-        CheckCompatibility();
 
-        // Creating a fixed world body to be able to attach anything to it (anchors...) // TODO: mettre dans une methode privee
-        CreateWorldBody();
 
-        // Creating the environment
-        m_environment = std::make_unique<FrEnvironment>(this); // FIXME: voir bug dans FrEnvironment pour le reglage du systeme
+  /// Default constructor
+  /// \param systemType contact method system (SMOOTH_CONTACT/NONSMOOTH_CONTACT)
+  /// \param timeStepper time stepper type
+  /// \param solver solver type
+  FrOffshoreSystem::FrOffshoreSystem(const std::string &name,
+                                     SYSTEM_TYPE systemType,
+                                     TIME_STEPPER timeStepper,
+                                     SOLVER solver) :
+      FrLoggable(name, TypeToString(this), nullptr),
+      m_monitor_real_time(false),
+      m_config_file() {
 
-        // Creating the log manager service
-        m_pathManager = std::make_shared<FrPathManager>();
-        
-        // Create the static analysis 
-        m_statics = std::make_unique<FrStaticAnalysis>(this);
+    // Creating the chrono System backend. It drives the way contact are modelled
+    SetSystemType(systemType, false);
 
-//        m_message = std::make_unique<hermes::Message>();
+    // Creating the log manager service
+    m_LogManager = std::make_unique<FrLogManager>(this);
 
-    }
+    // Setting the time stepper
+    SetTimeStepper(timeStepper, false);
+
+    // Setting the constraints solver
+    SetSolver(solver, false);
+
+
+    // Check compatibility between system contact model, time stepper and constraint solver
+    CheckCompatibility();
+
+    // Creating the environment
+    m_environment = std::make_unique<FrEnvironment>(this);
 
-    FrOffshoreSystem::~FrOffshoreSystem() = default;
+    // Creating the path manager service
+    m_pathManager = std::make_unique<FrPathManager>();
+    m_pathManager->RegisterTreeNode(this);
 
+//    // Creating the log manager service
+//    m_LogManager = std::make_unique<FrLogManager>(this);
 
-    void FrOffshoreSystem::Add(std::shared_ptr<FrObject> newItem) {
-        assert(std::dynamic_pointer_cast<FrBody>(newItem) ||
-               std::dynamic_pointer_cast<FrLinkBase>(newItem) ||
-               std::dynamic_pointer_cast<FrPhysicsItem>(newItem));
+    // Creating the static analysis
+    m_statics = std::make_unique<FrStaticAnalysis>(this);
 
-        if (auto item = std::dynamic_pointer_cast<FrBody>(newItem)) {
-            AddBody(item);
-            return;
-        }
+    // Creating a fixed world body to be able to attach anything to it (anchors...)
+    CreateWorldBody();
+  }
 
-        if (auto item = std::dynamic_pointer_cast<FrLinkBase>(newItem)) {
-            AddLink(item);
-            return;
-        }
+  FrOffshoreSystem::~FrOffshoreSystem() = default;
 
-        if (auto item = std::dynamic_pointer_cast<FrPrePhysicsItem>(newItem)) {
-            AddPhysicsItem(item);
-            return;
-        }
 
-        if (auto item = std::dynamic_pointer_cast<FrMidPhysicsItem>(newItem)) {
-            AddPhysicsItem(item);
-            return;
-        }
+//  void FrOffshoreSystem::Add(std::shared_ptr<FrObject> newItem) {
+//    assert(std::dynamic_pointer_cast<FrBody>(newItem) ||
+//           std::dynamic_pointer_cast<FrLinkBase>(newItem) ||
+//           std::dynamic_pointer_cast<FrPhysicsItem>(newItem));
+//
+//    if (auto item = std::dynamic_pointer_cast<FrBody>(newItem)) {
+//      AddBody(item);
+//      return;
+//    }
+//
+//    if (auto item = std::dynamic_pointer_cast<FrLinkBase>(newItem)) {
+//      AddLink(item);
+//      return;
+//    }
+//
+//    if (auto item = std::dynamic_pointer_cast<FrPrePhysicsItem>(newItem)) {
+//      AddPhysicsItem(item);
+//      return;
+//    }
+//
+//  }
+  const FrConfig &FrOffshoreSystem::config_file() {
+    return m_config_file;
+  }
 
-        if (auto item = std::dynamic_pointer_cast<FrPostPhysicsItem>(newItem)) {
-            AddPhysicsItem(item);
-            return;
-        }
+// ***** Body *****
 
+  void FrOffshoreSystem::AddBody(std::shared_ptr<FrBody> body, std::shared_ptr<internal::FrBodyBase> chrono_body) {
+
+    // TODO : voir si on set pas d'autorite le mode de contact a celui du systeme plutot que de faire un if...
+    if (!CheckBodyContactMethod(body)) {
+      body->SetContactMethod(m_systemType);
     }
 
+    m_chronoSystem->AddBody(chrono_body);  // Authorized because this method is a friend of FrBody
+    m_bodyList.push_back(body);
 
-    // ***** Body *****
+    event_logger::info(GetTypeName(), GetName(),
+                       "Body {} has been ADDED to the system", body->GetName());
+  }
 
-    void FrOffshoreSystem::AddBody(std::shared_ptr<FrBody> body) {
+  FrOffshoreSystem::BodyContainer &FrOffshoreSystem::GetBodyList() {
+    return m_bodyList;
+  }
 
-        if (!CheckBodyContactMethod(body)) { // TODO : voir si on set pas d'autorite le mode de contact a celui du systeme plutot que de faire un if...
-            body->SetContactMethod(m_systemType);
-        }
+  void FrOffshoreSystem::RemoveBody(std::shared_ptr<FrBody> body, std::shared_ptr<internal::FrBodyBase> chrono_body) {
 
-        m_chronoSystem->AddBody(body->GetChronoBody());  // Authorized because this method is a friend of FrBody
-        m_bodyList.push_back(body);
+    m_chronoSystem->RemoveBody(chrono_body);
 
-        body->m_system = this;
+    auto it = std::find(body_begin(), body_end(), body);
+    assert(it != body_end());
+    m_bodyList.erase(it);
 
-    }
+    body->RemoveAllForces();
+    body->RemoveAllNodes();
 
-    FrOffshoreSystem::BodyContainer FrOffshoreSystem::GetBodyList() {
-        return m_bodyList;
-    }
+    event_logger::info(GetTypeName(), GetName(), "Body {} has been REMOVED from the system", body->GetName());
 
-    void FrOffshoreSystem::RemoveBody(std::shared_ptr<FrBody> body) {
+    // FIXME : we should launch removal of FrNode and FrForce objects attached to this body from the logManager...
 
-        m_chronoSystem->RemoveBody(body->GetChronoBody());
+  }
 
-        auto it = std::find(body_begin(),body_end(),body);
-        assert(it != body_end());
-        m_bodyList.erase(it);
-        body->m_system = nullptr;
+  void FrOffshoreSystem::RemoveAllBodies() {
 
-    }
+    for (auto &body: m_bodyList)
+      Remove(body);
 
-    void FrOffshoreSystem::RemoveAllBodies() {
+    event_logger::info(GetTypeName(), GetName(), "Every bodies have been removed from the system");
 
-        for (auto& body: m_bodyList)
-            RemoveBody(body);
+  }
 
-    }
+
+// ***** Link *****
+
+  void FrOffshoreSystem::AddLink(std::shared_ptr<FrLink> link, std::shared_ptr<chrono::ChLink> chrono_link) {
+    m_chronoSystem->AddLink(chrono_link);
+    m_linkList.push_back(link);
+    event_logger::info(GetTypeName(), GetName(), "Link {} has been ADDED to the system", link->GetName());
+  }
 
+  void FrOffshoreSystem::RemoveLink(std::shared_ptr<FrLink> link, std::shared_ptr<chrono::ChLink> chrono_link) {
 
-    // ***** Link *****
+    m_chronoSystem->RemoveLink(chrono_link);
 
-    void FrOffshoreSystem::AddLink(std::shared_ptr<FrLinkBase> link) {
-        m_chronoSystem->AddLink(link->GetChronoLink());
-        m_linkList.push_back(link);
+    auto it = std::find(link_begin(), link_end(), link);
+    assert(it != link_end());
+    if (it == link_end()) {
+      event_logger::error(GetTypeName(), GetName(),
+                          "Fail to remove link {} as it is not registered", link->GetName());
+      return;
     }
 
-    void FrOffshoreSystem::RemoveLink(std::shared_ptr<FrLinkBase> link) {
+    m_linkList.erase(it);
+    event_logger::info(GetTypeName(), GetName(), "Link {} has been REMOVED from the system", link->GetName());
+  }
 
-        m_chronoSystem->RemoveLink(link->GetChronoLink());
+  void FrOffshoreSystem::RemoveAllLinks() {
 
-        auto it = std::find(link_begin(),link_end(),link);
-        assert(it != link_end());
-        m_linkList.erase(it);
-        link->m_system = nullptr;
+    for (auto &link: m_linkList)
+      Remove(link);
+  }
 
-    }
+
+// ***** Constraint *****
+
+  void FrOffshoreSystem::AddConstraint(std::shared_ptr<FrConstraint> constraint,
+                                       std::shared_ptr<chrono::ChLink> chrono_link) {
+    m_chronoSystem->AddLink(chrono_link);
+    m_constraintList.push_back(constraint);
+    event_logger::info(GetTypeName(), GetName(), "Constraint {} has been ADDED to the system", constraint->GetName());
+  }
 
-    void FrOffshoreSystem::RemoveAllLinks() {
+  void FrOffshoreSystem::RemoveConstraint(std::shared_ptr<FrConstraint> constraint,
+                                          std::shared_ptr<chrono::ChLink> chrono_link) {
 
-        for (auto& link: m_linkList)
-            RemoveLink(link);
+    m_chronoSystem->RemoveLink(chrono_link);
 
+    auto it = std::find(constraint_begin(), constraint_end(), constraint);
+    assert(it != constraint_end());
+    if (it == constraint_end()) {
+      event_logger::error(GetTypeName(), GetName(),
+                          "Fail to remove constraint {} as it is not registered", constraint->GetName());
+      return;
     }
 
+    m_constraintList.erase(it);
+    event_logger::info(GetTypeName(), GetName(), "Constraint {} has been REMOVED from the system",
+                       constraint->GetName());
+  }
 
-    // ***** Physics Item *****
+  void FrOffshoreSystem::RemoveAllConstraints() {
 
-    void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem> otherPhysics) {
-        m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
-        otherPhysics->m_system = this;
-        m_PrePhysicsList.push_back(otherPhysics);
-    }
+    for (auto &constraint: m_constraintList)
+      Remove(constraint);
+  }
 
-    FrOffshoreSystem::PrePhysicsContainer FrOffshoreSystem::GetPrePhysicsItemList() {
-        return m_PrePhysicsList;
-    }
 
-    void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem> otherPhysics) {
-        m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
-        otherPhysics->m_system = this;
-        m_MidPhysicsList.push_back(otherPhysics);
-    }
+// ***** Actuator *****
 
-    FrOffshoreSystem::MidPhysicsContainer FrOffshoreSystem::GetMidPhysicsItemList() {
-        return m_MidPhysicsList;
-    }
+  void
+  FrOffshoreSystem::AddActuator(std::shared_ptr<FrActuator> actuator, std::shared_ptr<chrono::ChLink> chrono_link) {
+    m_chronoSystem->AddLink(chrono_link);
+    m_actuatorList.push_back(actuator);
+    event_logger::info(GetTypeName(), GetName(), "Actuator {} has been ADDED to the system", actuator->GetName());
+  }
 
-    void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem> otherPhysics) {
-        m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
-        otherPhysics->m_system = this;
-        m_PostPhysicsList.push_back(otherPhysics);
-    }
+  void
+  FrOffshoreSystem::RemoveActuator(std::shared_ptr<FrActuator> actuator, std::shared_ptr<chrono::ChLink> chrono_link) {
+
+    m_chronoSystem->RemoveLink(chrono_link);
 
-    FrOffshoreSystem::PostPhysicsContainer FrOffshoreSystem::GetPostPhysicsItemList() {
-        return m_PostPhysicsList;
+    auto it = std::find(actuator_begin(), actuator_end(), actuator);
+    assert(it != actuator_end());
+    if (it == actuator_end()) {
+      event_logger::error(GetTypeName(), GetName(),
+                          "Fail to remove actuator {} as it is not registered", actuator->GetName());
+      return;
     }
 
-    void FrOffshoreSystem::RemovePhysicsItem(std::shared_ptr<FrPhysicsItem> item) {
+    m_actuatorList.erase(it);
+    event_logger::info(GetTypeName(), GetName(), "Actuator {} has been REMOVED from the system", actuator->GetName());
+  }
 
-        m_chronoSystem->RemoveOtherPhysicsItem(item->GetChronoPhysicsItem());
+  void FrOffshoreSystem::RemoveAllActuators() {
 
-        auto it = std::find(m_PrePhysicsList.begin(),m_PrePhysicsList.end(),item);
-        if (it!= m_PrePhysicsList.end())
-            m_PrePhysicsList.erase(it);
-        else {
-            auto it = std::find(m_MidPhysicsList.begin(),m_MidPhysicsList.end(),item);
-            if (it!= m_MidPhysicsList.end())
-                m_MidPhysicsList.erase(it);
-            else {
-                auto it = std::find(m_PostPhysicsList.begin(),m_PostPhysicsList.end(),item);
-                if (it!= m_PostPhysicsList.end())
-                    m_PostPhysicsList.erase(it);
-                else {
-                    assert(("physics item can't be found in the list : ",it!= m_PostPhysicsList.end()));
-                }
-            }
-        }
+    for (auto &actuator: m_actuatorList)
+      Remove(actuator);
+  }
 
 
-        item->m_system = nullptr;
+// ***** Physics Item *****
 
-    }
+  void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem> otherPhysics,
+                                        std::shared_ptr<internal::FrPhysicsItemBase> chrono_physics_item) {
 
-    void FrOffshoreSystem::RemoveAllPhysicsItem() {
+    m_chronoSystem->AddOtherPhysicsItem(chrono_physics_item);
+    m_PrePhysicsList.push_back(otherPhysics);
+    event_logger::info(GetTypeName(), GetName(), "A Physics Item has been ADDED to the system");
+  }
 
-        for (auto& item: m_PrePhysicsList)
-            RemovePhysicsItem(item);
+  FrOffshoreSystem::PrePhysicsContainer FrOffshoreSystem::GetPrePhysicsItemList() {
+    return m_PrePhysicsList;
+  }
 
-        for (auto& item: m_MidPhysicsList)
-            RemovePhysicsItem(item);
+  void FrOffshoreSystem::RemovePhysicsItem(std::shared_ptr<FrPhysicsItem> item,
+                                           std::shared_ptr<internal::FrPhysicsItemBase> chrono_physics_item) {
 
-        for (auto& item: m_PostPhysicsList)
-            RemovePhysicsItem(item);
+    m_chronoSystem->RemoveOtherPhysicsItem(chrono_physics_item);
 
-    }
+    auto it = std::find(m_PrePhysicsList.begin(), m_PrePhysicsList.end(), item);
+    if (it != m_PrePhysicsList.end())
+      m_PrePhysicsList.erase(it);
+    event_logger::info(GetTypeName(), GetName(), "A Physics Item has been REMOVED to the system");
+  }
 
+//  void FrOffshoreSystem::RemoveAllPhysicsItem() {
+//
+//    for (auto &item: m_PrePhysicsList)
+//      Remove(item);
+//
+//  }
 
-    // ***** FEAMesh *****
 
-    void FrOffshoreSystem::AddFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh){
-        m_chronoSystem->AddMesh(feaMesh->GetChronoMesh());  // Authorized because this method is a friend of FrFEAMesh
+// ***** FEAMesh *****
 
-        feaMesh->m_system = this;
-        m_feaMeshList.push_back(feaMesh);
-    }
+  void FrOffshoreSystem::AddFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh,
+                                    std::shared_ptr<chrono::fea::ChMesh> chrono_mesh) {
 
-    void FrOffshoreSystem::Add(std::shared_ptr<FrDynamicCable> cable) {
+    m_chronoSystem->AddMesh(chrono_mesh);  // Authorized because this method is a friend of FrFEAMesh
 
-        // Add the FEA mesh
-        AddFEAMesh(cable);
+//      feaMesh->m_system = this;
+    m_feaMeshList.push_back(feaMesh);
+  }
 
-        // Add the hinges
-        m_chronoSystem->Add(dynamic_cast<internal::FrDynamicCableBase*>(cable->GetChronoMesh().get())->m_startingHinge);
-        m_chronoSystem->Add(dynamic_cast<internal::FrDynamicCableBase*>(cable->GetChronoMesh().get())->m_endingHinge);
+  void FrOffshoreSystem::AddDynamicCable(std::shared_ptr<FrDynamicCable> cable,
+                                         std::shared_ptr<chrono::fea::ChMesh> chrono_mesh) {
 
-    }
+    // Add the FEA mesh
+    AddFEAMesh(cable, chrono_mesh);
 
-    FrOffshoreSystem::FEAMeshContainer FrOffshoreSystem::GetFEAMeshList() {
-        return m_feaMeshList;
-    }
+    // Add the hinges
+    m_chronoSystem->Add(dynamic_cast<internal::FrDynamicCableBase *>(chrono_mesh.get())->m_startingHinge);
+    m_chronoSystem->Add(dynamic_cast<internal::FrDynamicCableBase *>(chrono_mesh.get())->m_endingHinge);
 
-    void FrOffshoreSystem::RemoveFEAMesh(std::shared_ptr<FrFEAMesh> feamesh) {
+  }
 
-        m_chronoSystem->RemoveMesh(feamesh->GetChronoMesh());
+  FrOffshoreSystem::FEAMeshContainer FrOffshoreSystem::GetFEAMeshList() {
+    return m_feaMeshList;
+  }
 
-        auto it = std::find(m_feaMeshList.begin(),m_feaMeshList.end(),feamesh);
-        assert(it != m_feaMeshList.end());
-        m_feaMeshList.erase(it);
-        feamesh->m_system = nullptr;
+  void FrOffshoreSystem::RemoveFEAMesh(std::shared_ptr<FrFEAMesh> feamesh,
+                                       std::shared_ptr<chrono::fea::ChMesh> chrono_mesh) {
 
-    }
+    m_chronoSystem->RemoveMesh(chrono_mesh);
 
-    void FrOffshoreSystem::Remove(std::shared_ptr<FrDynamicCable> cable) {
+    auto it = std::find(m_feaMeshList.begin(), m_feaMeshList.end(), feamesh);
+    assert(it != m_feaMeshList.end());
+    m_feaMeshList.erase(it);
+//      feamesh->m_system = nullptr;
 
-        RemoveFEAMesh(cable);
+  }
 
-        m_chronoSystem->RemoveOtherPhysicsItem(dynamic_cast<internal::FrDynamicCableBase*>(cable->GetChronoMesh().get())->m_startingHinge);
-        m_chronoSystem->RemoveOtherPhysicsItem(dynamic_cast<internal::FrDynamicCableBase*>(cable->GetChronoMesh().get())->m_endingHinge);
+  void FrOffshoreSystem::RemoveDynamicCable(std::shared_ptr<FrDynamicCable> cable,
+                                            std::shared_ptr<chrono::fea::ChMesh> chrono_mesh) {
 
-    }
+    Remove(cable);
+
+    m_chronoSystem->RemoveOtherPhysicsItem(
+        dynamic_cast<internal::FrDynamicCableBase *>(chrono_mesh.get())->m_startingHinge);
+    m_chronoSystem->RemoveOtherPhysicsItem(
+        dynamic_cast<internal::FrDynamicCableBase *>(chrono_mesh.get())->m_endingHinge);
+
+  }
+
+  void FrOffshoreSystem::MonitorRealTimePerfs(bool val) {
+    m_monitor_real_time = val;
+    event_logger::info(GetTypeName(), GetName(), "Monitoring time performance set to {}", val);
+  }
+
+
+// ***** Environment *****
+
+  FrEnvironment *FrOffshoreSystem::GetEnvironment() const {
+    return m_environment.get();
+  }
 
+  std::shared_ptr<FrBody> FrOffshoreSystem::GetWorldBody() const {
+    return m_worldBody;
+  }
 
-    // ***** Environment *****
+  std::shared_ptr<FrNode> FrOffshoreSystem::NewWorldFixedNode(const std::string &name) {
+    return m_worldBody->NewNode(name);
+  }
 
-    FrEnvironment *FrOffshoreSystem::GetEnvironment() const {
-        return m_environment.get();
+  void FrOffshoreSystem::PreUpdate() {
+    // TODO : voir si on ne met pas l'environnement comme un physics Item update en tant que PrePhysicsItem
+    m_environment->Update(m_chronoSystem->GetChTime());
+  }
+
+  void FrOffshoreSystem::PostUpdate() {
+    // TODO
+  }
+
+  void FrOffshoreSystem::PrePhysicsUpdate(double time, bool update_assets) {
+    for (auto &item : m_PrePhysicsList) {
+      item->Update(time);
     }
+  }
+
+  void FrOffshoreSystem::Initialize() {
+
+    if (m_isInitialized)
+      return;
 
-    std::shared_ptr<FrBody> FrOffshoreSystem::GetWorldBody() const {
-        return m_worldBody;
+    event_logger::info(GetTypeName(), GetName(), "BEGIN OffshoreSystem initialization");
+    event_logger::flush();
+
+    // Initializing environment before bodies
+    m_environment->Initialize();
+
+    for (auto &item : m_PrePhysicsList) {
+      item->Initialize();
     }
 
-    void FrOffshoreSystem::PreUpdate() {
-        // TODO : voir si on ne met pas l'environnement comme un physics Item update en tant que PrePhysicsItem
-        m_environment->Update(m_chronoSystem->GetChTime());
+    for (auto &item : m_bodyList) {
+      item->Initialize();
     }
 
-    void FrOffshoreSystem::PostUpdate() {
-        // TODO
+    for (auto &item : m_linkList) {
+      item->Initialize();
     }
 
-    void FrOffshoreSystem::PrePhysicsUpdate(double time, bool update_assets) {
-        for (auto& item : m_PrePhysicsList) {
-            item->Update(time);
-        }
+    for (auto &item : m_constraintList) {
+      item->Initialize();
     }
 
-    void FrOffshoreSystem::MidPhysicsUpdate(double time, bool update_assets) {
-        for (auto& item : m_MidPhysicsList) {
-            item->Update(time);
-        }
+    for (auto &item : m_actuatorList) {
+      item->Initialize();
     }
 
-    void FrOffshoreSystem::PostPhysicsUpdate(double time, bool update_assets) {
-        for (auto& item : m_PostPhysicsList) {
-            item->Update(time);
-        }
+    for (auto &item : m_feaMeshList) {
+      item->Initialize();
     }
 
-    void FrOffshoreSystem::Initialize() {
+    m_chronoSystem->Update();
 
+    m_LogManager->Initialize();
 
-        // Initializing environment before bodies
-        m_environment->Initialize();
+    m_isInitialized = true;
 
-        for (auto& item : m_PrePhysicsList) {
-            item->Initialize();
-        }
+    event_logger::info(GetTypeName(), GetName(), "END OffshoreSystem initialization");
+    event_logger::flush();
 
-        for (auto& item : m_bodyList){
-            item->Initialize();
-        }
+  }
 
-        for (auto& item : m_MidPhysicsList) {
-            item->Initialize();
-        }
+  void FrOffshoreSystem::ForceInitialize() {
+    m_isInitialized = false;
+    Initialize();
+  }
 
-        for (auto& item : m_linkList) {
-            item->Initialize();
-        }
+  void FrOffshoreSystem::DefineLogMessages() {  // FIXME : doit etre appele par logManager !!!
 
-        for (auto& item : m_feaMeshList) {
-            item->Initialize();
-        }
+    // Solver related messages
 
-        for (auto& item : m_PostPhysicsList) {
-            item->Initialize();
-        }
+    auto msg = NewMessage("solver", "Messages relative to the dynamic solver and constraint solvers");
 
-        m_chronoSystem->Update();
+    msg->AddField<double>("time", "s", "Current time of the simulation", [this]() { return GetTime(); });
 
+    msg->AddField<int>("iter", "", "number of total iterations taken by the solver", [this]() {
+      return dynamic_cast<chrono::ChIterativeSolver *>(m_chronoSystem->GetSolver().get())->GetTotalIterations();
+    });
 
-        // Init the logs
-        if (IsLogged()) {
-            m_pathManager->Initialize(this);
-            m_pathManager->SetRunPath("Dynamic");
-            InitializeLog("");
-        }
+    if (dynamic_cast<chrono::ChIterativeSolver *>(m_chronoSystem->GetSolver().get())->GetRecordViolation()) {
 
-        m_isInitialized = true;
+      msg->AddField<double>("violationResidual", "", "constraint violation", [this]() {
+        return dynamic_cast<chrono::ChIterativeSolver *>(m_chronoSystem->GetSolver().get())->GetViolationHistory().back();
+      });
 
-    }
+      msg->AddField<double>("LagrangeResidual", "", "maximum change in Lagrange multipliers", [this]() {
+        return dynamic_cast<chrono::ChIterativeSolver *>(m_chronoSystem->GetSolver().get())->GetDeltalambdaHistory().back();
+      });
 
-    void FrOffshoreSystem::StepFinalize() {
-        m_environment->StepFinalize();
+    }
 
-        for (auto& item : m_PrePhysicsList) {
-            item->StepFinalize();
-        }
+  }
 
-        for (auto& item : m_bodyList){
-            item->StepFinalize();
-        }
+  void FrOffshoreSystem::StepFinalize() {
 
-        for (auto& item : m_MidPhysicsList) {
-            item->StepFinalize();
-        }
+    m_environment->StepFinalize();
 
-        for (auto& item : m_linkList) {
-            item->StepFinalize();
-        }
+    for (auto &item : m_PrePhysicsList) {
+      item->StepFinalize();
+    }
 
-        for (auto& item : m_feaMeshList) {
-            item->StepFinalize();
-        }
+    for (auto &item : m_bodyList) {
+      item->StepFinalize();
+    }
 
-        for (auto& item : m_PostPhysicsList) {
-            item->StepFinalize();
-        }
+    for (auto &item : m_linkList) {
+      item->StepFinalize();
+    }
 
-        // Serialize and send the message log
-        FrObject::SendLog();
+    for (auto &item : m_constraintList) {
+      item->StepFinalize();
+    }
 
+    for (auto &item : m_actuatorList) {
+      item->StepFinalize();
     }
 
-    void FrOffshoreSystem::SetSystemType(SYSTEM_TYPE type, bool checkCompat) {
+    for (auto &item : m_feaMeshList) {
+      item->StepFinalize();
+    }
 
-        if (m_chronoSystem) Clear(); // Clear the system from every bodies etc...
+    // Logging
+    m_LogManager->StepFinalize();
 
-        // Creating the chrono System backend. It drives the way contact are modelled
-        switch (type) {
-            case SMOOTH_CONTACT:
-                m_chronoSystem = std::make_unique<internal::FrSystemBaseSMC>(this);
-                break;
-            case NONSMOOTH_CONTACT:
-                std::cout << "NSC systems is not tested for now !!!!" << std::endl;
-                m_chronoSystem = std::make_unique<internal::FrSystemBaseNSC>();
-                break;
-        }
+    if (m_monitor_real_time) {
+      double ratio = m_chronoSystem->GetTimerStep() / GetTimeStep();
 
-        m_systemType = type;
+      std::string msg = (ratio > 1.) ? "slower that real time" : "faster than real time";
 
-        if (checkCompat) CheckCompatibility();
+      std::cout << "At time : "
+                << GetTime()
+                << ";\t"
+                << msg
+                << "(1 physical second computed in "
+                << ratio
+                << " seconds)"
+                << std::endl;
     }
 
-    void FrOffshoreSystem::CheckCompatibility() const {
-        // TODO : verifier la compatibilite entre type systeme, solveur et integrateur temporel
+  }
 
+  void FrOffshoreSystem::SetSystemType(SYSTEM_TYPE type, bool checkCompat) {
 
+    if (m_chronoSystem) Clear(); // Clear the system from every bodies etc...
 
+    // Creating the chrono System backend. It drives the way contact are modelled
+    switch (type) {
+      case SMOOTH_CONTACT:
+        m_chronoSystem = std::make_unique<internal::FrSystemBaseSMC>(this);
+        break;
+      case NONSMOOTH_CONTACT:
+        std::cout << "NSC systems is not tested for now !!!!" << std::endl;
+        m_chronoSystem = std::make_unique<internal::FrSystemBaseNSC>();
+        break;
     }
 
-    bool FrOffshoreSystem::CheckBodyContactMethod(std::shared_ptr<FrBody> body) {
-        return m_systemType == body->GetContactType();
-    }
+    m_systemType = type;
 
-    void FrOffshoreSystem::SetSolver(SOLVER solver, bool checkCompat) {
+    if (checkCompat) CheckCompatibility();
+  }
 
-        using SOLVERS = chrono::ChSolver::Type;
+  void FrOffshoreSystem::CheckCompatibility() const {
+    // TODO : verifier la compatibilite entre type systeme, solveur et integrateur temporel
 
-        switch (solver) {
-            case SOR:
-                m_chronoSystem->SetSolverType(SOLVERS::SOR);
-                break;
-            case SYMMSOR:
-                m_chronoSystem->SetSolverType(SOLVERS::SYMMSOR);
-                break;
-            case JACOBI:
-                m_chronoSystem->SetSolverType(SOLVERS::JACOBI);
-                break;
-            case BARZILAIBORWEIN:
-                m_chronoSystem->SetSolverType(SOLVERS::BARZILAIBORWEIN);
-                break;
-            case PCG:
-                m_chronoSystem->SetSolverType(SOLVERS::PCG);
-                break;
-            case APGD:
-                m_chronoSystem->SetSolverType(SOLVERS::APGD);
-                break;
-            case MINRES:
-                m_chronoSystem->SetSolverType(SOLVERS::MINRES);
-                break;
-            case SOLVER_SMC:
-                m_chronoSystem->SetSolverType(SOLVERS::SOLVER_SMC);
-                break;
-        }
+  }
 
-        m_solverType = solver;
+  bool FrOffshoreSystem::CheckBodyContactMethod(std::shared_ptr<FrBody> body) {
+    return m_systemType == body->GetContactType();
+  }
 
-        if (checkCompat) CheckCompatibility();
-    }
+  void FrOffshoreSystem::SetSolver(SOLVER solver, bool checkCompat) {
 
-    void FrOffshoreSystem::SetSolverWarmStarting(bool useWarm) {
-        m_chronoSystem->SetSolverWarmStarting(useWarm);
-    }
+    using SOLVERS = chrono::ChSolver::Type;
 
-    void FrOffshoreSystem::SetSolverOverrelaxationParam(double omega) {
-        m_chronoSystem->SetSolverOverrelaxationParam(omega);
+    switch (solver) {
+      case SOR:
+        m_chronoSystem->SetSolverType(SOLVERS::SOR);
+        break;
+      case SYMMSOR:
+        m_chronoSystem->SetSolverType(SOLVERS::SYMMSOR);
+        break;
+      case JACOBI:
+        m_chronoSystem->SetSolverType(SOLVERS::JACOBI);
+        break;
+      case BARZILAIBORWEIN:
+        m_chronoSystem->SetSolverType(SOLVERS::BARZILAIBORWEIN);
+        break;
+      case PCG:
+        m_chronoSystem->SetSolverType(SOLVERS::PCG);
+        break;
+      case APGD:
+        m_chronoSystem->SetSolverType(SOLVERS::APGD);
+        break;
+      case MINRES:
+        m_chronoSystem->SetSolverType(SOLVERS::MINRES);
+        break;
+      case SOLVER_SMC:
+        m_chronoSystem->SetSolverType(SOLVERS::SOLVER_SMC);
+        break;
     }
 
-    void FrOffshoreSystem::SetSolverSharpnessParam(double momega) {
-        m_chronoSystem->SetSolverSharpnessParam(momega);
-    }
+    m_solverType = solver;
 
-    void FrOffshoreSystem::SetParallelThreadNumber(int nbThreads) {
-        m_chronoSystem->SetParallelThreadNumber(nbThreads);
-    }
+    if (checkCompat) CheckCompatibility();
+  }
 
-    void FrOffshoreSystem::SetSolverMaxIterSpeed(int maxIter) {
-        m_chronoSystem->SetMaxItersSolverSpeed(maxIter);
-    }
+  void FrOffshoreSystem::SetSolverWarmStarting(bool useWarm) {
+    m_chronoSystem->SetSolverWarmStarting(useWarm);
+  }
 
-    void FrOffshoreSystem::SetSolverMaxIterStab(int maxIter) {
-        m_chronoSystem->SetMaxItersSolverStab(maxIter);
-    }
+  void FrOffshoreSystem::SetSolverOverrelaxationParam(double omega) {
+    m_chronoSystem->SetSolverOverrelaxationParam(omega);
+  }
 
-    void FrOffshoreSystem::SetSolverMaxIterAssembly(int maxIter) {
-        m_chronoSystem->SetMaxiter(maxIter);
-    }
+  void FrOffshoreSystem::SetSolverSharpnessParam(double momega) {
+    m_chronoSystem->SetSolverSharpnessParam(momega);
+  }
 
-    void FrOffshoreSystem::SetSolverGeometricTolerance(double tol) {
-        m_chronoSystem->SetTol(tol);
-    }
+  void FrOffshoreSystem::SetParallelThreadNumber(int nbThreads) {
+    m_chronoSystem->SetParallelThreadNumber(nbThreads);
+  }
 
-    void FrOffshoreSystem::SetSolverForceTolerance(double tol) {
-        m_chronoSystem->SetTolForce(tol);
-    }
+  void FrOffshoreSystem::SetSolverMaxIterSpeed(int maxIter) {
+    m_chronoSystem->SetMaxItersSolverSpeed(maxIter);
+  }
 
-    void FrOffshoreSystem::UseMaterialProperties(bool use) {
-        if (m_systemType == SMOOTH_CONTACT) {
-            dynamic_cast<chrono::ChSystemSMC*>(m_chronoSystem.get())->UseMaterialProperties(use);
-        } else {
-            std::cerr << "The use of material properties is only for SMOOTH_CONTACT systems" << std::endl;
-        }
-    }
+  void FrOffshoreSystem::SetSolverMaxIterStab(int maxIter) {
+    m_chronoSystem->SetMaxItersSolverStab(maxIter);
+  }
 
-    void FrOffshoreSystem::SetContactForceModel(FrOffshoreSystem::CONTACT_MODEL model) {
-        if (m_systemType == SMOOTH_CONTACT) {
-            auto systemSMC = dynamic_cast<chrono::ChSystemSMC*>(m_chronoSystem.get());
-            using ContactForceModel = chrono::ChSystemSMC::ContactForceModel;
-            switch (model) {
-                case HOOKE:
-                    systemSMC->SetContactForceModel(ContactForceModel::Hooke);
-                    break;
-                case HERTZ:
-                    systemSMC->SetContactForceModel(ContactForceModel::Hertz);
-                    break;
-                case COULOMB:
-                    systemSMC->SetContactForceModel(ContactForceModel::PlainCoulomb);
-                    break;
-            }
-        } else {
-            std::cerr << "Contact force model is only for SMOOTH_CONTACT systems" << std::endl;
-        }
-    }
+  void FrOffshoreSystem::SetSolverMaxIterAssembly(int maxIter) {
+    m_chronoSystem->SetMaxiter(maxIter);
+  }
 
-    void FrOffshoreSystem::SetAdhesionForceModel(FrOffshoreSystem::ADHESION_MODEL model) {
-        if (m_systemType == SMOOTH_CONTACT) {
-            auto systemSMC = dynamic_cast<chrono::ChSystemSMC*>(m_chronoSystem.get());
-            using AdhesionForceModel = chrono::ChSystemSMC::AdhesionForceModel ;
-            switch (model) {
-                case CONSTANT:
-                    systemSMC->SetAdhesionForceModel(AdhesionForceModel::Constant);
-                    break;
-                case DMT:
-                    systemSMC->SetAdhesionForceModel(AdhesionForceModel::DMT);
-                    break;
-            }
-        } else {
-            std::cerr << "Adhesion force model is only for SMOOTH_CONTACT systems" << std::endl;
-        }
-    }
+  void FrOffshoreSystem::SetSolverGeometricTolerance(double tol) {
+    m_chronoSystem->SetTol(tol);
+  }
 
-    void FrOffshoreSystem::SetTangentialDisplacementModel(FrOffshoreSystem::TANGENTIAL_DISP_MODEL model) {
-        if (m_systemType == SMOOTH_CONTACT) {
-            auto systemSMC = dynamic_cast<chrono::ChSystemSMC*>(m_chronoSystem.get());
-            using TangentialDisplacementModel = chrono::ChSystemSMC::TangentialDisplacementModel ;
-            switch (model) {
-                case NONE:
-                    systemSMC->SetTangentialDisplacementModel(TangentialDisplacementModel::None);
-                    break;
-                case ONE_STEP:
-                    systemSMC->SetTangentialDisplacementModel(TangentialDisplacementModel::OneStep);
-                    break;
-                case MULTI_STEP:
-                    systemSMC->SetTangentialDisplacementModel(TangentialDisplacementModel::MultiStep);
-                    break;
-            }
-        } else {
-            std::cerr << "Adhesion force model is only for SMOOTH_CONTACT systems" << std::endl;
-        }
-    }
+  void FrOffshoreSystem::SetSolverForceTolerance(double tol) {
+    m_chronoSystem->SetTolForce(tol);
+  }
 
-    void FrOffshoreSystem::SetStiffContact(bool isStiff) {
-        if (m_systemType == SMOOTH_CONTACT) {
-            dynamic_cast<chrono::ChSystemSMC*>(m_chronoSystem.get())->SetStiffContact(isStiff);
-        } else {
-            std::cerr << "StiffContact is only for SMOOTH_CONTACT systems" << std::endl;
-        }
+  void FrOffshoreSystem::UseMaterialProperties(bool use) {
+    if (m_systemType == SMOOTH_CONTACT) {
+      dynamic_cast<chrono::ChSystemSMC *>(m_chronoSystem.get())->UseMaterialProperties(use);
+    } else {
+      std::cerr << "The use of material properties is only for SMOOTH_CONTACT systems" << std::endl;
     }
+  }
 
-    void FrOffshoreSystem::SetSlipVelocityThreshold(double velocity) {
-        if (m_systemType == SMOOTH_CONTACT) {
-            dynamic_cast<chrono::ChSystemSMC*>(m_chronoSystem.get())->SetSlipVelocityThreshold(velocity);
-        } else {
-            std::cerr << "Slip Velocity Threshold is only for SMOOTH_CONTACT systems" << std::endl;
-        }
+  void FrOffshoreSystem::SetContactForceModel(FrOffshoreSystem::CONTACT_MODEL model) {
+    if (m_systemType == SMOOTH_CONTACT) {
+      auto systemSMC = dynamic_cast<chrono::ChSystemSMC *>(m_chronoSystem.get());
+      using ContactForceModel = chrono::ChSystemSMC::ContactForceModel;
+      switch (model) {
+        case HOOKE:
+          systemSMC->SetContactForceModel(ContactForceModel::Hooke);
+          break;
+        case HERTZ:
+          systemSMC->SetContactForceModel(ContactForceModel::Hertz);
+          break;
+        case COULOMB:
+          systemSMC->SetContactForceModel(ContactForceModel::PlainCoulomb);
+          break;
+      }
+    } else {
+      std::cerr << "Contact force model is only for SMOOTH_CONTACT systems" << std::endl;
     }
+  }
 
-    void FrOffshoreSystem::SetCharacteristicImpactVelocity(double velocity) {
-        if (m_systemType == SMOOTH_CONTACT) {
-            dynamic_cast<chrono::ChSystemSMC*>(m_chronoSystem.get())->SetCharacteristicImpactVelocity(velocity);
-        } else {
-            std::cerr << "Characteristic Impact Velocity is only for SMOOTH_CONTACT systems" << std::endl;
-        }
+  void FrOffshoreSystem::SetAdhesionForceModel(FrOffshoreSystem::ADHESION_MODEL model) {
+    if (m_systemType == SMOOTH_CONTACT) {
+      auto systemSMC = dynamic_cast<chrono::ChSystemSMC *>(m_chronoSystem.get());
+      using AdhesionForceModel = chrono::ChSystemSMC::AdhesionForceModel;
+      switch (model) {
+        case CONSTANT:
+          systemSMC->SetAdhesionForceModel(AdhesionForceModel::Constant);
+          break;
+        case DMT:
+          systemSMC->SetAdhesionForceModel(AdhesionForceModel::DMT);
+          break;
+      }
+    } else {
+      std::cerr << "Adhesion force model is only for SMOOTH_CONTACT systems" << std::endl;
     }
+  }
 
-    void FrOffshoreSystem::SetMinBounceSpeed(double speed) {
-        m_chronoSystem->SetMinBounceSpeed(speed);
+  void FrOffshoreSystem::SetTangentialDisplacementModel(FrOffshoreSystem::TANGENTIAL_DISP_MODEL model) {
+    if (m_systemType == SMOOTH_CONTACT) {
+      auto systemSMC = dynamic_cast<chrono::ChSystemSMC *>(m_chronoSystem.get());
+      using TangentialDisplacementModel = chrono::ChSystemSMC::TangentialDisplacementModel;
+      switch (model) {
+        case NONE:
+          systemSMC->SetTangentialDisplacementModel(TangentialDisplacementModel::None);
+          break;
+        case ONE_STEP:
+          systemSMC->SetTangentialDisplacementModel(TangentialDisplacementModel::OneStep);
+          break;
+        case MULTI_STEP:
+          systemSMC->SetTangentialDisplacementModel(TangentialDisplacementModel::MultiStep);
+          break;
+      }
+    } else {
+      std::cerr << "Adhesion force model is only for SMOOTH_CONTACT systems" << std::endl;
     }
+  }
 
-    void FrOffshoreSystem::SetMaxPenetrationRecoverySpeed(double speed) {
-        m_chronoSystem->SetMaxPenetrationRecoverySpeed(speed);
+  void FrOffshoreSystem::SetStiffContact(bool isStiff) {
+    if (m_systemType == SMOOTH_CONTACT) {
+      dynamic_cast<chrono::ChSystemSMC *>(m_chronoSystem.get())->SetStiffContact(isStiff);
+      event_logger::info(GetTypeName(), GetName(),
+                         "Stiff contact {}", (isStiff) ? "activated" : "deactivated");
+    } else {
+      event_logger::error(GetTypeName(), GetName(),
+                          "StiffContact is only for SMOOTH_CONTACT systems. Action ignored");
     }
+  }
 
-    int FrOffshoreSystem::GetNbPositionCoords() const {
-        return m_chronoSystem->GetNcoords();
+  void FrOffshoreSystem::SetSlipVelocityThreshold(double velocity) {
+    if (m_systemType == SMOOTH_CONTACT) {
+      dynamic_cast<chrono::ChSystemSMC *>(m_chronoSystem.get())->SetSlipVelocityThreshold(velocity);
+      event_logger::info(GetTypeName(), GetName(),
+                         "Slip Velocity Threshold set to {} m/s", velocity);
+    } else {
+      event_logger::error(GetTypeName(), GetName(),
+                          "Slip Velocity Threshold is only for SMOOTH_CONTACT systems. Action ignored");
     }
+  }
 
-    int FrOffshoreSystem::GetNbVelocityCoords() const {
-        return m_chronoSystem->GetNcoords_w();
+  void FrOffshoreSystem::SetCharacteristicImpactVelocity(double velocity) {
+    if (m_systemType == SMOOTH_CONTACT) {
+      dynamic_cast<chrono::ChSystemSMC *>(m_chronoSystem.get())->SetCharacteristicImpactVelocity(velocity);
+      event_logger::info(GetTypeName(), GetName(),
+                         "Characteristic Impact Velocity set to {} m/s", velocity);
+    } else {
+      event_logger::error(GetTypeName(), GetName(),
+                          "Characteristic Impact Velocity is only for SMOOTH_CONTACT systems. Action ignored");
     }
+  }
 
-    int FrOffshoreSystem::GetNbConstraintsCoords() const {
-        return m_chronoSystem->GetNdoc_w();
-    }
+  void FrOffshoreSystem::SetMinBounceSpeed(double speed) {
+    m_chronoSystem->SetMinBounceSpeed(speed);
+  }
 
-    int FrOffshoreSystem::GetNbDOF() const {
-        return m_chronoSystem->GetNdof();
-    }
+  void FrOffshoreSystem::SetMaxPenetrationRecoverySpeed(double speed) {
+    m_chronoSystem->SetMaxPenetrationRecoverySpeed(speed);
+  }
 
-    int FrOffshoreSystem::GetNbBodies() const {
-        return m_chronoSystem->GetNbodies();
-    }
+  int FrOffshoreSystem::GetNbPositionCoords() const {
+    return m_chronoSystem->GetNcoords();
+  }
 
-    int FrOffshoreSystem::GetNbFixedBodies() const {
-        return m_chronoSystem->GetNbodiesFixed();
-    }
+  int FrOffshoreSystem::GetNbVelocityCoords() const {
+    return m_chronoSystem->GetNcoords_w();
+  }
 
-    int FrOffshoreSystem::GetNbSleepingBodies() const {
-        return m_chronoSystem->GetNbodiesSleeping();
-    }
+  int FrOffshoreSystem::GetNbConstraintsCoords() const {
+    return m_chronoSystem->GetNdoc_w();
+  }
 
-    void FrOffshoreSystem::SetUseSleepingBodies(bool useSleeping) {
-        m_chronoSystem->SetUseSleeping(useSleeping);
-    }
+  int FrOffshoreSystem::GetNbDOF() const {
+    return m_chronoSystem->GetNdof();
+  }
 
-    double FrOffshoreSystem::GetGravityAcceleration() const {
-        return fabs(m_chronoSystem->Get_G_acc()[2]);
-    }
+  int FrOffshoreSystem::GetNbBodies() const {
+    return m_chronoSystem->GetNbodies();
+  }
 
-    void FrOffshoreSystem::SetGravityAcceleration(double gravityAcceleration) {
-        m_chronoSystem->Set_G_acc(chrono::ChVector<double>(0., 0., -gravityAcceleration));
-    }
+  int FrOffshoreSystem::GetNbFixedBodies() const {
+    return m_chronoSystem->GetNbodiesFixed();
+  }
 
-    bool FrOffshoreSystem::DoAssembly() {
-        return m_chronoSystem->DoFullAssembly();
-    }
+  int FrOffshoreSystem::GetNbSleepingBodies() const {
+    return m_chronoSystem->GetNbodiesSleeping();
+  }
 
-    FrStaticAnalysis *FrOffshoreSystem::GetStaticAnalysis() const {
-        return m_statics.get();
-    }
+  void FrOffshoreSystem::SetUseSleepingBodies(bool useSleeping) {
+    m_chronoSystem->SetUseSleeping(useSleeping);
+  }
+
+  double FrOffshoreSystem::GetGravityAcceleration() const {
+    return fabs(m_chronoSystem->Get_G_acc()[2]);
+  }
 
-    bool FrOffshoreSystem::SolveStaticWithRelaxation() {
+  void FrOffshoreSystem::SetGravityAcceleration(double gravityAcceleration) {
+    event_logger::info(GetTypeName(), GetName(),
+                       "Gravity acceleration set to {} m/s2", gravityAcceleration);
+    m_chronoSystem->Set_G_acc(chrono::ChVector<double>(0., 0., -gravityAcceleration));
+  }
 
-        IsInitialized();
+  bool FrOffshoreSystem::DoAssembly() {
+    event_logger::info(GetTypeName(), GetName(), "Solving assembly");
+    return m_chronoSystem->DoFullAssembly();
+  }
 
-        return m_statics->SolveStatic();
+  FrStaticAnalysis *FrOffshoreSystem::GetStaticAnalysis() const {
+    return m_statics.get();
+  }
 
+  bool FrOffshoreSystem::SolveStaticWithRelaxation() {
+
+    event_logger::info(GetTypeName(), GetName(), "Static analysis by dynamic relaxation STARTED");
+    Initialize();
+    return m_statics->SolveStatic();
+  }
+
+  void FrOffshoreSystem::Relax(FrStaticAnalysis::RELAXTYPE relax) {
+
+    for (auto &body:m_bodyList) {
+      switch (relax) {
+        case FrStaticAnalysis::NORELAX :
+          break;
+        case FrStaticAnalysis::VELOCITY :
+          body->SetVelocityInWorldNoRotation(Velocity(), NWU);
+          break;
+        case FrStaticAnalysis::ACCELERATION :
+          body->SetAccelerationInBodyNoRotation(Acceleration(), NWU);
+          break;
+        case FrStaticAnalysis::VELOCITYANDACCELERATION :
+          body->SetVelocityInWorldNoRotation(Velocity(), NWU);
+          body->SetAccelerationInBodyNoRotation(Acceleration(), NWU);
+          break;
+      }
     }
 
-    void FrOffshoreSystem::Relax(FrStaticAnalysis::RELAXTYPE relax) {
+    for (auto &mesh : m_feaMeshList) {
+      mesh->Relax();
+    }
+
+  }
 
-        for (auto& body:m_bodyList) {
-            switch (relax) {
-                case FrStaticAnalysis::NORELAX :
-                    break;
-                case FrStaticAnalysis::VELOCITY :
-                    body->SetVelocityInWorldNoRotation(Velocity(), NWU);
-                    break;
-                case FrStaticAnalysis::ACCELERATION :
-                    body->SetAccelerationInBodyNoRotation(Acceleration(), NWU);
-                    break;
-                case FrStaticAnalysis::VELOCITYANDACCELERATION :
-                    body->SetVelocityInWorldNoRotation(Velocity(), NWU);
-                    body->SetAccelerationInBodyNoRotation(Acceleration(), NWU);
-                    break;
-            }
-        }
+  void FrOffshoreSystem::SetTimeStepper(TIME_STEPPER type, bool check_compatibility) {
 
-        for (auto &mesh : m_feaMeshList) {
-            mesh->Relax();
-        }
+    using timeStepperType = chrono::ChTimestepper::Type;
 
+    switch (type) {
+      case EULER_IMPLICIT_LINEARIZED:
+        m_chronoSystem->SetTimestepperType(timeStepperType::EULER_IMPLICIT_LINEARIZED);
+        event_logger::info(GetTypeName(), GetName(), "Time stepper set to EULER_IMPLICIT_LINEARIZED");
+        break;
+      case EULER_IMPLICIT_PROJECTED:
+        m_chronoSystem->SetTimestepperType(timeStepperType::EULER_IMPLICIT_PROJECTED);
+        event_logger::info(GetTypeName(), GetName(), "Time stepper set to EULER_IMPLICIT_PROJECTED");
+        break;
+      case EULER_IMPLICIT:
+        m_chronoSystem->SetTimestepperType(timeStepperType::EULER_IMPLICIT);
+        event_logger::info(GetTypeName(), GetName(), "Time stepper set to EULER_IMPLICIT");
+        break;
+      case TRAPEZOIDAL:
+        m_chronoSystem->SetTimestepperType(timeStepperType::TRAPEZOIDAL);
+        event_logger::info(GetTypeName(), GetName(), "Time stepper set to TRAPEZOIDAL");
+        break;
+      case TRAPEZOIDAL_LINEARIZED:
+        m_chronoSystem->SetTimestepperType(timeStepperType::TRAPEZOIDAL_LINEARIZED);
+        event_logger::info(GetTypeName(), GetName(), "Time stepper set to TRAPEZOIDAL_LINEARIZED");
+        break;
+      case HHT:
+        m_chronoSystem->SetTimestepperType(timeStepperType::HHT);
+        event_logger::info(GetTypeName(), GetName(), "Time stepper set to HHT");
+        break;
+      case RUNGEKUTTA45:
+        m_chronoSystem->SetTimestepperType(timeStepperType::RUNGEKUTTA45);
+        event_logger::info(GetTypeName(), GetName(), "Time stepper set to RUNGEKUTTA45");
+        break;
+      case EULER_EXPLICIT:
+        m_chronoSystem->SetTimestepperType(timeStepperType::EULER_EXPLICIT);
+        event_logger::info(GetTypeName(), GetName(), "Time stepper set to EULER_EXPLICIT");
+        break;
+      case NEWMARK:
+        m_chronoSystem->SetTimestepperType(timeStepperType::NEWMARK);
+        event_logger::info(GetTypeName(), GetName(), "Time stepper set to NEWMARK");
+        break;
     }
 
-    void FrOffshoreSystem::SetTimeStepper(TIME_STEPPER type, bool checkCompat) {
+    m_timeStepper = type;
 
-        using timeStepperType = chrono::ChTimestepper::Type;
+    if (check_compatibility) CheckCompatibility();
 
-        switch (type) {
-            case EULER_IMPLICIT_LINEARIZED:
-                m_chronoSystem->SetTimestepperType(timeStepperType::EULER_IMPLICIT_LINEARIZED);
-                break;
-            case EULER_IMPLICIT_PROJECTED:
-                m_chronoSystem->SetTimestepperType(timeStepperType::EULER_IMPLICIT_PROJECTED);
-                break;
-            case EULER_IMPLICIT:
-                m_chronoSystem->SetTimestepperType(timeStepperType::EULER_IMPLICIT);
-                break;
-            case TRAPEZOIDAL:
-                m_chronoSystem->SetTimestepperType(timeStepperType::TRAPEZOIDAL);
-                break;
-            case TRAPEZOIDAL_LINEARIZED:
-                m_chronoSystem->SetTimestepperType(timeStepperType::TRAPEZOIDAL_LINEARIZED);
-                break;
-            case HHT:
-                m_chronoSystem->SetTimestepperType(timeStepperType::HHT);
-                break;
-            case RUNGEKUTTA45:
-                m_chronoSystem->SetTimestepperType(timeStepperType::RUNGEKUTTA45);
-                break;
-            case EULER_EXPLICIT:
-                m_chronoSystem->SetTimestepperType(timeStepperType::EULER_EXPLICIT);
-                break;
-            case NEWMARK:
-                m_chronoSystem->SetTimestepperType(timeStepperType::NEWMARK);
-                break;
-        }
+  }
 
-        m_timeStepper = type;
+  void FrOffshoreSystem::SetTimeStepper(TIME_STEPPER type) {
+    SetTimeStepper(type, true);
+  }
 
-        if (checkCompat) CheckCompatibility();
+  void FrOffshoreSystem::SetTimeStep(double timeStep) {
+    m_chronoSystem->SetStep(timeStep);
+    event_logger::info(GetTypeName(), GetName(), "Time step set to {} s", timeStep);
+  }
 
-    }
+  double FrOffshoreSystem::GetTimeStep() const {
+    return m_chronoSystem->GetStep();
+  }
 
-    void FrOffshoreSystem::SetTimeStepper(TIME_STEPPER type) {
-        SetTimeStepper(type, true);
-    }
+  void FrOffshoreSystem::SetMinTimeStep(double minTimeStep) {
+    m_chronoSystem->SetStepMin(minTimeStep);
+    event_logger::info(GetTypeName(), GetName(), "Set minimum time step to {} s", minTimeStep);
+  }
 
-    void FrOffshoreSystem::SetTimeStep(double timeStep) {
-        m_chronoSystem->SetStep(timeStep);
-    }
+  void FrOffshoreSystem::SetMaxTimeStep(double maxTimeStep) {
+    m_chronoSystem->SetStepMax(maxTimeStep);
+    event_logger::info(GetTypeName(), GetName(), "Set maximum time step to {} s", maxTimeStep);
+  }
 
-    double FrOffshoreSystem::GetTimeStep() const {
-        return m_chronoSystem->GetStep();
-    }
+  double FrOffshoreSystem::GetTime() const {
+    return m_chronoSystem->GetChTime();
+  }
 
-    void FrOffshoreSystem::SetMinTimeStep(double minTimeStep) {
-        m_chronoSystem->SetStepMin(minTimeStep);
-    }
+  void FrOffshoreSystem::SetTime(double time) {
+    m_chronoSystem->SetChTime(time);
+  }
 
-    void FrOffshoreSystem::SetMaxTimeStep(double maxTimeStep) {
-        m_chronoSystem->SetStepMax(maxTimeStep);
-    }
+  bool FrOffshoreSystem::AdvanceOneStep(double stepSize) {
+    Initialize();
+    return (bool) m_chronoSystem->DoStepDynamics(stepSize);
+  }
 
-    double FrOffshoreSystem::GetTime() const {
-        return m_chronoSystem->GetChTime();
-    }
+  bool FrOffshoreSystem::AdvanceTo(double nextTime) {
+    Initialize();
+    return m_chronoSystem->DoFrameDynamics(nextTime);
+  }
 
-    void FrOffshoreSystem::SetTime(double time) {
-        m_chronoSystem->SetChTime(time);
-    }
+  bool FrOffshoreSystem::RunDynamics(double frameStep) {
+    Initialize();
+    event_logger::info(GetTypeName(), GetName(), "Dynamic simulation STARTED");
+    m_chronoSystem->Setup();
+    m_chronoSystem->DoAssembly(chrono::AssemblyLevel::POSITION |
+                               chrono::AssemblyLevel::VELOCITY |
+                               chrono::AssemblyLevel::ACCELERATION);
 
-    bool FrOffshoreSystem::AdvanceOneStep(double stepSize) {
-        IsInitialized();
-        return (bool)m_chronoSystem->DoStepDynamics(stepSize);
+    while (true) {
+      double nextTime = m_chronoSystem->GetChTime() + frameStep;
+      if (!AdvanceTo(nextTime))
+        return false;
     }
+    return true;
+  }
 
-    bool FrOffshoreSystem::AdvanceTo(double nextTime) {
-        IsInitialized();
-        return m_chronoSystem->DoFrameDynamics(nextTime);
+  void FrOffshoreSystem::CreateWorldBody() {
+    m_worldBody = std::make_shared<FrBody>("world_body", this);
+    m_worldBody->SetFixedInWorld(true);
+//      m_worldBody->SetName("WorldBody");
+//      m_worldBody->SetLogged(false);
+    switch (m_systemType) {
+      case SMOOTH_CONTACT:
+        m_worldBody->SetSmoothContact();
+        break;
+      case NONSMOOTH_CONTACT:
+        m_worldBody->SetNonSmoothContact();
+        break;
     }
+    Add(m_worldBody);
+    m_worldBody->LogThis(false);  // No log for the world body
+  }
 
-    bool FrOffshoreSystem::RunDynamics(double frameStep) {
-        IsInitialized();
-        m_chronoSystem->Setup();
-        m_chronoSystem->DoAssembly(chrono::AssemblyLevel::POSITION |
-                                   chrono::AssemblyLevel::VELOCITY |
-                                   chrono::AssemblyLevel::ACCELERATION);
+  std::shared_ptr<FrBody> FrOffshoreSystem::NewBody(const std::string &name) {
+    auto body = std::make_shared<FrBody>(name, this);
+    // TODO : suivant le type de systeme SMC ou NSC, regler le type de surface...
 
-        while (true) {
-            double nextTime = m_chronoSystem->GetChTime() + frameStep;
-            if (!AdvanceTo(nextTime))
-                return false;
-        }
-        return true;
+    switch (m_systemType) {
+      case SMOOTH_CONTACT:
+        body->SetSmoothContact();
+        break;
+      case NONSMOOTH_CONTACT:
+        body->SetNonSmoothContact();
+        break;
     }
 
-    void FrOffshoreSystem::CreateWorldBody() {
-        m_worldBody = std::make_shared<FrBody>();
-        m_worldBody->SetFixedInWorld(true);
-        m_worldBody->SetName("WorldBody");
-        m_worldBody->SetLogged(false);
-        switch (m_systemType) {
-            case SMOOTH_CONTACT:
-                m_worldBody->SetSmoothContact();
-                break;
-            case NONSMOOTH_CONTACT:
-                m_worldBody->SetNonSmoothContact();
-                break;
-        }
-        AddBody(m_worldBody);
-    }
+    Add(body);
+    return body;
+  }
 
-    std::shared_ptr<FrBody> FrOffshoreSystem::NewBody() {
-        auto body = std::make_shared<FrBody>();  // TODO : suivant le type de systeme SMC ou NSC, regler le type de surface...
+  void FrOffshoreSystem::Clear() {
+    m_chronoSystem->Clear();
 
-        switch (m_systemType) {
-            case SMOOTH_CONTACT:
-                body->SetSmoothContact();
-                break;
-            case NONSMOOTH_CONTACT:
-                body->SetNonSmoothContact();
-                break;
-        }
+    m_bodyList.clear();
+    m_linkList.clear();
+    m_constraintList.clear();
+    m_actuatorList.clear();
+    m_feaMeshList.clear();
+    m_PrePhysicsList.clear();
 
-        AddBody(body);
-        return body;
-    }
+    m_isInitialized = false;
+  }
 
-    void FrOffshoreSystem::Clear() {
-        m_chronoSystem->Clear();
 
-        m_bodyList.clear();
-        m_linkList.clear();
-        m_feaMeshList.clear();
-        m_PrePhysicsList.clear();
-        m_MidPhysicsList.clear();
-        m_PostPhysicsList.clear();
+// Irrlicht visualization
 
-        m_isInitialized = false;
-    }
+  FrIrrApp *FrOffshoreSystem::GetIrrApp() const {
+    return m_irrApp.get();
+  }
 
-    chrono::ChSystem* FrOffshoreSystem::GetChronoSystem() {
-        return m_chronoSystem.get();
-    }
+  void FrOffshoreSystem::RunInViewer(double endTime, double dist, bool recordVideo, int videoFrameSaveInterval) {
 
+    // Initialization of the system if not already done.
+    Initialize();
 
-    // Irrlicht visualization
+    // Definition and initialization of the Irrlicht application.
+    // Definition and initialization of the Irrlicht application.
+    m_irrApp = std::make_unique<FrIrrApp>(this, m_chronoSystem.get(), dist);
 
-    void FrOffshoreSystem::RunInViewer(double endTime, double dist, bool recordVideo, int videoFrameSaveInterval) {
+    m_irrApp->SetTimestep(m_chronoSystem->GetStep());
+    m_irrApp->SetVideoframeSave(recordVideo);
+    m_irrApp->SetVideoframeSaveInterval(videoFrameSaveInterval);
 
-        // Initialization of the system if not already done.
-        IsInitialized();
+    event_logger::info(GetTypeName(), GetName(),
+                       "Dynamic simulation STARTED in viewer with endTime = {} s, video recording set to {}",
+                       endTime, recordVideo);
 
-        // Definition and initialization of the Irrlicht application.
-        FrIrrApp app(this, m_chronoSystem.get(), dist);
+    m_irrApp->Run(endTime); // The temporal loop is here.
 
-        app.SetTimestep(m_chronoSystem->GetStep());
-        app.SetVideoframeSave(recordVideo);
-        app.SetVideoframeSaveInterval(videoFrameSaveInterval);
-        app.Run(endTime); // The temporal loop is here.
+  }
 
-    }
+  void FrOffshoreSystem::RunInViewer(double endTime, double dist, bool recordVideo) {
+    RunInViewer(endTime, dist, recordVideo, 10);
+  }
 
-    void FrOffshoreSystem::RunInViewer(double endTime, double dist, bool recordVideo) {
-        RunInViewer(endTime, dist, recordVideo, 10);
-    }
+  void FrOffshoreSystem::RunInViewer(double endTime, double dist) {
+    RunInViewer(endTime, dist, false);
+  }
 
-    void FrOffshoreSystem::RunInViewer(double endTime, double dist) {
-        RunInViewer(endTime, dist, false);
-    }
+  void FrOffshoreSystem::RunInViewer(double endTime) {
+    RunInViewer(endTime, 100);
+  }
 
-    void FrOffshoreSystem::RunInViewer(double endTime) {
-        RunInViewer(endTime, 100);
-    }
+  void FrOffshoreSystem::RunInViewer() {
+    RunInViewer(0);
+  }
 
-    void FrOffshoreSystem::RunInViewer() {
-        RunInViewer(0);
-    }
+  void FrOffshoreSystem::Visualize(double dist, bool recordVideo) {
 
-    void FrOffshoreSystem::Visualize( double dist, bool recordVideo) {
+    Initialize();
 
-        IsInitialized();  // So that system is automatically initialized when run in viewer mode
+    FrIrrApp app(this, m_chronoSystem.get(), dist);
 
-        FrIrrApp app(this, m_chronoSystem.get(), dist);
+    app.SetTimestep(m_chronoSystem->GetStep());
+    app.SetVideoframeSave(recordVideo);
+    app.Visualize();
 
-        app.SetTimestep(m_chronoSystem->GetStep());
-        app.SetVideoframeSave(recordVideo);
-        app.Visualize();
+  }
 
-    }
+  void FrOffshoreSystem::Visualize(double dist) {
+    Visualize(dist, false);
+  }
 
-    void FrOffshoreSystem::Visualize( double dist) {
-        Visualize(dist, false);
-    }
+  void FrOffshoreSystem::Visualize() {
+    Visualize(100);
+  }
 
-    void FrOffshoreSystem::Visualize() {
-        Visualize(100);
-    }
+  void FrOffshoreSystem::VisualizeStaticAnalysis(double dist, bool recordVideo) {
 
-    void FrOffshoreSystem::VisualizeStaticAnalysis( double dist, bool recordVideo) {
+    Initialize();  // So that system is automatically initialized when run in viewer mode
 
-        IsInitialized();  // So that system is automatically initialized when run in viewer mode
+    FrIrrApp app(this, m_chronoSystem.get(), dist);
 
-        FrIrrApp app(this, m_chronoSystem.get(), dist);
+    app.SetTimestep(m_chronoSystem->GetStep());
+    app.SetVideoframeSave(recordVideo);
+    app.VisualizeStaticAnalysis();
 
-        app.SetTimestep(m_chronoSystem->GetStep());
-        app.SetVideoframeSave(recordVideo);
-        app.VisualizeStaticAnalysis();
+  }
 
-    }
+  void FrOffshoreSystem::VisualizeStaticAnalysis(double dist) {
+    VisualizeStaticAnalysis(dist, false);
+  }
 
-    void FrOffshoreSystem::VisualizeStaticAnalysis( double dist) {
-        VisualizeStaticAnalysis(dist, false);
-    }
+  void FrOffshoreSystem::VisualizeStaticAnalysis() {
+    VisualizeStaticAnalysis(100);
+  }
 
-    void FrOffshoreSystem::VisualizeStaticAnalysis() {
-        VisualizeStaticAnalysis(100);
-    }
+  void FrOffshoreSystem::AddAsset(std::shared_ptr<chrono::ChAsset> asset) {
+    m_chronoSystem->AddAsset(std::move(asset));
+  }
 
-    void FrOffshoreSystem::AddAsset(std::shared_ptr<chrono::ChAsset> asset) {
-        m_chronoSystem->AddAsset(std::move(asset));
-    }
+  FrLogManager *FrOffshoreSystem::GetLogManager() const {
+    return m_LogManager.get();
+  }
 
-    void FrOffshoreSystem::IsInitialized() {
-        if (!m_isInitialized) Initialize();
-    }
+  FrPathManager *FrOffshoreSystem::GetPathManager() const {
+    return m_pathManager.get();
+  }
 
-    // Iterators
+// Iterators
 
-    FrOffshoreSystem::BodyIter FrOffshoreSystem::body_begin() {
-        return m_bodyList.begin();
-    }
+  FrOffshoreSystem::BodyIter FrOffshoreSystem::body_begin() {
+    return m_bodyList.begin();
+  }
 
-    FrOffshoreSystem::ConstBodyIter FrOffshoreSystem::body_begin() const {
-        return m_bodyList.cbegin();
-    }
+  FrOffshoreSystem::ConstBodyIter FrOffshoreSystem::body_begin() const {
+    return m_bodyList.cbegin();
+  }
 
-    FrOffshoreSystem::BodyIter FrOffshoreSystem::body_end() {
-        return m_bodyList.end();
-    }
+  FrOffshoreSystem::BodyIter FrOffshoreSystem::body_end() {
+    return m_bodyList.end();
+  }
 
-    FrOffshoreSystem::ConstBodyIter FrOffshoreSystem::body_end() const {
-        return m_bodyList.cend();
-    }
+  FrOffshoreSystem::ConstBodyIter FrOffshoreSystem::body_end() const {
+    return m_bodyList.cend();
+  }
 
-    FrOffshoreSystem::LinkIter FrOffshoreSystem::link_begin() {
-        return m_linkList.begin();
-    }
+  FrOffshoreSystem::LinkIter FrOffshoreSystem::link_begin() {
+    return m_linkList.begin();
+  }
 
-    FrOffshoreSystem::ConstLinkIter FrOffshoreSystem::link_begin() const {
-        return m_linkList.cbegin();
-    }
+  FrOffshoreSystem::ConstLinkIter FrOffshoreSystem::link_begin() const {
+    return m_linkList.cbegin();
+  }
 
-    FrOffshoreSystem::LinkIter FrOffshoreSystem::link_end() {
-        return m_linkList.end();
-    }
+  FrOffshoreSystem::LinkIter FrOffshoreSystem::link_end() {
+    return m_linkList.end();
+  }
 
-    FrOffshoreSystem::ConstLinkIter FrOffshoreSystem::link_end() const {
-        return m_linkList.cend();
-    }
+  FrOffshoreSystem::ConstLinkIter FrOffshoreSystem::link_end() const {
+    return m_linkList.cend();
+  }
 
-    void FrOffshoreSystem::InitializeLog_Dependencies(const std::string& systemPath) {
+  FrOffshoreSystem::ConstraintIter FrOffshoreSystem::constraint_begin() {
+    return m_constraintList.begin();
+  }
 
-        if (IsLogged()) {
+  FrOffshoreSystem::ConstConstraintIter FrOffshoreSystem::constraint_begin() const {
+    return m_constraintList.cbegin();
+  }
 
-            // Initializing environment before bodies
-//            m_environment->InitializeLog();
+  FrOffshoreSystem::ConstraintIter FrOffshoreSystem::constraint_end() {
+    return m_constraintList.end();
+  }
 
-            for (auto &item : m_PrePhysicsList) {
-                item->SetPathManager(GetPathManager());
-                item->InitializeLog(systemPath);
-            }
+  FrOffshoreSystem::ConstConstraintIter FrOffshoreSystem::constraint_end() const {
+    return m_constraintList.cend();
+  }
 
-            for (auto &item : m_bodyList) {
-                item->SetPathManager(GetPathManager());
-                item->InitializeLog(systemPath);
-            }
+  FrOffshoreSystem::ActuatorIter FrOffshoreSystem::actuator_begin() {
+    return m_actuatorList.begin();
+  }
 
-            for (auto &item : m_MidPhysicsList) {
-                item->SetPathManager(GetPathManager());
-                item->InitializeLog(systemPath);
-            }
+  FrOffshoreSystem::ConstActuatorIter FrOffshoreSystem::actuator_begin() const {
+    return m_actuatorList.cbegin();
+  }
 
-            for (auto &item : m_linkList) {
-                item->SetPathManager(GetPathManager());
-                item->InitializeLog(systemPath);
-            }
+  FrOffshoreSystem::ActuatorIter FrOffshoreSystem::actuator_end() {
+    return m_actuatorList.end();
+  }
 
-            for (auto &item : m_feaMeshList) {
-                item->SetPathManager(GetPathManager());
-                item->InitializeLog(systemPath);
-            }
+  FrOffshoreSystem::ConstActuatorIter FrOffshoreSystem::actuator_end() const {
+    return m_actuatorList.cend();
+  }
 
-            for (auto &item : m_PostPhysicsList) {
-                item->SetPathManager(GetPathManager());
-                item->InitializeLog(systemPath);
-            }
+//    void FrOffshoreSystem::InitializeLog_Dependencies(const std::string& systemPath) {
+//
+//        if (IsLogged()) {
+//
+//            // Initializing environment before bodies
+////            m_environment->InitializeLog();
+//
+//            for (auto &item : m_PrePhysicsList) {
+//                item->SetPathManager(GetPathManager());
+//                item->InitializeLog(systemPath);
+//            }
+//
+//            for (auto &item : m_bodyList) {
+//                item->SetPathManager(GetPathManager());
+//                item->InitializeLog(systemPath);
+//            }
+//
+//            for (auto &item : m_linkList) {
+//                item->SetPathManager(GetPathManager());
+//                item->InitializeLog(systemPath);
+//            }
+//
+//            for (auto &item : m_feaMeshList) {
+//                item->SetPathManager(GetPathManager());
+//                item->InitializeLog(systemPath);
+//            }
+//
+//        }
+//    }
+//
+//    void FrOffshoreSystem::ClearLogs() {
+//
+//        ClearMessage();
+//
+//        for (auto &item : m_PrePhysicsList) {
+//            item->ClearMessage();
+//        }
+//
+//        for (auto &item : m_bodyList) {
+//            item->ClearMessage();
+//            for (auto& force : item->GetForceList()) {
+//                force->ClearMessage();
+//            }
+//            for (auto& node : item->GetNodeList()) {
+//                node->ClearMessage();
+//            }
+//        }
+//
+//        for (auto &item : m_linkList) {
+//            item->ClearMessage();
+//        }
+//
+//    }
+//
+//    void FrOffshoreSystem::AddFields() {
+//        m_message->AddField<double>("time", "s", "Current time of the simulation",
+//                                    [this]() { return GetTime(); });
+//
+//        m_message->AddField<int>("iter", "", "number of total iterations taken by the solver", [this]() {
+//            return dynamic_cast<chrono::ChIterativeSolver*>(m_chronoSystem->GetSolver().get())->GetTotalIterations();
+//        });
+//
+//        if (dynamic_cast<chrono::ChIterativeSolver*>(m_chronoSystem->GetSolver().get())->GetRecordViolation()) {
+//
+//            m_message->AddField<double>("violationResidual", "", "constraint violation", [this]() {
+//                return dynamic_cast<chrono::ChIterativeSolver *>(m_chronoSystem->GetSolver().get())->GetViolationHistory().back();
+//                                        });
+//
+//            m_message->AddField<double>("LagrangeResidual", "", "maximum change in Lagrange multipliers", [this]() {
+//                return dynamic_cast<chrono::ChIterativeSolver *>(m_chronoSystem->GetSolver().get())->GetDeltalambdaHistory().back();
+//            });
+//
+//        }
+//
+//    }
+//
+//    std::string FrOffshoreSystem::GetDataPath(const std::string& relPath) const {
+//        return GetPathManager()->GetDataPath(relPath);
+//    }
+//
+//    std::string FrOffshoreSystem::BuildPath(const std::string &rootPath) {
+//
+//        auto objPath= fmt::format("{}_{}", GetTypeName(), GetShortenUUID());
+//
+//        auto logPath = GetPathManager()->BuildPath(objPath, fmt::format("{}_{}.csv", GetTypeName(), GetShortenUUID()));
+//
+//        // Add a serializer
+//        m_message->AddSerializer(FrSerializerFactory::instance().Create(this, logPath));
+//
+//        return objPath;
+//    }
 
-        }
-    }
+  void FrOffshoreSystem::SetSolverVerbose(bool verbose) {
+    m_chronoSystem->GetSolver()->SetVerbose(verbose);
+    dynamic_cast<chrono::ChIterativeSolver *>(m_chronoSystem->GetSolver().get())->SetRecordViolation(verbose);
+  }
 
-    void FrOffshoreSystem::ClearLogs() {
 
-        ClearMessage();
+  bool FrOffshoreSystem::Add(std::shared_ptr<FrTreeNodeBase> item) {
 
-        for (auto &item : m_PrePhysicsList) {
-            item->ClearMessage();
-        }
+    // FIXME : mettre des gardes au cas ou RegisterTreeNode renvoie false !!!
 
-        for (auto &item : m_bodyList) {
-            item->ClearMessage();
-            for (auto& force : item->GetForceList()) {
-                force->ClearMessage();
-            }
-            for (auto& node : item->GetNodeList()) {
-                node->ClearMessage();
-            }
-        }
+    bool added = true;
 
-        for (auto &item : m_MidPhysicsList) {
-            item->ClearMessage();
-        }
+    // BODY
+    if (auto body = std::dynamic_pointer_cast<FrBody>(item)) {
+      AddBody(body, body->GetChronoBody());
+      m_pathManager->RegisterTreeNode(body.get());
 
-        for (auto &item : m_linkList) {
-            item->ClearMessage();
-        }
+      // LINK
+    } else if (auto link = std::dynamic_pointer_cast<FrLink>(item)) {
+      AddLink(link, link->GetChronoLink());
+      m_pathManager->RegisterTreeNode(link.get());
 
-        for (auto &item : m_PostPhysicsList) {
-            item->ClearMessage();
-        }
+      // CONSTRAINT
+    } else if (auto constraint = std::dynamic_pointer_cast<FrConstraint>(item)) {
+      AddConstraint(constraint, constraint->GetChronoLink());
+      m_pathManager->RegisterTreeNode(constraint.get());
 
-    }
+      // ACTUATOR
+    } else if (auto actuator = std::dynamic_pointer_cast<FrActuator>(item)) {
+      AddActuator(actuator, actuator->GetChronoLink());
+      m_pathManager->RegisterTreeNode(actuator.get());
 
-    void FrOffshoreSystem::AddFields() {
-        m_message->AddField<double>("time", "s", "Current time of the simulation",
-                                    [this]() { return GetTime(); });
+      // CATENARY LINE
+      // MUST BE BEFORE PHYSICS ITEM
+    } else if (auto catenary_line = std::dynamic_pointer_cast<FrCatenaryLine>(item)) {
+      AddPhysicsItem(catenary_line, catenary_line->GetChronoPhysicsItem());
+      m_pathManager->RegisterTreeNode(catenary_line.get());
 
-        m_message->AddField<int>("iter", "", "number of total iterations taken by the solver", [this]() {
-            return dynamic_cast<chrono::ChIterativeSolver*>(m_chronoSystem->GetSolver().get())->GetTotalIterations();
-        });
+    } else if (auto equilibrium_frame = std::dynamic_pointer_cast<FrEquilibriumFrame>(item)) {
+      AddPhysicsItem(equilibrium_frame, equilibrium_frame->GetChronoPhysicsItem());
+      m_pathManager->RegisterTreeNode(equilibrium_frame.get());
 
-        if (dynamic_cast<chrono::ChIterativeSolver*>(m_chronoSystem->GetSolver().get())->GetRecordViolation()) {
+      //PHYSICS ITEM
+    } else if (auto physics_item = std::dynamic_pointer_cast<FrPrePhysicsItem>(item)) {
+      AddPhysicsItem(physics_item, physics_item->GetChronoPhysicsItem());
+//      m_pathManager->RegisterTreeNode(physics_item.get());
 
-            m_message->AddField<double>("violationResidual", "", "constraint violation", [this]() {
-                return dynamic_cast<chrono::ChIterativeSolver *>(m_chronoSystem->GetSolver().get())->GetViolationHistory().back();
-                                        });
+      // DYNAMIC CABLE
+      // MUST BE BEFORE FEAMESH CASE (dynamic cable is also feamesh, however the AddDynamicCable also add the hinges)
+    } else if (auto dynamic_cable = std::dynamic_pointer_cast<FrDynamicCable>(item)) {
+      AddDynamicCable(dynamic_cable, dynamic_cable->GetChronoMesh());
+      m_pathManager->RegisterTreeNode(dynamic_cable.get());
 
-            m_message->AddField<double>("LagrangeResidual", "", "maximum change in Lagrange multipliers", [this]() {
-                return dynamic_cast<chrono::ChIterativeSolver *>(m_chronoSystem->GetSolver().get())->GetDeltalambdaHistory().back();
-            });
 
-        }
+      // FEA MESH
+    } else if (auto fea_mesh = std::dynamic_pointer_cast<FrFEAMesh>(item)) {
+      AddFEAMesh(fea_mesh, fea_mesh->GetChronoMesh());
+//      m_pathManager->RegisterTreeNode(fea_mesh.get());
 
+      // UNKNOWN
+    } else {
+      added = false;
     }
+//    else {
+//      std::cerr << "Unknown object type " << std::endl;
+//      event_logger::error(GetTypeName(), GetName(),
+//          "Trying to add object {} with unknown type", item->GetName());
+//      exit(EXIT_FAILURE);
+//    }
 
-    std::string FrOffshoreSystem::GetDataPath(const std::string& relPath) const {
-        return GetPathManager()->GetDataPath(relPath);
+    if (added) {
+      if (auto loggable = std::dynamic_pointer_cast<FrLoggableBase>(item)) {
+        m_LogManager->Add(loggable);
+      }
     }
+
+    return added;
+  }
+
+  void FrOffshoreSystem::Remove(std::shared_ptr<FrTreeNodeBase> item) {
+
+    // BODY
+    if (auto body = std::dynamic_pointer_cast<FrBody>(item)) {
+      RemoveBody(body, body->GetChronoBody());
+
+      // LINK
+    } else if (auto link = std::dynamic_pointer_cast<FrLink>(item)) {
+      RemoveLink(link, link->GetChronoLink());
+
+      // CONSTRAINT
+    } else if (auto constraint = std::dynamic_pointer_cast<FrConstraint>(item)) {
+      RemoveConstraint(constraint, constraint->GetChronoLink());
 
-    std::string FrOffshoreSystem::BuildPath(const std::string &rootPath) {
+      // ACTUATOR
+    } else if (auto actuator = std::dynamic_pointer_cast<FrActuator>(item)) {
+      RemoveActuator(actuator, actuator->GetChronoLink());
 
-        auto objPath= fmt::format("{}_{}", GetTypeName(), GetShortenUUID());
+      //PHYSICS ITEM
+    } else if (auto physics_item = std::dynamic_pointer_cast<FrPrePhysicsItem>(item)) {
+      RemovePhysicsItem(physics_item, physics_item->GetChronoPhysicsItem());
 
-        auto logPath = GetPathManager()->BuildPath(objPath, fmt::format("{}_{}.csv", GetTypeName(), GetShortenUUID()));
+      // FEA MESH
+    } else if (auto fea_mesh = std::dynamic_pointer_cast<FrFEAMesh>(item)) {
+      RemoveFEAMesh(fea_mesh, fea_mesh->GetChronoMesh());
 
-        // Add a serializer
-        m_message->AddSerializer(FrSerializerFactory::instance().Create(this, logPath));
+      // DYNAMIC CABLE
+    } else if (auto dynamic_cable = std::dynamic_pointer_cast<FrDynamicCable>(item)) {
+      RemoveDynamicCable(dynamic_cable, dynamic_cable->GetChronoMesh());
 
-        return objPath;
+      // UNKNOWN
+    } else {
+      std::cerr << "Unknown object type " << std::endl;
+      exit(EXIT_FAILURE);
     }
 
-    void FrOffshoreSystem::SetSolverVerbose(bool verbose) {
-        m_chronoSystem->GetSolver()->SetVerbose(verbose);
-        dynamic_cast<chrono::ChIterativeSolver*>(m_chronoSystem->GetSolver().get())->SetRecordViolation(verbose);
+    if (auto loggable = std::dynamic_pointer_cast<FrLoggableBase>(item)) {
+      m_LogManager->Remove(loggable);
     }
 
+  }
 
 }  // end namespace frydom

@@ -59,6 +59,7 @@ list(APPEND SRC_FILES
 list(APPEND SRC_FILES
         math/FrMatrix.cpp
         math/FrVector.cpp
+        math/Torsor.cpp
 
         math/functions/FrFunctionBase.cpp
 
@@ -85,6 +86,7 @@ list(APPEND SRC_FILES
 # STATICS
 list(APPEND SRC_FILES
         statics/FrStaticAnalysis.cpp
+        ../hydrodynamics/hydrostatic/FrHydroStaticEquilibrium.cpp
         )
 
 

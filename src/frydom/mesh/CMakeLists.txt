@@ -4,7 +4,7 @@ set(SRC_FILES
 		FrTriangleMeshConnected.cpp
 		FrCache.cpp
 		FrMesh.cpp
-		FrHydrostaticsProperties.cpp
+        ../hydrodynamics/hydrostatic/FrHydrostaticsProperties.cpp
 		FrMeshClipper.cpp
 		FrHydroMesh.cpp
 		FrIncrementalMeshWriter.cpp

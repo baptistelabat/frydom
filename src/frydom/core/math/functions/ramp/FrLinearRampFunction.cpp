@@ -17,7 +17,6 @@ namespace frydom {
 
     FrLinearRampFunction::FrLinearRampFunction() {
         SetByTwoPoints(m_x0, m_y0, m_x1, m_y1);
-//        m_function = clamp_after(clamp_before(FrVarXFunction(), 0), 1).Clone();
     }
 
     FrLinearRampFunction::FrLinearRampFunction(double x0, double y0, double x1, double y1) : FrFunctionBase() {
@@ -29,32 +28,6 @@ namespace frydom {
     FrLinearRampFunction* FrLinearRampFunction::Clone() const {
         return new FrLinearRampFunction(*this);
     }
-
-//    void FrLinearRampFunction::SetY0(double intercept) {
-//        m_intercept = intercept;
-//    }
-//
-//    double FrLinearRampFunction::GetY0() const {
-//        return m_intercept;
-//    }
-//
-//    void FrLinearRampFunction::SetSlope(double slope) {
-//        m_slope = slope;
-//    }
-//
-//    double FrLinearRampFunction::GetSlope() const {
-//        return m_slope;
-//    }
-//
-//    void FrLinearRampFunction::SetInterceptAndSlope(double intercept, double slope) {
-//        m_intercept = intercept;
-//        m_slope = slope;
-//    }
-//
-//    void FrLinearRampFunction::SetXWindow(double x0, double x1) {
-//        m_x0 = x0;
-//        m_x1 = x1;
-//    }
 //
     void FrLinearRampFunction::SetByTwoPoints(double x0, double y0, double x1, double y1) {
 
@@ -84,10 +57,8 @@ namespace frydom {
     }
 
     std::string FrLinearRampFunction::GetRepr() const {
-        fmt::MemoryWriter mw;
+//        fmt::MemoryWriter mw;
 
-//        mw.write("Ramp(({:.3g}, {:.3g}), ({:.3g}, {:.3g}))", m_x0, Get_y(m_x0), m_x1, Get_y(m_x1));
-//        return mw.str();
         return ""; // TODO
     }
 

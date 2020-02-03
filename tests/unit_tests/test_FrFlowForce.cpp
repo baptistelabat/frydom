@@ -24,16 +24,16 @@ using namespace frydom;
 
 
 std::map<std::string, ANGLE_UNIT>
-        AngleUnit = boost::assign::map_list_of("DEG", DEG)("RAD", RAD);
+    AngleUnit = boost::assign::map_list_of("DEG", DEG)("RAD", RAD);
 
 std::map<std::string, SPEED_UNIT>
-        SpeedUnit = boost::assign::map_list_of("MS", MS)("KNOT", KNOT)("KMH", KMH);
+    SpeedUnit = boost::assign::map_list_of("MS", MS)("KNOT", KNOT)("KMH", KMH);
 
 std::map<std::string, FRAME_CONVENTION>
-        FrameConv = boost::assign::map_list_of("NWU", NWU)("NED", NED);
+    FrameConv = boost::assign::map_list_of("NWU", NWU)("NED", NED);
 
 std::map<std::string, DIRECTION_CONVENTION>
-        DirConvention = boost::assign::map_list_of("GOTO", GOTO)("COMEFROM", COMEFROM);
+    DirConvention = boost::assign::map_list_of("GOTO", GOTO)("COMEFROM", COMEFROM);
 
 
 
@@ -46,143 +46,146 @@ std::map<std::string, DIRECTION_CONVENTION>
 class TestFrFlowForce : public testing::Test {
 
 
-protected:
+ protected:
 
-    FrOffshoreSystem system;                                       ///< offshore system
-    std::shared_ptr<FrBody> body;                                  ///< hydrodynamic body
-    std::shared_ptr<FrFlowForce> force;                            ///< flow force
+  FrOffshoreSystem system;                                       ///< offshore system
+  std::shared_ptr<FrBody> body;                                  ///< hydrodynamic body
+  std::shared_ptr<FrFlowForce> force;                            ///< flow force
 
-    const Position bodyPositionInWorld = Position(0., 0., 0.);      ///< Position of Point in world
-    const Position COGPosition = Position(0., 0., 0.03);            ///< Position of the COG in body
+  const Position bodyPositionInWorld = Position(0., 0., 0.);      ///< Position of Point in world
+  const Position COGPosition = Position(0., 0., 0.03);            ///< Position of the COG in body
 
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> speed;    ///< List of speed test
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> dir;      ///< List of direction test
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> forceREF; ///< List of force results for the test
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> speed;    ///< List of speed test
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> dir;      ///< List of direction test
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> forceREF; ///< List of force results for the test
 
-    ANGLE_UNIT angleUnit;                                           ///< direction unit (RAD/DEG)
-    SPEED_UNIT speedUnit;                                           ///< speed unit (KNOT/MS)
-    FRAME_CONVENTION frame;                                         ///< frame convention (NED/NWU)
-    DIRECTION_CONVENTION convention;                                ///< direction convention (GOTO/COMEFROM)
+  ANGLE_UNIT angleUnit;                                           ///< direction unit (RAD/DEG)
+  SPEED_UNIT speedUnit;                                           ///< speed unit (KNOT/MS)
+  FRAME_CONVENTION frame;                                         ///< frame convention (NED/NWU)
+  DIRECTION_CONVENTION convention;                                ///< direction convention (GOTO/COMEFROM)
 
-    FLUID_TYPE m_type;
+  FLUID_TYPE m_type;
 
-    /// Initialize environment
-    void SetUp() override;
+  TestFrFlowForce(): system("test_FrFlowForce") {}
+
+  /// Initialize environment
+  void SetUp() override;
 
 
-public:
-    /// Test the force vector
-    void TestForce();
+ public:
+  /// Test the force vector
+  void TestForce();
 
-    /// Compare the force value in world at the COG
-    void CheckForceInWorldAtCOG(Force force, const unsigned int index);
+  /// Compare the force value in world at the COG
+  void CheckForceInWorldAtCOG(Force force, const unsigned int index);
 
-    /// Compare the torque value in body at the COG
-    void CheckTorqueInBodyAtCOG(Torque torque, const unsigned int index);
+  /// Compare the torque value in body at the COG
+  void CheckTorqueInBodyAtCOG(Torque torque, const unsigned int index);
 
-    /// Loading data from HDF5 file
-    void LoadData(std::string filename, std::string group);
+  /// Loading data from HDF5 file
+  void LoadData(std::string filename, std::string group);
 
-    ///
-    void MakeForce(FLUID_TYPE type, std::string filename);
+  ///
+  void MakeForce(FLUID_TYPE type, std::string filename);
 
 };
 
 void TestFrFlowForce::SetUp() {
-    body = std::make_shared<FrBody>();
-    body->SetPosition(bodyPositionInWorld, NWU);
+  body = system.NewBody("body");
+  body->SetPosition(bodyPositionInWorld, NWU);
 
-    FrInertiaTensor InertiaTensor(1.,1.,1.,1.,0.,0.,0.,COGPosition,NWU);
-    body->SetInertiaTensor(InertiaTensor);
-
-    system.AddBody(body);
+  FrInertiaTensor InertiaTensor(1., 1., 1., 1., 0., 0., 0., COGPosition, NWU);
+  body->SetInertiaTensor(InertiaTensor);
 }
 
 void TestFrFlowForce::LoadData(std::string filename, std::string group) {
 
-    FrHDF5Reader reader;
+  FrHDF5Reader reader;
 
-    reader.SetFilename(filename);
+  reader.SetFilename(filename);
 
-    speed = reader.ReadDoubleArray(group + "speed/");
-    dir   = reader.ReadDoubleArray(group + "direction/");
-    forceREF      = reader.ReadDoubleArray(group + "force/");
+  speed = reader.ReadDoubleArray(group + "speed/");
+  dir = reader.ReadDoubleArray(group + "direction/");
+  forceREF = reader.ReadDoubleArray(group + "force/");
 
-    angleUnit = STRING2ANGLE( reader.ReadString(group + "angle_unit/") );
-    speedUnit = SpeedUnit[ reader.ReadString(group + "speed_unit/") ];
-    convention = DirConvention[ reader.ReadString(group + "convention/") ];
-    frame = FrameConv[ reader.ReadString(group + "frame/") ];
+  angleUnit = STRING2ANGLE(reader.ReadString(group + "angle_unit/"));
+  speedUnit = SpeedUnit[reader.ReadString(group + "speed_unit/")];
+  convention = DirConvention[reader.ReadString(group + "convention/")];
+  frame = FrameConv[reader.ReadString(group + "frame/")];
 }
 
 void TestFrFlowForce::MakeForce(FLUID_TYPE type, std::string filename) {
-    m_type = type;
-    if (type==FLUID_TYPE::WATER) {
-        force = std::make_shared<FrCurrentForce>(filename);
-    } else if (type==FLUID_TYPE::AIR) {
-        force = std::make_shared<FrWindForce>(filename);
-    }
-    body->AddExternalForce(force);
+  m_type = type;
+  if (type == FLUID_TYPE::WATER) {
+    force = make_current_force("current", body, filename);
+  } else if (type == FLUID_TYPE::AIR) {
+    force = make_wind_force("wind", body, filename);
+  }
 }
 
 void TestFrFlowForce::CheckForceInWorldAtCOG(Force force, const unsigned int index) {
 
-    auto forceRef_i = forceREF.row(index);
-    EXPECT_NEAR(forceRef_i(0), force.GetFx(), 10e-2);
-    EXPECT_NEAR(forceRef_i(1), force.GetFy(), 10e-2);
-    EXPECT_NEAR(forceRef_i(2), force.GetFz(), 10e-2);
+  auto forceRef_i = forceREF.row(index);
+  EXPECT_NEAR(forceRef_i(0), force.GetFx(), 10e-2);
+  EXPECT_NEAR(forceRef_i(1), force.GetFy(), 10e-2);
+  EXPECT_NEAR(forceRef_i(2), force.GetFz(), 10e-2);
 }
 
 void TestFrFlowForce::CheckTorqueInBodyAtCOG(Torque torque, const unsigned int index) {
 
-    auto forceRef_i = forceREF.row(index);
-    EXPECT_NEAR(forceRef_i(3), torque.GetMx(), 10e-2);
-    EXPECT_NEAR(forceRef_i(4), torque.GetMy(), 10e-2);
-    EXPECT_NEAR(forceRef_i(5), torque.GetMz(), 10e-2);
+  auto forceRef_i = forceREF.row(index);
+  EXPECT_NEAR(forceRef_i(3), torque.GetMx(), 10e-2);
+  EXPECT_NEAR(forceRef_i(4), torque.GetMy(), 10e-2);
+  EXPECT_NEAR(forceRef_i(5), torque.GetMz(), 10e-2);
 }
 
 void TestFrFlowForce::TestForce() {
-    Force forceTemp;
-    Torque torqueTemp;
+  Force forceTemp;
+  Torque torqueTemp;
 
-    for (unsigned int i=0; i<speed.size(); i++) {
+  for (unsigned int i = 0; i < speed.size(); i++) {
 
-        if (m_type == WATER) {
-            system.GetEnvironment()->GetOcean()->GetCurrent()->MakeFieldUniform();
-            system.GetEnvironment()->GetOcean()->GetCurrent()->GetFieldUniform()->Set(dir(i), speed(i), angleUnit, speedUnit, frame,
-                                                                   convention);
-        } else if (m_type == FLUID_TYPE::AIR) {
-            system.GetEnvironment()->GetAtmosphere()->GetWind()->MakeFieldUniform();
-            system.GetEnvironment()->GetAtmosphere()->GetWind()->GetFieldUniform()->Set(dir(i), speed(i), angleUnit, speedUnit, frame,
-                                                                   convention);
-        }
-        force->Update(0.);
-        force->GetForceInWorld(forceTemp, NWU);
-        force->GetTorqueInBodyAtCOG(torqueTemp, NWU);
-
-        CheckForceInWorldAtCOG(forceTemp, i);
-        CheckTorqueInBodyAtCOG(torqueTemp, i);
+    if (m_type == WATER) {
+      system.GetEnvironment()->GetOcean()->GetCurrent()->MakeFieldUniform();
+      system.GetEnvironment()->GetOcean()->GetCurrent()->GetFieldUniform()->Set(dir(i), speed(i), angleUnit, speedUnit,
+                                                                                frame,
+                                                                                convention);
+    } else if (m_type == FLUID_TYPE::AIR) {
+      system.GetEnvironment()->GetAtmosphere()->GetWind()->MakeFieldUniform();
+      system.GetEnvironment()->GetAtmosphere()->GetWind()->GetFieldUniform()->Set(dir(i), speed(i), angleUnit,
+                                                                                  speedUnit, frame,
+                                                                                  convention);
     }
+    force->Update(0.);
+    force->GetForceInWorld(forceTemp, NWU);
+    force->GetTorqueInBodyAtCOG(torqueTemp, NWU);
+
+    CheckForceInWorldAtCOG(forceTemp, i);
+    CheckTorqueInBodyAtCOG(torqueTemp, i);
+  }
 }
 
 
 TEST_F(TestFrFlowForce, TestCurrentForce) {
-    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
-    LoadData(system.GetDataPath("TNR_database.h5"), "/current_force/");
-    MakeForce(WATER, system.GetDataPath("Ship_PolarCurrentCoeffs.json"));
-    system.Initialize();
-    TestForce();
+  auto database = FrFileSystem::join({system.config_file().GetDataFolder(), "unit_test/TNR_database.h5"});
+  LoadData(database, "/current_force/");
+  auto Ship_PolarCurrentCoeffs = FrFileSystem::join({system.config_file().GetDataFolder(), "unit_test/Ship_PolarCurrentCoeffs.json"});
+  MakeForce(WATER, Ship_PolarCurrentCoeffs);
+  system.Initialize();
+  TestForce();
 };
 
 
 TEST_F(TestFrFlowForce, TestWindForce) {
-    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
-    LoadData(system.GetDataPath("TNR_database.h5"), "/wind_force/");
-    MakeForce(FLUID_TYPE::AIR, system.GetDataPath("Ship_PolarWindCoeffs.json"));
-    system.Initialize();
-    TestForce();
+  auto database = FrFileSystem::join({system.config_file().GetDataFolder(), "unit_test/TNR_database.h5"});
+  LoadData(database, "/wind_force/");
+  auto Ship_PolarWindCoeffs = FrFileSystem::join({system.config_file().GetDataFolder(), "unit_test/Ship_PolarWindCoeffs.json"});
+  MakeForce(FLUID_TYPE::AIR, Ship_PolarWindCoeffs);
+  system.Initialize();
+  TestForce();
 };
 
 int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }

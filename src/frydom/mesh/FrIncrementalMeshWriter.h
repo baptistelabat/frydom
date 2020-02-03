@@ -16,43 +16,43 @@
 
 namespace frydom {
 
-    namespace mesh {
+  namespace mesh {
 
-        // Forward declaration
-        class FrMesh;
+    // Forward declaration
+    class FrMesh;
 
-        namespace meshutils {
+    namespace meshutils {
 
-            class FrIncrementalMeshWriter {
+      class FrIncrementalMeshWriter {
 
-            private:
-                std::string m_meshFileBase = "output";
-                std::string m_extension = ".obj";
-                int m_counter = 0;
+       private:
+        std::string m_meshFileBase = "output";
+        std::string m_extension = ".obj";
+        int m_counter = 0;
 
-            public:
-                FrIncrementalMeshWriter() = default;
+       public:
+        FrIncrementalMeshWriter() = default;
 
-                void SetFileBase(std::string base);
+        void SetFileBase(std::string base);
 
-                void SetFileType(std::string fileType);
+        void SetFileType(std::string fileType);
 
-                void Reinit(int i);
+        void Reinit(int i);
 
-                void Reinit();
+        void Reinit();
 
-                void operator()(const FrMesh &mesh);
+        void operator()(const FrMesh &mesh);
 
-                void Write(const FrMesh &mesh);
+        void Write(const FrMesh &mesh);
 
-            private:
-                std::string GetFilename() const;
+       private:
+        std::string GetFilename() const;
 
-            };
+      };
 
-        } // end namespace frydom::mesh::meshutils
+    } // end namespace frydom::mesh::meshutils
 
-    } // end namespace frydom::mesh
+  } // end namespace frydom::mesh
 
 } // end namespace frydom
 

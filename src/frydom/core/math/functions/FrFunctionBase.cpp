@@ -112,35 +112,32 @@ namespace frydom {
 
     void FrFunctionBase::WriteToGnuPlotFile(double xmin, double xmax, double dx, std::string filename) const {
 
-        fmt::MemoryWriter mw;
+        fmt::memory_buffer buffer;
 
         // Building Gnuplot dat file as a single string
-        mw << "#x\ty\tdy\tdydy\n";
+        fmt::format_to(buffer, "#x\ty\tdy\tdydy\n");
         double x(xmin);
         while (x <= xmax) {
-            mw << x << "\t"
-               << Get_y(x) << "\t"
-               << Get_y_dx(x) << "\t"
-               << Get_y_dxdx(x) << "\n";
+          fmt::format_to(buffer, "{}\t{}\t{}\t{}\n", x, Get_y(x), Get_y_dx(x), Get_y_dxdx(x));
             x += dx;
         }
 
         // Writing data file
         std::ofstream dataFile;
         dataFile.open(filename+".dat", std::ios::trunc);
-        dataFile << mw.str();
+        dataFile << fmt::to_string(buffer);
         dataFile.close();
-        mw.clear();
+        buffer.clear();
 
         // Writing gnuplot file along with gnuplot script syntax
-        mw.write("set grid\n");
-        mw.write("plot \"{:s}.dat\" using 1:2 with lines title \"y\", ", filename);
-        mw.write("\"{:s}.dat\" using 1:3 with lines title \"dy\", ", filename);
-        mw.write("\"{:s}.dat\" using 1:4 with lines title \"dydy\"\n", filename);
+        fmt::format_to(buffer, "set grid\n");
+        fmt::format_to(buffer, "plot \"{:s}.dat\" using 1:2 with lines title \"y\", ", filename);
+        fmt::format_to(buffer, "\"{:s}.dat\" using 1:3 with lines title \"dy\", ", filename);
+        fmt::format_to(buffer, "\"{:s}.dat\" using 1:4 with lines title \"dydy\"\n", filename);
 
         std::ofstream gnuFile;
         gnuFile.open(filename+".gnuplot", std::ios::trunc);
-        gnuFile << mw.str();
+        gnuFile << fmt::to_string(buffer);
         gnuFile.close();
 
     }
@@ -340,9 +337,7 @@ namespace frydom {
     }
 
     std::string FrConstantFunction::GetRepr() const {
-        fmt::MemoryWriter mw;
-        mw << c_y;
-        return mw.str();
+        return std::to_string(c_y);
     }
 
     void FrConstantFunction::Eval(double x) const {}
@@ -366,11 +361,9 @@ namespace frydom {
     }
 
     std::string FrUnaryOpFunction::GetRepr() const {
-        fmt::MemoryWriter mw;
-        if (m_negate) mw << '-';
-
-        mw << m_function->GetRepr();
-        return mw.str();
+      std::string ret;
+      if (m_negate) ret += "-";
+      return ret + m_function->GetRepr();
     }
 
     void FrUnaryOpFunction::Eval(double x) const {
@@ -408,9 +401,7 @@ namespace frydom {
     }
 
     std::string FrAddFunction::GetRepr() const {
-        fmt::MemoryWriter mw;
-        mw << m_function->GetRepr() << " + " << m_rightFunction->GetRepr();
-        return mw.str();
+      return m_function->GetRepr() + "+" + m_rightFunction->GetRepr();
     }
 
     void FrAddFunction::Eval(double x) const {
@@ -432,9 +423,7 @@ namespace frydom {
     }
 
     std::string FrSubFunction::GetRepr() const {
-        fmt::MemoryWriter mw;
-        mw << m_function->GetRepr() << " - " << m_rightFunction->GetRepr();
-        return mw.str();
+      return m_function->GetRepr() + "-" + m_rightFunction->GetRepr();
     }
 
     void FrSubFunction::Eval(double x) const {
@@ -455,9 +444,7 @@ namespace frydom {
     }
 
     std::string FrMulFunction::GetRepr() const {
-        fmt::MemoryWriter mw;
-        mw << m_function->GetRepr() << " * " << m_rightFunction->GetRepr();
-        return mw.str();
+      return m_function->GetRepr() + "*" + m_rightFunction->GetRepr();
     }
 
     void FrMulFunction::Eval(double x) const {
@@ -481,9 +468,7 @@ namespace frydom {
     }
 
     std::string FrDivFunction::GetRepr() const {
-        fmt::MemoryWriter mw;
-        mw << m_function->GetRepr() << " / " << m_rightFunction->GetRepr();
-        return mw.str();
+      return m_function->GetRepr() + "/" + m_rightFunction->GetRepr();
     }
 
     void FrDivFunction::Eval(double x) const {
@@ -507,10 +492,9 @@ namespace frydom {
     }
 
     std::string FrCompFunction::GetRepr() const {
-        fmt::MemoryWriter mw;
-
-//        mw <<
-        // TODO
+      fmt::memory_buffer buffer;
+      fmt::format_to(buffer, "{} o({})", m_function->GetRepr(), m_rightFunction->GetRepr());
+      return fmt::to_string(buffer);
     }
 
     void FrCompFunction::Eval(double x) const {

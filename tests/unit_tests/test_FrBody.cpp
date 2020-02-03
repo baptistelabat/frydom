@@ -107,8 +107,11 @@ void Test_AllGetPosition(const std::shared_ptr<FrBody> body,
 
 TEST(FrBodyTest,Position) {
     FRAME_CONVENTION fc = NED;
+
+    FrOffshoreSystem system("system");
+
     // Body Instantiation
-    auto body = std::make_shared<FrBody>();
+    auto body = system.NewBody("body");
 
     Position RefPositionInWorld(1., 2., 3.);
     body->SetPosition(RefPositionInWorld, fc);
@@ -126,8 +129,11 @@ TEST(FrBodyTest,Position) {
 }
 
 TEST(FrBodyTest,PositionNED) {
+
+    FrOffshoreSystem system("system");
+
     // Body Instantiation
-    auto body = std::make_shared<FrBody>();
+    auto body = system.NewBody("body");
 
     Position RefPositionInWorld(1., 2., 3.);
     body->SetPosition(RefPositionInWorld, NWU);
@@ -146,8 +152,11 @@ TEST(FrBodyTest,PositionNED) {
 
 TEST(FrBodyTest,Translation) {
     FRAME_CONVENTION fc = NED;
+
+    FrOffshoreSystem system("system");
+
     // Body Instantiation
-    auto body = std::make_shared<FrBody>();
+    auto body = system.NewBody("body");
 
     Position RefPositionInWorld(1., 2., 3.);
     body->SetPosition(RefPositionInWorld, fc);
@@ -225,8 +234,11 @@ void Test_AllGetRotation(const std::shared_ptr<FrBody> body, const FrRotation &B
 
 TEST(FrBodyTest,Orientation) {
     FRAME_CONVENTION fc = NED;
+
+    FrOffshoreSystem system("system");
+
     // Body Instantiation
-    auto body = std::make_shared<FrBody>();
+    auto body = system.NewBody("body");
 
     Position RefPositionInWorld(1., 2., 3.);
     body->SetPosition(RefPositionInWorld, fc);
@@ -321,8 +333,11 @@ TEST(FrBodyTest,Orientation) {
 
 TEST(FrBodyTest,PositionWithOrientation){
     FRAME_CONVENTION fc = NED;
+
+    FrOffshoreSystem system("system");
+
     // Body Instantiation
-    auto body = std::make_shared<FrBody>();
+    auto body = system.NewBody("body");
 
     Position RefPositionInWorld(1.,2.,3.);
     body->SetPosition(RefPositionInWorld,fc);
@@ -365,8 +380,11 @@ void Test_GetAngularVelocity(const std::shared_ptr<FrBody> body,
 
 TEST(FrBodyTest,AngularVelocity) {
     FRAME_CONVENTION fc = NED;
+
+    FrOffshoreSystem system("system");
+
     // Body Instantiation
-    auto body = std::make_shared<FrBody>();
+    auto body = system.NewBody("body");
 
     AngularVelocity BodyAngularVelocityInBody, BodyAngularVelocityInWorld;
 
@@ -483,8 +501,11 @@ void Test_AllGetVelocity(const std::shared_ptr<FrBody> body,
 
 TEST(FrBodyTest,TranslationalVelocity){
     FRAME_CONVENTION fc = NED;
+
+    FrOffshoreSystem system("system");
+
     // Body Instantiation
-    auto body = std::make_shared<FrBody>();
+    auto body = system.NewBody("body");
 
     Position OrigWorldPos(1.,2.,3.);
     body->SetPosition(OrigWorldPos,fc);
@@ -560,8 +581,11 @@ TEST(FrBodyTest,TranslationalVelocity){
 
 TEST(FrBodyTest,TranslationalVelocityWithOrientation){
     FRAME_CONVENTION fc = NED;
+
+    FrOffshoreSystem system("system");
+
     // Body Instantiation
-    auto body = std::make_shared<FrBody>();
+    auto body = system.NewBody("body");
 
     Position OrigWorldPos(1.,2.,3.);
     body->SetPosition(OrigWorldPos,fc);
@@ -652,8 +676,11 @@ TEST(FrBodyTest,TranslationalVelocityWithOrientation){
 
 TEST(FrBodyTest,TranslationalVelocityWithAngularVelocity){
     FRAME_CONVENTION fc = NED;
+
+    FrOffshoreSystem system("system");
+
     // Body Instantiation
-    auto body = std::make_shared<FrBody>();
+    auto body = system.NewBody("body");
 
     Position OrigWorldPos(1.,2.,3.);
     body->SetPosition(OrigWorldPos,fc);
@@ -732,8 +759,11 @@ TEST(FrBodyTest,TranslationalVelocityWithAngularVelocity){
 
 TEST(FrBodyTest,TranslationalVelocityWithAngularVelocityAndOrientation){
     FRAME_CONVENTION fc = NED;
+
+    FrOffshoreSystem system("system");
+
     // Body Instantiation
-    auto body = std::make_shared<FrBody>();
+    auto body = system.NewBody("body");
 
     Position OrigWorldPos(1.,2.,3.);
     body->SetPosition(OrigWorldPos,fc);
@@ -846,8 +876,11 @@ void Test_GetAngularAcceleration(const std::shared_ptr<FrBody> body,
 
 TEST(FrBodyTest,AngularAcceleration) {
     FRAME_CONVENTION fc = NED;
+
+    FrOffshoreSystem system("system");
+
     // Body Instantiation
-    auto body = std::make_shared<FrBody>();
+    auto body = system.NewBody("body");
 
     AngularAcceleration BodyAngularAccelerationInBody, BodyAngularAccelerationInWorld;
 
@@ -979,8 +1012,11 @@ void Test_AllGetAcceleration(const std::shared_ptr<FrBody> body,
 TEST(FrBodyTest,Acceleration){
     FRAME_CONVENTION fc = NED;
     bool is_orientation = false;
+
+    FrOffshoreSystem system("system");
+
     // Body Instantiation
-    auto body = std::make_shared<FrBody>();
+    auto body = system.NewBody("body");
 
     Position OrigWorldPos(1.,2.,3.);
     body->SetPosition(OrigWorldPos, fc);
@@ -1016,8 +1052,11 @@ TEST(FrBodyTest,Acceleration){
 TEST(FrBodyTest,AccelerationWithOrientation){
     FRAME_CONVENTION fc = NED;
     bool is_orientation = true;
+
+    FrOffshoreSystem system("system");
+
     // Body Instantiation
-    auto body = std::make_shared<FrBody>();
+    auto body = system.NewBody("body");
 
     Position OrigWorldPos(1.,2.,3.);
     body->SetPosition(OrigWorldPos, fc);
@@ -1062,8 +1101,11 @@ TEST(FrBodyTest,AccelerationWithOrientation){
 TEST(FrBodyTest,AccelerationWithAngularVelocityAndAcceleration){
     FRAME_CONVENTION fc = NED;
     bool is_orientation = false;
+
+    FrOffshoreSystem system("system");
+
     // Body Instantiation
-    auto body = std::make_shared<FrBody>();
+    auto body = system.NewBody("body");
 
     Position OrigWorldPos(1.,2.,3.);
     body->SetPosition(OrigWorldPos, fc);
@@ -1107,8 +1149,11 @@ TEST(FrBodyTest,AccelerationWithAngularVelocityAndAcceleration){
 TEST(FrBodyTest,AccelerationWithOrientationAndAngularVelocityAndAcceleration){
     FRAME_CONVENTION fc = NED;
     bool is_orientation = true;
+
+    FrOffshoreSystem system("system");
+
     // Body Instantiation
-    auto body = std::make_shared<FrBody>();
+    auto body = system.NewBody("body");
 
     Position OrigWorldPos(1.,2.,3.);
     body->SetPosition(OrigWorldPos, fc);
@@ -1156,8 +1201,10 @@ TEST(FrBodyTest,AccelerationWithOrientationAndAngularVelocityAndAcceleration){
 
 TEST(FrBodyTest,ProjectVectorMethods){
 
+    FrOffshoreSystem system("system");
+
     // Body Instantiation
-    auto body = std::make_shared<FrBody>();
+    auto body = system.NewBody("body");
 
     Position NWUWorldPos(1,2,3);
 
@@ -1184,8 +1231,10 @@ TEST(FrBodyTest,ProjectVectorMethods){
 
 TEST(FrBodyTest,ProjectVectorMethodsWithOrientation){
 
+    FrOffshoreSystem system("system");
+
     // Body Instantiation
-    auto body = std::make_shared<FrBody>();
+    auto body = system.NewBody("body");
 
     //-----------------Orientation-----------------//
     // Rotation to an easy transformation

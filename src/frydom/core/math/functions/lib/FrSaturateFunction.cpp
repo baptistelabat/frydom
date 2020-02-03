@@ -30,7 +30,7 @@ namespace frydom {
     }
 
     std::string FrSaturateFunction::GetRepr() const {
-        fmt::MemoryWriter mw;
+//        fmt::MemoryWriter mw;
 //        mw <<
         return "";  // TODO
     }

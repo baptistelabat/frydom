@@ -48,4 +48,8 @@ namespace frydom {
         return m_mapEqFrame.at(BEMBody).get();
     }
 
+    std::shared_ptr<FrEquilibriumFrame> FrHydroMapper::GetSharedEquilibriumFrame(FrBody* body) const {
+        return m_mapEqFrame.at(GetBEMBody(body));
+    }
+
 }  // end namespace frydom

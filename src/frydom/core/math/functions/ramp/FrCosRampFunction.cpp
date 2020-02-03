@@ -9,7 +9,11 @@
 //
 // ==========================================================================
 
+#include "fmt/format.h"
+
 #include <MathUtils/Constants.h>
+
+
 #include "FrCosRampFunction.h"
 #include "frydom/core/math/functions/lib/FrClampFunction.h"
 #include "frydom/core/math/functions/lib/FrTrigonometricFunctions.h"
@@ -60,7 +64,7 @@ namespace frydom{
     }
 
     std::string FrCosRampFunction::GetRepr() const {
-        fmt::MemoryWriter mw;
+//        fmt::MemoryWriter mw;
 
 //        mw.write("Ramp(({:.3g}, {:.3g}), ({:.3g}, {:.3g}))", m_x0, Get_y(m_x0), m_x1, Get_y(m_x1));
 //        return mw.str();

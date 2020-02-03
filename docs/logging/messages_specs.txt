@@ -1,0 +1,52 @@
+
+On aura toujours la forme <PREFIX>/<BODY>/<Target>
+
+
+
+
+
+<PREFIX>FRYDOM_[ID]/
+
+<PREFIX>FRYDOM_[ID]/BODY/
+
+<PREFIX>FRYDOM_[ID]/BODY/BODY_[Name]/
+<PREFIX>FRYDOM_[ID]/BODY/BODY_[Name]/<frydom_msg.Body[MsgType] or Body[MsgType].csv>
+
+<PREFIX>FRYDOM_[ID]/BODY/BODY_[Name]/FORCE/
+<PREFIX>FRYDOM_[ID]/BODY/BODY_[Name]/FORCE/FORCE_[Name]/
+<PREFIX>FRYDOM_[ID]/BODY/BODY_[Name]/FORCE/FORCE_[Name]/<frydom_msg.[ForceType][MsgType] or [ForceType][MsgType].csv>
+
+<PREFIX>FRYDOM_[ID]/BODY/BODY_[Name]/NODES/
+<PREFIX>FRYDOM_[ID]/BODY/BODY_[Name]/NODES/NODE_[Name]/
+<PREFIX>FRYDOM_[ID]/BODY/BODY_[Name]/NODES/NODE_[Name]/<frydom_msg.Node[MsgType] or Node[MsgType].csv>
+
+<PREFIX>FRYDOM_[ID]/BODY/BODY_[Name]/NODES/NODE_[Name]/SENSOR/
+<PREFIX>FRYDOM_[ID]/BODY/BODY_[Name]/NODES/NODE_[Name]/SENSOR/SENSOR_[Name]/
+<PREFIX>FRYDOM_[ID]/BODY/BODY_[Name]/NODES/NODE_[Name]/SENSOR/SENSOR_[Name]/<frydom_msg.[SensorType][MsgType] or  [SensorType][MsgType].csv>
+
+<PREFIX>FRYDOM_[ID]/BODY/BODY_[Name]/EQUILIBRIUM_FRAME/
+<PREFIX>FRYDOM_[ID]/BODY/BODY_[Name]/EQUILIBRIUM_FRAME/EQUILIBRIUM_FRAME_[Name]/
+<PREFIX>FRYDOM_[ID]/BODY/BODY_[Name]/EQUILIBRIUM_FRAME/EQUILIBRIUM_FRAME_[Name]/<frydom_msg.[EquilibriumFrameType][MsgType] or [EquilibriumFrameType][MsgType].csv>
+
+<PREFIX>FRYDOM_[ID]/CABLE/
+<PREFIX>FRYDOM_[ID]/CABLE/CABLE_[Name]/
+<PREFIX>FRYDOM_[ID]/CABLE/CABLE_[Name]/<frydom_msg.[CableType][MsgType] or [CableType][MsgType].csv>
+
+<PREFIX>FRYDOM_[ID]/SENSOR/
+<PREFIX>FRYDOM_[ID]/SENSOR/SENSOR_[Name]
+<PREFIX>FRYDOM_[ID]/SENSOR/SENSOR_[Name]/<frydom_msg.[SensorType][MsgType] or [SensorType][MsgType].csv>
+
+<PREFIX>FRYDOM_[ID]/LINK/
+<PREFIX>FRYDOM_[ID]/LINK/LINK_[Name]/
+<PREFIX>FRYDOM_[ID]/LINK/LINK_[Name]/<frydom_msg.[LinkType][MsgType] or [LinkType][Msgtype].csv>
+
+<PREFIX>FRYDOM_[ID]/CONSTRAINT/
+<PREFIX>FRYDOM_[ID]/CONSTRAINT/CONSTRAINT_[Name]/
+<PREFIX>FRYDOM_[ID]/CONSTRAINT/CONSTRAINT_[Name]/<frydom_msg.[ConstraintType][MsgType] or [ConstraintType][MsgType].csv>
+
+<PREFIX>FRYDOM_[ID]/SIMULATION/
+<PREFIX>FRYDOM_[ID]/SIMULATION/<frydom_msg.SimulationData or SimulationData.csv>
+
+
+
+symbols enclosed by < > are specified by a hermes serializer

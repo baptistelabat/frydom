@@ -24,7 +24,7 @@ namespace frydom {
         return m_box;
     }
 
-    void FrBoxShape::Translate(Position direction) const {
+    void FrBoxShape::Translate(const Direction& direction) const {
             m_box->Pos = internal::Vector3dToChVector(direction);
     }
 }  // end namespace frydom

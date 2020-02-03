@@ -70,7 +70,7 @@ Static analysis
 .. toctree::
    :maxdepth: 2
 
-   src/static_analysis/static_analysis
+   src/static_analysis/index
 
 Numerical methods
 *****************

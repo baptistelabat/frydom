@@ -76,6 +76,11 @@ namespace frydom {
         /// \return Equilibrium frame
         FrEquilibriumFrame* GetEquilibriumFrame(FrBody* body) const;
 
+        /// Return the equilibrium frame
+        /// \param body body (frydom object)
+        /// \return Equilibrium frame
+        std::shared_ptr<FrEquilibriumFrame> GetSharedEquilibriumFrame(FrBody* body) const;
+
         std::unordered_map<FrBEMBody*, FrBody*>::iterator begin() { return m_mapBEMToBody.begin(); }
 
         std::unordered_map<FrBEMBody*, FrBody*>::iterator end() { return m_mapBEMToBody.end(); };

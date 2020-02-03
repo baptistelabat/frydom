@@ -42,10 +42,6 @@ namespace frydom {
         /// \param freeSurface pointer to the free surface, to which the wave field belongs
         explicit FrAiryRegularWaveField(FrFreeSurface* freeSurface);
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "AiryRegularWaveField"; }
-
         /// Set the wave height of the regular Airy wave filed
         /// \param height wave height
         void SetWaveHeight(double height);

@@ -16,111 +16,110 @@ using namespace frydom;
 
 class TestFrStandardCurrentForce : public ::testing::Test {
 
-protected:
+ protected:
 
-    FrOffshoreSystem system;
-    std::shared_ptr<FrBody> body;
-    std::shared_ptr<FrCurrentStandardForce> force;
+  FrOffshoreSystem system;
+  std::shared_ptr<FrBody> body;
+  std::shared_ptr<FrCurrentStandardForce> force;
 
-    double m_frontalArea;
-    double m_lateralArea;
-    double m_lengthBetweenPerpendicular;
-    double m_lengthOverAll;
-    double m_Xcenter;
-    double m_currentSpeed;
+  double m_frontalArea;
+  double m_lateralArea;
+  double m_lengthBetweenPerpendicular;
+  double m_lengthOverAll;
+  double m_Xcenter;
+  double m_currentSpeed;
 
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m_direction;
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m_dragCoefficient;
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m_direction;
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m_dragCoefficient;
 
-    double m_xadim;
-    double m_yadim;
-    double m_nadim;
+  double m_xadim;
+  double m_yadim;
+  double m_nadim;
 
-    void SetUp() override;
+  TestFrStandardCurrentForce() : system("TestFrStandardCurrentForce") {}
 
-    void LoadData(std::string filename);
+  void SetUp() override;
+
+  void LoadData(std::string filename);
 
 
 };
 
 void TestFrStandardCurrentForce::LoadData(std::string filename) {
 
-    FrHDF5Reader reader;
+  FrHDF5Reader reader;
 
-    reader.SetFilename(filename);
-    std::string group = "/standardDNV/current/";
+  reader.SetFilename(filename);
+  std::string group = "/standardDNV/current/";
 
-    m_frontalArea = reader.ReadDouble(group + "FrontalArea");
-    m_lateralArea = reader.ReadDouble(group + "LateralArea");
-    m_lengthBetweenPerpendicular = reader.ReadDouble(group + "LengthBetweenPerpendicular");
-    m_lengthOverAll = reader.ReadDouble(group + "LengthOverAll");
-    m_Xcenter = reader.ReadDouble(group + "Xcenter");
-    m_currentSpeed = reader.ReadDouble(group + "CurrentSpeed");
-    m_direction = reader.ReadDoubleArray(group + "CurrentDirection");
-    m_dragCoefficient = reader.ReadDoubleArray(group + "DragCoefficient");
+  m_frontalArea = reader.ReadDouble(group + "FrontalArea");
+  m_lateralArea = reader.ReadDouble(group + "LateralArea");
+  m_lengthBetweenPerpendicular = reader.ReadDouble(group + "LengthBetweenPerpendicular");
+  m_lengthOverAll = reader.ReadDouble(group + "LengthOverAll");
+  m_Xcenter = reader.ReadDouble(group + "Xcenter");
+  m_currentSpeed = reader.ReadDouble(group + "CurrentSpeed");
+  m_direction = reader.ReadDoubleArray(group + "CurrentDirection");
+  m_dragCoefficient = reader.ReadDoubleArray(group + "DragCoefficient");
 
 }
 
 void TestFrStandardCurrentForce::SetUp() {
+  auto database = FrFileSystem::join({system.config_file().GetDataFolder(), "unit_test/TNR_database.h5"});
+  LoadData(database);
 
-    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
-    LoadData(system.GetDataPath("TNR_database.h5"));
+  body = system.NewBody("body");
 
-    force = std::make_shared<FrCurrentStandardForce>();
-    force->SetLengthBetweenPerpendicular(m_lengthBetweenPerpendicular);
-    force->SetLateralArea(m_lateralArea);
-    force->SetTransverseArea(m_frontalArea);
-    force->SetXCenter(m_Xcenter);
+  force = make_current_standard_force("current_standard", body);
+  force->SetLengthBetweenPerpendicular(m_lengthBetweenPerpendicular);
+  force->SetLateralArea(m_lateralArea);
+  force->SetTransverseArea(m_frontalArea);
+  force->SetXCenter(m_Xcenter);
 
-    body = system.NewBody();
+  FrInertiaTensor InertiaTensor(1., 1., 1., 1., 0., 0., 0., Position(), NWU);
+  body->SetInertiaTensor(InertiaTensor);
 
-    FrInertiaTensor InertiaTensor(1.,1.,1.,1.,0.,0.,0.,Position(),NWU);
-    body->SetInertiaTensor(InertiaTensor);
+  system.GetEnvironment()->GetOcean()->GetCurrent()->MakeFieldUniform();
 
-    body->AddExternalForce(force);
+  auto rho = system.GetEnvironment()->GetOcean()->GetDensity();
+  m_xadim = 0.5 * rho * m_currentSpeed * m_currentSpeed * m_frontalArea;
+  m_yadim = 0.5 * rho * m_currentSpeed * m_currentSpeed * m_lateralArea;
+  m_nadim = 0.5 * rho * m_currentSpeed * m_currentSpeed * m_lateralArea * m_lengthOverAll;
 
-    system.GetEnvironment()->GetOcean()->GetCurrent()->MakeFieldUniform();
-
-    auto rho = system.GetEnvironment()->GetOcean()->GetDensity();
-    m_xadim = 0.5*rho*m_currentSpeed*m_currentSpeed*m_frontalArea;
-    m_yadim = 0.5*rho*m_currentSpeed*m_currentSpeed*m_lateralArea;
-    m_nadim = 0.5*rho*m_currentSpeed*m_currentSpeed*m_lateralArea*m_lengthOverAll;
-
-    system.Initialize();
+  system.Initialize();
 }
 
 TEST_F(TestFrStandardCurrentForce, TestForce) {
 
-    for (int i=0; i<m_direction.size(); i++) {
+  for (int i = 0; i < m_direction.size(); i++) {
 
-        system.GetEnvironment()->GetOcean()->GetCurrent()->GetFieldUniform()
-                ->Set(m_direction(i), m_currentSpeed, DEG, MS, NED, COMEFROM);
+    system.GetEnvironment()->GetOcean()->GetCurrent()->GetFieldUniform()
+        ->Set(m_direction(i), m_currentSpeed, DEG, MS, NED, COMEFROM);
 
-        force->Update(0.);
+    force->Update(0.);
 
-        EXPECT_NEAR(m_dragCoefficient(0, i), force->GetForceInWorld(NWU).GetFx() / m_xadim, 1.e-5);
-        EXPECT_NEAR(m_dragCoefficient(1, i), force->GetForceInWorld(NWU).GetFy() / m_yadim, 1.e-5);
-        EXPECT_NEAR(m_dragCoefficient(2, i), force->GetTorqueInWorldAtCOG(NWU).GetMz() / m_nadim, 1.e-5);
-    }
+    EXPECT_NEAR(m_dragCoefficient(0, i), force->GetForceInWorld(NWU).GetFx() / m_xadim, 1.e-5);
+    EXPECT_NEAR(m_dragCoefficient(1, i), force->GetForceInWorld(NWU).GetFy() / m_yadim, 1.e-5);
+    EXPECT_NEAR(m_dragCoefficient(2, i), force->GetTorqueInWorldAtCOG(NWU).GetMz() / m_nadim, 1.e-5);
+  }
 }
 
 TEST_F(TestFrStandardCurrentForce, TestTransport) {
 
-    int i = 2;
-    double xc = 0.5;
+  int i = 2;
+  double xc = 0.5;
 
-    system.GetEnvironment()->GetOcean()->GetCurrent()->GetFieldUniform()
-            ->Set(m_direction(i), m_currentSpeed, DEG, MS, NED, COMEFROM);
+  system.GetEnvironment()->GetOcean()->GetCurrent()->GetFieldUniform()
+      ->Set(m_direction(i), m_currentSpeed, DEG, MS, NED, COMEFROM);
 
-    FrInertiaTensor InertiaTensor(1.,1.,1.,1.,0.,0.,0.,Position(0.1, 0., 0.),NWU);
-    body->SetInertiaTensor(InertiaTensor);
+  FrInertiaTensor InertiaTensor(1., 1., 1., 1., 0., 0., 0., Position(0.1, 0., 0.), NWU);
+  body->SetInertiaTensor(InertiaTensor);
 
-    body->Initialize();
+  body->Initialize();
 
-    force->SetXCenter(xc);
-    force->Initialize();
-    force->Update(0.);
+  force->SetXCenter(xc);
+  force->Initialize();
+  force->Update(0.);
 
-    double torqueRef = m_dragCoefficient(2, i) * m_nadim + (xc-0.1) * m_dragCoefficient(1, i) * m_yadim;
-    EXPECT_NEAR(torqueRef / m_nadim, force->GetTorqueInWorldAtCOG(NWU).GetMz() / m_nadim, 1.e-5);
+  double torqueRef = m_dragCoefficient(2, i) * m_nadim + (xc - 0.1) * m_dragCoefficient(1, i) * m_yadim;
+  EXPECT_NEAR(torqueRef / m_nadim, force->GetTorqueInWorldAtCOG(NWU).GetMz() / m_nadim, 1.e-5);
 }

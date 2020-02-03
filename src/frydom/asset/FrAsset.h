@@ -55,11 +55,14 @@ namespace frydom {
         virtual void StepFinalize() = 0;
 
     protected:
+
         std::shared_ptr<chrono::ChAsset> GetChronoAsset();
 
     private:
 
         friend void FrAssetOwner::AddAsset(std::shared_ptr<FrAsset>);
+        friend void FrAssetOwner::RemoveAsset(std::shared_ptr<FrAsset>);
+
     };
 
 

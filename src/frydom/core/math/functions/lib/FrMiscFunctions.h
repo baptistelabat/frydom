@@ -19,8 +19,6 @@ namespace frydom {
 
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "SqrtFunction"; }
-
     protected:
         void Eval(double x) const override;
 
@@ -40,8 +38,6 @@ namespace frydom {
 
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "AbsFunction"; }
-
     protected:
         void Eval(double x) const override;
 
@@ -49,24 +45,6 @@ namespace frydom {
 
     FrAbsFunction abs(const FrFunctionBase& function);
 
-
-
-//    class FrSignFunction : public FrFunctionBase {
-//
-//    public:
-//        explicit FrSignFunction(double alpha);
-//        FrSignFunction(const FrFunctionBase& function);
-//        FrSignFunction(const FrSignFunction& other);
-//        FrSignFunction* Clone() const override;
-//
-//        std::string GetRepr() const override;
-//
-//    protected:
-//        void Eval(double x) const override;
-//
-//    };
-//
-//    FrSignFunction sign(const FrFunctionBase& function);
 
 }  // end namespace frydom
 

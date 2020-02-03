@@ -20,8 +20,6 @@ namespace frydom {
 
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "CosFunction"; }
-
     protected:
         void Eval(double x) const override;
 
@@ -42,8 +40,6 @@ namespace frydom {
 
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "SinFunction"; }
-
     protected:
         void Eval(double x) const override;
 
@@ -63,8 +59,6 @@ namespace frydom {
         FrTanFunction* Clone() const override;
 
         std::string GetRepr() const override;
-
-        std::string GetTypeName() const override { return "TanFunction"; }
 
     protected:
         void Eval(double x) const override;
@@ -88,8 +82,6 @@ namespace frydom {
 
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "ACosFunction"; }
-
     protected:
         void Eval(double x) const override;
 
@@ -109,8 +101,6 @@ namespace frydom {
         FrASinFunction* Clone() const override;
 
         std::string GetRepr() const override;
-
-        std::string GetTypeName() const override { return "ASinFunction"; }
 
     protected:
         void Eval(double x) const override;
@@ -132,20 +122,12 @@ namespace frydom {
 
         std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "ATanFunction"; }
-
     protected:
         void Eval(double x) const override;
 
     };
 
     FrATanFunction atan(const FrFunctionBase& function);
-
-
-
-
-
-
 
 
 }  // end namespace frydom

@@ -1,0 +1,27 @@
+{
+  "wave_amplitudes_m": [
+    [
+      1.0233267079464885,
+      1.0233267079464885
+    ]
+  ],
+  "wave_directions_rad": [
+    4.71238898038469
+  ],
+  "wave_field_type": "AiryIrregularWaveField",
+  "wave_frequencies_rads": [
+    0.5235987755982988,
+    1.0471975511965976
+  ],
+  "wave_mean_direction_rad": 4.71238898038469,
+  "wave_numbers_m": [
+    0.027946552274009957,
+    0.11178620909603983
+  ],
+  "wave_phases_rad": [
+    [
+      0.0,
+      0.0
+    ]
+  ]
+}

@@ -126,6 +126,7 @@ cmake-build-release
 /visual/visualFrydom.VC.db
 /visual/.vs
 /thirdparty/eigen_build/
+tests/_junk/
 
 # Doxygen
 docs/api/html
@@ -137,4 +138,4 @@ tools/docs/_build
 tools/Old_Nemoh2HDB
 
 # Data from AWS
-tests/data
+data/ce

@@ -12,8 +12,10 @@
 #ifndef FRYDOM_FRSTATICANALYSIS_H
 #define FRYDOM_FRSTATICANALYSIS_H
 
-#include "frydom/core/common/FrObject.h"
+
 #include <map>
+#include "frydom/core/common/FrObject.h"
+
 
 namespace frydom{
 
@@ -58,8 +60,6 @@ namespace frydom{
     public:
 
         explicit FrStaticAnalysis(FrOffshoreSystem* system);;
-
-        std::string GetTypeName() const override { return "StaticAnalysis"; }
 
         FrOffshoreSystem* GetSystem();
 

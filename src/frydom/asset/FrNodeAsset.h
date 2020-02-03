@@ -9,32 +9,32 @@
 
 namespace frydom {
 
-    // Forward declaration
-    class FrNode;
+  // Forward declaration
+  class FrNode;
 
 
-    /**
-     * \class FrNodeAsset
-     * \brief Class to display a reference frame.
-     */
-    class FrNodeAsset : public FrAsset {
+  /**
+   * \class FrNodeAsset
+   * \brief Class to display a reference frame.
+   */
+  class FrNodeAsset : public FrAsset {
 
-    private:
+   private:
 
-        FrNode* m_node;
-        double m_CharacteristicLength;
+    FrNode *m_node;
+    double m_CharacteristicLength;
 
-    public:
+   public:
 
-        explicit FrNodeAsset(FrNode* node);
+    explicit FrNodeAsset(FrNode *node);
 
-        void SetSize(double size);;
+    void SetSize(double size);;
 
-        void Initialize() override;
+    void Initialize() override;
 
-        void StepFinalize() override;
+    void StepFinalize() override;
 
-    };
+  };
 
 } // end namespace frydom
 

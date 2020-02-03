@@ -26,34 +26,40 @@
 
 namespace frydom {
 
-    // =========================================================================================================
-    // IO for flow force model
-    // =========================================================================================================
+  // =========================================================================================================
+  // IO for flow force model
+  // =========================================================================================================
 
-    /// Extract coefficients for the flow force model from JSON file
-    /// \param jsonFile Name of the json file containing the polar coefficient
-    /// \param angle Flow direction
-    /// \param cx Polar coefficient in surge
-    /// \param cy Polar coefficient in sway
-    /// \param cn Polar coefficient in yaw
-    /// \param unit Unit of the angle direction
-    /// \param fc frame convention (NED/NWU)
-    /// \param dc direction convention (GOTO/COMEFROM)
-    void LoadFlowPolarCoeffFromJson(const std::string& jsonFile,
-                                    std::vector<double>& angle,
-                                    std::vector<double>& cx,
-                                    std::vector<double>& cy,
-                                    std::vector<double>& cn,
-                                    ANGLE_UNIT& unit,
-                                    FRAME_CONVENTION& fc,
-                                    DIRECTION_CONVENTION& dc);
+  /// Extract coefficients for the flow force model from JSON file
+  /// \param jsonFile Name of the json file containing the polar coefficient
+  /// \param angle Flow direction
+  /// \param cx Polar coefficient in surge
+  /// \param cy Polar coefficient in sway
+  /// \param cn Polar coefficient in yaw
+  /// \param unit Unit of the angle direction
+  /// \param fc frame convention (NED/NWU)
+  /// \param dc direction convention (GOTO/COMEFROM)
+  void LoadFlowPolarCoeffFromJson(const std::string &jsonFile,
+                                  std::vector<double> &angle,
+                                  std::vector<double> &cx,
+                                  std::vector<double> &cy,
+                                  std::vector<double> &cn,
+                                  double &frontal_area,
+                                  double &lateral_area,
+                                  double &length,
+                                  ANGLE_UNIT &unit,
+                                  FRAME_CONVENTION &fc,
+                                  DIRECTION_CONVENTION &dc);
 
-    /// This function reads the flow polar coefficients from a Json input file.
-    void LoadFlowPolarCoeffFromJson(const std::string& jsonFile,
-                                    std::vector<std::pair<double, mathutils::Vector3d<double>>>& polar,
-                                    ANGLE_UNIT& unit,
-                                    FRAME_CONVENTION& fc,
-                                    DIRECTION_CONVENTION& dc);
+  /// This function reads the flow polar coefficients from a Json input file.
+  void LoadFlowPolarCoeffFromJson(const std::string &jsonFile,
+                                  std::vector<std::pair<double, mathutils::Vector3d<double>>> &polar,
+                                  double &frontal_area,
+                                  double &lateral_area,
+                                  double &length,
+                                  ANGLE_UNIT &unit,
+                                  FRAME_CONVENTION &fc,
+                                  DIRECTION_CONVENTION &dc);
 
 
 }  // end namespace frydom

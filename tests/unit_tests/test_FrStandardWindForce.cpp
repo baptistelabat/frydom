@@ -34,6 +34,8 @@ protected:
     double m_xadim;
     double m_yadim;
     double m_nadim;
+    
+    TestFrStandardWindForce() : system("TestFrStandardWindForce") {}
 
     void SetUp() override;
 
@@ -61,22 +63,19 @@ void TestFrStandardWindForce::LoadData(std::string filename) {
 }
 
 void TestFrStandardWindForce::SetUp() {
+    auto database = FrFileSystem::join({system.config_file().GetDataFolder(), "unit_test/TNR_database.h5"});
+    LoadData(database);
+    
+    body = system.NewBody("body");
 
-    system.GetPathManager()->SetResourcesPath(std::string(RESOURCES_PATH));
-    LoadData(system.GetDataPath("TNR_database.h5"));
-
-    force = std::make_shared<FrWindStandardForce>();
+    force = make_wind_standard_force("wind_standard", body);
     force->SetLenghtBetweenPerpendicular(m_lengthBetweenPerpendicular);
     force->SetLateralArea(m_lateralArea);
     force->SetTransverseArea(m_frontalArea);
     force->SetXCenter(m_Xcenter);
-
-    body = system.NewBody();
-
+    
     FrInertiaTensor InertiaTensor(1.,1.,1.,1.,0.,0.,0.,Position(),NWU);
     body->SetInertiaTensor(InertiaTensor);
-
-    body->AddExternalForce(force);
 
     system.GetEnvironment()->GetAtmosphere()->GetWind()->MakeFieldUniform();
 

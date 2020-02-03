@@ -17,24 +17,28 @@
 #include "frydom/asset/FrAssetOwner.h"
 
 namespace chrono {
-    class ChAsset;
-    class ChSphereShape;
+  class ChAsset;
+
+  class ChSphereShape;
 }  // end namespace chrono
 
 namespace frydom {
 
-    class FrSphereShape {
-      public:
-        FrSphereShape(double radius);
-        double radius() const;
+  class FrSphereShape {
 
-      protected:
-        std::shared_ptr<chrono::ChAsset> GetChronoAsset();
+   public:
+    explicit FrSphereShape(double radius);
 
-      private:
-        friend void FrAssetOwner::AddSphereShape(double);
-        std::shared_ptr<chrono::ChSphereShape> m_sphere;
-    };
+    double radius() const;
+
+   protected:
+    std::shared_ptr<chrono::ChAsset> GetChronoAsset();
+
+   private:
+    friend void FrAssetOwner::AddSphereShape(double);
+
+    std::shared_ptr<chrono::ChSphereShape> m_sphere;
+  };
 
 }  // end namespace frydom
 

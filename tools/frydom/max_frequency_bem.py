@@ -2,13 +2,13 @@
 #  -*- coding: utf-8 -*-
 # ==========================================================================
 # FRyDoM - frydom-ce.org
-# 
+#
 # Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 # All rights reserved.
-# 
+#
 # Use of this source code is governed by a GPLv3 license that can be found
 # in the LICENSE file of FRyDoM.
-# 
+#
 # ==========================================================================
 
 """
@@ -65,7 +65,7 @@ def main():
         ifmt = ext[1:].lower()
         if ifmt == '':
             raise IOError('Unable to determine the input file format from its extension. '
-                           'Please specify an input format.')
+                          'Please specify an input format.')
 
     # Loading mesh from file
     if os.path.isfile(args.infilename):
@@ -105,7 +105,7 @@ def main():
     print('\t+ Gravity:      %.3f m/s**2' % args.gravity)
 
     if depth == 0.:
-        print ('\t+ Water depth: INFINITE')
+        print('\t+ Water depth: INFINITE')
     else:
         print('\t+ Water depth:  %.3f m (FINITE)' % depth)
 

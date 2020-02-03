@@ -16,53 +16,44 @@
 #include "frydom/hydrodynamics/FrEquilibriumFrame.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOceanInc.h"
+#include "frydom/logging/FrTypeNames.h"
 
 namespace frydom {
 
-    void FrLinearDiffractionForce::Initialize() {
+  Eigen::MatrixXcd FrLinearDiffractionForce::GetHDBData(unsigned int iangle) const {
 
-        // Initialization of the parent class.
-        FrLinearExcitationForceBase::Initialize();
+    auto BEMBody = m_HDB->GetBody(GetBody());
 
-    }
+    return BEMBody->GetDiffraction(iangle);
 
-    Eigen::MatrixXcd FrLinearDiffractionForce::GetHDBData(unsigned int iangle) const {
+  }
 
-        auto BEMBody = m_HDB->GetBody(m_body);
+  Eigen::VectorXcd FrLinearDiffractionForce::GetHDBData(unsigned int iangle, unsigned int iforce) const {
 
-        return BEMBody->GetDiffraction(iangle);
+    auto BEMBody = m_HDB->GetBody(GetBody());
 
-    }
+    return BEMBody->GetDiffraction(iangle, iforce);
 
-    Eigen::VectorXcd FrLinearDiffractionForce::GetHDBData(unsigned int iangle, unsigned int iforce) const {
+  }
 
-        auto BEMBody = m_HDB->GetBody(m_body);
+  FrLinearDiffractionForce::FrLinearDiffractionForce(const std::string &name,
+                                                     FrBody *body,
+                                                     const std::shared_ptr<FrHydroDB> &HDB)
+      : FrLinearHDBForce(name, TypeToString(this), body, HDB) {}
 
-        return BEMBody->GetDiffraction(iangle,iforce);
+  std::shared_ptr<FrLinearDiffractionForce>
+  make_linear_diffraction_force(const std::string &name,
+                                std::shared_ptr<FrBody> body,
+                                std::shared_ptr<FrHydroDB> HDB) {
 
-    }
+    // Construction of the excitation force object from the HDB.
+    auto diffractionForce = std::make_shared<FrLinearDiffractionForce>(name, body.get(), HDB);
 
-    void FrLinearDiffractionForce::Compute(double time) {
+    // Add the excitation force object as an external force to the body.
+    body->AddExternalForce(diffractionForce);
 
-        // This function computes the linear diffraction forces from Nemoh results.
+    return diffractionForce;
 
-        Compute_F_HDB();
-
-    }
-
-    std::shared_ptr<FrLinearDiffractionForce>
-    make_linear_diffraction_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body){
-
-        // This function creates the linear excitation force object.
-
-        // Construction of the excitation force object from the HDB.
-        auto diffractionForce = std::make_shared<FrLinearDiffractionForce>(HDB);
-
-        // Add the excitation force object as an external force to the body.
-        body->AddExternalForce(diffractionForce); // Initialization of m_body.
-
-        return diffractionForce;
-
-    }
+  }
 
 }  // end namespace frydom

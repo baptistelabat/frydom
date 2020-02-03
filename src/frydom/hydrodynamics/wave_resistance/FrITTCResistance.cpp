@@ -15,41 +15,82 @@
 #include "frydom/core/body/FrBody.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOcean.h"
+#include "frydom/logging/FrTypeNames.h"
 
 
-namespace frydom{
+namespace frydom {
 
-    void FrITTCResistance::Compute(double time) {
+  void FrITTCResistance::Compute(double time) {
 
-        Velocity cogBodyVel = m_body->GetCOGVelocityInBody(NWU);
-        double  ux = cogBodyVel.GetVx();
+    auto body = GetBody();
+    auto system = body->GetSystem();
+    auto ocean = system->GetEnvironment()->GetOcean();
 
-        // Computing Reynolds number
-        double Re = GetSystem()->GetEnvironment()->GetOcean()->GetReynoldsNumberInWater(m_Lpp, ux);
+    Velocity cogBodyVel = body->GetCOGVelocityInBody(NWU);
+    double ux = cogBodyVel.GetVx();
 
-        // Computing ITTC57 flat plate friction coefficient
-        auto Cf = 0.075 / pow( log10(Re)-2., 2. );
+    // Computing Reynolds number
+    double Re = ocean->GetReynoldsNumberInWater(m_Lpp, ux);
 
-        // Total coefficient
-        auto Ct = (1. + m_k)*Cf + m_cr + m_ca + m_caa + m_capp;
+    // Computing ITTC57 flat plate friction coefficient
+    auto Cf = 0.075 / pow(log10(Re) - 2., 2.);
 
-        // Resistance along the body X Axis
-        double Rt = - 0.5 * m_environment->GetOcean()->GetDensity() * m_hullWetSurface * Ct * ux * std::abs(ux);
+    // Total coefficient
+    auto Ct = (1. + m_k) * Cf + m_cr + m_ca + m_caa + m_capp;
 
-        SetForceInBody(Force(Rt, 0., 0.), NWU);
-    }
+    // Resistance along the body X Axis
+    double Rt = -0.5 * ocean->GetDensity() * m_hullWetSurface * Ct * ux * std::abs(ux);
 
-    void FrITTCResistance::SetRoughnessFromLength(double Lwl, double surfaceRoughness) {
-        m_ca = (105. * std::pow(surfaceRoughness / Lwl, 1./3.) - 0.64) * 0.001;
-    }
+    SetForceInBody(Force(Rt, 0., 0.), NWU);
+  }
 
-    void FrITTCResistance::SetAirResistanceFromArea(double area) {
-        m_caa = area / (1000. * m_hullWetSurface);
-    }
+  void FrITTCResistance::SetRoughnessFromLength(double Lwl, double surfaceRoughness) {
+    m_ca = (105. * std::pow(surfaceRoughness / Lwl, 1. / 3.) - 0.64) * 0.001;
+  }
 
-    void FrITTCResistance::Initialize() {
-        FrForce::Initialize();
-        m_environment = GetSystem()->GetEnvironment(); // To reduce the number of indirections during update
-    }
+  void FrITTCResistance::SetAirResistanceFromArea(double area) {
+    m_caa = area / (1000. * m_hullWetSurface);
+  }
+
+  void FrITTCResistance::Initialize() {
+    FrForce::Initialize();
+  }
+
+  FrITTCResistance::FrITTCResistance(const std::string &name,
+                                     FrBody *body,
+                                     double Lpp,
+                                     double hullWetSurface,
+                                     double cr,
+                                     double k,
+                                     double ca,
+                                     double caa,
+                                     double capp) :
+      FrForce(name, TypeToString(this), body),
+      m_Lpp(Lpp),
+      m_hullWetSurface(hullWetSurface),
+      m_k(k),
+      m_cr(cr),
+      m_ca(ca),
+      m_caa(caa),
+      m_capp(capp) {}
+
+  std::shared_ptr<FrITTCResistance>
+  make_ITTC_resistance_force(const std::string &name,
+                             std::shared_ptr<FrBody> body,
+                             double Lpp,
+                             double hullWetSurface,
+                             double cr,
+                             double k,
+                             double ca,
+                             double caa,
+                             double capp) {
+    
+    auto force = std::make_shared<FrITTCResistance>(name, body.get(), Lpp, hullWetSurface, cr, k, ca, caa, capp);
+    
+    body->AddExternalForce(force);
+
+    return force;
+    
+  }
 
 }  // end namespace frydom

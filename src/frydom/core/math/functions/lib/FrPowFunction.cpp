@@ -27,7 +27,7 @@ namespace frydom {
     }
 
     std::string FrPowFunction::GetRepr() const {
-        fmt::MemoryWriter mw;
+//        fmt::MemoryWriter mw;
 //        mw <<
         return "";
     }
