@@ -98,9 +98,9 @@ namespace frydom {
 
   void FrForce::DefineLogMessages() {
 
-    auto msg = NewMessage("", "Force message");
+    auto msg = NewMessage("FrForce", "Force message");
 
-    msg->AddField<double>("time", "s", "Current time of the simulation",
+    msg->AddField<double>("Time", "s", "Current time of the simulation",
                           [this]() { return m_chronoForce->GetChTime(); });
 
     msg->AddField<Eigen::Matrix<double, 3, 1>>
