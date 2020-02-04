@@ -7,8 +7,8 @@ set(FLOW_FILES_LOCAL
         )
 
 set(FLOW_FILES "")
-foreach(file ${FLOW_FILES_LOCAL})
+foreach (file ${FLOW_FILES_LOCAL})
     list(APPEND FLOW_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
-endforeach()
+endforeach ()
 
 set(FLOW_FILES ${FLOW_FILES} PARENT_SCOPE)

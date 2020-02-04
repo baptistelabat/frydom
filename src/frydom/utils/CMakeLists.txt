@@ -5,11 +5,11 @@ set(SRC_FILES
         FrIrrCamera.cpp
         FrFileSystem.cpp
         FrConfig.cpp
-)
+        )
 
 set(FRYDOM_UTILS_SOURCES "")
-foreach(file ${SRC_FILES})
+foreach (file ${SRC_FILES})
     list(APPEND FRYDOM_UTILS_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
-endforeach()
+endforeach ()
 
 set(FRYDOM_UTILS_SOURCES ${FRYDOM_UTILS_SOURCES} PARENT_SCOPE)

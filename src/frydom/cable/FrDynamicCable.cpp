@@ -341,11 +341,11 @@ namespace frydom {
 
     msg->AddField<Eigen::Matrix<double, 3, 1>>
         ("StartingNodeTension", "N", fmt::format("Starting node tension in world reference frame in {}", GetLogFC()),
-            [this]() { return GetTension(0., GetLogFC()); });
+         [this]() { return GetTension(0., GetLogFC()); });
 
     msg->AddField<Eigen::Matrix<double, 3, 1>>
         ("EndingNodeTension", "N", fmt::format("Ending node tension in world reference frame in {}", GetLogFC()),
-            [this]() { return - GetTension(GetUnstrainedLength(), GetLogFC()); });
+         [this]() { return -GetTension(GetUnstrainedLength(), GetLogFC()); });
 
   }
 

@@ -17,13 +17,13 @@
 
 namespace frydom {
 
-    // TODO : Ici, on importera une librairie de gestion d'unites...
+  // TODO : Ici, on importera une librairie de gestion d'unites...
 
-    using SPEED_UNIT = mathutils::SPEED_UNIT;
+  using SPEED_UNIT = mathutils::SPEED_UNIT;
 
-    using ANGLE_UNIT = mathutils::ANGLE_UNIT;
+  using ANGLE_UNIT = mathutils::ANGLE_UNIT;
 
-    using FREQUENCY_UNIT = mathutils::FREQUENCY_UNIT ;
+  using FREQUENCY_UNIT = mathutils::FREQUENCY_UNIT;
 
 //    /**
 //    * \class FrUnits

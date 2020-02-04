@@ -6,7 +6,7 @@ using namespace frydom;
 
 TEST(FrShape, FrBoxShape) {
   FrOffshoreSystem system("test_FrShape");
-  
+
   auto body = system.NewBody("body");
   body->AddBoxShape(1, 2, 3);
 

@@ -66,7 +66,7 @@ class TestFrFlowForce : public testing::Test {
 
   FLUID_TYPE m_type;
 
-  TestFrFlowForce(): system("test_FrFlowForce") {}
+  TestFrFlowForce() : system("test_FrFlowForce") {}
 
   /// Initialize environment
   void SetUp() override;
@@ -169,7 +169,8 @@ void TestFrFlowForce::TestForce() {
 TEST_F(TestFrFlowForce, TestCurrentForce) {
   auto database = FrFileSystem::join({system.config_file().GetDataFolder(), "unit_test/TNR_database.h5"});
   LoadData(database, "/current_force/");
-  auto Ship_PolarCurrentCoeffs = FrFileSystem::join({system.config_file().GetDataFolder(), "unit_test/Ship_PolarCurrentCoeffs.json"});
+  auto Ship_PolarCurrentCoeffs = FrFileSystem::join(
+      {system.config_file().GetDataFolder(), "unit_test/Ship_PolarCurrentCoeffs.json"});
   MakeForce(WATER, Ship_PolarCurrentCoeffs);
   system.Initialize();
   TestForce();
@@ -179,7 +180,8 @@ TEST_F(TestFrFlowForce, TestCurrentForce) {
 TEST_F(TestFrFlowForce, TestWindForce) {
   auto database = FrFileSystem::join({system.config_file().GetDataFolder(), "unit_test/TNR_database.h5"});
   LoadData(database, "/wind_force/");
-  auto Ship_PolarWindCoeffs = FrFileSystem::join({system.config_file().GetDataFolder(), "unit_test/Ship_PolarWindCoeffs.json"});
+  auto Ship_PolarWindCoeffs = FrFileSystem::join(
+      {system.config_file().GetDataFolder(), "unit_test/Ship_PolarWindCoeffs.json"});
   MakeForce(FLUID_TYPE::AIR, Ship_PolarWindCoeffs);
   system.Initialize();
   TestForce();

@@ -17,64 +17,65 @@
 #include "frydom/environment/FrFluidType.h"
 
 
-namespace frydom{
+namespace frydom {
 
-    FrAtmosphere::FrAtmosphere(FrEnvironment* environment) {
+  FrAtmosphere::FrAtmosphere(FrEnvironment *environment) {
 
-        m_environment = environment;
+    m_environment = environment;
 
-        m_wind       = std::make_unique<FrWind>(this);
-        m_airProp     = std::make_unique<FrFluidProperties>(20., 1.204, 0., 0., 0., 0. );
+    m_wind = std::make_unique<FrWind>(this);
+    m_airProp = std::make_unique<FrFluidProperties>(20., 1.204, 0., 0., 0., 0.);
 
-    }
+  }
 
-    FrEnvironment *FrAtmosphere::GetEnvironment() const { return m_environment; }
+  FrEnvironment *FrAtmosphere::GetEnvironment() const { return m_environment; }
 
-    void FrAtmosphere::SetTemperature(double Temperature) {m_airProp->m_temperature = Temperature;}
+  void FrAtmosphere::SetTemperature(double Temperature) { m_airProp->m_temperature = Temperature; }
 
-    double FrAtmosphere::GetTemperature() const {return m_airProp->m_temperature;}
+  double FrAtmosphere::GetTemperature() const { return m_airProp->m_temperature; }
 
-    void FrAtmosphere::SetDensity(double Density) {m_airProp->m_density = Density;}
+  void FrAtmosphere::SetDensity(double Density) { m_airProp->m_density = Density; }
 
-    double FrAtmosphere::GetDensity() const {return m_airProp->m_density;}
+  double FrAtmosphere::GetDensity() const { return m_airProp->m_density; }
 
-    void FrAtmosphere::SetDynamicViscosity(double DynamicViscosity) {m_airProp->m_dynamicViscosity = DynamicViscosity;}
+  void FrAtmosphere::SetDynamicViscosity(double DynamicViscosity) { m_airProp->m_dynamicViscosity = DynamicViscosity; }
 
-    double FrAtmosphere::GetDynamicViscosity() const {return m_airProp->m_dynamicViscosity;}
+  double FrAtmosphere::GetDynamicViscosity() const { return m_airProp->m_dynamicViscosity; }
 
-    void FrAtmosphere::SetKinematicViscosity(double KinematicViscosity) {m_airProp->m_kinematicViscosity = KinematicViscosity;}
+  void FrAtmosphere::SetKinematicViscosity(
+      double KinematicViscosity) { m_airProp->m_kinematicViscosity = KinematicViscosity; }
 
-    double FrAtmosphere::GetKinematicViscosity() const {return m_airProp->m_kinematicViscosity;}
+  double FrAtmosphere::GetKinematicViscosity() const { return m_airProp->m_kinematicViscosity; }
 
-    void FrAtmosphere::SetSalinity(double Salinity) {m_airProp->m_salinity = Salinity;}
+  void FrAtmosphere::SetSalinity(double Salinity) { m_airProp->m_salinity = Salinity; }
 
-    double FrAtmosphere::GetSalinity() const {return m_airProp->m_salinity;}
+  double FrAtmosphere::GetSalinity() const { return m_airProp->m_salinity; }
 
-    void FrAtmosphere::SetPressure(double Pressure) {m_airProp->m_pressure = Pressure;}
+  void FrAtmosphere::SetPressure(double Pressure) { m_airProp->m_pressure = Pressure; }
 
-    double FrAtmosphere::GetPressure() const {return m_airProp->m_pressure;}
+  double FrAtmosphere::GetPressure() const { return m_airProp->m_pressure; }
 
-    double FrAtmosphere::GetReynoldsNumberInAir(double characteristicLength, double velocity) const {
-        return fabs(velocity) * characteristicLength / GetKinematicViscosity();
-    }
+  double FrAtmosphere::GetReynoldsNumberInAir(double characteristicLength, double velocity) const {
+    return fabs(velocity) * characteristicLength / GetKinematicViscosity();
+  }
 
-    double FrAtmosphere::GetFroudeNumberInAir(double characteristicLength, double velocity) const {
-        return fabs(velocity) / std::sqrt(m_environment->GetGravityAcceleration() * characteristicLength);
-    }
+  double FrAtmosphere::GetFroudeNumberInAir(double characteristicLength, double velocity) const {
+    return fabs(velocity) / std::sqrt(m_environment->GetGravityAcceleration() * characteristicLength);
+  }
 
-    FrWind *FrAtmosphere::GetWind() const { return m_wind.get();}
+  FrWind *FrAtmosphere::GetWind() const { return m_wind.get(); }
 
-    void FrAtmosphere::Update(double time) {
-        m_wind->Update(time);
-    }
+  void FrAtmosphere::Update(double time) {
+    m_wind->Update(time);
+  }
 
-    void FrAtmosphere::Initialize() {
-        m_wind->Initialize();
-    }
+  void FrAtmosphere::Initialize() {
+    m_wind->Initialize();
+  }
 
-    void FrAtmosphere::StepFinalize() {
-        m_wind->StepFinalize();
-    }
+  void FrAtmosphere::StepFinalize() {
+    m_wind->StepFinalize();
+  }
 
 
 }  // end namespace frydom

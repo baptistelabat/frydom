@@ -149,7 +149,7 @@ namespace frydom {
     hydroMesh->Update(0.);
 
     // To check the clipped mesh, uncomment the following line
-      hydroMesh->GetClippedMesh().Write("Clipped_Mesh.obj");
+    hydroMesh->GetClippedMesh().Write("Clipped_Mesh.obj");
 
     // Compute all hydrostatics properties and files a report
     FrHydrostaticsProperties hsp(body->GetSystem()->GetEnvironment()->GetFluidDensity(WATER),

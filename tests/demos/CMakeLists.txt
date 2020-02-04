@@ -33,17 +33,17 @@ set(BENCH
         )
 
 # Compile target
-foreach(test ${DEMOS})
+foreach (test ${DEMOS})
     message(STATUS "        ...add demo_${test}")
     add_executable(demo_${test} demo_${test}.cpp)
     target_link_libraries(demo_${test} FRyDoM_Engine)
-endforeach()
+endforeach ()
 
-foreach(test ${BENCH})
+foreach (test ${BENCH})
     message(STATUS "        ...add bench_${test}")
     add_executable(bench_${test} bench_${test}.cpp)
     target_link_libraries(bench_${test} FRyDoM_Engine)
-endforeach()
+endforeach ()
 
 set(subdirs
         # add here the test source subdirectories

@@ -29,7 +29,8 @@ namespace frydom {
   // Forward declarations
 //    class FrOffshoreSystem;
   class FrBody;
-    class FrTriangleMeshShape;
+
+  class FrTriangleMeshShape;
   namespace geom { class FrPlane; }
 
   /**
@@ -59,7 +60,7 @@ namespace frydom {
                 FrFrame meshOffsset,
                 FrHydroMesh::ClippingSupport support);
 
-        void ShowAsset(bool show) {m_showAsset = show;};
+    void ShowAsset(bool show) { m_showAsset = show; };
 
     /// Initialize the hydromesh
     void Initialize() override;
@@ -81,12 +82,13 @@ namespace frydom {
     /// Get the clipping support (PLANESUPPORT/WAVESUPPORT)
     /// \return clipping support
     ClippingSupport GetClippingSupport() const;
-        mesh::FrMeshClipper* GetClipper() { return m_clipper.get();}
 
-     protected:
+    mesh::FrMeshClipper *GetClipper() { return m_clipper.get(); }
 
-      /// This function is called at the end of the time step, after the last step of the integration scheme.
-      void StepFinalize() override;;
+   protected:
+
+    /// This function is called at the end of the time step, after the last step of the integration scheme.
+    void StepFinalize() override;;
 
 
    private:
@@ -97,7 +99,7 @@ namespace frydom {
 
     /// Get the internal item, related to chrono::ChPhysicsItem
     /// \return internal item, related to chrono::ChPhysicsItem
-    chrono::ChPhysicsItem* GetChronoItem_ptr() const override { return m_chronoPhysicsItem.get();};
+    chrono::ChPhysicsItem *GetChronoItem_ptr() const override { return m_chronoPhysicsItem.get(); };
 
    private:
 
@@ -112,7 +114,7 @@ namespace frydom {
     ClippingSupport m_clippingSupport;              ///< Support for the clipping procedure
 
     std::shared_ptr<geom::FrPlane> c_clippingPlane; ///< plane for the FrClippingPane
-        bool m_showAsset = false;
+    bool m_showAsset = false;
 
   };
 

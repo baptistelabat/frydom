@@ -16,8 +16,7 @@
 
 #endif
 
-std::string GetPlatformName()
-{
+std::string GetPlatformName() {
   #ifdef _WIN32
   return "Windows 32-bit";
   #elif _WIN64

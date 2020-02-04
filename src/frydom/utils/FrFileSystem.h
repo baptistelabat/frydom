@@ -103,8 +103,6 @@ namespace frydom {
     static std::string get_hostname();
 
 
-
-
     /// Create directory in a recursive way (similar to mkdir -p /path/to/dir under Unix but multiplatform)
     static bool mkdir(const std::string &path);
 

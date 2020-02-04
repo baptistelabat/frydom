@@ -8,8 +8,8 @@ namespace frydom {
 
 
   Torsor::Torsor(const mathutils::Vector3d<double> &resultant, const mathutils::Vector3d<double> &moment,
-                     const Position &point, FRAME_CONVENTION fc) {
-    Set(resultant,moment,point,fc);
+                 const Position &point, FRAME_CONVENTION fc) {
+    Set(resultant, moment, point, fc);
   }
 
   void Torsor::Set(const mathutils::Vector3d<double> &resultant, const mathutils::Vector3d<double> &moment,
@@ -26,7 +26,7 @@ namespace frydom {
 
   mathutils::Vector3d<double> Torsor::TransportMomentAtPoint(const Position &newPoint, FRAME_CONVENTION fc) const {
     Position tempPos = newPoint;
-    if(IsNED(fc)) internal::SwapFrameConvention(tempPos);
+    if (IsNED(fc)) internal::SwapFrameConvention(tempPos);
     Position newToOld = m_point - tempPos;
     mathutils::Vector3d<double> tempMoment = m_moment + newToOld.cross(m_resultant);
     if (IsNED(fc)) internal::SwapFrameConvention(tempMoment);
@@ -35,7 +35,7 @@ namespace frydom {
 
   Position Torsor::GetPoint(FRAME_CONVENTION fc) const {
     Position tempPos = m_point;
-    if(IsNED(fc)) internal::SwapFrameConvention(tempPos);
+    if (IsNED(fc)) internal::SwapFrameConvention(tempPos);
     return tempPos;
   }
 
@@ -43,9 +43,9 @@ namespace frydom {
 
     os << std::endl;
     os << "Torsor: \n";
-    os << "resultant : (" << m_resultant[0]<<"," << m_resultant[1]<<"," << m_resultant[2]<<")" << std::endl;
-    os << "moment : (" << m_moment[0]<<"," << m_moment[1]<<"," << m_moment[2]<<")" << std::endl;
-    os << "expressed at point : (" << m_point[0]<<"," << m_point[1]<<"," << m_point[2]<<")" << std::endl;
+    os << "resultant : (" << m_resultant[0] << "," << m_resultant[1] << "," << m_resultant[2] << ")" << std::endl;
+    os << "moment : (" << m_moment[0] << "," << m_moment[1] << "," << m_moment[2] << ")" << std::endl;
+    os << "expressed at point : (" << m_point[0] << "," << m_point[1] << "," << m_point[2] << ")" << std::endl;
     os << std::endl;
 
     return os;
@@ -61,8 +61,9 @@ namespace frydom {
 
   // GeneralizedForceTorsor
 
-  GeneralizedForceTorsor::GeneralizedForceTorsor(const Force &force, const Torque &torque, const Position &point, FRAME_CONVENTION fc) :
-  Torsor(force, torque, point, fc) {  }
+  GeneralizedForceTorsor::GeneralizedForceTorsor(const Force &force, const Torque &torque, const Position &point,
+                                                 FRAME_CONVENTION fc) :
+      Torsor(force, torque, point, fc) {}
 
   Force GeneralizedForceTorsor::GetForce() const {
     return m_resultant;
@@ -84,9 +85,9 @@ namespace frydom {
   // GeneralizedVelocityTorsor
 
   GeneralizedVelocityTorsor::GeneralizedVelocityTorsor(const Velocity &linearvelocity,
-                                                           const AngularVelocity &angularVelocity,
-                                                           const Position &point, FRAME_CONVENTION fc) :
-                                                           Torsor(angularVelocity, linearvelocity, point, fc){
+                                                       const AngularVelocity &angularVelocity,
+                                                       const Position &point, FRAME_CONVENTION fc) :
+      Torsor(angularVelocity, linearvelocity, point, fc) {
 
   }
 

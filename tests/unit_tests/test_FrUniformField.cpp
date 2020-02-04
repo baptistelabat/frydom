@@ -43,7 +43,7 @@ std::map<std::string, DIRECTION_CONVENTION>
 class TestFrUniformField : public ::testing::Test {
 
  protected:
-  
+
   FrOffshoreSystem system;
 
   FrUniformField field;
@@ -63,7 +63,7 @@ class TestFrUniformField : public ::testing::Test {
 
   Position m_PointInWorld;
   Velocity m_VelocityInWorld;
-  
+
   TestFrUniformField() : system("TestFrUniformField") {}
 
   void SetUp() override;

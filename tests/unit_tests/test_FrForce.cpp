@@ -710,7 +710,7 @@ class TestBase : public ::testing::Test {
 
   TestBase() : system("test_FrForce") {}
 
-  std::shared_ptr<FrBody> GetBody() const {return body;}
+  std::shared_ptr<FrBody> GetBody() const { return body; }
 
  protected:
 

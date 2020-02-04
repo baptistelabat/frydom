@@ -114,7 +114,7 @@ namespace frydom {
 
   class FrLogManager;
 
-    class FrIrrApp;
+  class FrIrrApp;
 
   /// Main class for a FRyDoM offshore system. This class is used to represent a multibody physical system,
   /// so it acts also as a database for most items involved in simulations, most noticeably objects of FrBody and FrLink
@@ -231,7 +231,7 @@ namespace frydom {
 
     std::unique_ptr<FrStaticAnalysis> m_statics;
 
-        std::unique_ptr<FrIrrApp> m_irrApp;
+    std::unique_ptr<FrIrrApp> m_irrApp;
 
     // Container: definition.
     using BodyContainer = std::vector<std::shared_ptr<FrBody>>;
@@ -275,7 +275,7 @@ namespace frydom {
     /// Destructor
     ~FrOffshoreSystem() override;
 
-    const FrConfig& config_file();
+    const FrConfig &config_file();
 
 
     /// Add an item (body, link, etc.) to the offshore sytem
@@ -354,7 +354,7 @@ namespace frydom {
     /// \return world body embedded in the offshore system
     std::shared_ptr<FrBody> GetWorldBody() const;
 
-    std::shared_ptr<FrNode> NewWorldFixedNode(const std::string& name);
+    std::shared_ptr<FrNode> NewWorldFixedNode(const std::string &name);
 
     /// Update in priority certain components of the offshore system (Environment)
     void PreUpdate();
@@ -665,7 +665,7 @@ namespace frydom {
 
     // Irrlicht Application
 
-    FrIrrApp* GetIrrApp() const;
+    FrIrrApp *GetIrrApp() const;
 
     /// Run the simulation in the viewer environment
     /// \param endTime end time of the simulation

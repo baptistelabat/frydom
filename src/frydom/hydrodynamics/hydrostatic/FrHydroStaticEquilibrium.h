@@ -59,7 +59,7 @@ namespace frydom {
                              const std::string &meshFile,
                              FrFrame meshOffset,
                              double mass,
-                             const Position& COGPosInBody, FRAME_CONVENTION fc);
+                             const Position &COGPosInBody, FRAME_CONVENTION fc);
 
     /// FrHydrostaticEquilibrium destructor to ensure that the HydroMesh created for the solving is removed to the system.
     ~FrHydroStaticEquilibrium();
@@ -90,7 +90,7 @@ namespace frydom {
     FrLinearHydrostaticStiffnessMatrix GetHydrostaticMatrix() const;
 
     /// Get the hydrostatic stiffness matrix, at the specified reduction point.
-    FrLinearHydrostaticStiffnessMatrix GetHydrostaticMatrix(const Position& reductionPoint, FRAME_CONVENTION fc) const;
+    FrLinearHydrostaticStiffnessMatrix GetHydrostaticMatrix(const Position &reductionPoint, FRAME_CONVENTION fc) const;
 
     /// Set the maximum number of iterations for the Newton-Raphson solver
     /// \param max_iterations maximum iterations

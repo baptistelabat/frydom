@@ -23,76 +23,76 @@
 
 namespace frydom {
 
-    // Forward declarations
-    class FrEquilibriumFrame;
+  // Forward declarations
+  class FrEquilibriumFrame;
 //    class FrHydroDB;
 
-    /// This class defines the linear hydrostatic restoring force applied to a hydrodynamic body.
-    /// The force takes into account the position of the body (at COG) regards to the equilibrium frame.
-    /// For rotation, cardan angle are considered.
-    /// It is supposed that the equilibrium frame has the z-axis pointing upwards and its
-    /// position equals the position of the COG of the body at equilibrium
+  /// This class defines the linear hydrostatic restoring force applied to a hydrodynamic body.
+  /// The force takes into account the position of the body (at COG) regards to the equilibrium frame.
+  /// For rotation, cardan angle are considered.
+  /// It is supposed that the equilibrium frame has the z-axis pointing upwards and its
+  /// position equals the position of the COG of the body at equilibrium
 
-    /**
-     * \class FrLinearHydrostaticForce
-     * \brief Class for computing linear hydrostatic loads.
-     */
-    class FrLinearHydrostaticForce : public FrForce {
+  /**
+   * \class FrLinearHydrostaticForce
+   * \brief Class for computing linear hydrostatic loads.
+   */
+  class FrLinearHydrostaticForce : public FrForce {
 
-     public:
+   public:
 
-      /// Constructor.
-      FrLinearHydrostaticForce(const std::string &name,
-                               FrBody* body,
-                               const std::shared_ptr<FrEquilibriumFrame> &eqFrame);
+    /// Constructor.
+    FrLinearHydrostaticForce(const std::string &name,
+                             FrBody *body,
+                             const std::shared_ptr<FrEquilibriumFrame> &eqFrame);
 
-      /// Return true if the force is included in the static analysis
-      bool IncludedInStaticAnalysis() const override { return true; }
+    /// Return true if the force is included in the static analysis
+    bool IncludedInStaticAnalysis() const override { return true; }
 
-      /// Get the hydrostatic stiffness matrix of the hydrostatic force
-      /// \return Hydrostatic stiffness matrix
-      FrLinearHydrostaticStiffnessMatrix GetStiffnessMatrix() const;
+    /// Get the hydrostatic stiffness matrix of the hydrostatic force
+    /// \return Hydrostatic stiffness matrix
+    FrLinearHydrostaticStiffnessMatrix GetStiffnessMatrix() const;
 
-      /// This function sets the hydrostatic stiffness matrix.
-      void SetStiffnessMatrix(FrLinearHydrostaticStiffnessMatrix HydrostaticMatrix);
+    /// This function sets the hydrostatic stiffness matrix.
+    void SetStiffnessMatrix(FrLinearHydrostaticStiffnessMatrix HydrostaticMatrix);
 
-      /// This function sets the hydrostatic stiffness matrix.
-      void SetStiffnessMatrix(mathutils::MatrixMN<double> HydrostaticMatrix);
+    /// This function sets the hydrostatic stiffness matrix.
+    void SetStiffnessMatrix(mathutils::MatrixMN<double> HydrostaticMatrix);
 
-      /// Intialize the linear hydrostatic force model
-      void Initialize() override;
+    /// Intialize the linear hydrostatic force model
+    void Initialize() override;
 
-     private:
+   private:
 
-      FrLinearHydrostaticStiffnessMatrix m_stiffnessMatrix;      ///< Hydrostatic stiffness matrix
+    FrLinearHydrostaticStiffnessMatrix m_stiffnessMatrix;      ///< Hydrostatic stiffness matrix
 
-      std::shared_ptr<FrEquilibriumFrame> m_equilibriumFrame;    ///< Equilibrium frame of the body to which the force is applied
+    std::shared_ptr<FrEquilibriumFrame> m_equilibriumFrame;    ///< Equilibrium frame of the body to which the force is applied
 
-      /// Compute the linear hydrostatic force
-      /// \param time Current time of the simulation from beginning
-      void Compute(double time) override;
+    /// Compute the linear hydrostatic force
+    /// \param time Current time of the simulation from beginning
+    void Compute(double time) override;
 
-    };
+  };
 
-    /// This function creates the linear hydrostatic force object for computing the linear hydrostatic loads with a hydrostatic sitffness matrix computed by FrMesh.
-    std::shared_ptr<FrLinearHydrostaticForce>
-    make_linear_hydrostatic_force(const std::string &name,
-                                  std::shared_ptr<FrBody> body,
-                                  std::shared_ptr<FrEquilibriumFrame> eqFrame);
+  /// This function creates the linear hydrostatic force object for computing the linear hydrostatic loads with a hydrostatic sitffness matrix computed by FrMesh.
+  std::shared_ptr<FrLinearHydrostaticForce>
+  make_linear_hydrostatic_force(const std::string &name,
+                                std::shared_ptr<FrBody> body,
+                                std::shared_ptr<FrEquilibriumFrame> eqFrame);
 
-    /// This function creates the linear hydrostatic force object for computing the linear hydrostatic loads with a hydrostatic stiffness matrix given by the hdb.
-    std::shared_ptr<FrLinearHydrostaticForce>
-    make_linear_hydrostatic_force(const std::string &name,
-                                  std::shared_ptr<FrBody> body,
-                                  std::shared_ptr<FrHydroDB> HDB);
+  /// This function creates the linear hydrostatic force object for computing the linear hydrostatic loads with a hydrostatic stiffness matrix given by the hdb.
+  std::shared_ptr<FrLinearHydrostaticForce>
+  make_linear_hydrostatic_force(const std::string &name,
+                                std::shared_ptr<FrBody> body,
+                                std::shared_ptr<FrHydroDB> HDB);
 
-    /// This function creates the linear hydrostatic force object for computing the linear hydrostatic loads with a hydrostatic sitffness matrix computed by FrMesh.
-    std::shared_ptr<FrLinearHydrostaticForce>
-    make_linear_hydrostatic_force(const std::string &name,
-                                  std::shared_ptr<FrBody> body,
-                                  std::shared_ptr<FrEquilibriumFrame> eqFrame,
-                                  const std::string& meshFile,
-                                  FrFrame meshOffset);
+  /// This function creates the linear hydrostatic force object for computing the linear hydrostatic loads with a hydrostatic sitffness matrix computed by FrMesh.
+  std::shared_ptr<FrLinearHydrostaticForce>
+  make_linear_hydrostatic_force(const std::string &name,
+                                std::shared_ptr<FrBody> body,
+                                std::shared_ptr<FrEquilibriumFrame> eqFrame,
+                                const std::string &meshFile,
+                                FrFrame meshOffset);
 
 }  // end namespace frydom
 

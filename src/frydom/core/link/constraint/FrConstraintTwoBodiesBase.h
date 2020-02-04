@@ -9,29 +9,29 @@
 
 namespace frydom {
 
-    namespace internal {
+  namespace internal {
 
-        /// This class override the ChConstraintTwoBodies class to be used with a full
-        /// dense mass matrix
-        class FrConstraintTwoBodiesBase : public chrono::ChConstraintTwoBodies {
+    /// This class override the ChConstraintTwoBodies class to be used with a full
+    /// dense mass matrix
+    class FrConstraintTwoBodiesBase : public chrono::ChConstraintTwoBodies {
 
-        public:
-            /// Default constructor of the class
-            FrConstraintTwoBodiesBase() : chrono::ChConstraintTwoBodies() {}
+     public:
+      /// Default constructor of the class
+      FrConstraintTwoBodiesBase() : chrono::ChConstraintTwoBodies() {}
 
-            /// Copy constructor
-            explicit FrConstraintTwoBodiesBase(const chrono::ChConstraintTwoBodies& source)
-                : chrono::ChConstraintTwoBodies(source) {}
+      /// Copy constructor
+      explicit FrConstraintTwoBodiesBase(const chrono::ChConstraintTwoBodies &source)
+          : chrono::ChConstraintTwoBodies(source) {}
 
-            /// This function updates the following auxiliary data:
-            ///  - the Eq_a and Eq_b matrices
-            ///  - the g_i product
-            void Update_auxiliary() override;
+      /// This function updates the following auxiliary data:
+      ///  - the Eq_a and Eq_b matrices
+      ///  - the g_i product
+      void Update_auxiliary() override;
 
-            virtual FrConstraintTwoBodiesBase* Clone() const override { return new FrConstraintTwoBodiesBase(*this); }
-        };
+      virtual FrConstraintTwoBodiesBase *Clone() const override { return new FrConstraintTwoBodiesBase(*this); }
+    };
 
-    } //end namespace internal
+  } //end namespace internal
 
 } // end namespace frydom
 

@@ -18,44 +18,43 @@
 namespace frydom {
 
 
-    /// Class for representing a ramp
-    ///
-    ///             --------
-    ///            /
-    ///           /
-    ///          /
-    /// --------
-    ///
-    ///
-    class FrLinearRampFunction : public FrFunctionBase {
+  /// Class for representing a ramp
+  ///
+  ///             --------
+  ///            /
+  ///           /
+  ///          /
+  /// --------
+  ///
+  ///
+  class FrLinearRampFunction : public FrFunctionBase {
 
-    private:
-        double m_x0 = 0., m_x1 = 1., m_y0 = 0., m_y1 = 1.;
+   private:
+    double m_x0 = 0., m_x1 = 1., m_y0 = 0., m_y1 = 1.;
 
-    public:
+   public:
 
-        FrLinearRampFunction();
+    FrLinearRampFunction();
 
-        FrLinearRampFunction(double x0, double y0, double x1, double y1);
+    FrLinearRampFunction(double x0, double y0, double x1, double y1);
 
-        FrLinearRampFunction(const FrLinearRampFunction& other);
+    FrLinearRampFunction(const FrLinearRampFunction &other);
 
-        FrLinearRampFunction* Clone() const override;
+    FrLinearRampFunction *Clone() const override;
 
-        void SetByTwoPoints(double x0, double y0, double x1, double y1);
+    void SetByTwoPoints(double x0, double y0, double x1, double y1);
 
-        void GetByTwoPoints(double& x0, double& y0, double& x1, double& y1 );
+    void GetByTwoPoints(double &x0, double &y0, double &x1, double &y1);
 
-        void Initialize() override;
+    void Initialize() override;
 
-        std::string GetRepr() const override;
+    std::string GetRepr() const override;
 
-    protected:
-        void Eval(double x) const override;
+   protected:
+    void Eval(double x) const override;
 
 
-
-    };
+  };
 
 
 }  // end namespace frydom

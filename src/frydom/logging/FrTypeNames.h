@@ -10,11 +10,11 @@
 
 namespace frydom {
 
-  template <typename T>
+  template<typename T>
   std::string TypeToString();
 
-  template <typename T>
-  std::string TypeToString(T*) {
+  template<typename T>
+  std::string TypeToString(T *) {
     return TypeToString<T>();
   }
 

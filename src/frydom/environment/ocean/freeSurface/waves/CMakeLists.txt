@@ -10,9 +10,9 @@ set(WAVES_FILES_LOCAL
         )
 
 set(WAVES_FILES "")
-foreach(file ${WAVES_FILES_LOCAL})
+foreach (file ${WAVES_FILES_LOCAL})
     list(APPEND WAVES_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
-endforeach()
+endforeach ()
 
 list(APPEND WAVES_FILES ${AIRY_FILES})
 

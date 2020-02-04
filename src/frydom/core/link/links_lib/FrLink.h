@@ -110,19 +110,19 @@ namespace frydom {
       Force GetLinkForceOnBody1InFrame2AtOrigin1();
 
       /// Get the link torque applying on Body 1 (as external) expressed in node 2 frame and on node 1 origin
-            Torque GetLinkTorqueOnBody1InFrame2AtOrigin1();
+      Torque GetLinkTorqueOnBody1InFrame2AtOrigin1();
 
-          /// Get the link force applying on node 1 by the spring damper addon
-          Force GetLinkForceOnNode1() const;
+      /// Get the link force applying on node 1 by the spring damper addon
+      Force GetLinkForceOnNode1() const;
 
-          /// Get the link torque applying on node 1 by the spring damper addon
-          Torque GetLinkTorqueOnNode1() const;
+      /// Get the link torque applying on node 1 by the spring damper addon
+      Torque GetLinkTorqueOnNode1() const;
 
-          /// Get the link force applying on node 2 by the spring damper addon
-          Force GetLinkForceOnNode2() const;
+      /// Get the link force applying on node 2 by the spring damper addon
+      Force GetLinkForceOnNode2() const;
 
-          /// Get the link torque applying on node 2 by the spring damper addon
-          Torque GetLinkTorqueOnNode2() const;
+      /// Get the link torque applying on node 2 by the spring damper addon
+      Torque GetLinkTorqueOnNode2() const;
 
       FrFrame GetConstraintViolation();
 
@@ -214,44 +214,44 @@ namespace frydom {
      */
 
     /// Get the Marker 2 frame relatively to node 1 frame
-        const FrFrame GetNode2FrameWRTNode1Frame() const; // tested
+    const FrFrame GetNode2FrameWRTNode1Frame() const; // tested
 
     /// Get the Marker 1 frame relatively to node 2 frame
-        const FrFrame GetNode1FrameWRTNode2Frame() const; // tested
+    const FrFrame GetNode1FrameWRTNode2Frame() const; // tested
 
     /// Get the Marker 2 position relatively to node 1, expressed in node 1 frame
-        const Position GetNode2PositionWRTNode1(FRAME_CONVENTION fc) const; // tested
+    const Position GetNode2PositionWRTNode1(FRAME_CONVENTION fc) const; // tested
 
     /// Get the Marker 1 position relatively to node 2, expressed in node 2 frame
-        const Position GetNode1PositionWRTNode2(FRAME_CONVENTION fc) const; // tested
+    const Position GetNode1PositionWRTNode2(FRAME_CONVENTION fc) const; // tested
 
     /// Get the Marker 2 orientation relatively to node 1
-        const FrRotation GetNode2OrientationWRTNode1() const; // tested
+    const FrRotation GetNode2OrientationWRTNode1() const; // tested
 
     /// Get the Marker 1 orientation relatively to node 2
-        const FrRotation GetNode1OrientationWRTNode2() const; // tested
+    const FrRotation GetNode1OrientationWRTNode2() const; // tested
 
     /*
      * Velocity related methods
      */
 
     /// Get the Marker 2 generalized velocity with respect to node 1, expressed in node 1 frame
-        const GeneralizedVelocity GetGeneralizedVelocityOfNode2WRTNode1(FRAME_CONVENTION fc) const; // tested
+    const GeneralizedVelocity GetGeneralizedVelocityOfNode2WRTNode1(FRAME_CONVENTION fc) const; // tested
 
     /// Get the Marker 1 generalized velocity with respect to node 2, expressed in node 2 frame
-        const GeneralizedVelocity GetGeneralizedVelocityOfNode1WRTNode2(FRAME_CONVENTION fc) const; // tested
+    const GeneralizedVelocity GetGeneralizedVelocityOfNode1WRTNode2(FRAME_CONVENTION fc) const; // tested
 
     /// Get the Marker 2 velocity with respect to node 1, expressed in node 1 frame
-        const Velocity GetVelocityOfNode2WRTNode1(FRAME_CONVENTION fc) const; // tested
+    const Velocity GetVelocityOfNode2WRTNode1(FRAME_CONVENTION fc) const; // tested
 
     /// Get the Marker 1 velocity with respect to node 2, expressed in node 2 frame
-        const Velocity GetVelocityOfNode1WRTNode2(FRAME_CONVENTION fc) const; // tested
+    const Velocity GetVelocityOfNode1WRTNode2(FRAME_CONVENTION fc) const; // tested
 
     /// Get the Marker 2 angular velocity with respect to node 1, expressed in node 1 frame
-        const AngularVelocity GetAngularVelocityOfNode2WRTNode1(FRAME_CONVENTION fc) const; // tested
+    const AngularVelocity GetAngularVelocityOfNode2WRTNode1(FRAME_CONVENTION fc) const; // tested
 
     /// Get the Marker 1 angular velocity with respect to node 2, expressed in node 2 frame
-        const AngularVelocity GetAngularVelocityOfNode1WRTNode2(FRAME_CONVENTION fc) const; // tested
+    const AngularVelocity GetAngularVelocityOfNode1WRTNode2(FRAME_CONVENTION fc) const; // tested
 
     /*
      * Acceleration related methods
@@ -281,70 +281,71 @@ namespace frydom {
 
     /// Get the link reaction force applied at node 1, expressed in node 1 frame.
     /// Note this is the force applied on the body
-        const Force GetLinkReactionForceOnNode1(FRAME_CONVENTION fc) const; // tested
+    const Force GetLinkReactionForceOnNode1(FRAME_CONVENTION fc) const; // tested
 
     /// Get the link reaction force applied at node 2, expressed in node 2 frame
     /// Note this is the force applied on the body
-        const Force GetLinkReactionForceOnNode2(FRAME_CONVENTION fc) const; // tested
+    const Force GetLinkReactionForceOnNode2(FRAME_CONVENTION fc) const; // tested
 
     /// Get the link reaction force applied at node 1, expressed in body 1 frame.
     /// Note this is the force applied on the body
-        const Force GetLinkReactionForceOnBody1(FRAME_CONVENTION fc) const; // tested
+    const Force GetLinkReactionForceOnBody1(FRAME_CONVENTION fc) const; // tested
 
     /// Get the link reaction force applied at node 2, expressed in body 2 frame
     /// Note this is the force applied on the body
-        const Force GetLinkReactionForceOnBody2(FRAME_CONVENTION fc) const; // tested
+    const Force GetLinkReactionForceOnBody2(FRAME_CONVENTION fc) const; // tested
 
     /// Get the link reaction torque applied at node 1, expressed in node 1 frame.
     /// Note this is the torque applied on the body
-        const Torque GetLinkReactionTorqueOnNode1(FRAME_CONVENTION fc) const; // tested
+    const Torque GetLinkReactionTorqueOnNode1(FRAME_CONVENTION fc) const; // tested
 
     /// Get the link reaction torque applied at node 2, expressed in node 2 frame.
     /// Note this is the torque applied on the body
-        const Torque GetLinkReactionTorqueOnNode2(FRAME_CONVENTION fc) const; // tested
+    const Torque GetLinkReactionTorqueOnNode2(FRAME_CONVENTION fc) const; // tested
 
     /// Get the link reaction torque applied at body 1 COG, expressed in body 1 reference frame
     /// Note this is the torque applied on the body
-        const Torque GetLinkReactionTorqueOnBody1AtCOG(FRAME_CONVENTION fc) const; // tested
+    const Torque GetLinkReactionTorqueOnBody1AtCOG(FRAME_CONVENTION fc) const; // tested
 
     /// Get the link reaction torque applied at body 2 COG, expressed in body 2 reference frame
     /// Note this is the torque applied on the body
-        const Torque GetLinkReactionTorqueOnBody2AtCOG(FRAME_CONVENTION fc) const; // tested
+    const Torque GetLinkReactionTorqueOnBody2AtCOG(FRAME_CONVENTION fc) const; // tested
 
     /*
      * Link force in free degree of freedom (ie spring damping)
      */
 
-      /// Get the force of the spring damper applied at node 1, expressed in node 1 reference frame
-      const Force GetSpringDamperForceOnNode1(FRAME_CONVENTION fc) const; // tested
+    /// Get the force of the spring damper applied at node 1, expressed in node 1 reference frame
+    const Force GetSpringDamperForceOnNode1(FRAME_CONVENTION fc) const; // tested
 
-      /// Get the force of the spring damper applied at node 2, expressed in node 2 reference frame
-      const Force GetSpringDamperForceOnNode2(FRAME_CONVENTION fc) const; // tested
+    /// Get the force of the spring damper applied at node 2, expressed in node 2 reference frame
+    const Force GetSpringDamperForceOnNode2(FRAME_CONVENTION fc) const; // tested
 
-      /// Get the force of the spring damper applied at body 1, expressed in body 1 reference frame
-      const Force GetSpringDamperForceOnBody1(FRAME_CONVENTION fc) const; // tested
+    /// Get the force of the spring damper applied at body 1, expressed in body 1 reference frame
+    const Force GetSpringDamperForceOnBody1(FRAME_CONVENTION fc) const; // tested
 
-      /// Get the force of the spring damper applied at body 2, expressed in body 2 reference frame
-      const Force GetSpringDamperForceOnBody2(FRAME_CONVENTION fc) const; // tested
+    /// Get the force of the spring damper applied at body 2, expressed in body 2 reference frame
+    const Force GetSpringDamperForceOnBody2(FRAME_CONVENTION fc) const; // tested
 
-      /// Get the torque of the spring damper applied at node 1, expressed in node 1 reference frame
-      const Torque GetSpringDamperTorqueOnNode1(FRAME_CONVENTION fc) const; // tested
+    /// Get the torque of the spring damper applied at node 1, expressed in node 1 reference frame
+    const Torque GetSpringDamperTorqueOnNode1(FRAME_CONVENTION fc) const; // tested
 
-      /// Get the torque of the spring damper applied at node 2, expressed in node 2 reference frame
-      const Torque GetSpringDamperTorqueOnNode2(FRAME_CONVENTION fc) const; // tested
+    /// Get the torque of the spring damper applied at node 2, expressed in node 2 reference frame
+    const Torque GetSpringDamperTorqueOnNode2(FRAME_CONVENTION fc) const; // tested
 
-      /// Get the torque of the spring damper applied at body 1 COG, expressed in body 1 reference frame
-      const Torque GetSpringDamperTorqueOnBody1AtCOG(FRAME_CONVENTION fc) const; // tested
+    /// Get the torque of the spring damper applied at body 1 COG, expressed in body 1 reference frame
+    const Torque GetSpringDamperTorqueOnBody1AtCOG(FRAME_CONVENTION fc) const; // tested
 
-      /// Get the torque of the spring damper applied at body 2 COG, expressed in body 2 reference frame
-      const Torque GetSpringDamperTorqueOnBody2AtCOG(FRAME_CONVENTION fc) const; // tested
+    /// Get the torque of the spring damper applied at body 2 COG, expressed in body 2 reference frame
+    const Torque GetSpringDamperTorqueOnBody2AtCOG(FRAME_CONVENTION fc) const; // tested
 
 
-        /// Generic computation of the power delivered in a FrLink by the spring damper
-        virtual double GetLinkPower() const; // tested
+    /// Generic computation of the power delivered in a FrLink by the spring damper
+    virtual double GetLinkPower() const; // tested
 
     /// Get the constraint violation of the link (ie the
-        FrFrame GetConstraintViolation() const;  // FIXME : verifier que cette violation ne prend pas en compte la position relative normale de la liaison
+    FrFrame
+    GetConstraintViolation() const;  // FIXME : verifier que cette violation ne prend pas en compte la position relative normale de la liaison
 
     /// Initialize the link by setting the markers
     void Initialize() override;

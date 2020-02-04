@@ -30,7 +30,6 @@
 #define DATE_FOLDER_FORMAT "%Y-%m-%d_%Hh%Mm%Ss"
 
 
-
 using json = nlohmann::json;
 
 namespace frydom {

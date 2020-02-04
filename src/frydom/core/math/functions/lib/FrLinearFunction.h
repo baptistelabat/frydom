@@ -11,30 +11,37 @@
 
 namespace frydom {
 
-    class FrLinearFunction : public FrFunctionBase {
+  class FrLinearFunction : public FrFunctionBase {
 
-    private:
-        double m_intercept = 0.;  //
-        double m_slope = 1.;
+   private:
+    double m_intercept = 0.;  //
+    double m_slope = 1.;
 
-    public:
-        FrLinearFunction(double intercept, double slope);
-        FrLinearFunction(const FrLinearFunction& other);
-        FrLinearFunction* Clone() const override;
+   public:
+    FrLinearFunction(double intercept, double slope);
 
-        void SetByTwoPoints(double x0, double y0, double x1, double y1);
-        void SetSlope(double slope);
-        double GetSlope() const;
-        void SetIntercept(double intercept);
-        double GetIntercept() const;
-        void Set(double intercept, double slope);
+    FrLinearFunction(const FrLinearFunction &other);
 
-        std::string GetRepr() const override;
+    FrLinearFunction *Clone() const override;
 
-    protected:
-        void Eval(double x) const override;
+    void SetByTwoPoints(double x0, double y0, double x1, double y1);
 
-    };
+    void SetSlope(double slope);
+
+    double GetSlope() const;
+
+    void SetIntercept(double intercept);
+
+    double GetIntercept() const;
+
+    void Set(double intercept, double slope);
+
+    std::string GetRepr() const override;
+
+   protected:
+    void Eval(double x) const override;
+
+  };
 
 }  // end namespace frydom
 

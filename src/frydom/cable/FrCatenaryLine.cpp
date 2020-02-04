@@ -52,11 +52,11 @@ namespace frydom {
 
     msg->AddField<Eigen::Matrix<double, 3, 1>>
         ("StartingNodeTension", "N", fmt::format("Starting node tension in world reference frame in {}", GetLogFC()),
-            [this]() { return GetStartingNodeTension(GetLogFC()); });
+         [this]() { return GetStartingNodeTension(GetLogFC()); });
 
     msg->AddField<Eigen::Matrix<double, 3, 1>>
         ("EndingNodeTension", "N", fmt::format("Ending node tension in world reference frame in {}", GetLogFC()),
-            [this]() { return GetEndingNodeTension(GetLogFC()); });
+         [this]() { return GetEndingNodeTension(GetLogFC()); });
 
     // TODO : logger la position de la ligne pour un ensemble d'abscisse curvilignes ?
 

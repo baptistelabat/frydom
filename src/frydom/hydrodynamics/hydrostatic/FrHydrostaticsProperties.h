@@ -34,9 +34,11 @@ namespace frydom {
 
     /// Constructors.
 
-    FrHydrostaticsProperties(double waterDensity, double gravityAcceleration, mesh::FrMesh &clipped_mesh, Position cog, FRAME_CONVENTION fc);
+    FrHydrostaticsProperties(double waterDensity, double gravityAcceleration, mesh::FrMesh &clipped_mesh, Position cog,
+                             FRAME_CONVENTION fc);
 
-    FrHydrostaticsProperties(double waterDensity, double gravityAcceleration, mesh::FrMesh &clipped_mesh, Position cog, Position out, FRAME_CONVENTION fc);
+    FrHydrostaticsProperties(double waterDensity, double gravityAcceleration, mesh::FrMesh &clipped_mesh, Position cog,
+                             Position out, FRAME_CONVENTION fc);
 
     /// Compute the geometric and hydrostatic properties
     void ComputeProperties();
@@ -61,11 +63,11 @@ namespace frydom {
     /// \return longitudinal metacentric height
     double GetLongitudinalMetacentricHeight() const;
 
-    double GetLengthOverallSubmerged() const {return m_lengthOverallSubmerged;}
+    double GetLengthOverallSubmerged() const { return m_lengthOverallSubmerged; }
 
-    double GetBreadthOverallSubmerged() const {return m_breadthOverallSubmerged;}
+    double GetBreadthOverallSubmerged() const { return m_breadthOverallSubmerged; }
 
-    Position GetBuoyancyCenter() const {return m_buoyancyCenter;}
+    Position GetBuoyancyCenter() const { return m_buoyancyCenter; }
 
    private:
 

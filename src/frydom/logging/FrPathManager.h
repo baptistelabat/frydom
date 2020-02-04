@@ -63,11 +63,12 @@ namespace frydom {
 
       if (!RegisterPath(path)) {
 
-        throw std::runtime_error("Object with name " + node->GetName() + " already exists in this context. Defined twice.");
+        throw std::runtime_error(
+            "Object with name " + node->GetName() + " already exists in this context. Defined twice.");
       }
 
 //      if (RegisterPath(path)) {
-        node->SetTreePath(path);
+      node->SetTreePath(path);
 //        return true;
 //      }
 //      return false;
@@ -81,7 +82,7 @@ namespace frydom {
     bool HasPath(const std::string &path);
 
     /// Gives the normalized path of the node given a hard coded policy concerning the naming scheme.
-    template <class NodeType>
+    template<class NodeType>
     static std::string GetNormalizedPathName(NodeType *node) {
       return TypeToNormalizedPathPrefix(node) + node->GetName() + "/";
     }

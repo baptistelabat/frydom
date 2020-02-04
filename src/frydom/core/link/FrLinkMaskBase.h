@@ -9,30 +9,30 @@
 
 namespace frydom {
 
-    namespace internal {
+  namespace internal {
 
     /// Specialized ChLinkMaskLF to be used with off-diagonal mass matrix coefficients
     class FrLinkMaskBase : public chrono::ChLinkMaskLF {
 
-    public:
-        /// Create a FrLinkMaskBase with 7 scalar constraints of
-        /// class FrConstraintTwoBodies.
-        FrLinkMaskBase();
+     public:
+      /// Create a FrLinkMaskBase with 7 scalar constraints of
+      /// class FrConstraintTwoBodies.
+      FrLinkMaskBase();
 
-        /// Create a FrLinkMaskBase with nmconstr scalar constraints of
-        /// class FrConstraintTwoBodies.
-        FrLinkMaskBase(int mnconstr);
+      /// Create a FrLinkMaskBase with nmconstr scalar constraints of
+      /// class FrConstraintTwoBodies.
+      FrLinkMaskBase(int mnconstr);
 
-        /// Copy constructor
-        FrLinkMaskBase(const FrLinkMaskBase& source) : chrono::ChLinkMaskLF(source) {}
+      /// Copy constructor
+      FrLinkMaskBase(const FrLinkMaskBase &source) : chrono::ChLinkMaskLF(source) {}
 
-        virtual FrLinkMaskBase* Clone() const override { return new FrLinkMaskBase(*this); }
+      virtual FrLinkMaskBase *Clone() const override { return new FrLinkMaskBase(*this); }
 
-        void ResetNconstr(int newnconstr) override;
+      void ResetNconstr(int newnconstr) override;
 
     };
 
-    } // end namespace internal
+  } // end namespace internal
 
 } // end namespace frydom
 

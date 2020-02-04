@@ -9,13 +9,13 @@ set(REFACTORING_TESTS
         test_spdlog
         )
 
-foreach(test ${REFACTORING_TESTS})
+foreach (test ${REFACTORING_TESTS})
     message(STATUS "        ...add ${test}")
 
     add_executable(${test} ${test}.cpp)
     target_link_libraries(${test} FRyDoM_Engine)
 
-endforeach()
+endforeach ()
 
 set(subdirs
         # add here the test source subdirectories

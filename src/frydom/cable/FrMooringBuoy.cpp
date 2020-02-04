@@ -37,7 +37,8 @@ namespace frydom {
                                double damping) :
       FrBody(name, system) {
     m_radius = radius;
-    m_hydrostaticForce = std::make_shared<FrSphereNonLinearHydrostaticForce>("NonlinearHydrostaticsForceOn_" + name, this);
+    m_hydrostaticForce = std::make_shared<FrSphereNonLinearHydrostaticForce>("NonlinearHydrostaticsForceOn_" + name,
+                                                                             this);
     AddExternalForce(m_hydrostaticForce);
 
     m_dampingForce = std::make_shared<FrLinearDamping>("LinearDampingForceOn_" + name, this, WATER, false);

@@ -39,7 +39,7 @@ namespace frydom {
 
     bool IsLogged() const;
 
-    const std::string& GetTypeName() const;
+    const std::string &GetTypeName() const;
 
     using MessageContainer = std::vector<std::unique_ptr<hermes::Message>>;
     using MessageIter = MessageContainer::iterator;
@@ -52,7 +52,7 @@ namespace frydom {
       return m_messages.end();
     }
 
-    virtual const hermes::Message* GetInitializationMessage() const {
+    virtual const hermes::Message *GetInitializationMessage() const {
       return nullptr;
     }
 
