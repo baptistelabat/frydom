@@ -16,14 +16,14 @@
 namespace frydom {
 
 
-    FrException::FrException(const char *message) : msg_(message) {}
+  FrException::FrException(const char *message) : msg_(message) {}
 
-    FrException::FrException(const std::string &message) : msg_(message) {}
+  FrException::FrException(const std::string &message) : msg_(message) {}
 
-    FrException::~FrException() {}
+  FrException::~FrException() {}
 
-    const char *FrException::what() const throw() {
-        return msg_.c_str();
-    }
+  const char *FrException::what() const throw() {
+    return msg_.c_str();
+  }
 
 } // end namespace frydom

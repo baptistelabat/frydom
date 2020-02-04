@@ -19,7 +19,7 @@
 
 namespace frydom {
 
-    using Complex = std::complex<double>;
+  using Complex = std::complex<double>;
 
 }
 

@@ -19,92 +19,101 @@
 
 #include "MathUtils/LookupTable1D.h"
 
+
+// TODO : splitter en force de vent et de courant et generique (FlowForce) !!!
+
 namespace frydom {
 
-    /**
-     * \class FrFlowForce
-     * \brief Class for computing the flow force.
-     */
-    class FrFlowForce : public FrForce {
+  /**
+   * \class FrFlowForce
+   * \brief Class for computing the flow force.
+   */
+  class FrFlowForce : public FrForce {
 
-    protected:
+   protected:
 
-        Velocity m_fluxVelocityInBody;             ///< relative velocity of the flow in the body frame
-        mathutils::LookupTable1D<double, mathutils::Vector3d<double>> m_table;  ///< Table of polar coefficient
+    Velocity m_fluxVelocityInBody;             ///< relative velocity of the flow in the body frame
+    mathutils::LookupTable1D<double, mathutils::Vector3d<double>> m_table;  ///< Table of polar coefficient
 
-    public:
+    double m_frontal_area;
+    double m_lateral_area;
+    double m_length;
 
-        /// Default constructor
-        FrFlowForce() = default;
+   public:
 
-        /// Constructor of the flow force with polar coeffients from json table
-        /// \param jsonFile Name of the json file containing the polar coefficients
-        explicit FrFlowForce(const std::string& jsonFile);
+    /// Default constructor
+//      FrFlowForce() = default;
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "FlowForce"; }
+    /// Constructor of the flow force with polar coeffients from json table
+    /// \param jsonFile Name of the json file containing the polar coefficients
+    explicit FrFlowForce(const std::string &name,
+                         const std::string &type_name,
+                         FrBody *body,
+                         const std::string &jsonFile);
 
-        /// Extract polar coeffients from json table
-        /// \param jsonFile Name of the json file containing the polar coefficients
-        void ReadTable(const std::string& jsonFile);
+    /// Extract polar coeffients from json table
+    /// \param jsonFile Name of the json file containing the polar coefficients
+    void ReadTable(const std::string &jsonFile);
 
-    protected:
+   protected:
 
-        /// Update the state of the flow force
-        /// \param time Current time of the simulation
-        void Compute(double time) override;
+    /// Update the state of the flow force
+    /// \param time Current time of the simulation
+    void Compute(double time) override;
 
-    };
+    virtual double GetFluidDensity() const = 0;
 
-
-    /**
-     * \class FrCurrentForce
-     * \brief Class for computing the current loads.
-     */
-    class FrCurrentForce : public FrFlowForce {
+  };
 
 
-    public:
-
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "CurrentForce"; }
-
-        explicit FrCurrentForce(const std::string& jsonFile) : FrFlowForce(jsonFile) { }
-
-    private:
-
-        void Compute(double time) override;
-
-    };
+  /**
+   * \class FrCurrentForce
+   * \brief Class for computing the current loads.
+   */
+  class FrCurrentForce : public FrFlowForce {
 
 
-    /**
-     * \class FrWindForce
-     * \brief Class for computing the wind loads.
-     */
-    class FrWindForce : public FrFlowForce {
+   public:
 
-    public:
+    FrCurrentForce(const std::string &name, FrBody *body, const std::string &jsonFile);
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "WindForce"; }
+   private:
 
-        explicit FrWindForce(const std::string& jsonFile) : FrFlowForce(jsonFile) { }
+    void Compute(double time) override;
 
-    private:
+    double GetFluidDensity() const override;
 
-        /// Compute thd wind force
-        /// \param time Current time of the simulation from beginning, in seconds
-        void Compute(double time) override;
+  };
 
-    };
 
-    std::shared_ptr<FrCurrentForce> make_current_force(const std::string& jsonFile, std::shared_ptr<FrBody> body);
+  /**
+   * \class FrWindForce
+   * \brief Class for computing the wind loads.
+   */
+  class FrWindForce : public FrFlowForce {
 
-    std::shared_ptr<FrWindForce> make_wind_force(const std::string& jsonFile, std::shared_ptr<FrBody> body);
+   public:
+
+    explicit FrWindForce(const std::string &name, FrBody *body, const std::string &jsonFile);
+
+
+   private:
+
+    /// Compute thd wind force
+    /// \param time Current time of the simulation from beginning, in seconds
+    void Compute(double time) override;
+
+    double GetFluidDensity() const override;
+
+  };
+
+  std::shared_ptr<FrCurrentForce> make_current_force(const std::string &name,
+                                                     std::shared_ptr<FrBody> body,
+                                                     const std::string &jsonFile);
+
+  std::shared_ptr<FrWindForce> make_wind_force(const std::string &name,
+                                               std::shared_ptr<FrBody> body,
+                                               const std::string &jsonFile);
 
 
 } // end of namespace frydom

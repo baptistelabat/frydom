@@ -3,6 +3,8 @@ message(STATUS "    ...UNIT TESTS :")
 
 set(UNIT_TESTS
         # include test source files here (without .cpp)
+        test_FrLoggable
+        test_FrPathManager
         test_FrForce
         test_internal
         test_FrBody
@@ -27,28 +29,24 @@ set(UNIT_TESTS
         test_FrWaveSpectrum
         test_FrQuadraticDamping
         test_FrShape
-        #test_FrLinks
-#        test_FrFunction
         test_edge_splitting
         test_FrAssembly
         test_FrClippingSurface
         test_FrPlane
         test_FrPolygon
         test_FrMesh
+        test_FrLink
+        test_Torsor
         )
 
-# Set the path definition of the data resources
-set(unit_test_resources_path ${CMAKE_SOURCE_DIR}/tests/data/unit_test/)
-
-foreach(test ${UNIT_TESTS})
+foreach (test ${UNIT_TESTS})
     message(STATUS "        ...add ${test}")
 
     add_executable(${test} ${test}.cpp)
     target_link_libraries(${test} FRyDoM_Engine gtest_main)
-    target_compile_definitions(${test} PUBLIC RESOURCES_PATH="${unit_test_resources_path}")
     add_test(NAME ${test}
             COMMAND ${test})
-endforeach()
+endforeach ()
 
 
 set(subdirs

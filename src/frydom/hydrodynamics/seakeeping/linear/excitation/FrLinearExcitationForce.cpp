@@ -15,53 +15,46 @@
 #include "frydom/hydrodynamics/FrEquilibriumFrame.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOceanInc.h"
+#include "frydom/logging/FrTypeNames.h"
 
 namespace frydom {
 
-    void FrLinearExcitationForce::Initialize() {
+  Eigen::MatrixXcd FrLinearExcitationForce::GetHDBData(unsigned int iangle) const {
 
-        // Initialization of the parent class.
-        FrLinearExcitationForceBase::Initialize();
+    auto BEMBody = m_HDB->GetBody(GetBody());
 
-    }
+    return BEMBody->GetExcitation(iangle);
 
-    Eigen::MatrixXcd FrLinearExcitationForce::GetHDBData(unsigned int iangle) const {
+  }
 
-        auto BEMBody = m_HDB->GetBody(m_body);
+  Eigen::VectorXcd FrLinearExcitationForce::GetHDBData(unsigned int iangle, unsigned int iforce) const {
 
-        return BEMBody->GetExcitation(iangle);
+    auto BEMBody = m_HDB->GetBody(GetBody());
 
-    }
+    return BEMBody->GetExcitation(iangle, iforce);
 
-    Eigen::VectorXcd FrLinearExcitationForce::GetHDBData(unsigned int iangle, unsigned int iforce) const {
+  }
 
-        auto BEMBody = m_HDB->GetBody(m_body);
+  FrLinearExcitationForce::FrLinearExcitationForce(const std::string &name,
+                                                   FrBody *body,
+                                                   const std::shared_ptr<FrHydroDB> &HDB) :
+      FrLinearHDBForce(name, TypeToString(this), body, HDB) {}
 
-        return BEMBody->GetExcitation(iangle,iforce);
+  std::shared_ptr<FrLinearExcitationForce>
+  make_linear_excitation_force(const std::string &name,
+                               std::shared_ptr<FrBody> body,
+                               std::shared_ptr<FrHydroDB> HDB) {
 
-    }
+    // This function creates the linear excitation force object.
 
-    void FrLinearExcitationForce::Compute(double time) {
+    // Construction of the excitation force object from the HDB.
+    auto excitationForce = std::make_shared<FrLinearExcitationForce>(name, body.get(), HDB);
 
-        // This function computes the linear excitation forces from Nemoh results.
+    // Add the excitation force object as an external force to the body.
+    body->AddExternalForce(excitationForce); // Initialization of m_body.
 
-        Compute_F_HDB();
+    return excitationForce;
 
-    }
-
-    std::shared_ptr<FrLinearExcitationForce>
-    make_linear_excitation_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body){
-
-        // This function creates the linear excitation force object.
-
-        // Construction of the excitation force object from the HDB.
-        auto excitationForce = std::make_shared<FrLinearExcitationForce>(HDB);
-
-        // Add the excitation force object as an external force to the body.
-        body->AddExternalForce(excitationForce); // Initialization of m_body.
-
-        return excitationForce;
-
-    }
+  }
 
 }  // end namespace frydom

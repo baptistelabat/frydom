@@ -8,6 +8,7 @@ set(FRYDOM_SRC_FILES "")
 
 # Adding a new subdirectory to the FRyDoM root source directory must be done by adding its name here
 set(subdirs
+        logging
         asset
         cable
         collision
@@ -24,13 +25,15 @@ set(subdirs
 # voir crascit.com/2016/01/31/enhanced-source-file-handling-with-target_sources/
 
 set(FRYDOM_SRC_FILES "")
-foreach(subdir ${subdirs})
+foreach (subdir ${subdirs})
 
     add_subdirectory(${subdir})
     string(TOUPPER FRYDOM_${subdir}_SOURCES SOURCE_FILES)
     list(APPEND FRYDOM_SRC_FILES ${${SOURCE_FILES}})
 
-endforeach()
+endforeach ()
+
+list(APPEND FRYDOM_SRC_FILES "${CMAKE_CURRENT_BINARY_DIR}/version.cpp")
 
 # =============================================================================
 # FRyDoM DEPENDENCIES
@@ -50,6 +53,7 @@ target_link_libraries(FRyDoM_Engine
         hermes
         OpenMeshCore
         nlohmann_json
+        spdlog::spdlog_header_only
         )
 
 target_include_directories(FRyDoM_Engine PUBLIC

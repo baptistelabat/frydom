@@ -29,38 +29,21 @@ set(BENCH
         DTMB5512
         Cables
         NonlinearHydrostaticBox
+        HS_equilibrium
         )
 
-# Resource data loading / path definition
-
-if(${frydom_download_demo_data})
-    include(URL_DEMO_DATA.conf)
-endif()
-
-set(NonlinearHydrostaticBox_resources_path ${box_resources_path})
-set(SphereDecay_resources_path ${sphere_resources_path})
-set(SphereIrregular_resources_path ${sphere_resources_path})
-set(SphereRegular_resources_path ${sphere_resources_path})
-set(Hydrodynamic_resources_path ${platform_resources_path})
-set(Morison_resources_path ${platform_resources_path})
-set(NonLinearHydrostatics_resources_path ${cylinder_resources_path})
-set(Hub_Installation_resources_path ${barge_resources_path})
-set(HexagonalArticulatedBuoy_resources_path ${HexagonalArticulatedBuoy})
-
 # Compile target
-foreach(test ${DEMOS})
+foreach (test ${DEMOS})
     message(STATUS "        ...add demo_${test}")
     add_executable(demo_${test} demo_${test}.cpp)
     target_link_libraries(demo_${test} FRyDoM_Engine)
-    target_compile_definitions(demo_${test} PUBLIC RESOURCES_PATH="${${test}_resources_path}")
-endforeach()
+endforeach ()
 
-foreach(test ${BENCH})
+foreach (test ${BENCH})
     message(STATUS "        ...add bench_${test}")
     add_executable(bench_${test} bench_${test}.cpp)
     target_link_libraries(bench_${test} FRyDoM_Engine)
-    target_compile_definitions(bench_${test} PUBLIC RESOURCES_PATH="${${test}_resources_path}")
-endforeach()
+endforeach ()
 
 set(subdirs
         # add here the test source subdirectories

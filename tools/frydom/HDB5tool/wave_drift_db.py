@@ -2,27 +2,26 @@
 #  -*- coding: utf-8 -*-
 # ==========================================================================
 # FRyDoM - frydom-ce.org
-# 
+#
 # Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 # All rights reserved.
-# 
+#
 # Use of this source code is governed by a GPLv3 license that can be found
 # in the LICENSE file of FRyDoM.
-# 
+#
 # ==========================================================================
 """Module to load wave drift polar coefficients"""
 
 import numpy as np
 from scipy.interpolate import interp1d
 
-class CoeffData(object):
 
+class CoeffData(object):
     """
         Class for dealing with wave drift polar coefficients.
     """
 
     def __init__(self):
-
         """
         Constructor of the class CoeffData.
         """
@@ -34,8 +33,8 @@ class CoeffData(object):
         self.heading_index = None
         return
 
-class WaveDriftDB(object):
 
+class WaveDriftDB(object):
     """
     Class for dealing with wave drift polar coefficients.
     """
@@ -263,9 +262,9 @@ class WaveDriftDB(object):
         """
 
         if unit_freq == 'Hz':
-            freq = (2.*pi)*freq
+            freq = (2. * pi) * freq
         elif unit_freq == 's':
-            freq = (2.*pi) / freq[::-1]
+            freq = (2. * pi) / freq[::-1]
             data = data[::-1]
 
         if unit_dir == "deg":
@@ -500,6 +499,5 @@ class WaveDriftDB(object):
         for key, mode in self._modes.items():
 
             for i_dir, angle in enumerate(mode.heading):
-
-                print("mode: %s ;heading_%i:%16.8f ;size_freq(%s)" % (key, i_dir, np.degrees(angle), str(mode.data[i_dir].size)))
-
+                print("mode: %s ;heading_%i:%16.8f ;size_freq(%s)" % (
+                key, i_dir, np.degrees(angle), str(mode.data[i_dir].size)))

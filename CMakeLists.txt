@@ -13,9 +13,9 @@ cmake_minimum_required(VERSION 3.11)
 #-----------------------------------------------------------------------------
 # Prevent in-source builds
 #-----------------------------------------------------------------------------
-if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
-    message( FATAL_ERROR  "In-source build is not possible and not recommended. Choose an empty directory for build output.")
-endif(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+    message(FATAL_ERROR "In-source build is not possible and not recommended. Choose an empty directory for build output.")
+endif (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 
 #-----------------------------------------------------------------------------
 # Define project name and specify version information
@@ -41,6 +41,8 @@ option(frydom_build_demo "Build demo tests" ON)
 option(frydom_build_dev_test "Build dev test" ON)
 option(frydom_download_demo_data "Downloading demo data" ON)
 
+option(frydom_build_tools "Build the standalone tools" ON)
+
 #-----------------------------------------------------------------------------
 # C++ dialect
 #-----------------------------------------------------------------------------
@@ -51,11 +53,12 @@ set(CMAKE_CXX_STANDARD 14)
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 #=============================================================================
-# Adding Thirparty libraries to the project
+# Retrieving the current Git revision
 #=============================================================================
-# It set FRYDOM_THIRDPARTY_LIBS and FRYDOM_THIRDPARTY_INCLUDE_DIRS
-#add_subdirectory(thirdparty)
-
+include(GetGitRevisionDescription)
+get_git_head_revision(GIT_REFSPEC GIT_SHA1)
+set(FRYDOM_FLAVOR "FRyDoM-CE (Community Edition)" CACHE STRING "The FRyDoM flavor (CE or EE)")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/frydom/version.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/src/frydom/version.cpp")
 
 # =============================================================================
 # FRyDoM DEPENDENCIES
@@ -63,12 +66,18 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/URL.conf.cmake)
 
+
+if (${frydom_download_demo_data})
+    include(${CMAKE_CURRENT_SOURCE_DIR}/data/DownloadData.cmake)
+    DownloadData()
+endif ()
+
+
 include(Add_googletest)
 
 include(Add_chrono)
 include(Add_MathUtils)
 include(Add_HDF5)
-
 include(Add_GeographicLib)
 include(Add_fmt)
 include(Add_cppfs)
@@ -76,6 +85,7 @@ include(Add_TimeZone)
 include(Add_hermes)
 include(Add_OpenMesh)
 include(Add_json)
+include(Add_spdlog)
 
 #=============================================================================
 # Adding the FRyDoM project sources
@@ -90,4 +100,13 @@ if (${frydom_build_tests})
     include(Add_googletest)
 
     add_subdirectory(tests)
-endif()
+endif ()
+
+
+#=============================================================================
+# Adding tools
+#=============================================================================
+if (${frydom_build_tools})
+    include(add_cxxopts)
+    add_subdirectory(tools)
+endif ()

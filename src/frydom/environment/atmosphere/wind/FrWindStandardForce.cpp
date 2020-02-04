@@ -16,81 +16,94 @@
 #include "frydom/core/body/FrBody.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/atmosphere/FrAtmosphereInc.h"
-
+#include "frydom/logging/FrTypeNames.h"
 
 namespace frydom {
 
-    FrWindStandardForce::FrWindStandardForce() : FrForce() { }
+  FrWindStandardForce::FrWindStandardForce(const std::string &name, FrBody *body) :
+      FrForce(name, TypeToString(this), body) {}
 
-    void FrWindStandardForce::SetLateralArea(double lateralArea) {
-        assert(lateralArea > FLT_EPSILON);
-        m_lateralArea = lateralArea;
-    }
+  void FrWindStandardForce::SetLateralArea(double lateralArea) {
+    assert(lateralArea > FLT_EPSILON);
+    m_lateralArea = lateralArea;
+  }
 
-    void FrWindStandardForce::SetTransverseArea(double transverseArea) {
-        assert(transverseArea > FLT_EPSILON);
-        m_transverseArea = transverseArea;
-    }
+  void FrWindStandardForce::SetTransverseArea(double transverseArea) {
+    assert(transverseArea > FLT_EPSILON);
+    m_transverseArea = transverseArea;
+  }
 
-    void FrWindStandardForce::SetXCenter(double xCenter) {
-        m_xCenter = xCenter;
-    }
+  void FrWindStandardForce::SetXCenter(double xCenter) {
+    m_xCenter = xCenter;
+  }
 
-    void FrWindStandardForce::SetLenghtBetweenPerpendicular(double lpp) {
-        assert(lpp > FLT_EPSILON);
-        m_lpp = lpp;
-    }
+  void FrWindStandardForce::SetLenghtBetweenPerpendicular(double lpp) {
+    assert(lpp > FLT_EPSILON);
+    m_lpp = lpp;
+  }
 
-    void FrWindStandardForce::Initialize() {
-        FrForce::Initialize();
-        if (m_transverseArea < FLT_EPSILON) throw FrException(" error value transverse area");
-        if (m_lateralArea < FLT_EPSILON) throw FrException("error value lateral area");
-        if (m_lpp < FLT_EPSILON) throw FrException("error value length between perpendicular");
-    }
+  void FrWindStandardForce::Initialize() {
+    FrForce::Initialize();
+    if (m_transverseArea < FLT_EPSILON) throw FrException(" error value transverse area");
+    if (m_lateralArea < FLT_EPSILON) throw FrException("error value lateral area");
+    if (m_lpp < FLT_EPSILON) throw FrException("error value length between perpendicular");
+  }
 
-    void FrWindStandardForce::Compute(double time) {
+  void FrWindStandardForce::Compute(double time) {
 
-        Force force;
-        Torque torque;
+    Force force;
+    Torque torque;
 
-        auto rho = GetSystem()->GetEnvironment()->GetAtmosphere()->GetDensity();
+    auto body = GetBody();
+    auto environment = body->GetSystem()->GetEnvironment();
 
-        FrFrame FrameAtCOG = m_body->GetFrameAtCOG(NWU);
+    auto rho = environment->GetAtmosphere()->GetDensity();
 
-        auto bodyVelocity = m_body->GetLinearVelocityInWorld(NWU);
-        bodyVelocity.z()= 0.;
+    FrFrame FrameAtCOG = body->GetFrameAtCOG(NWU);
 
-        Velocity fluxVelocityInBody = m_body->GetSystem()->GetEnvironment()->GetAtmosphere()->GetWind()
-                ->GetRelativeVelocityInFrame(FrameAtCOG, bodyVelocity, NWU);
+    auto bodyVelocity = body->GetLinearVelocityInWorld(NWU);
+    bodyVelocity.z() = 0.;
 
-        fluxVelocityInBody = internal::SwapFrameConvention(fluxVelocityInBody);
-        fluxVelocityInBody = -fluxVelocityInBody;   // Swap convention GOTO/COMEFROM;
+    Velocity fluxVelocityInBody = environment->GetAtmosphere()->GetWind()->GetRelativeVelocityInFrame(FrameAtCOG,
+                                                                                                      bodyVelocity,
+                                                                                                      NWU);
 
-        double alpha = fluxVelocityInBody.GetProjectedAngleAroundZ(RAD);
-        alpha = Normalize_0_2PI(alpha);
+    fluxVelocityInBody = internal::SwapFrameConvention(fluxVelocityInBody);
+    fluxVelocityInBody = -fluxVelocityInBody;   // Swap convention GOTO/COMEFROM;
 
-        auto ak = 0.5 * rho * fluxVelocityInBody.squaredNorm();
+    double alpha = fluxVelocityInBody.GetProjectedAngleAroundZ(RAD);
+    alpha = Normalize_0_2PI(alpha);
 
-        force.x() = -0.7 * ak * m_transverseArea * cos(alpha);
-        force.y() = 0.9 * ak * m_lateralArea * sin(alpha);
-        force.z() = 0.;
+    auto ak = 0.5 * rho * fluxVelocityInBody.squaredNorm();
 
-        if (alpha > M_PI) alpha = 2.*M_PI - alpha;
-        auto m1 = 0.3 * (1. - 2. * alpha / M_PI);
-        torque.x() = 0.;
-        torque.y() = 0.;
-        torque.z() = force.y() * m1 * m_lpp;
+    force.x() = -0.7 * ak * m_transverseArea * cos(alpha);
+    force.y() = 0.9 * ak * m_lateralArea * sin(alpha);
+    force.z() = 0.;
 
-        // Build the projected rotation in the XoY plane.
-        double phi, theta, psi;
-        m_body->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
-        auto bodyRotation = FrRotation(Direction(0.,0.,1.), psi, NWU);
-        auto frame = FrFrame(m_body->GetCOGPositionInWorld(NWU), bodyRotation, NWU);
+    if (alpha > M_PI) alpha = 2. * M_PI - alpha;
+    auto m1 = 0.3 * (1. - 2. * alpha / M_PI);
+    torque.x() = 0.;
+    torque.y() = 0.;
+    torque.z() = force.y() * m1 * m_lpp;
 
-        auto worldForce = frame.ProjectVectorFrameInParent(force, NWU);
-        auto worldTorque = frame.ProjectVectorFrameInParent(torque, NWU);
+    // Build the projected rotation in the XoY plane.
+    double phi, theta, psi;
+    body->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
+    auto bodyRotation = FrRotation(Direction(0., 0., 1.), psi, NWU);
+    auto frame = FrFrame(body->GetCOGPositionInWorld(NWU), bodyRotation, NWU);
 
-        SetForceTorqueInWorldAtPointInBody(worldForce, worldTorque, Position(m_xCenter, 0., 0.), NWU);
-    }
+    auto worldForce = frame.ProjectVectorFrameInParent(force, NWU);
+    auto worldTorque = frame.ProjectVectorFrameInParent(torque, NWU);
 
+    SetForceTorqueInWorldAtPointInBody(worldForce, worldTorque, Position(m_xCenter, 0., 0.), NWU);
+  }
+
+  std::shared_ptr<FrWindStandardForce> make_wind_standard_force(const std::string &name, std::shared_ptr<FrBody> body) {
+
+    auto force = std::make_shared<FrWindStandardForce>(name, body.get());
+
+    body->AddExternalForce(force);
+
+    return force;
+  }
 }  // end namespace frydom

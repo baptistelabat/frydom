@@ -13,8 +13,8 @@ Description of the test case
 ----------------------------
 
 In this simulation, the 1:46.6 scale is considered which corresponds to the laboratory scale of the DTMB 5512 geometry
-used in the experimental campaigned made by the Iowa Institute of Hydraulic Research (IIHR). The hull model with no
-appendage, no propeller and no rudder is considered. The CAD model is freely available. The main characteristics of the
+used in the experimental campaigned made by the Iowa Institute of Hydraulic Research (IIHR) [Gui2001]_ [Irvine2008]_. The hull model with no
+appendage, no propeller and no rudder is considered. The CAD model and data are freely available on the IIHR website. The main characteristics of the
 vessel are summarized in the following table. The x-axis is pointing forward to the vessel and z-axis is pointing upward
 as represented in the following figure.
 
@@ -141,7 +141,7 @@ Captive test results
 
 The regular wave field propagates in negative x-direction. Four different wave amplitudes are considered corresponding to small (0.025), small-median (0.05, 0.075) and median (0.1) steepness. The wave period is equal to 0.22 seconds.
 
-The zeroth and first harmonic coefficients of :math:`C_T`, :math:`C_H` and :math:`C_M` are compared to experimental results in :numref:`fig_zeroth_coeff` and :numref:`fig_first_harmonic`.
+The zeroth and first harmonic coefficients of :math:`C_T`, :math:`C_H` and :math:`C_M` are compared to experimental results [Gui2002]_ in :numref:`fig_zeroth_coeff` and :numref:`fig_first_harmonic`.
 
 .. _fig_zeroth_coeff:
 .. figure:: _static/zero_harmonic_plot.png
@@ -187,3 +187,13 @@ test case in order to characterize these discrepancies.
 
 
     Comparison of the Pitch RAO results from FRyDoM with experimental data for different regular wave frequency. Results for different Froude number (0.0, 0.19, 0.28, 0.34, 0.41) from left to right and top to bottom.
+
+
+References
+----------
+
+.. [Gui2001] L. Gui, J. Longo, B. Metcalf, J. Shao, F. Stern, "Forces, moment, and wave pattern for surface combatant in regular head waves. Part 1 : Measurment systems and uncertainty assessment", Experiments in Fluids, Vol 31, 2001, pp 674-680.
+
+.. [Gui2002] L. Gui, J. Longo, B. Metcalf, J. Shao, F. Stern, "Forces, moment, and wave pattern for surface combatant in regular head waves. Part 2 : Measurment results and discussions", Experiments in Fluids, Vol 32, 2002, pp 27-36.
+
+.. [Irvine2008] M. Irvine, J. Longo, F. Stern, "Pitch and Heave Tets Uncertainty assessment for a surface combatant in regular head waves", Journal Ship Research, Vol 52, No 2, June 2008, pp 146-163.

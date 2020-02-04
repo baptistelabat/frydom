@@ -10,61 +10,65 @@
 
 namespace frydom {
 
-    // FIXME : en cas de composition, le clamp n'a pas lieu sur x mais sur le resultat de la
-    // fonction embarquee
+  // FIXME : en cas de composition, le clamp n'a pas lieu sur x mais sur le resultat de la
+  // fonction embarquee
 
-    class FrClampFunction : public FrFunctionBase {
+  class FrClampFunction : public FrFunctionBase {
 
-    protected:
-        double m_xClamp;
+   protected:
+    double m_xClamp;
 
-    public:
-        FrClampFunction(const FrFunctionBase& function, double xClamp);
-        FrClampFunction(const FrClampFunction& other);
+   public:
+    FrClampFunction(const FrFunctionBase &function, double xClamp);
+
+    FrClampFunction(const FrClampFunction &other);
 //        FrClampFunction* Clone() const override;
 
-        void Set(double xClamp);
+    void Set(double xClamp);
 
 //        std::string GetRepr() const override;
 
 //    protected:
 //        void Eval(double x) const override;
 
-    };
+  };
 
-    class FrClampAfterFunction : public FrClampFunction {
+  class FrClampAfterFunction : public FrClampFunction {
 
-    public:
-        FrClampAfterFunction(const FrFunctionBase& function, double xClamp);
-        FrClampAfterFunction(const FrClampAfterFunction& other);
-        FrClampAfterFunction* Clone() const override;
-        std::string GetRepr() const override;
+   public:
+    FrClampAfterFunction(const FrFunctionBase &function, double xClamp);
 
-        std::string GetTypeName() const override { return "ClampAfterFunction"; }
+    FrClampAfterFunction(const FrClampAfterFunction &other);
 
-    protected:
-        void Eval(double x) const override;
+    FrClampAfterFunction *Clone() const override;
 
-    };
+    std::string GetRepr() const override;
 
-    class FrClampBeforeFunction : public FrClampFunction {
+   protected:
+    void Eval(double x) const override;
 
-    public:
-        FrClampBeforeFunction(const FrFunctionBase& function, double xClamp);
-        FrClampBeforeFunction(const FrClampBeforeFunction& other);
-        FrClampBeforeFunction* Clone() const override;
-        std::string GetRepr() const override;
+  };
 
-        std::string GetTypeName() const override { return "ClampBeforeFunction"; }
+  class FrClampBeforeFunction : public FrClampFunction {
 
-    protected:
-        void Eval(double x) const override;
+   public:
+    FrClampBeforeFunction(const FrFunctionBase &function, double xClamp);
 
-    };
+    FrClampBeforeFunction(const FrClampBeforeFunction &other);
+
+    FrClampBeforeFunction *Clone() const override;
+
+    std::string GetRepr() const override;
+
+   protected:
+    void Eval(double x) const override;
+
+  };
 
 
-    FrClampAfterFunction clamp_after(const FrFunctionBase& function, double xClamp);
-    FrClampBeforeFunction clamp_before(const FrFunctionBase& function, double xClamp);
+  FrClampAfterFunction clamp_after(const FrFunctionBase &function, double xClamp);
+
+  FrClampBeforeFunction clamp_before(const FrFunctionBase &function, double xClamp);
 
 
 }  // end namespace frydom

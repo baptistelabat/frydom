@@ -16,39 +16,35 @@
 #include "frydom/environment/flow/FrFlowBase.h"
 
 
-
 namespace frydom {
 
-    // Forward declarations
-    class FrEnvironment;
-    class FrAtmosphere;
+  // Forward declarations
+  class FrEnvironment;
 
-    /**
-    * \class FrWind
-    * \brief Class for defining a wind.
-    */
-    class FrWind : public FrFlowBase {
-    private:
+  class FrAtmosphere;
 
-        FrAtmosphere* m_atmosphere;  ///> Pointer to the atmosphere containing this wind model
+  /**
+  * \class FrWind
+  * \brief Class for defining a wind.
+  */
+  class FrWind : public FrFlowBase {
+   private:
 
-    public:
+    FrAtmosphere *m_atmosphere;  ///> Pointer to the atmosphere containing this wind model
 
-        /// Default constructor
-        /// \param atmosphere containing this wind model
-        explicit FrWind(FrAtmosphere* atmosphere) : FrFlowBase() { m_atmosphere = atmosphere;}
+   public:
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "Wind"; }
+    /// Default constructor
+    /// \param atmosphere containing this wind model
+    explicit FrWind(FrAtmosphere *atmosphere) : FrFlowBase() { m_atmosphere = atmosphere; }
 
-        /// Get the atmosphere containing this wind model
-        /// \return atmosphere containing this wind model
-        FrAtmosphere* GetAtmosphere() const {return m_atmosphere;}
+    /// Get the atmosphere containing this wind model
+    /// \return atmosphere containing this wind model
+    FrAtmosphere *GetAtmosphere() const { return m_atmosphere; }
 
-        FrEnvironment* GetEnvironment() const override;
+    FrEnvironment *GetEnvironment() const override;
 
-    };
+  };
 
 }  // end namespace frydom
 

@@ -11,6 +11,7 @@
 
 
 
+#include <frydom/logging/FrEventLogger.h>
 #include "FrBody.h"
 
 
@@ -26,273 +27,304 @@
 #include "frydom/collision/FrCollisionModel.h"
 #include "frydom/core/link/links_lib/FrDOFMaskLink.h"
 #include "frydom/core/link/links_lib/FrFixedLink.h"
+#include "frydom/logging/FrLogManager.h"
+
+#include "frydom/logging/FrPathManager.h"
+#include "frydom/logging/FrTypeNames.h"
+
 
 namespace frydom {
 
-    namespace internal {
+  namespace internal {
 
-        //
-        // FrBodyBase
-        //
+    //
+    // FrBodyBase
+    //
 
-        FrBodyBase::FrBodyBase(FrBody *body) : chrono::ChBodyAuxRef(), m_frydomBody(body) {
-        }
+    FrBodyBase::FrBodyBase(FrBody *body) : chrono::ChBodyAuxRef(), m_frydomBody(body) {}
 
-        FrBodyBase::FrBodyBase(const FrBodyBase& other) : chrono::ChBodyAuxRef(other) {
-            m_frydomBody = other.m_frydomBody;
-            m_variables_ptr = other.m_variables_ptr;
-        }
-
-        void FrBodyBase::SetupInitial() {}
-
-        void FrBodyBase::Update(bool update_assets) {
-            chrono::ChBodyAuxRef::Update(update_assets);
-            m_frydomBody->Update();
-        }
-
-        void FrBodyBase::UpdateAfterMove() {
-
-            auto auxref_to_cog = (chrono::ChFrameMoving<double>)GetFrame_REF_to_COG();
-
-            chrono::ChFrameMoving<double> auxref_to_abs;
-            this->TransformLocalToParent(auxref_to_cog, auxref_to_abs);
-
-            SetFrame_REF_to_abs(auxref_to_abs);
-
-            chrono::ChBodyAuxRef::Update(true);
-
-            // Updating markers
-            UpdateMarkers(GetChTime());
-        }
-
-        void FrBodyBase::UpdateMarkerPositionToCOG(const chrono::ChVector<> newCOG) {
-
-            chrono::ChVector<double> position;
-
-            for (auto& marker : GetMarkerList()) {
-                position = marker->GetPos() - newCOG;
-                marker->Impose_Rel_Coord(chrono::ChCoordsys<double>(position, marker->GetRot()));
-            }
-            UpdateMarkers(GetChTime());
-        }
-
-        void FrBodyBase::RemoveAsset(std::shared_ptr<chrono::ChAsset> asset) { //taken from RemoveForce
-            // trying to remove objects not previously added?
-            assert(std::find<std::vector<std::shared_ptr<chrono::ChAsset>>::iterator>(assets.begin(), assets.end(), asset) !=
-                           assets.end());
-
-            // warning! linear time search
-            assets.erase(
-                    std::find<std::vector<std::shared_ptr<chrono::ChAsset>>::iterator>(assets.begin(), assets.end(), asset));
-        }
-
-        //
-        // STATE FUNCTION
-        //
-
-        void FrBodyBase::IntToDescriptor(const unsigned int off_v,
-                                         const chrono::ChStateDelta& v,
-                                         const chrono::ChVectorDynamic<>& R,
-                                         const unsigned int off_L,
-                                         const chrono::ChVectorDynamic<>& L,
-                                         const chrono::ChVectorDynamic<>& Qc) {
-            Variables().Get_qb().PasteClippedMatrix(v, off_v, 0, 6, 1, 0, 0);
-            Variables().Get_fb().PasteClippedMatrix(R, off_v, 0, 6, 1, 0, 0);
-        }
-
-        void FrBodyBase::IntFromDescriptor(const unsigned int off_v,
-                                           chrono::ChStateDelta& v,
-                                           const unsigned int off_L,
-                                           chrono::ChVectorDynamic<>& L) {
-            v.PasteMatrix(Variables().Get_qb(), off_v, 0);
-        }
-
-        //
-        // SOLVER FUNCTIONS
-        //
-
-        chrono::ChVariables& FrBodyBase::Variables() {
-
-            if (m_variables_ptr) {
-                return *m_variables_ptr.get();
-            } else {
-                return chrono::ChBody::variables;
-            }
-        }
-
-        void FrBodyBase::SetVariables(const std::shared_ptr<chrono::ChVariables> new_variables) {
-            m_variables_ptr = new_variables;
-            variables.SetDisabled(true);
-        }
-
-        void FrBodyBase::InjectVariables(chrono::ChSystemDescriptor& mdescriptor) {
-            Variables().SetDisabled(!this->IsActive());
-            mdescriptor.InsertVariables(&this->Variables());
-        }
-
-        void FrBodyBase::VariablesFbReset() {
-            Variables().Get_fb().FillElem(0.0);
-        }
-
-        void FrBodyBase::VariablesFbLoadForces(double factor) {
-            // add applied forces to 'fb' vector
-            this->Variables().Get_fb().PasteSumVector(Xforce * factor, 0, 0);
-
-            // add applied torques to 'fb' vector, including gyroscopic torque
-            if (this->GetNoGyroTorque())
-                this->Variables().Get_fb().PasteSumVector((Xtorque)*factor, 3, 0);
-            else
-                this->Variables().Get_fb().PasteSumVector((Xtorque - gyro) * factor, 3, 0);
-        }
-
-        void FrBodyBase::VariablesFbIncrementMq() {
-            this->Variables().Compute_inc_Mb_v(this->Variables().Get_fb(), this->Variables().Get_qb());
-        }
-
-        void FrBodyBase::VariablesQbLoadSpeed() {
-            this->Variables().Get_qb().PasteVector(GetCoord_dt().pos, 0, 0);
-            this->Variables().Get_qb().PasteVector(GetWvel_loc(), 3, 0);
-        }
-
-        void FrBodyBase::VariablesQbSetSpeed(double step) {
-            chrono::ChCoordsys<> old_coord_dt = this->GetCoord_dt();
-
-            // from 'qb' vector, sets body speed, and updates auxiliary data
-            this->SetPos_dt(this->Variables().Get_qb().ClipVector(0, 0));
-            this->SetWvel_loc(this->Variables().Get_qb().ClipVector(3, 0));
-
-            // apply limits (if in speed clamping mode) to speeds.
-            ClampSpeed();
-
-            // compute auxiliary gyroscopic forces
-            ComputeGyro();
-
-            // Compute accel. by BDF (approximate by differentiation);
-            if (step) {
-                this->SetPos_dtdt((this->GetCoord_dt().pos - old_coord_dt.pos) / step);
-                this->SetRot_dtdt((this->GetCoord_dt().rot - old_coord_dt.rot) / step);
-            }
-        }
-
-        void FrBodyBase::VariablesQbIncrementPosition(double dt_step) {
-            if (!this->IsActive())
-                return;
-
-            // Updates position with incremental action of speed contained in the
-            // 'qb' vector:  pos' = pos + dt * speed   , like in an Eulero step.
-
-            chrono::ChVector<> newspeed = Variables().Get_qb().ClipVector(0, 0);
-            chrono::ChVector<> newwel = Variables().Get_qb().ClipVector(3, 0);
-
-            // ADVANCE POSITION: pos' = pos + dt * vel
-            this->SetPos(this->GetPos() + newspeed * dt_step);
-
-            // ADVANCE ROTATION: rot' = [dt*wwel]%rot  (use quaternion for delta rotation)
-            chrono::ChQuaternion<> mdeltarot;
-            chrono::ChQuaternion<> moldrot = this->GetRot();
-            chrono::ChVector<> newwel_abs = Amatrix * newwel;
-            double mangle = newwel_abs.Length() * dt_step;
-            newwel_abs.Normalize();
-            mdeltarot.Q_from_AngAxis(mangle, newwel_abs);
-            chrono::ChQuaternion<> mnewrot = mdeltarot % moldrot;
-            this->SetRot(mnewrot);
-        }
-
-
-    }  // end namespace frydom::internal
-
-    FrBody::FrBody() {
-
-        SetLogged(true);
-
-        m_chronoBody = std::make_shared<internal::FrBodyBase>(this);
-        m_chronoBody->SetMaxSpeed(DEFAULT_MAX_SPEED);
-        m_chronoBody->SetMaxWvel(DEFAULT_MAX_ROTATION_SPEED);
-
-        m_DOFMask = std::make_unique<FrDOFMask>();
+    FrBodyBase::FrBodyBase(const FrBodyBase &other) : chrono::ChBodyAuxRef(other) {
+      m_frydomBody = other.m_frydomBody;
+      m_variables_ptr = other.m_variables_ptr;
     }
 
-    FrOffshoreSystem* FrBody::GetSystem() const {
-        return m_system;
+    void FrBodyBase::SetupInitial() {}
+
+    void FrBodyBase::Update(bool update_assets) {
+      chrono::ChBodyAuxRef::Update(update_assets);
+      m_frydomBody->Update();
     }
 
-    void FrBody::SetFixedInWorld(bool state) {
-        m_chronoBody->SetBodyFixed(state);
+    void FrBodyBase::UpdateAfterMove() {
+
+      auto auxref_to_cog = (chrono::ChFrameMoving<double>) GetFrame_REF_to_COG();
+
+      chrono::ChFrameMoving<double> auxref_to_abs;
+      this->TransformLocalToParent(auxref_to_cog, auxref_to_abs);
+
+      SetFrame_REF_to_abs(auxref_to_abs);
+
+      chrono::ChBodyAuxRef::Update(true);
+
+      // Updating markers
+      UpdateMarkers(GetChTime());
     }
 
-    void FrBody::SetUseSleeping(bool state) {
-        m_chronoBody->SetUseSleeping(state);
+    void FrBodyBase::UpdateMarkerPositionToCOG(const chrono::ChVector<> newCOG) {
+
+      chrono::ChVector<double> position;
+
+      for (auto &marker : GetMarkerList()) {
+        position = marker->GetPos() - newCOG;
+        marker->Impose_Rel_Coord(chrono::ChCoordsys<double>(position, marker->GetRot()));
+      }
+      UpdateMarkers(GetChTime());
     }
 
-    bool FrBody::GetUseSleeping() const {
-        return m_chronoBody->GetUseSleeping();
+    void FrBodyBase::RemoveAsset(std::shared_ptr<chrono::ChAsset> asset) { //taken from RemoveForce
+      // trying to remove objects not previously added?
+
+      if (std::find<std::vector<std::shared_ptr<chrono::ChAsset>>::iterator>(assets.begin(), assets.end(), asset) ==
+          assets.end()) {
+        event_logger::error(m_frydomBody->GetTypeName(), m_frydomBody->GetName(), "Failed to remove asset");
+      }
+
+      // warning! linear time search
+      assets.erase(
+          std::find<std::vector<std::shared_ptr<chrono::ChAsset>>::iterator>(assets.begin(), assets.end(), asset));
     }
 
-    void FrBody::SetSleeping(bool state) {
-        m_chronoBody->SetSleeping(state);
+    //
+    // STATE FUNCTION
+    //
+
+    void FrBodyBase::IntToDescriptor(const unsigned int off_v,
+                                     const chrono::ChStateDelta &v,
+                                     const chrono::ChVectorDynamic<> &R,
+                                     const unsigned int off_L,
+                                     const chrono::ChVectorDynamic<> &L,
+                                     const chrono::ChVectorDynamic<> &Qc) {
+      Variables().Get_qb().PasteClippedMatrix(v, off_v, 0, 6, 1, 0, 0);
+      Variables().Get_fb().PasteClippedMatrix(R, off_v, 0, 6, 1, 0, 0);
     }
 
-    bool FrBody::GetSleeping() const {
-        return m_chronoBody->GetSleeping();
+    void FrBodyBase::IntFromDescriptor(const unsigned int off_v,
+                                       chrono::ChStateDelta &v,
+                                       const unsigned int off_L,
+                                       chrono::ChVectorDynamic<> &L) {
+      v.PasteMatrix(Variables().Get_qb(), off_v, 0);
     }
 
-    bool FrBody::TrySleeping() {
-        return m_chronoBody->TrySleeping();
+    //
+    // SOLVER FUNCTIONS
+    //
+
+    chrono::ChVariables &FrBodyBase::Variables() {
+
+      if (m_variables_ptr) {
+        return *m_variables_ptr.get();
+      } else {
+        return chrono::ChBody::variables;
+      }
     }
 
-    bool FrBody::IsActive() {
-        return m_chronoBody->IsActive();
+    void FrBodyBase::SetVariables(const std::shared_ptr<chrono::ChVariables> new_variables) {
+      m_variables_ptr = new_variables;
+      variables.SetDisabled(true);
     }
 
-    void FrBody::SetupInitial() {
-        m_chronoBody->SetupInitial();
-        Initialize();
+    void FrBodyBase::InjectVariables(chrono::ChSystemDescriptor &mdescriptor) {
+      Variables().SetDisabled(!this->IsActive());
+      mdescriptor.InsertVariables(&this->Variables());
     }
 
-    void FrBody::Initialize() {
-
-        // Check the mass and inertia coefficients
-        assert(("Null mass not permitted : ", GetInertiaTensor().GetMass()!=0)) ;
-        double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
-        GetInertiaTensor().GetInertiaCoeffsAtCOG(Ixx, Iyy, Izz, Ixy, Ixz, Iyz, NWU);
-        assert(("Null diagonal inertia not permitted : ", Ixx!=0.&&Iyy!=0.&&Izz!=0.));
-
-
-        // Initializing forces
-        auto forceIter = force_begin();
-        for (; forceIter != force_end(); forceIter++) {
-            (*forceIter)->Initialize();
-        }
-
-        // Initializing nodes
-        auto nodeIter = node_begin();
-        for (; nodeIter != node_end(); nodeIter++) {
-            (*nodeIter)->Initialize();
-        }
-
-        // BodyDOF constraints Initialization
-        if (m_DOFMask->HasLockedDOF()) {
-            InitializeLockedDOF();
-        }
-
+    void FrBodyBase::VariablesFbReset() {
+      Variables().Get_fb().FillElem(0.0);
     }
 
-    void FrBody::StepFinalize() {
+    void FrBodyBase::VariablesFbLoadForces(double factor) {
+      // add applied forces to 'fb' vector
+      this->Variables().Get_fb().PasteSumVector(Xforce * factor, 0, 0);
 
-        // Update the asset
-        FrAssetOwner::UpdateAsset();
+      // add applied torques to 'fb' vector, including gyroscopic torque
+      if (this->GetNoGyroTorque())
+        this->Variables().Get_fb().PasteSumVector((Xtorque) * factor, 3, 0);
+      else
+        this->Variables().Get_fb().PasteSumVector((Xtorque - gyro) * factor, 3, 0);
+    }
 
-        // StepFinalize of forces
-        auto forceIter = force_begin();
-        for (; forceIter != force_end(); forceIter++) {
-            (*forceIter)->StepFinalize();
-        }
+    void FrBodyBase::VariablesFbIncrementMq() {
+      this->Variables().Compute_inc_Mb_v(this->Variables().Get_fb(), this->Variables().Get_qb());
+    }
 
-        // Initializing nodes
-        auto nodeIter = node_begin();
-        for (; nodeIter != node_end(); nodeIter++) {
-            (*nodeIter)->StepFinalize();
-        }
+    void FrBodyBase::VariablesQbLoadSpeed() {
+      this->Variables().Get_qb().PasteVector(GetCoord_dt().pos, 0, 0);
+      this->Variables().Get_qb().PasteVector(GetWvel_loc(), 3, 0);
+    }
+
+    void FrBodyBase::VariablesQbSetSpeed(double step) {
+      chrono::ChCoordsys<> old_coord_dt = this->GetCoord_dt();
+
+      // from 'qb' vector, sets body speed, and updates auxiliary data
+      this->SetPos_dt(this->Variables().Get_qb().ClipVector(0, 0));
+      this->SetWvel_loc(this->Variables().Get_qb().ClipVector(3, 0));
+
+      // apply limits (if in speed clamping mode) to speeds.
+      ClampSpeed();
+
+      // compute auxiliary gyroscopic forces
+      ComputeGyro();
+
+      // Compute accel. by BDF (approximate by differentiation);
+      if (step) {
+        this->SetPos_dtdt((this->GetCoord_dt().pos - old_coord_dt.pos) / step);
+        this->SetRot_dtdt((this->GetCoord_dt().rot - old_coord_dt.rot) / step);
+      }
+    }
+
+    void FrBodyBase::VariablesQbIncrementPosition(double dt_step) {
+      if (!this->IsActive())
+        return;
+
+      // Updates position with incremental action of speed contained in the
+      // 'qb' vector:  pos' = pos + dt * speed   , like in an Eulero step.
+
+      chrono::ChVector<> newspeed = Variables().Get_qb().ClipVector(0, 0);
+      chrono::ChVector<> newwel = Variables().Get_qb().ClipVector(3, 0);
+
+      // ADVANCE POSITION: pos' = pos + dt * vel
+      this->SetPos(this->GetPos() + newspeed * dt_step);
+
+      // ADVANCE ROTATION: rot' = [dt*wwel]%rot  (use quaternion for delta rotation)
+      chrono::ChQuaternion<> mdeltarot;
+      chrono::ChQuaternion<> moldrot = this->GetRot();
+      chrono::ChVector<> newwel_abs = Amatrix * newwel;
+      double mangle = newwel_abs.Length() * dt_step;
+      newwel_abs.Normalize();
+      mdeltarot.Q_from_AngAxis(mangle, newwel_abs);
+      chrono::ChQuaternion<> mnewrot = mdeltarot % moldrot;
+      this->SetRot(mnewrot);
+    }
+
+
+  }  // end namespace frydom::internal
+
+  FrBody::FrBody(const std::string &name, FrOffshoreSystem *system) :
+      FrLoggable(name, TypeToString(this), system) {
+
+//        SetLogged(true);
+
+    m_chronoBody = std::make_shared<internal::FrBodyBase>(this);
+    m_chronoBody->SetMaxSpeed(DEFAULT_MAX_SPEED);
+    m_chronoBody->SetMaxWvel(DEFAULT_MAX_ROTATION_SPEED);
+
+    m_DOFMask = std::make_unique<FrDOFMask>();
+
+    event_logger::info(GetTypeName(), GetName(), "Body created");
+
+  }
+
+  void FrBody::SetFixedInWorld(bool state) {
+    m_chronoBody->SetBodyFixed(state);
+    if (state) {
+      event_logger::info(GetTypeName(), GetName(), "Body set to fixed in world");
+    } else {
+      event_logger::info(GetTypeName(), GetName(), "Body no more fixed in world");
+    }
+
+  }
+
+  void FrBody::SetUseSleeping(bool state) {
+    m_chronoBody->SetUseSleeping(state);
+    if (state) {
+      event_logger::info(GetTypeName(), GetName(), "Use sleeping");
+    } else {
+      event_logger::info(GetTypeName(), GetName(), "Do not use sleeping");
+    }
+  }
+
+  bool FrBody::GetUseSleeping() const {
+    return m_chronoBody->GetUseSleeping();
+  }
+
+  void FrBody::SetSleeping(bool state) {
+    m_chronoBody->SetSleeping(state);
+    if (state) {
+      event_logger::info(GetTypeName(), GetName(), "Enter in sleeping mode");
+    } else {
+      event_logger::info(GetTypeName(), GetName(), "Do not sleep anymore");
+    }
+  }
+
+  bool FrBody::GetSleeping() const {
+    return m_chronoBody->GetSleeping();
+  }
+
+  bool FrBody::TrySleeping() {
+    return m_chronoBody->TrySleeping();
+  }
+
+  bool FrBody::IsActive() {
+    return m_chronoBody->IsActive();
+  }
+
+  void FrBody::SetupInitial() {
+    m_chronoBody->SetupInitial();
+    Initialize();
+  }
+
+  void FrBody::Initialize() {
+
+    // Check the mass and inertia coefficients
+    if (GetInertiaTensor().GetMass() == 0) {
+      event_logger::critical(GetTypeName(), GetName(), "Null mass is not permitted");
+      exit(EXIT_FAILURE);
+    }
+
+
+    double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
+    GetInertiaTensor().GetInertiaCoeffsAtCOG(Ixx, Iyy, Izz, Ixy, Ixz, Iyz, NWU);
+    if (Ixx == 0 || Iyy == 0. || Izz == 0.) {
+      event_logger::critical(GetTypeName(), GetName(), "Null diagonal inertia not permitted");
+      exit(EXIT_FAILURE);
+    }
+
+
+    // Initializing forces
+    auto forceIter = force_begin();
+    for (; forceIter != force_end(); forceIter++) {
+      (*forceIter)->Initialize();
+    }
+
+    // Initializing nodes
+    auto nodeIter = node_begin();
+    for (; nodeIter != node_end(); nodeIter++) {
+      (*nodeIter)->Initialize();
+    }
+
+    // BodyDOF constraints Initialization
+    if (m_DOFMask->HasLockedDOF()) {
+      InitializeLockedDOF();
+    }
+
+  }
+
+  void FrBody::StepFinalize() {
+
+    // Update the asset
+    FrAssetOwner::UpdateAsset();
+
+    // StepFinalize of forces
+    auto forceIter = force_begin();
+    for (; forceIter != force_end(); forceIter++) {
+      (*forceIter)->StepFinalize();
+    }
+
+    // Initializing nodes
+    auto nodeIter = node_begin();
+    for (; nodeIter != node_end(); nodeIter++) {
+      (*nodeIter)->StepFinalize();
+    }
 
 //        // StepFinalize of assets
 //        auto assetIter = asset_begin();
@@ -300,756 +332,833 @@ namespace frydom {
 //            (*assetIter)->StepFinalize();
 //        }
 
-        // Send the message to the logging system
-        FrObject::StepFinalize();
+    // Send the message to the logging system
+    FrObject::StepFinalize();
 
+  }
+
+  void FrBody::Update() {
+    // TODO
+
+  }
+
+  void FrBody::SetSmoothContact() {
+    auto materialSurface = std::make_shared<chrono::ChMaterialSurfaceSMC>();
+    m_chronoBody->SetMaterialSurface(materialSurface);
+    m_contactType = CONTACT_TYPE::SMOOTH_CONTACT;
+  }
+
+  void FrBody::SetNonSmoothContact() {
+    auto materialSurface = std::make_shared<chrono::ChMaterialSurfaceNSC>();
+    m_chronoBody->SetMaterialSurface(materialSurface);
+    m_contactType = CONTACT_TYPE::NONSMOOTH_CONTACT;
+  }
+
+  void FrBody::SetContactMethod(CONTACT_TYPE contactType) {
+    switch (contactType) {
+      case CONTACT_TYPE::SMOOTH_CONTACT:
+        SetSmoothContact();
+        break;
+      case CONTACT_TYPE::NONSMOOTH_CONTACT:
+        SetNonSmoothContact();
+        break;
+    }
+  }
+
+  FrBody::CONTACT_TYPE FrBody::GetContactType() const {
+    return m_contactType;
+  }
+
+  // Force linear iterators
+  FrBody::ForceIter FrBody::force_begin() {
+    return m_externalForces.begin();
+  }
+
+  FrBody::ConstForceIter FrBody::force_begin() const {
+    return m_externalForces.cbegin();
+  }
+
+  FrBody::ForceIter FrBody::force_end() {
+    return m_externalForces.end();
+  }
+
+  FrBody::ConstForceIter FrBody::force_end() const {
+    return m_externalForces.cend();
+  }
+
+  // Node linear iterators
+  FrBody::NodeIter FrBody::node_begin() {
+    return m_nodes.begin();
+  }
+
+  FrBody::ConstNodeIter FrBody::node_begin() const {
+    return m_nodes.cbegin();
+  }
+
+  FrBody::NodeIter FrBody::node_end() {
+    return m_nodes.end();
+  }
+
+  FrBody::ConstNodeIter FrBody::node_end() const {
+    return m_nodes.cend();
+  }
+
+  double FrBody::GetMass() const {
+    return m_chronoBody->GetMass();
+  }
+
+  FrInertiaTensor FrBody::GetInertiaTensor() const {
+    double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
+    SplitMatrix33IntoCoeffs(internal::ChMatrix33ToMatrix33(m_chronoBody->GetInertia()),
+                            Ixx, Ixy, Ixz, Ixy, Iyy, Iyz, Ixz, Iyz, Izz);
+
+    return {GetMass(), Ixx, Iyy, Izz, Ixy, Ixz, Iyz, GetCOG(NWU), NWU};
+  }
+
+  void FrBody::SetInertiaTensor(const FrInertiaTensor &inertia) {
+
+    m_chronoBody->SetMass(inertia.GetMass());
+
+    auto cog_pos = inertia.GetCOGPosition(NWU);
+
+    SetCOG(cog_pos, NWU);
+
+    double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
+    inertia.GetInertiaCoeffsAtCOG(Ixx, Iyy, Izz, Ixy, Ixz, Iyz, NWU);
+
+    m_chronoBody->SetInertiaXX(chrono::ChVector<double>(Ixx, Iyy, Izz));
+    m_chronoBody->SetInertiaXY(chrono::ChVector<double>(Ixy, Ixz, Iyz));
+
+    event_logger::info(GetTypeName(), GetName(),
+                       "Set inertia tensor with mass = {} kg, G = [{}\t{}\t{}], "
+                       "Ixx = {}, Iyy = {}, Izz = {}, Ixy = {}, Ixz = {}, Iyz = {}",
+                       inertia.GetMass(),
+                       cog_pos[0], cog_pos[1], cog_pos[2],
+                       Ixx, Iyy, Izz, Ixy, Ixz, Iyz);
+
+  }
+
+  void FrBody::AllowCollision(bool isColliding) {
+    m_chronoBody->SetCollide(isColliding);
+    if (isColliding) {
+      event_logger::info(GetTypeName(), GetName(), "Collision activated");
+    } else {
+      event_logger::info(GetTypeName(), GetName(), "Collision deactivated");
+    }
+  }
+
+  FrCollisionModel *FrBody::GetCollisionModel() {
+    return dynamic_cast<internal::FrCollisionModelBase *> (m_chronoBody->GetCollisionModel().get())->m_frydomCollisionModel;
+  }
+
+  void FrBody::SetCollisionModel(std::shared_ptr<FrCollisionModel> collisionModel) {
+    m_chronoBody->SetCollisionModel(collisionModel->m_chronoCollisionModel);
+    AllowCollision(true);
+  }
+
+  void FrBody::ActivateSpeedLimits(bool activate) {
+    m_chronoBody->SetLimitSpeed(activate);
+    if (activate) {
+      event_logger::info(GetTypeName(), GetName(), "Speed limit activated");
+    } else {
+      event_logger::info(GetTypeName(), GetName(), "Speed limit deactivated");
+    }
+  }
+
+  void FrBody::SetMaxSpeed(double maxSpeed_ms) {
+    m_chronoBody->SetMaxSpeed((float) maxSpeed_ms);
+    ActivateSpeedLimits(true);
+    event_logger::info(GetTypeName(), GetName(), "Speed limit set to {} m/s", maxSpeed_ms);
+  }
+
+  void FrBody::SetMaxRotationSpeed(double wMax_rads) {
+    m_chronoBody->SetMaxWvel((float) wMax_rads);
+    ActivateSpeedLimits(true);
+    event_logger::info(GetTypeName(), GetName(), "Speed limit set to {} rad/s", wMax_rads);
+  }
+
+  void FrBody::RemoveGravity(
+      bool val) { // TODO : ajouter la force d'accumulation a l'initialisation --> cas ou le systeme n'a pas encore ete precise pour la gravite...
+    // TODO : this method should not be used in production !!
+    if (val) {
+      m_chronoBody->Accumulate_force(
+          GetMass() * m_chronoBody->TransformDirectionParentToLocal(chrono::ChVector<double>(0., 0., 9.81)),
+          chrono::VNULL,
+          true
+      );
+      // TODO : aller chercher la gravite dans systeme !!!
+    } else {
+      m_chronoBody->Empty_forces_accumulators();
     }
 
-    void FrBody::Update() {
-        // TODO
+  }
 
-    }
+  void FrBody::AddExternalForce(std::shared_ptr<frydom::FrForce> force) {
+    /// This subroutine is used for adding the hydrodynamic loads.
+    m_chronoBody->AddForce(force->GetChronoForce());  // FrBody is a friend class of FrForce
+    m_externalForces.push_back(force);
+    GetSystem()->GetPathManager()->RegisterTreeNode(force.get());
 
-    void FrBody::SetSmoothContact() {
-        auto materialSurface = std::make_shared<chrono::ChMaterialSurfaceSMC>();
-        m_chronoBody->SetMaterialSurface(materialSurface);
-        m_contactType = CONTACT_TYPE::SMOOTH_CONTACT;
-    }
+    GetSystem()->GetLogManager()->Add(force);
 
-    void FrBody::SetNonSmoothContact() {
-        auto materialSurface = std::make_shared<chrono::ChMaterialSurfaceNSC>();
-        m_chronoBody->SetMaterialSurface(materialSurface);
-        m_contactType = CONTACT_TYPE::NONSMOOTH_CONTACT;
-    }
+    event_logger::info(GetTypeName(), GetName(), "External force {} added", force->GetName());
 
-    void FrBody::SetContactMethod(CONTACT_TYPE contactType) {
-        switch (contactType) {
-            case CONTACT_TYPE::SMOOTH_CONTACT:
-                SetSmoothContact();
-                break;
-            case CONTACT_TYPE::NONSMOOTH_CONTACT:
-                SetNonSmoothContact();
-                break;
+  }
+
+  void FrBody::RemoveExternalForce(std::shared_ptr<FrForce> force) {
+    m_chronoBody->RemoveForce(force->GetChronoForce());
+
+    m_externalForces.erase(
+        std::find<std::vector<std::shared_ptr<FrForce>>::iterator>(m_externalForces.begin(), m_externalForces.end(),
+                                                                   force));
+
+    event_logger::info(GetTypeName(), GetName(), "External force {} removed", force->GetName());
+
+    if (force->m_asset != nullptr) {
+      m_chronoBody->RemoveAsset(force->m_asset->GetChronoAsset());
+
+      bool asserted = false;
+      for (int ia = 0; ia < m_assets.size(); ++ia) {
+        if (m_assets[ia] == force->m_asset) {
+          m_assets.erase(m_assets.begin() + ia);
+          asserted = true;
         }
-    }
-
-    FrBody::CONTACT_TYPE FrBody::GetContactType() const {
-        return m_contactType;
-    }
-
-    // Force linear iterators
-    FrBody::ForceIter FrBody::force_begin() {
-        return m_externalForces.begin();
-    }
-
-    FrBody::ConstForceIter FrBody::force_begin() const {
-        return m_externalForces.cbegin();
-    }
-
-    FrBody::ForceIter FrBody::force_end() {
-        return m_externalForces.end();
-    }
-
-    FrBody::ConstForceIter FrBody::force_end() const {
-        return m_externalForces.cend();
-    }
-
-    // Node linear iterators
-    FrBody::NodeIter FrBody::node_begin() {
-        return m_nodes.begin();
-    }
-
-    FrBody::ConstNodeIter FrBody::node_begin() const {
-        return m_nodes.cbegin();
-    }
-
-    FrBody::NodeIter FrBody::node_end() {
-        return m_nodes.end();
-    }
-
-    FrBody::ConstNodeIter FrBody::node_end() const {
-        return m_nodes.cend();
-    }
-
-    double FrBody::GetMass() const {
-        return m_chronoBody->GetMass();
-    }
-
-    FrInertiaTensor FrBody::GetInertiaTensor() const {
-        double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
-        SplitMatrix33IntoCoeffs(internal::ChMatrix33ToMatrix33(m_chronoBody->GetInertia()),
-                Ixx, Ixy, Ixz, Ixy, Iyy, Iyz, Ixz, Iyz, Izz);
-
-        return {GetMass(), Ixx, Iyy, Izz, Ixy, Ixz, Iyz, GetCOG(NWU), NWU};
-    }
-
-    void FrBody::SetInertiaTensor(const FrInertiaTensor &inertia) {
-
-        m_chronoBody->SetMass(inertia.GetMass());
-
-        SetCOG(inertia.GetCOGPosition(NWU), NWU);
-
-        double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
-        inertia.GetInertiaCoeffsAtCOG(Ixx, Iyy, Izz, Ixy, Ixz, Iyz, NWU);
-
-        m_chronoBody->SetInertiaXX(chrono::ChVector<double>(Ixx, Iyy, Izz));
-        m_chronoBody->SetInertiaXY(chrono::ChVector<double>(Ixy, Ixz, Iyz));
-
-    }
-
-    void FrBody::AllowCollision(bool isColliding) {
-        m_chronoBody->SetCollide(isColliding);
-    }
-
-    FrCollisionModel *FrBody::GetCollisionModel() {
-        return dynamic_cast<internal::FrCollisionModelBase*> (m_chronoBody->GetCollisionModel().get())->m_frydomCollisionModel;
-    }
-
-    void FrBody::SetCollisionModel(std::shared_ptr<FrCollisionModel> collisionModel) {
-        m_chronoBody->SetCollisionModel(collisionModel->m_chronoCollisionModel);
-        AllowCollision(true);
-    }
-
-    void FrBody::ActivateSpeedLimits(bool activate) {
-        m_chronoBody->SetLimitSpeed(activate);
-    }
-
-    void FrBody::SetMaxSpeed(double maxSpeed_ms) {
-        m_chronoBody->SetMaxSpeed((float)maxSpeed_ms);
-        ActivateSpeedLimits(true);
-    }
-
-    void FrBody::SetMaxRotationSpeed(double wMax_rads) {
-        m_chronoBody->SetMaxWvel((float)wMax_rads);
-        ActivateSpeedLimits(true);
-    }
-
-    void FrBody::RemoveGravity(bool val) { // TODO : ajouter la force d'accumulation a l'initialisation --> cas ou le systeme n'a pas encore ete precise pour la gravite...
-        // TODO : this method should not be used in production !!
-        if (val) {
-            m_chronoBody->Accumulate_force(
-                    GetMass() * m_chronoBody->TransformDirectionParentToLocal(chrono::ChVector<double>(0., 0., 9.81)),
-                    chrono::VNULL,
-                    true
-                    );
-            // TODO : aller chercher la gravite dans systeme !!!
-        } else {
-            m_chronoBody->Empty_forces_accumulators();
-        }
-
-    }
-
-    void FrBody::AddExternalForce(std::shared_ptr<frydom::FrForce> force) {
-        /// This subroutine is used for adding the hydrodynamic loads.
-        m_chronoBody->AddForce(force->GetChronoForce());  // FrBody is a friend class of FrForce
-
-        force->m_body = this;
-        m_externalForces.push_back(force);
-
-    }
-
-    void FrBody::RemoveExternalForce(std::shared_ptr<FrForce> force) {
-        m_chronoBody->RemoveForce(force->GetChronoForce());
-
-        m_externalForces.erase(
-                std::find<std::vector<std::shared_ptr<FrForce>>::iterator>(m_externalForces.begin(), m_externalForces.end(), force));
-
-        if (force->m_asset!=nullptr) {
-            m_chronoBody->RemoveAsset(force->m_asset->GetChronoAsset());
-
-            bool asserted=false;
-            for (int ia=0;ia<m_assets.size();++ia){
-                if (m_assets[ia]==force->m_asset){
-                    m_assets.erase(m_assets.begin()+ia);
-                    asserted=true;
-                }
-            }
-            assert(asserted);
-            force->m_asset=nullptr;
-
-        }
-
-
-        force->m_body = nullptr;
-    }
-
-    void FrBody::RemoveAllForces() {
-        m_chronoBody->RemoveAllForces();
-        for (auto forceIter=force_begin(); forceIter!=force_end(); forceIter++) {
-            (*forceIter)->m_body = nullptr;
-        }
-        m_externalForces.clear();
-    }
-
-    Force FrBody::GetTotalExtForceInWorld(FRAME_CONVENTION fc) const {
-        auto chronoForce = m_chronoBody->Get_Xforce();
-        auto force = internal::ChVectorToVector3d<Force>(m_chronoBody->Get_Xforce());
-        if (IsNED(fc)) internal::SwapFrameConvention<Position>(force);
-        return force;
-    }
-
-    Force FrBody::GetTotalExtForceInBody(FRAME_CONVENTION fc) const {
-        return ProjectVectorInBody(GetTotalExtForceInWorld(fc),fc);
-    }
-
-    Torque FrBody::GetTotalExtTorqueInBodyAtCOG(FRAME_CONVENTION fc) const {
-        auto torque = internal::ChVectorToVector3d<Torque>(m_chronoBody->Get_Xtorque());
-        if (IsNED(fc)) internal::SwapFrameConvention<Position>(torque);
-        return torque;
-    }
-
-    Torque FrBody::GetTotalExtTorqueInWorldAtCOG(FRAME_CONVENTION fc) const {
-        return ProjectVectorInWorld(GetTotalExtTorqueInBodyAtCOG(fc),fc);
-    }
-
-
-    // Nodes
-
-    std::shared_ptr<FrNode> FrBody::NewNode() {
-        auto node = std::make_shared<FrNode>(this);
-        m_nodes.push_back(node);
-        return node;
-    }
-
-    void FrBody::SetCOG(const Position& bodyPos, FRAME_CONVENTION fc) {
-        FrFrame cogFrame;
-        cogFrame.SetPosition(bodyPos, fc);
-        m_chronoBody->UpdateMarkerPositionToCOG(internal::Vector3dToChVector(cogFrame.GetPosition(NWU)));
-        m_chronoBody->SetFrame_COG_to_REF(internal::FrFrame2ChFrame(cogFrame));
-    }
-
-    Position FrBody::GetCOG(FRAME_CONVENTION fc) const {
-        Position cogPos = internal::ChVectorToVector3d<Position>(m_chronoBody->GetFrame_COG_to_REF().GetPos()); // In NWU
-        if (IsNED(fc)) internal::SwapFrameConvention<Position>(cogPos);
-        return cogPos;
-    }
-
-    Position FrBody::GetPosition(FRAME_CONVENTION fc) const {
-        Position refPos = internal::ChVectorToVector3d<Position>(m_chronoBody->GetFrame_REF_to_abs().GetPos());
-        if (IsNED(fc)) internal::SwapFrameConvention<Position>(refPos);
-        return refPos;
-    }
-
-    FrGeographicCoord FrBody::GetGeoPosition(FRAME_CONVENTION fc) const {
-        return CartToGeo(GetPosition(fc),fc);
-    }
-
-    void FrBody::SetPosition(const Position &worldPos, FRAME_CONVENTION fc) {
-
-        /// This subroutine sets the initial position of a body in world.
-
-        auto bodyFrame = GetFrame();
-        bodyFrame.SetPosition(worldPos, fc);
-        m_chronoBody->SetFrame_REF_to_abs(internal::FrFrame2ChFrame(bodyFrame));
-        m_chronoBody->UpdateAfterMove();
-    }
-
-    void FrBody::SetGeoPosition(const FrGeographicCoord& geoCoord) {
-        SetPosition(GeoToCart(geoCoord,NWU),NWU);
-    }
-
-    FrRotation FrBody::GetRotation() const {
-        return FrRotation(GetQuaternion());
-    }
-
-    void FrBody::SetRotation(const FrRotation &rotation) {
-        SetRotation(rotation.GetQuaternion());
-    }
-
-    FrUnitQuaternion FrBody::GetQuaternion() const {
-        return internal::Ch2FrQuaternion(m_chronoBody->GetRot());
-    }
-
-    void FrBody::SetRotation(const FrUnitQuaternion &quaternion) {
-        Position bodyWorldPos = GetPosition(NWU);
-        m_chronoBody->SetRot(internal::Fr2ChQuaternion(quaternion));
-        SetPosition(bodyWorldPos, NWU);
-    }
-
-    FrFrame FrBody::GetFrame() const {
-        FrFrame bodyRefFrame;
-        bodyRefFrame.SetPosition(GetPosition(NWU), NWU);
-        bodyRefFrame.SetRotation(GetQuaternion());
-        return bodyRefFrame;
-    }
-
-    void FrBody::SetFrame(const FrFrame &worldFrame) {
-        SetPosition(worldFrame.GetPosition(NWU), NWU);
-        SetRotation(worldFrame.GetQuaternion());
-    }
-
-    FrFrame FrBody::GetFrameAtPoint(const Position& bodyPoint, FRAME_CONVENTION fc) {
-        FrFrame pointFrame;
-        pointFrame.SetPosition(GetPointPositionInWorld(bodyPoint, fc), fc);
-        pointFrame.SetRotation(GetQuaternion());
-        return pointFrame;
-    }
-
-    FrFrame FrBody::GetFrameAtCOG(FRAME_CONVENTION fc) {
-        return GetFrameAtPoint(GetCOG(fc), fc);
-    }
-
-    Position FrBody::GetPointPositionInWorld(const Position &bodyPos, FRAME_CONVENTION fc) const {
-        return GetPosition(fc) + ProjectVectorInWorld<Position>(bodyPos, fc);
-    }
-
-    Position FrBody::GetPointPositionInBody(const Position &worldPos, FRAME_CONVENTION fc) const {
-        return ProjectVectorInBody<Position>(worldPos - GetPosition(fc), fc);
-    }
-
-    Position FrBody::GetCOGPositionInWorld(FRAME_CONVENTION fc) const {
-        Position cogPos = internal::ChVectorToVector3d<Position>(m_chronoBody->GetPos());
-        if (IsNED(fc)) internal::SwapFrameConvention<Position>(cogPos);
-        return cogPos;
-    }
-
-    FrGeographicCoord FrBody::GetGeoPointPositionInWorld(const Position& bodyPos, FRAME_CONVENTION fc) const {
-        return CartToGeo(GetPointPositionInWorld(bodyPos, fc), fc);
-    }
-
-    FrGeographicCoord FrBody::GetGeoPointPositionInBody(const Position &worldPos, FRAME_CONVENTION fc) const {
-        return CartToGeo(GetPointPositionInBody(worldPos, fc), fc);
-    }
-
-    FrGeographicCoord FrBody::GetCOGGeoPosition() const {
-        return CartToGeo(GetCOGPositionInWorld(NWU), NWU);
-    }
-
-
-    void FrBody::SetPositionOfBodyPoint(const Position &bodyPoint, const Position &worldPos, FRAME_CONVENTION fc) {
-        Position bodyWorldPos = GetPosition(fc);
-        Position worldPointPos = GetPointPositionInWorld(bodyPoint, fc);
-
-        Translation translation = worldPos - worldPointPos;
-        TranslateInWorld(translation, fc);
-    }
-
-    void FrBody::TranslateInWorld(const Translation &worldTranslation, FRAME_CONVENTION fc) {
-        auto refFrame = GetFrame();
-        refFrame.SetPosition(refFrame.GetPosition(fc) + worldTranslation, fc);
-        m_chronoBody->SetFrame_REF_to_abs(internal::FrFrame2ChFrame(refFrame));
-        m_chronoBody->UpdateAfterMove();
-    }
-
-    void FrBody::TranslateInWorld(double x, double y, double z, FRAME_CONVENTION fc) {
-        TranslateInWorld(Translation(x, y, z), fc);
-    }
-
-    void FrBody::TranslateInBody(const Translation &bodyTranslation, FRAME_CONVENTION fc) {
-        auto refFrame = GetFrame();
-        refFrame.SetPosition(refFrame.GetPosition(fc) + ProjectVectorInWorld<Position>(bodyTranslation, fc), fc);
-        m_chronoBody->SetFrame_REF_to_abs(internal::FrFrame2ChFrame(refFrame));
-        m_chronoBody->UpdateAfterMove();
-    }
-
-    void FrBody::TranslateInBody(double x, double y, double z, FRAME_CONVENTION fc) {
-        TranslateInBody(Translation(x, y, z), fc);
-    }
-
-    void FrBody::Rotate(const FrRotation &relRotation) {
-        SetRotation(GetRotation() * relRotation);
-    }
-
-    void FrBody::Rotate(const FrUnitQuaternion &relQuaternion) {
-        SetRotation(GetQuaternion() * relQuaternion);
-    }
-
-    void FrBody::RotateAroundPointInWorld(const FrRotation& rot, const Position& worldPos, FRAME_CONVENTION fc) {
-        RotateAroundPointInWorld(rot.GetQuaternion(), worldPos, fc);
-    }
-
-    void FrBody::RotateAroundPointInBody(const FrRotation& rot, const Position& bodyPos, FRAME_CONVENTION fc) {
-        RotateAroundPointInBody(rot.GetQuaternion(), bodyPos, fc);
-    }
-
-    void FrBody::RotateAroundPointInWorld(const FrUnitQuaternion& rot, const Position& worldPos, FRAME_CONVENTION fc) {
-        Position bodyPos = GetPointPositionInBody(worldPos, fc);
-        Rotate(rot);
-        SetPositionOfBodyPoint(bodyPos, worldPos, fc);
-    }
-
-    void FrBody::RotateAroundPointInBody(const FrUnitQuaternion& rot, const Position& bodyPos, FRAME_CONVENTION fc) {
-        Position worldPos = GetPointPositionInWorld(bodyPos, fc);
-        Rotate(rot);
-        SetPositionOfBodyPoint(bodyPos, worldPos, fc);
-    }
-
-    void FrBody::RotateAroundCOG(const FrRotation& rot, FRAME_CONVENTION fc) {
-        RotateAroundPointInBody(rot, GetCOG(fc), fc);
-    }
-
-    void FrBody::RotateAroundCOG(const FrUnitQuaternion& rot, FRAME_CONVENTION fc) {
-        RotateAroundPointInBody(rot, GetCOG(fc), fc);
-    }
-
-    void FrBody::SetGeneralizedVelocityInWorld(const Velocity& worldVel, const AngularVelocity& worldAngVel,
-            FRAME_CONVENTION fc) {
-        SetGeneralizedVelocityInWorldAtPointInBody(Position(0., 0., 0.), worldVel, worldAngVel, fc);
-    }
-
-    void FrBody::SetGeneralizedVelocityInBody(const Velocity& bodyVel, const AngularVelocity& bodyAngVel,
-            FRAME_CONVENTION fc) {
-        SetGeneralizedVelocityInBodyAtPointInBody(Position(0., 0., 0.), bodyVel, bodyAngVel, fc);
-    }
-
-    Velocity FrBody::GetLinearVelocityInWorld(FRAME_CONVENTION fc) const {
-        Velocity bodyVel = internal::ChVectorToVector3d<Velocity>(m_chronoBody->GetFrame_REF_to_abs().GetPos_dt());
-        if (IsNED(fc)) internal::SwapFrameConvention<Velocity>(bodyVel);
-        return bodyVel;
-    }
-
-    Velocity FrBody::GetVelocityInBody(FRAME_CONVENTION fc) const {
-        return ProjectVectorInBody<Velocity>(GetLinearVelocityInWorld(fc), fc);
-    }
-
-    void FrBody::SetVelocityInWorldNoRotation(const Velocity &worldVel, FRAME_CONVENTION fc) {
-        auto worldVelTmp = worldVel;
-        if (IsNED(fc)) internal::SwapFrameConvention<Velocity>(worldVelTmp);
-        chrono::ChCoordsys<double> coord;
-        coord.pos = internal::Vector3dToChVector(worldVelTmp);
-        coord.rot.SetNull();
-        m_chronoBody->SetCoord_dt(coord);
-        m_chronoBody->UpdateAfterMove();
-    }
-
-    void FrBody::SetVelocityInBodyNoRotation(const Velocity &bodyVel, FRAME_CONVENTION fc) {
-        SetVelocityInWorldNoRotation(ProjectVectorInWorld(bodyVel, fc), fc);
-    }
-
-    Velocity FrBody::GetCOGLinearVelocityInWorld(FRAME_CONVENTION fc) const {
-        Velocity cogVel = internal::ChVectorToVector3d<Velocity>(m_chronoBody->GetCoord_dt().pos); // In NWU
-        if (IsNED(fc)) internal::SwapFrameConvention<Velocity>(cogVel);
-        return cogVel;
-    }
-
-    Velocity FrBody::GetCOGVelocityInBody(FRAME_CONVENTION fc) const {
-        return ProjectVectorInBody<Velocity>(GetCOGLinearVelocityInWorld(fc), fc);
-    }
-
-    void FrBody::SetAccelerationInWorldNoRotation(const Acceleration &worldAcc, FRAME_CONVENTION fc) {
-        auto worldAccTmp = worldAcc;
-        if (IsNED(fc)) internal::SwapFrameConvention<Acceleration>(worldAccTmp);
-        chrono::ChCoordsys<double> coord;
-        coord.pos = internal::Vector3dToChVector(worldAccTmp);
-        coord.rot.SetNull();
-        m_chronoBody->SetCoord_dtdt(coord);
-        m_chronoBody->UpdateAfterMove();
-    }
-
-    void FrBody::SetAccelerationInBodyNoRotation(const Acceleration &bodyAcc, FRAME_CONVENTION fc) {
-        SetAccelerationInWorldNoRotation(ProjectVectorInWorld<Acceleration>(bodyAcc, fc), fc);
-    }
-
-    Acceleration FrBody::GetLinearAccelerationInWorld(FRAME_CONVENTION fc) const {
-        return GetAccelerationInWorldAtPointInBody(Position(0.,0.,0.), fc);
-    }
-
-    Acceleration FrBody::GetAccelerationInBody(FRAME_CONVENTION fc) const {
-        return ProjectVectorInBody<Acceleration>(GetLinearAccelerationInWorld(fc), fc);
-    }
-
-
-
-    Acceleration FrBody::GetCOGLinearAccelerationInWorld(FRAME_CONVENTION fc) const {
-        Acceleration cogAcc = internal::ChVectorToVector3d<Acceleration>(m_chronoBody->GetCoord_dtdt().pos); // In NWU
-        if (IsNED(fc)) internal::SwapFrameConvention<Acceleration>(cogAcc);
-        return cogAcc;
-    }
-
-    Acceleration FrBody::GetCOGAccelerationInBody(FRAME_CONVENTION fc) const {
-        return ProjectVectorInBody<Acceleration>(GetCOGLinearAccelerationInWorld(fc), fc);
-    }
-
-    void FrBody::SetAngularVelocityInWorld(const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
-        auto worldAngVelTmp = worldAngVel;
-        if (IsNED(fc)) internal::SwapFrameConvention<AngularVelocity>(worldAngVelTmp);
-        m_chronoBody->SetWvel_par(internal::Vector3dToChVector(worldAngVelTmp));
-        m_chronoBody->UpdateAfterMove();
-    }
-
-    void FrBody::SetCOGAngularVelocityInWorld(const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
-        auto worldAngVelTmp = worldAngVel;
-        if (IsNED(fc)) internal::SwapFrameConvention<AngularVelocity>(worldAngVelTmp);
-        m_chronoBody->SetWvel_par(internal::Vector3dToChVector(worldAngVelTmp));
-    }
-
-    void FrBody::SetAngularVelocityInBody(const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
-        SetAngularVelocityInWorld(ProjectVectorInWorld(bodyAngVel, fc), fc);
-    }
-
-    AngularVelocity FrBody::GetAngularVelocityInWorld(FRAME_CONVENTION fc) const {
-        AngularVelocity angVel = internal::ChVectorToVector3d<AngularVelocity>(m_chronoBody->GetWvel_par());
-        if (IsNED(fc)) internal::SwapFrameConvention<AngularVelocity>(angVel);
-        return angVel;
-    }
-
-    AngularVelocity FrBody::GetAngularVelocityInBody(FRAME_CONVENTION fc) const {
-        return ProjectVectorInBody<AngularVelocity>(GetAngularVelocityInWorld(fc), fc);
-    }
-
-    void FrBody::SetAngularAccelerationInWorld(const AngularAcceleration &worldAngAcc, FRAME_CONVENTION fc) {
-        auto worldAngAccTmp = worldAngAcc;
-        if (IsNED(fc)) internal::SwapFrameConvention<AngularAcceleration>(worldAngAccTmp);
-        auto chronoAngAcc = internal::Vector3dToChVector(worldAngAccTmp);
-        m_chronoBody->SetWacc_par(chronoAngAcc); // FIXME : dans chrono, l'argument d'entree n'est pas const... -> fix Chrono
-        m_chronoBody->UpdateAfterMove();
-    }
-
-    void FrBody::SetAngularAccelerationInBody(const AngularAcceleration &bodyAngAcc, FRAME_CONVENTION fc) {
-        SetAngularAccelerationInWorld(ProjectVectorInWorld(bodyAngAcc, fc), fc);
-    }
-
-    AngularAcceleration FrBody::GetAngularAccelerationInWorld(FRAME_CONVENTION fc) const {
-        AngularAcceleration angAcc = internal::ChVectorToVector3d<AngularAcceleration>(m_chronoBody->GetWacc_par());
-        if (IsNED(fc)) internal::SwapFrameConvention<AngularAcceleration>(angAcc);
-        return angAcc;
-    }
-
-    AngularAcceleration FrBody::GetAngularAccelerationInBody(FRAME_CONVENTION fc) const {
-        return ProjectVectorInBody(GetAngularAccelerationInWorld(fc), fc);
-    }
+      }
+      assert(asserted); // FIXME : renvoyer une erreur mais ne pas faire planter !!!
+      force->m_asset = nullptr;
 
-    Velocity FrBody::GetVelocityInWorldAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
-        Position bodyPoint = GetPointPositionInBody(worldPoint, fc);
-        return GetVelocityInWorldAtPointInBody(bodyPoint, fc);
     }
 
-    Velocity FrBody::GetVelocityInWorldAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
-        return ProjectVectorInWorld<Velocity>(GetVelocityInBodyAtPointInBody(bodyPoint, fc), fc);
+    auto logManager = GetSystem()->GetLogManager();
+    if (auto loggable = std::dynamic_pointer_cast<FrLoggableBase>(force)) {
+      logManager->Remove(loggable);
     }
 
-    Velocity FrBody::GetVelocityInBodyAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
-        Position bodyPoint = GetPointPositionInBody(worldPoint, fc);
-        return GetVelocityInBodyAtPointInBody(bodyPoint, fc);
-    }
-
-    Velocity FrBody::GetVelocityInBodyAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
-        Velocity bodyVel = GetVelocityInBody(fc);
-        AngularVelocity bodyAngVel = GetAngularVelocityInBody(fc);
-        return bodyVel + bodyAngVel.cross(bodyPoint);
-    }
-
-    Acceleration FrBody::GetAccelerationInWorldAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
-        auto bodyPoint = GetPointPositionInBody(worldPoint, fc);
-        return GetAccelerationInWorldAtPointInBody(bodyPoint, fc);
-    }
-
-    Acceleration FrBody::GetAccelerationInWorldAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
-        auto bodyPointTmp = bodyPoint;
-        if (IsNED(fc)) internal::SwapFrameConvention<Position>(bodyPointTmp);
-
-        Acceleration pointAcc = internal::ChVectorToVector3d<Acceleration>(
-                m_chronoBody->PointAccelerationLocalToParent(internal::Vector3dToChVector(bodyPointTmp - GetCOG(NWU)))
-                );
-
-        if (IsNED(fc)) internal::SwapFrameConvention<Acceleration>(pointAcc);
-        return pointAcc;
-    }
-
-    Acceleration FrBody::GetAccelerationInBodyAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
-        return GetAccelerationInBodyAtPointInBody(GetPointPositionInBody(worldPoint, fc), fc);
-    }
-
-    Acceleration FrBody::GetAccelerationInBodyAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
-        return ProjectVectorInBody(GetAccelerationInWorldAtPointInBody(bodyPoint, fc), fc);
-    }
-
-
-    void FrBody::SetGeneralizedVelocityInWorldAtPointInWorld(const Position &worldPoint, const Velocity &worldVel,
-                                                              const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
-        Position bodyPoint = GetPointPositionInBody(worldPoint, fc);
-        SetGeneralizedVelocityInWorldAtPointInBody(bodyPoint, worldVel, worldAngVel, fc);
-    }
-
-    void FrBody::SetGeneralizedVelocityInWorldAtPointInBody(const Position &bodyPoint, const Velocity &worldVel,
-                                                             const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
-        Velocity bodyVel = ProjectVectorInBody<Velocity>(worldVel, fc);
-        AngularVelocity bodyAngVel = ProjectVectorInBody<AngularVelocity>(worldAngVel, fc);
-        SetGeneralizedVelocityInBodyAtPointInBody(bodyPoint, bodyVel, bodyAngVel, fc);
-    }
-
-    void FrBody::SetGeneralizedVelocityInBodyAtPointInWorld(const Position &worldPoint, const Velocity &bodyVel,
-                                                             const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
-        Position bodyPoint = GetPointPositionInBody(worldPoint, fc);
-        SetGeneralizedVelocityInBodyAtPointInBody(bodyPoint, bodyVel, bodyAngVel, fc);
-    }
-
-    void FrBody::SetGeneralizedVelocityInBodyAtPointInBody(const Position &bodyPoint, const Velocity &bodyVel,
-                                                            const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
-
-        Position PG = GetCOG(fc) - bodyPoint;
-        Velocity cogVel = bodyVel + bodyAngVel.cross(PG);
-        SetVelocityInBodyNoRotation(cogVel, fc);
-        SetAngularVelocityInBody(bodyAngVel, fc);
-    }
-
-    void FrBody::SetGeneralizedAccelerationInBodyAtCOG(const Acceleration &bodyAcc, const AngularAcceleration &bodyAngAcc, FRAME_CONVENTION fc) {
-        SetAccelerationInBodyNoRotation(bodyAcc, fc);
-        SetAngularAccelerationInBody(bodyAngAcc, fc);
-    }
-
-    void FrBody::SetGeneralizedAccelerationInWorldAtCOG(const Acceleration &worldAcc, const AngularAcceleration &worldAngAcc, FRAME_CONVENTION fc) {
-        SetAccelerationInWorldNoRotation(worldAcc, fc);
-        SetAngularAccelerationInWorld(worldAngAcc, fc);
-    }
-
-    void FrBody::CartToGeo(const Position &cartPos, FrGeographicCoord &geoCoord, FRAME_CONVENTION fc) const {
-        geoCoord = CartToGeo(cartPos, fc);
-    }
-    void FrBody::CartToGeo(const Position &cartPos, FrGeographicCoord &geoCoord, FRAME_CONVENTION fc) {
-        geoCoord = CartToGeo(cartPos, fc);
-    }
-
-    FrGeographicCoord FrBody::CartToGeo(const Position &cartPos, FRAME_CONVENTION fc) const {
-        return GetSystem()->GetEnvironment()->GetGeographicServices()->CartToGeo(cartPos, fc);
-    }
+  }
 
-    FrGeographicCoord FrBody::CartToGeo(const Position &cartPos, FRAME_CONVENTION fc) {
-        return GetSystem()->GetEnvironment()->GetGeographicServices()->CartToGeo(cartPos, fc);
-    }
-
-
-    void FrBody::GeoToCart(const FrGeographicCoord& geoCoord, Position& cartPos, FRAME_CONVENTION fc) const {
-        cartPos = GeoToCart(geoCoord, fc);
-    }
-
-    void FrBody::GeoToCart(const FrGeographicCoord& geoCoord, Position& cartPos, FRAME_CONVENTION fc) {
-        cartPos = GeoToCart(geoCoord, fc);
-    }
-
-    Position FrBody::GeoToCart(const FrGeographicCoord& geoCoord, FRAME_CONVENTION fc) const {
-        return GetSystem()->GetEnvironment()->GetGeographicServices()->GeoToCart(geoCoord, fc);
-    }
-
-    Position FrBody::GeoToCart(const FrGeographicCoord& geoCoord, FRAME_CONVENTION fc) {
-        return GetSystem()->GetEnvironment()->GetGeographicServices()->GeoToCart(geoCoord, fc);
-    }
-
-    void FrBody::InitializeLockedDOF() {
-
-        // TODO : voir si n'accepte pas de definir des offset sur les ddl bloques...
-
-        // Getting the markers that enter in the link
-
-        // Body marker placed at the current COG body position  // TODO : voir si on se donne d'autres regles que le COG...
-        auto bodyNode = NewNode();
-
-        auto cogPositionInWorld= GetCOGPositionInWorld(NWU);
-        auto bodyOrientationInWorld = GetQuaternion();
-
-        auto bodyNodeFrameInWorld = FrFrame(cogPositionInWorld, bodyOrientationInWorld, NWU);
-        bodyNode->SetFrameInWorld(bodyNodeFrameInWorld);
+  void FrBody::RemoveAllForces() {
+    m_chronoBody->RemoveAllForces();
 
-        // World Marker placed at the current COG body position
-        auto worldNode = GetSystem()->GetWorldBody()->NewNode();
-        worldNode->SetFrameInBody(bodyNodeFrameInWorld);
-
-        // Creating the link
-        auto DOFLink = std::make_shared<FrDOFMaskLink>(worldNode, bodyNode, GetSystem());
-
-        // Initializing the link with the DOFMask
-        DOFLink->SetDOFMask(m_DOFMask.get());
-
-        // Adding the link to the system
-        m_system->AddLink(DOFLink);
-
+    auto logManager = GetSystem()->GetLogManager();
+    for (auto &force : m_externalForces) {
+      logManager->Remove(force);
     }
-
-    FrDOFMask* FrBody::GetDOFMask() {
-        return m_DOFMask.get();
-    }
-
-    void FrBody::InitializeLog_Dependencies(const std::string& bodyPath) {
-
-        if (IsLogged()) {
+    m_externalForces.clear();
 
-            // Initializing forces
-            for (const auto& force : m_externalForces){
-                force->SetPathManager(GetPathManager());
-                force->InitializeLog(bodyPath);
-            }
+    event_logger::info(GetTypeName(), GetName(), "All forces removed");
+  }
 
-            // Initializing nodes
-            for (const auto &node : m_nodes) {
-                node->SetPathManager(GetPathManager());
-                node->InitializeLog(bodyPath);
-            }
+  void FrBody::RemoveAllNodes() {
+    m_chronoBody->RemoveAllMarkers();
 
-        }
-
+    auto logManager = GetSystem()->GetLogManager();
+    for (auto &node : m_nodes) {
+      logManager->Remove(node);
     }
-
-    void FrBody::AddFields() {
-
-        m_message->AddField<double>("Time", "s", "Current time of the simulation",
-                                    [this]() { return m_system->GetTime(); });
-
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("Position","m", fmt::format("body position in the world reference frame in {}", GetLogFrameConvention()),
-                 [this]() {return GetPosition(GetLogFrameConvention());});
+    m_nodes.clear();
 
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("COGPositionInWorld","m", fmt::format("COG body position in the world reference frame in {}", GetLogFrameConvention()),
-                 [this]() {return GetCOGPositionInWorld(GetLogFrameConvention());});
+    event_logger::info(GetTypeName(), GetName(), "All nodes removed");
+  }
 
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("CardanAngles","rad", fmt::format("body orientation in the world reference frame in {}", GetLogFrameConvention()),
-                 [this]() {double phi, theta, psi ; GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, GetLogFrameConvention());
-                     return Vector3d<double> (phi,theta,psi);});
+  Force FrBody::GetTotalExtForceInWorld(FRAME_CONVENTION fc) const {
+    auto chronoForce = m_chronoBody->Get_Xforce();
+    auto force = internal::ChVectorToVector3d<Force>(m_chronoBody->Get_Xforce());
+    if (IsNED(fc)) internal::SwapFrameConvention<Position>(force);
+    return force;
+  }
 
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("LinearVelocityInWorld","m/s", fmt::format("body linear velocity in the world reference frame in {}", GetLogFrameConvention()),
-                 [this]() {return GetLinearVelocityInWorld(GetLogFrameConvention());});
+  Force FrBody::GetTotalExtForceInBody(FRAME_CONVENTION fc) const {
+    return ProjectVectorInBody(GetTotalExtForceInWorld(fc), fc);
+  }
 
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("COGLinearVelocityInWorld","m/s", fmt::format("COG body linear velocity in the world reference frame in {}", GetLogFrameConvention()),
-                 [this]() {return GetCOGLinearVelocityInWorld(GetLogFrameConvention());});
+  Torque FrBody::GetTotalExtTorqueInBodyAtCOG(FRAME_CONVENTION fc) const {
+    auto torque = internal::ChVectorToVector3d<Torque>(m_chronoBody->Get_Xtorque());
+    if (IsNED(fc)) internal::SwapFrameConvention<Position>(torque);
+    return torque;
+  }
 
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("AngularVelocityInWorld","rad/s", fmt::format("body angular velocity in the world reference frame in {}", GetLogFrameConvention()),
-                 [this]() {return GetAngularVelocityInWorld(GetLogFrameConvention());});
+  Torque FrBody::GetTotalExtTorqueInWorldAtCOG(FRAME_CONVENTION fc) const {
+    return ProjectVectorInWorld(GetTotalExtTorqueInBodyAtCOG(fc), fc);
+  }
 
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("LinearAccelerationInWorld","m/s2", fmt::format("body linear acceleration in the world reference frame in {}", GetLogFrameConvention()),
-                 [this]() {return GetLinearAccelerationInWorld(GetLogFrameConvention());});
 
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("COGLinearAccelerationInWorld","m/s2", fmt::format("COG body linear acceleration in the world reference frame in {}", GetLogFrameConvention()),
-                 [this]() {return GetCOGLinearAccelerationInWorld(GetLogFrameConvention());});
+  // Nodes
 
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("AngularAccelerationInWorld","rad/s2", fmt::format("body angular acceleration in the world reference frame in {}", GetLogFrameConvention()),
-                 [this]() {return GetAngularAccelerationInWorld(GetLogFrameConvention());});
+  std::shared_ptr<FrNode> FrBody::NewNode(const std::string &name) {
+    auto node = std::make_shared<FrNode>(name, this);
+    m_nodes.push_back(node);
 
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("TotalExtForceInBody","N",fmt::format("Total external force, expressed in body reference frame in {}", GetLogFrameConvention()),
-                 [this] () {return GetTotalExtForceInBody(GetLogFrameConvention());});
+    auto pos = node->GetNodePositionInBody(NWU);
 
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("TotalExtTorqueInBodyAtCOG","Nm",fmt::format("Total external torque at COG, expressed in body reference frame in {}", GetLogFrameConvention()),
-                 [this] () {return GetTotalExtTorqueInBodyAtCOG(GetLogFrameConvention());});
+    event_logger::info(GetTypeName(), GetName(),
+                       "Node {} added to body at position {}\t{}\t{}",
+                       node->GetName(), pos[0], pos[1], pos[2]);
+    GetSystem()->GetPathManager()->RegisterTreeNode(node.get());
 
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("TotalExtForceInWorld","N",fmt::format("Total external force, expressed in world reference frame in {}", GetLogFrameConvention()),
-                 [this] () {return GetTotalExtForceInWorld(GetLogFrameConvention());});
+    GetSystem()->GetLogManager()->Add(node);
 
-        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("TotalExtTorqueInWorldAtCOG","Nm",fmt::format("Total external torque at COG, expressed in world reference frame in {}", GetLogFrameConvention()),
-                 [this] () {return GetTotalExtTorqueInWorldAtCOG(GetLogFrameConvention());});
+    return node;
+  }
 
-    }
-
-    std::shared_ptr<internal::FrBodyBase> FrBody::GetChronoBody() {
-        return m_chronoBody;
-    }
+  void FrBody::SetCOG(const Position &bodyPos, FRAME_CONVENTION fc) {
+    FrFrame cogFrame;
+    cogFrame.SetPosition(bodyPos, fc);
+    event_logger::info(GetTypeName(), GetName(),
+                       "Center of gravity set (in body reference frame) to [{}\t{}\t{}]", bodyPos.x(), bodyPos.y(),
+                       bodyPos.z());
+//    m_chronoBody->UpdateMarkerPositionToCOG(internal::Vector3dToChVector(cogFrame.GetPosition(NWU)));
+    m_chronoBody->SetFrame_COG_to_REF(internal::FrFrame2ChFrame(cogFrame));
+  }
 
-    internal::FrBodyBase *FrBody::GetChronoItem_ptr() const {
-        return m_chronoBody.get();
-    }
+  Position FrBody::GetCOG(FRAME_CONVENTION fc) const {
+    Position cogPos = internal::ChVectorToVector3d<Position>(m_chronoBody->GetFrame_COG_to_REF().GetPos()); // In NWU
+    if (IsNED(fc)) internal::SwapFrameConvention<Position>(cogPos);
+    return cogPos;
+  }
 
-    FrBody::ForceContainer FrBody::GetForceList() const {return m_externalForces;}
+  Position FrBody::GetPosition(FRAME_CONVENTION fc) const {
+    Position refPos = internal::ChVectorToVector3d<Position>(m_chronoBody->GetFrame_REF_to_abs().GetPos());
+    if (IsNED(fc)) internal::SwapFrameConvention<Position>(refPos);
+    return refPos;
+  }
 
-    FrBody::NodeContainer FrBody::GetNodeList() const { return m_nodes; }
+  FrGeographicCoord FrBody::GetGeoPosition(FRAME_CONVENTION fc) const {
+    return CartToGeo(GetPosition(fc), fc);
+  }
+
+  void FrBody::SetPosition(const Position &worldPos, FRAME_CONVENTION fc) {
+
+    /// This subroutine sets the initial position of a body in world.
+
+    auto bodyFrame = GetFrame();
+    bodyFrame.SetPosition(worldPos, fc);
+
+    event_logger::info(GetTypeName(), GetName(),
+                       "Set body position (in world reference frame NWU) to [{}\t{}\t{}]",
+                       worldPos.x(), worldPos.y(), worldPos.z());
+
+    m_chronoBody->SetFrame_REF_to_abs(internal::FrFrame2ChFrame(bodyFrame));
+    m_chronoBody->UpdateAfterMove();
+  }
+
+  void FrBody::SetGeoPosition(const FrGeographicCoord &geoCoord) {
+    SetPosition(GeoToCart(geoCoord, NWU), NWU);
+    event_logger::info(GetTypeName(), GetName(),
+                       "Set geographic body position to latitude = {} °; longitude{} °]",
+                       geoCoord.GetLatitude(), geoCoord.GetLongitude());
+  }
+
+  FrRotation FrBody::GetRotation() const {
+    return FrRotation(GetQuaternion());
+  }
+
+  void FrBody::SetRotation(const FrRotation &rotation) {
+    SetRotation(rotation.GetQuaternion());
+  }
+
+  FrUnitQuaternion FrBody::GetQuaternion() const {
+    return internal::Ch2FrQuaternion(m_chronoBody->GetRot());
+  }
+
+  void FrBody::SetRotation(const FrUnitQuaternion &quaternion) {
+    Position bodyWorldPos = GetPosition(NWU);
+    m_chronoBody->SetRot(internal::Fr2ChQuaternion(quaternion));
+
+    double phi, theta, psi;
+    FrRotation(quaternion).GetCardanAngles_DEGREES(phi, theta, psi, NWU);
+
+    event_logger::info(GetTypeName(), GetName(),
+                       "Set body orientation (in world reference frame NWU, cardan angles) to "
+                       "phi = {}\ttheta = {}\tpsi = {}]",
+                       phi, theta, psi);
+
+    SetPosition(bodyWorldPos, NWU);  // FIXME : pourquoi doit-on set la position ???
+  }
+
+  FrFrame FrBody::GetFrame() const {
+    FrFrame bodyRefFrame;
+    bodyRefFrame.SetPosition(GetPosition(NWU), NWU);
+    bodyRefFrame.SetRotation(GetQuaternion());
+    return bodyRefFrame;
+  }
+
+  void FrBody::SetFrame(const FrFrame &worldFrame) {
+    SetPosition(worldFrame.GetPosition(NWU), NWU);
+    SetRotation(worldFrame.GetQuaternion());
+  }
+
+  FrFrame FrBody::GetFrameAtPoint(const Position &bodyPoint, FRAME_CONVENTION fc) {
+    FrFrame pointFrame;
+    pointFrame.SetPosition(GetPointPositionInWorld(bodyPoint, fc), fc);
+    pointFrame.SetRotation(GetQuaternion());
+    return pointFrame;
+  }
+
+  FrFrame FrBody::GetFrameAtCOG(FRAME_CONVENTION fc) {
+    return GetFrameAtPoint(GetCOG(fc), fc);
+  }
+
+  Position FrBody::GetPointPositionInWorld(const Position &bodyPos, FRAME_CONVENTION fc) const {
+    return GetPosition(fc) + ProjectVectorInWorld<Position>(bodyPos, fc);
+  }
+
+  Position FrBody::GetPointPositionInBody(const Position &worldPos, FRAME_CONVENTION fc) const {
+    return ProjectVectorInBody<Position>(worldPos - GetPosition(fc), fc);
+  }
+
+  Position FrBody::GetCOGPositionInWorld(FRAME_CONVENTION fc) const {
+    Position cogPos = internal::ChVectorToVector3d<Position>(m_chronoBody->GetPos());
+    if (IsNED(fc)) internal::SwapFrameConvention<Position>(cogPos);
+    return cogPos;
+  }
+
+  FrGeographicCoord FrBody::GetGeoPointPositionInWorld(const Position &bodyPos, FRAME_CONVENTION fc) const {
+    return CartToGeo(GetPointPositionInWorld(bodyPos, fc), fc);
+  }
+
+  FrGeographicCoord FrBody::GetGeoPointPositionInBody(const Position &worldPos, FRAME_CONVENTION fc) const {
+    return CartToGeo(GetPointPositionInBody(worldPos, fc), fc);
+  }
+
+  FrGeographicCoord FrBody::GetCOGGeoPosition() const {
+    return CartToGeo(GetCOGPositionInWorld(NWU), NWU);
+  }
+
+
+  void FrBody::SetPositionOfBodyPoint(const Position &bodyPoint, const Position &worldPos, FRAME_CONVENTION fc) {
+    Position bodyWorldPos = GetPosition(fc);
+    Position worldPointPos = GetPointPositionInWorld(bodyPoint, fc);
+
+    Translation translation = worldPos - worldPointPos;
+    TranslateInWorld(translation, fc);
+  }
+
+  void FrBody::TranslateInWorld(const Translation &worldTranslation, FRAME_CONVENTION fc) {
+    auto refFrame = GetFrame();
+    refFrame.SetPosition(refFrame.GetPosition(fc) + worldTranslation, fc);
+    m_chronoBody->SetFrame_REF_to_abs(internal::FrFrame2ChFrame(refFrame));
+    m_chronoBody->UpdateAfterMove();
+  }
+
+  void FrBody::TranslateInWorld(double x, double y, double z, FRAME_CONVENTION fc) {
+    TranslateInWorld(Translation(x, y, z), fc);
+  }
+
+  void FrBody::TranslateInBody(const Translation &bodyTranslation, FRAME_CONVENTION fc) {
+    auto refFrame = GetFrame();
+    refFrame.SetPosition(refFrame.GetPosition(fc) + ProjectVectorInWorld<Position>(bodyTranslation, fc), fc);
+    m_chronoBody->SetFrame_REF_to_abs(internal::FrFrame2ChFrame(refFrame));
+    m_chronoBody->UpdateAfterMove();
+  }
+
+  void FrBody::TranslateInBody(double x, double y, double z, FRAME_CONVENTION fc) {
+    TranslateInBody(Translation(x, y, z), fc);
+  }
+
+  void FrBody::Rotate(const FrRotation &relRotation) {
+    SetRotation(GetRotation() * relRotation);
+  }
+
+  void FrBody::Rotate(const FrUnitQuaternion &relQuaternion) {
+    SetRotation(GetQuaternion() * relQuaternion);
+  }
+
+  void FrBody::RotateAroundPointInWorld(const FrRotation &rot, const Position &worldPos, FRAME_CONVENTION fc) {
+    RotateAroundPointInWorld(rot.GetQuaternion(), worldPos, fc);
+  }
+
+  void FrBody::RotateAroundPointInBody(const FrRotation &rot, const Position &bodyPos, FRAME_CONVENTION fc) {
+    RotateAroundPointInBody(rot.GetQuaternion(), bodyPos, fc);
+  }
+
+  void FrBody::RotateAroundPointInWorld(const FrUnitQuaternion &rot, const Position &worldPos, FRAME_CONVENTION fc) {
+    Position bodyPos = GetPointPositionInBody(worldPos, fc);
+    Rotate(rot);
+    SetPositionOfBodyPoint(bodyPos, worldPos, fc);
+  }
+
+  void FrBody::RotateAroundPointInBody(const FrUnitQuaternion &rot, const Position &bodyPos, FRAME_CONVENTION fc) {
+    Position worldPos = GetPointPositionInWorld(bodyPos, fc);
+    Rotate(rot);
+    SetPositionOfBodyPoint(bodyPos, worldPos, fc);
+  }
+
+  void FrBody::RotateAroundCOG(const FrRotation &rot, FRAME_CONVENTION fc) {
+    RotateAroundPointInBody(rot, GetCOG(fc), fc);
+  }
+
+  void FrBody::RotateAroundCOG(const FrUnitQuaternion &rot, FRAME_CONVENTION fc) {
+    RotateAroundPointInBody(rot, GetCOG(fc), fc);
+  }
+
+  void FrBody::SetGeneralizedVelocityInWorld(const Velocity &worldVel, const AngularVelocity &worldAngVel,
+                                             FRAME_CONVENTION fc) {
+    SetGeneralizedVelocityInWorldAtPointInBody(Position(0., 0., 0.), worldVel, worldAngVel, fc);
+  }
+
+  void FrBody::SetGeneralizedVelocityInBody(const Velocity &bodyVel, const AngularVelocity &bodyAngVel,
+                                            FRAME_CONVENTION fc) {
+    SetGeneralizedVelocityInBodyAtPointInBody(Position(0., 0., 0.), bodyVel, bodyAngVel, fc);
+  }
+
+  Velocity FrBody::GetLinearVelocityInWorld(FRAME_CONVENTION fc) const {
+    Velocity bodyVel = internal::ChVectorToVector3d<Velocity>(m_chronoBody->GetFrame_REF_to_abs().GetPos_dt());
+    if (IsNED(fc)) internal::SwapFrameConvention<Velocity>(bodyVel);
+    return bodyVel;
+  }
+
+  Velocity FrBody::GetVelocityInBody(FRAME_CONVENTION fc) const {
+    return ProjectVectorInBody<Velocity>(GetLinearVelocityInWorld(fc), fc);
+  }
+
+  void FrBody::SetVelocityInWorldNoRotation(const Velocity &worldVel, FRAME_CONVENTION fc) {
+    auto worldVelTmp = worldVel;
+    if (IsNED(fc)) internal::SwapFrameConvention<Velocity>(worldVelTmp);
+    chrono::ChCoordsys<double> coord;
+    coord.pos = internal::Vector3dToChVector(worldVelTmp);
+    coord.rot.SetNull();
+    m_chronoBody->SetCoord_dt(coord);
+    m_chronoBody->UpdateAfterMove();
+  }
+
+  void FrBody::SetVelocityInBodyNoRotation(const Velocity &bodyVel, FRAME_CONVENTION fc) {
+    SetVelocityInWorldNoRotation(ProjectVectorInWorld(bodyVel, fc), fc);
+  }
+
+  Velocity FrBody::GetCOGLinearVelocityInWorld(FRAME_CONVENTION fc) const {
+    Velocity cogVel = internal::ChVectorToVector3d<Velocity>(m_chronoBody->GetCoord_dt().pos); // In NWU
+    if (IsNED(fc)) internal::SwapFrameConvention<Velocity>(cogVel);
+    return cogVel;
+  }
+
+  Velocity FrBody::GetCOGVelocityInBody(FRAME_CONVENTION fc) const {
+    return ProjectVectorInBody<Velocity>(GetCOGLinearVelocityInWorld(fc), fc);
+  }
+
+  void FrBody::SetAccelerationInWorldNoRotation(const Acceleration &worldAcc, FRAME_CONVENTION fc) {
+    auto worldAccTmp = worldAcc;
+    if (IsNED(fc)) internal::SwapFrameConvention<Acceleration>(worldAccTmp);
+    chrono::ChCoordsys<double> coord;
+    coord.pos = internal::Vector3dToChVector(worldAccTmp);
+    coord.rot.SetNull();
+    m_chronoBody->SetCoord_dtdt(coord);
+    m_chronoBody->UpdateAfterMove();
+  }
+
+  void FrBody::SetAccelerationInBodyNoRotation(const Acceleration &bodyAcc, FRAME_CONVENTION fc) {
+    SetAccelerationInWorldNoRotation(ProjectVectorInWorld<Acceleration>(bodyAcc, fc), fc);
+  }
+
+  Acceleration FrBody::GetLinearAccelerationInWorld(FRAME_CONVENTION fc) const {
+    return GetAccelerationInWorldAtPointInBody(Position(0., 0., 0.), fc);
+  }
+
+  Acceleration FrBody::GetAccelerationInBody(FRAME_CONVENTION fc) const {
+    return ProjectVectorInBody<Acceleration>(GetLinearAccelerationInWorld(fc), fc);
+  }
+
+
+  Acceleration FrBody::GetCOGLinearAccelerationInWorld(FRAME_CONVENTION fc) const {
+    Acceleration cogAcc = internal::ChVectorToVector3d<Acceleration>(m_chronoBody->GetCoord_dtdt().pos); // In NWU
+    if (IsNED(fc)) internal::SwapFrameConvention<Acceleration>(cogAcc);
+    return cogAcc;
+  }
+
+  Acceleration FrBody::GetCOGAccelerationInBody(FRAME_CONVENTION fc) const {
+    return ProjectVectorInBody<Acceleration>(GetCOGLinearAccelerationInWorld(fc), fc);
+  }
+
+  void FrBody::SetAngularVelocityInWorld(const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
+    auto worldAngVelTmp = worldAngVel;
+    if (IsNED(fc)) internal::SwapFrameConvention<AngularVelocity>(worldAngVelTmp);
+    m_chronoBody->SetWvel_par(internal::Vector3dToChVector(worldAngVelTmp));
+    m_chronoBody->UpdateAfterMove();
+  }
+
+  void FrBody::SetCOGAngularVelocityInWorld(const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
+    auto worldAngVelTmp = worldAngVel;
+    if (IsNED(fc)) internal::SwapFrameConvention<AngularVelocity>(worldAngVelTmp);
+    m_chronoBody->SetWvel_par(internal::Vector3dToChVector(worldAngVelTmp));
+  }
+
+  void FrBody::SetAngularVelocityInBody(const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
+    SetAngularVelocityInWorld(ProjectVectorInWorld(bodyAngVel, fc), fc);
+  }
+
+  AngularVelocity FrBody::GetAngularVelocityInWorld(FRAME_CONVENTION fc) const {
+    AngularVelocity angVel = internal::ChVectorToVector3d<AngularVelocity>(m_chronoBody->GetWvel_par());
+    if (IsNED(fc)) internal::SwapFrameConvention<AngularVelocity>(angVel);
+    return angVel;
+  }
+
+  AngularVelocity FrBody::GetAngularVelocityInBody(FRAME_CONVENTION fc) const {
+    return ProjectVectorInBody<AngularVelocity>(GetAngularVelocityInWorld(fc), fc);
+  }
+
+  void FrBody::SetAngularAccelerationInWorld(const AngularAcceleration &worldAngAcc, FRAME_CONVENTION fc) {
+    auto worldAngAccTmp = worldAngAcc;
+    if (IsNED(fc)) internal::SwapFrameConvention<AngularAcceleration>(worldAngAccTmp);
+    auto chronoAngAcc = internal::Vector3dToChVector(worldAngAccTmp);
+    m_chronoBody->SetWacc_par(
+        chronoAngAcc); // FIXME : dans chrono, l'argument d'entree n'est pas const... -> fix Chrono
+    m_chronoBody->UpdateAfterMove();
+  }
+
+  void FrBody::SetAngularAccelerationInBody(const AngularAcceleration &bodyAngAcc, FRAME_CONVENTION fc) {
+    SetAngularAccelerationInWorld(ProjectVectorInWorld(bodyAngAcc, fc), fc);
+  }
+
+  AngularAcceleration FrBody::GetAngularAccelerationInWorld(FRAME_CONVENTION fc) const {
+    AngularAcceleration angAcc = internal::ChVectorToVector3d<AngularAcceleration>(m_chronoBody->GetWacc_par());
+    if (IsNED(fc)) internal::SwapFrameConvention<AngularAcceleration>(angAcc);
+    return angAcc;
+  }
+
+  AngularAcceleration FrBody::GetAngularAccelerationInBody(FRAME_CONVENTION fc) const {
+    return ProjectVectorInBody(GetAngularAccelerationInWorld(fc), fc);
+  }
+
+  Velocity FrBody::GetVelocityInWorldAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
+    Position bodyPoint = GetPointPositionInBody(worldPoint, fc);
+    return GetVelocityInWorldAtPointInBody(bodyPoint, fc);
+  }
+
+  Velocity FrBody::GetVelocityInWorldAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
+    return ProjectVectorInWorld<Velocity>(GetVelocityInBodyAtPointInBody(bodyPoint, fc), fc);
+  }
+
+  Velocity FrBody::GetVelocityInBodyAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
+    Position bodyPoint = GetPointPositionInBody(worldPoint, fc);
+    return GetVelocityInBodyAtPointInBody(bodyPoint, fc);
+  }
+
+  Velocity FrBody::GetVelocityInBodyAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
+    Velocity bodyVel = GetVelocityInBody(fc);
+    AngularVelocity bodyAngVel = GetAngularVelocityInBody(fc);
+    return bodyVel + bodyAngVel.cross(bodyPoint);
+  }
+
+  Acceleration FrBody::GetAccelerationInWorldAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
+    auto bodyPoint = GetPointPositionInBody(worldPoint, fc);
+    return GetAccelerationInWorldAtPointInBody(bodyPoint, fc);
+  }
+
+  Acceleration FrBody::GetAccelerationInWorldAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
+    auto bodyPointTmp = bodyPoint;
+    if (IsNED(fc)) internal::SwapFrameConvention<Position>(bodyPointTmp);
+
+    Acceleration pointAcc = internal::ChVectorToVector3d<Acceleration>(
+        m_chronoBody->PointAccelerationLocalToParent(internal::Vector3dToChVector(bodyPointTmp - GetCOG(NWU)))
+    );
+
+    if (IsNED(fc)) internal::SwapFrameConvention<Acceleration>(pointAcc);
+    return pointAcc;
+  }
+
+  Acceleration FrBody::GetAccelerationInBodyAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
+    return GetAccelerationInBodyAtPointInBody(GetPointPositionInBody(worldPoint, fc), fc);
+  }
+
+  Acceleration FrBody::GetAccelerationInBodyAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
+    return ProjectVectorInBody(GetAccelerationInWorldAtPointInBody(bodyPoint, fc), fc);
+  }
+
+
+  void FrBody::SetGeneralizedVelocityInWorldAtPointInWorld(const Position &worldPoint, const Velocity &worldVel,
+                                                           const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
+    Position bodyPoint = GetPointPositionInBody(worldPoint, fc);
+    SetGeneralizedVelocityInWorldAtPointInBody(bodyPoint, worldVel, worldAngVel, fc);
+  }
+
+  void FrBody::SetGeneralizedVelocityInWorldAtPointInBody(const Position &bodyPoint, const Velocity &worldVel,
+                                                          const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
+    Velocity bodyVel = ProjectVectorInBody<Velocity>(worldVel, fc);
+    AngularVelocity bodyAngVel = ProjectVectorInBody<AngularVelocity>(worldAngVel, fc);
+    SetGeneralizedVelocityInBodyAtPointInBody(bodyPoint, bodyVel, bodyAngVel, fc);
+  }
+
+  void FrBody::SetGeneralizedVelocityInBodyAtPointInWorld(const Position &worldPoint, const Velocity &bodyVel,
+                                                          const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
+    Position bodyPoint = GetPointPositionInBody(worldPoint, fc);
+    SetGeneralizedVelocityInBodyAtPointInBody(bodyPoint, bodyVel, bodyAngVel, fc);
+  }
+
+  void FrBody::SetGeneralizedVelocityInBodyAtPointInBody(const Position &bodyPoint, const Velocity &bodyVel,
+                                                         const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
+
+    Position PG = GetCOG(fc) - bodyPoint;
+    Velocity cogVel = bodyVel + bodyAngVel.cross(PG);
+    SetVelocityInBodyNoRotation(cogVel, fc);
+    SetAngularVelocityInBody(bodyAngVel, fc);
+  }
+
+  void
+  FrBody::SetGeneralizedAccelerationInBodyAtCOG(const Acceleration &bodyAcc, const AngularAcceleration &bodyAngAcc,
+                                                FRAME_CONVENTION fc) {
+    SetAccelerationInBodyNoRotation(bodyAcc, fc);
+    SetAngularAccelerationInBody(bodyAngAcc, fc);
+  }
+
+  void
+  FrBody::SetGeneralizedAccelerationInWorldAtCOG(const Acceleration &worldAcc, const AngularAcceleration &worldAngAcc,
+                                                 FRAME_CONVENTION fc) {
+    SetAccelerationInWorldNoRotation(worldAcc, fc);
+    SetAngularAccelerationInWorld(worldAngAcc, fc);
+  }
+
+  void FrBody::CartToGeo(const Position &cartPos, FrGeographicCoord &geoCoord, FRAME_CONVENTION fc) const {
+    geoCoord = CartToGeo(cartPos, fc);
+  }
+
+  void FrBody::CartToGeo(const Position &cartPos, FrGeographicCoord &geoCoord, FRAME_CONVENTION fc) {
+    geoCoord = CartToGeo(cartPos, fc);
+  }
+
+  FrGeographicCoord FrBody::CartToGeo(const Position &cartPos, FRAME_CONVENTION fc) const {
+    return GetSystem()->GetEnvironment()->GetGeographicServices()->CartToGeo(cartPos, fc);
+  }
+
+  FrGeographicCoord FrBody::CartToGeo(const Position &cartPos, FRAME_CONVENTION fc) {
+    return GetSystem()->GetEnvironment()->GetGeographicServices()->CartToGeo(cartPos, fc);
+  }
+
+
+  void FrBody::GeoToCart(const FrGeographicCoord &geoCoord, Position &cartPos, FRAME_CONVENTION fc) const {
+    cartPos = GeoToCart(geoCoord, fc);
+  }
+
+  void FrBody::GeoToCart(const FrGeographicCoord &geoCoord, Position &cartPos, FRAME_CONVENTION fc) {
+    cartPos = GeoToCart(geoCoord, fc);
+  }
+
+  Position FrBody::GeoToCart(const FrGeographicCoord &geoCoord, FRAME_CONVENTION fc) const {
+    return GetSystem()->GetEnvironment()->GetGeographicServices()->GeoToCart(geoCoord, fc);
+  }
+
+  Position FrBody::GeoToCart(const FrGeographicCoord &geoCoord, FRAME_CONVENTION fc) {
+    return GetSystem()->GetEnvironment()->GetGeographicServices()->GeoToCart(geoCoord, fc);
+  }
+
+  void FrBody::InitializeLockedDOF() {
+
+    // TODO : voir si n'accepte pas de definir des offset sur les ddl bloques...
+
+    // Getting the markers that enter in the link
+
+    // Body marker placed at the current COG body position  // TODO : voir si on se donne d'autres regles que le COG...
+    auto bodyNode = NewNode(GetName() + "_locking_node");
+
+    auto cogPositionInWorld = GetCOGPositionInWorld(NWU);
+    auto bodyOrientationInWorld = GetQuaternion();
+
+    auto bodyNodeFrameInWorld = FrFrame(cogPositionInWorld, bodyOrientationInWorld, NWU);
+    bodyNode->SetFrameInWorld(bodyNodeFrameInWorld);
+
+    // World Marker placed at the current COG body position
+    auto node_numbers = GetSystem()->GetWorldBody()->GetNodeList().size();
+    auto worldNode = GetSystem()->GetWorldBody()->NewNode("world_body_locking_node" + std::to_string(node_numbers));
+    worldNode->SetFrameInBody(bodyNodeFrameInWorld);
+
+    // Creating the link
+    auto DOFLink = std::make_shared<FrDOFMaskLink>(GetName() + "_locking_constraint", GetSystem(), worldNode, bodyNode);
+
+    // Initializing the link with the DOFMask
+    DOFLink->SetDOFMask(m_DOFMask.get());
+
+    // Adding the link to the system
+    GetSystem()->Add(DOFLink);
+
+  }
+
+  FrDOFMask *FrBody::GetDOFMask() {
+    return m_DOFMask.get();
+  }
+
+  void FrBody::DefineLogMessages() {
+
+
+    auto msg = NewMessage("FrBody", "Body states");
+
+    msg->AddField<double>("Time", "s", "Current time of the simulation", [this]() { return GetSystem()->GetTime(); });
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("Position", "m", fmt::format("body position in the world reference frame in {}", GetLogFC()),
+         [this]() { return GetPosition(GetLogFC()); });
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("COGPositionInWorld", "m",
+         fmt::format("COG body position in the world reference frame in {}", GetLogFC()),
+         [this]() { return GetCOGPositionInWorld(GetLogFC()); });
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("CardanAngles", "rad",
+         fmt::format("body orientation in the world reference frame in {}", GetLogFC()),
+         [this]() {
+           double phi, theta, psi;
+           GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, GetLogFC());
+           return Vector3d<double>(phi, theta, psi);
+         });
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("LinearVelocityInWorld", "m/s",
+         fmt::format("body linear velocity in the world reference frame in {}", GetLogFC()),
+         [this]() { return GetLinearVelocityInWorld(GetLogFC()); });
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("COGLinearVelocityInWorld", "m/s",
+         fmt::format("COG body linear velocity in the world reference frame in {}", GetLogFC()),
+         [this]() { return GetCOGLinearVelocityInWorld(GetLogFC()); });
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("AngularVelocityInWorld", "rad/s",
+         fmt::format("body angular velocity in the world reference frame in {}", GetLogFC()),
+         [this]() { return GetAngularVelocityInWorld(GetLogFC()); });
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("LinearAccelerationInWorld", "m/s2",
+         fmt::format("body linear acceleration in the world reference frame in {}", GetLogFC()),
+         [this]() { return GetLinearAccelerationInWorld(GetLogFC()); });
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("COGLinearAccelerationInWorld", "m/s2",
+         fmt::format("COG body linear acceleration in the world reference frame in {}", GetLogFC()),
+         [this]() { return GetCOGLinearAccelerationInWorld(GetLogFC()); });
+
+    msg->AddField<Eigen::Matrix<double, 3, 1>>
+        ("AngularAccelerationInWorld", "rad/s2",
+         fmt::format("body angular acceleration in the world reference frame in {}", GetLogFC()),
+         [this]() { return GetAngularAccelerationInWorld(GetLogFC()); });
+
+//        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                ("TotalExtForceInBody","N",fmt::format("Total external force, expressed in body reference frame in {}", GetLogFC()),
+//                 [this] () {return GetTotalExtForceInBody(GetLogFC());});
+//
+//        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                ("TotalExtTorqueInBodyAtCOG","Nm",fmt::format("Total external torque at COG, expressed in body reference frame in {}", GetLogFC()),
+//                 [this] () {return GetTotalExtTorqueInBodyAtCOG(GetLogFC());});
+//
+//        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                ("TotalExtForceInWorld","N",fmt::format("Total external force, expressed in world reference frame in {}", GetLogFC()),
+//                 [this] () {return GetTotalExtForceInWorld(GetLogFC());});
+//
+//        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                ("TotalExtTorqueInWorldAtCOG","Nm",fmt::format("Total external torque at COG, expressed in world reference frame in {}", GetLogFC()),
+//                 [this] () {return GetTotalExtTorqueInWorldAtCOG(GetLogFC());});n GetPosition(GetLogFC());});
+
+
+  }
+
+  std::shared_ptr<internal::FrBodyBase> FrBody::GetChronoBody() {
+    return m_chronoBody;
+  }
+
+  internal::FrBodyBase *FrBody::GetChronoItem_ptr() const {
+    return m_chronoBody.get();
+  }
+
+  FrBody::ForceContainer FrBody::GetForceList() const { return m_externalForces; }
+
+  FrBody::NodeContainer FrBody::GetNodeList() const { return m_nodes; }
 
 
 }  // end namespace frydom

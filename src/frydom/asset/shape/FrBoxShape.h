@@ -14,30 +14,40 @@
 #include <memory>
 #include "frydom/asset/FrAssetOwner.h"
 
+// forward declaration
 namespace chrono {
-    class ChBoxShape;
-    class ChAsset;
-}  // end namespace chrono
+
+  class ChBoxShape;
+
+  class ChAsset;
+
+}
 
 namespace frydom {
-    class Position;
 
-    class FrBoxShape {
-      public:
-        FrBoxShape(double xSize, double ySize, double zSize);
-        double xSize() const;
-        double ySize() const;
-        double zSize() const;
+  class Direction;
 
-        void Translate(Position direction) const;
+  class FrBoxShape {
+   public:
+    FrBoxShape(double xSize, double ySize, double zSize);
 
-      protected:
-        std::shared_ptr<chrono::ChAsset> GetChronoAsset();
+    double xSize() const;
 
-      private:
-        friend void FrAssetOwner::AddBoxShape(double, double, double);
-        std::shared_ptr<chrono::ChBoxShape> m_box;
-    };
+    double ySize() const;
+
+    double zSize() const;
+
+    void Translate(const Direction &direction) const;
+
+   protected:
+    std::shared_ptr<chrono::ChAsset> GetChronoAsset();
+
+   private:
+
+    friend void FrAssetOwner::AddBoxShape(double, double, double);
+
+    std::shared_ptr<chrono::ChBoxShape> m_box;
+  };
 
 }  // end namespace frydom
 

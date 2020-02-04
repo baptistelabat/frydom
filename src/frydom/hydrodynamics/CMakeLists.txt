@@ -8,14 +8,14 @@ add_subdirectory(seakeeping)
 add_subdirectory(wave_resistance)
 
 set(SRC_FILES
-#        FrTryalForce.cpp
+        #        FrTryalForce.cpp
         FrEquilibriumFrame.cpp
-)
+        )
 
 set(FRYDOM_HYDRODYNAMICS_SOURCES "")
-foreach(file ${SRC_FILES})
+foreach (file ${SRC_FILES})
     list(APPEND FRYDOM_HYDRODYNAMICS_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
-endforeach()
+endforeach ()
 
 list(APPEND FRYDOM_HYDRODYNAMICS_SOURCES ${FRYDOM_DAMPING_SOURCES})
 list(APPEND FRYDOM_HYDRODYNAMICS_SOURCES ${FRYDOM_HYDROSTATIC_SOURCES})

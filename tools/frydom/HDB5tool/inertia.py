@@ -2,20 +2,20 @@
 #  -*- coding: utf-8 -*-
 # ==========================================================================
 # FRyDoM - frydom-ce.org
-# 
+#
 # Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 # All rights reserved.
-# 
+#
 # Use of this source code is governed by a GPLv3 license that can be found
 # in the LICENSE file of FRyDoM.
-# 
+#
 # ==========================================================================
 """Module to create the inertia matrix for the RAO computation."""
 
 import numpy as np
 
-class Inertia(object):
 
+class Inertia(object):
     """
         Class for dealing with the inertia parameters.
     """
@@ -285,7 +285,7 @@ class Inertia(object):
 
         res = np.zeros((6, 6))
         res[3:6, 3:6] = self._matrix
-        res[0,0] = self._mass
+        res[0, 0] = self._mass
         res[1, 1] = self._mass
         res[2, 2] = self._mass
         return res
@@ -303,7 +303,7 @@ class Inertia(object):
 
         if value.shape[0] == 6 and value.shape[1] == 6:
             self._matrix = value[3:6, 3:6]
-            self._mass = value[0,0]
+            self._mass = value[0, 0]
         else:
             print("warning : shape matrix mismatch")
 
@@ -319,5 +319,3 @@ class Inertia(object):
         """
 
         return self._matrix
-
-

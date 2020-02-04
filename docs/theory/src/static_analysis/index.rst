@@ -7,7 +7,7 @@ Static Analysis
     :maxdepth: 1
 
     static_analysis
-    floating_body_statics
+    hydrostatic_equilibrium
 
 
 

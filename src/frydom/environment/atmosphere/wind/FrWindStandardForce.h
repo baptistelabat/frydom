@@ -18,53 +18,53 @@
 namespace frydom {
 
 
-    /// Standard wind drag force from DNV standard
-    /// DNV-GL station keeping 01111
+  /// Standard wind drag force from DNV standard
+  /// DNV-GL station keeping 01111
 
-    /**
-     * \class FrWindStandardForce
-     * \brief Class for computing the wind loads following the DNV guidelines.
-     */
-    class FrWindStandardForce : public FrForce {
+  /**
+   * \class FrWindStandardForce
+   * \brief Class for computing the wind loads following the DNV guidelines.
+   */
+  class FrWindStandardForce : public FrForce {
 
-    private:
-        double m_transverseArea = -1;
-        double m_lateralArea = -1;
-        double m_lpp = -1;
-        double m_xCenter;
+   private:
+    double m_transverseArea = -1;
+    double m_lateralArea = -1;
+    double m_lpp = -1;
+    double m_xCenter;
 
-    public:
+   public:
 
-        FrWindStandardForce();
+    explicit FrWindStandardForce(const std::string &name, FrBody *body);
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "WindStandardForce"; }
+    void SetLateralArea(double lateralArea);
 
-        void SetLateralArea(double lateralArea);
+    double GetLateralArea() const { return m_lateralArea; }
 
-        double GetLateralArea() const { return m_lateralArea; }
+    void SetTransverseArea(double transverseArea);
 
-        void SetTransverseArea(double transverseArea);
+    double GetTransverseArea() const { return m_transverseArea; }
 
-        double GetTransverseArea() const { return m_transverseArea; }
+    void SetXCenter(double xCenter);
 
-        void SetXCenter(double xCenter);
+    double GetXCenter() const { return m_xCenter; }
 
-        double GetXCenter() const { return m_xCenter; }
+    void SetLenghtBetweenPerpendicular(double lpp);
 
-        void SetLenghtBetweenPerpendicular(double lpp);
+    double GetLengthBetweenPerpendicular() const { return m_lpp; }
 
-        double GetLengthBetweenPerpendicular() const { return m_lpp; }
+    void Initialize() override;
 
-        void Initialize() override;
+   private:
 
-    private:
+    /// Compute the wind force according to the DNV standards
+    /// \param time Current time of the simulation from beginning, in seconds
+    void Compute(double time) override;
+  };
 
-        /// Compute the wind force according to the DNV standards
-        /// \param time Current time of the simulation from beginning, in seconds
-        void Compute(double time) override;
-    };
+
+  std::shared_ptr<FrWindStandardForce>
+  make_wind_standard_force(const std::string &name, std::shared_ptr<FrBody> body);
 
 
 }  // end namespace frydom

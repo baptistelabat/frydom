@@ -8,34 +8,34 @@
 
 namespace frydom {
 
-    namespace internal {
+  namespace internal {
 
-        FrLinkMaskBase::FrLinkMaskBase() {
-            ResetNconstr(7);
-        }
+    FrLinkMaskBase::FrLinkMaskBase() {
+      ResetNconstr(7);
+    }
 
-        FrLinkMaskBase::FrLinkMaskBase(int mnconstr) {
-            nconstr = mnconstr;
+    FrLinkMaskBase::FrLinkMaskBase(int mnconstr) {
+      nconstr = mnconstr;
 
-            constraints.resize(nconstr);
-            for (int i = 0; i < nconstr; i++)
-                constraints[i] = new FrConstraintTwoBodiesBase;
-        }
+      constraints.resize(nconstr);
+      for (int i = 0; i < nconstr; i++)
+        constraints[i] = new FrConstraintTwoBodiesBase;
+    }
 
-        void FrLinkMaskBase::ResetNconstr(int newnconstr) {
-                int i;
-                for (i = 0; i < nconstr; i++)
-                    if (constraints[i])
-                        delete constraints[i];
+    void FrLinkMaskBase::ResetNconstr(int newnconstr) {
+      int i;
+      for (i = 0; i < nconstr; i++)
+        if (constraints[i])
+          delete constraints[i];
 
-                nconstr = newnconstr;
+      nconstr = newnconstr;
 
-                constraints.resize(nconstr);
+      constraints.resize(nconstr);
 
-                for (i = 0; i < nconstr; i++)
-                    constraints[i] = new FrConstraintTwoBodiesBase;
-        }
+      for (i = 0; i < nconstr; i++)
+        constraints[i] = new FrConstraintTwoBodiesBase;
+    }
 
-    } // end namespace internal
+  } // end namespace internal
 
 } // end namespace frydom

@@ -19,108 +19,104 @@
 #include "frydom/core/force/FrForce.h"
 
 
-
 namespace frydom {
 
-    /// This class defined a generic manoeuvring damping model in surge, sway and yaw. Each component of the damping force
-    /// is defined as the sum of non-linear terms depending in surge, sway and yaw velocity of the body.
-    /// Specific manoeuvring damping term can be defined with shape definition (ex: "Xuuv") with :
-    /// - the first capital letter corresponding the component axis :
-    ///     X: component in surge
-    ///     Y: component in sway
-    ///     N: component in yaw
-    /// - the lower case letters corresponding to the exponent applied on ship velocity :
-    ///     u: translational velocity in surge
-    ///     v: translational velocity in sway
-    ///     w: angular velocity in yaw
-    class FrManDampingTaylorExpansion : public FrForce {
+  /// This class defined a generic manoeuvring damping model in surge, sway and yaw. Each component of the damping force
+  /// is defined as the sum of non-linear terms depending in surge, sway and yaw velocity of the body.
+  /// Specific manoeuvring damping term can be defined with shape definition (ex: "Xuuv") with :
+  /// - the first capital letter corresponding the component axis :
+  ///     X: component in surge
+  ///     Y: component in sway
+  ///     N: component in yaw
+  /// - the lower case letters corresponding to the exponent applied on ship velocity :
+  ///     u: translational velocity in surge
+  ///     v: translational velocity in sway
+  ///     w: angular velocity in yaw
+  class FrManDampingTaylorExpansion : public FrForce {
 
-        /// This structure contains the parameters defining the terms in manoeuvring damping force
-        struct TypeParam_ {
-            double val = 0.;
-            bool cm = false;
-            bool cn = false;
-            bool cp = false;
-            std::pair<int, int> m;
-            std::pair<int, int> n;
-            std::pair<int, int> p;
-        };
-
-    private:
-        std::vector<TypeParam_> m_cx;   ///< Parameters in surge motion
-        std::vector<TypeParam_> m_cy;   ///< Parameters in sway motion
-        std::vector<TypeParam_> m_cn;   ///< Parameters in yaw motion
-
-        TypeParam_ SetParams(double val, int m, int n, int p);
-
-        TypeParam_ SetParams(std::string tag, double val);
-
-        double ForceComponent(const TypeParam_ coeff, double vx, double vy, double vrz) const;
-
-    public:
-
-        /// Default constructor
-        FrManDampingTaylorExpansion() = default;
-
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "ManDampingTaylorExpansion"; }
-
-        /// Definition of a manoeuvring force component from string definition and scalar value
-        /// \param tag : shape definition (ex: "Xuuv")
-        /// \param val : coefficient value
-        void Set(std::string tag, double val);
-
-        /// Definition of a manoeuvring force component in surge from string definition and scalar value
-        /// \param tag : shape definition (ex: "uuv")
-        /// \param val : coefficient value
-        void SetX(std::string tag, double val);
-
-        /// Definition of a manoeuvring force component in sway from string definition and scalar value
-        /// \param tag : shape definition (ex: "uuv")
-        /// \param val : coefficient value
-        void SetY(std::string tag, double val);
-
-        /// Definition of a manoeuvring force component in yaw from string definition and scalar value
-        /// \param tag : shape definition (ex: "uuv")
-        /// \param val : coefficient value
-        void SetN(std::string tag, double val);
-
-        /// Definition of a manoeuvring force component in surge from exponent definition
-        /// \param val : coefficient value
-        /// \param m : exponent for surge velocity
-        /// \param n : exponent for sway velocity
-        /// \param p : exponent for yaw velocity
-        void SetX(double val, int m, int n, int p);
-
-        /// Definition of a manoeuvring force component in sway from exponent definition
-        /// \param val : coefficient value
-        /// \param m : exponent for surge velocity
-        /// \param n : exponent for sway velocity
-        /// \param p : exponent for yaw velocity
-        void SetY(double val, int m, int n, int p);
-
-        /// Definition of a manoeuvring force component in yaw from exponent
-        /// \param val : coefficient value
-        /// \param m : exponent for surge velocity
-        /// \param n : exponent for sway velocity
-        /// \param p : exponent for yaw velocity
-        void SetN(double val, int m, int n, int p);
-
-        /// Clear all coefficients definition
-        void ClearAll();
-
-    private:
-
-        /// Compute the manoeuvring force value
-        /// \param time Current time of the simulation from beginning
-        void Compute(double time) override;
+    /// This structure contains the parameters defining the terms in manoeuvring damping force
+    struct TypeParam_ {
+      double val = 0.;
+      bool cm = false;
+      bool cn = false;
+      bool cp = false;
+      std::pair<int, int> m;
+      std::pair<int, int> n;
+      std::pair<int, int> p;
     };
 
-    /// Helper to make a manoeuvring damping model, as described above.
-    /// \param body body to add the force
-    /// \return manoeuvring model to be set up
-    std::shared_ptr<FrManDampingTaylorExpansion> make_manoeuvring_model(const std::shared_ptr<FrBody>& body);
+   private:
+    std::vector<TypeParam_> m_cx;   ///< Parameters in surge motion
+    std::vector<TypeParam_> m_cy;   ///< Parameters in sway motion
+    std::vector<TypeParam_> m_cn;   ///< Parameters in yaw motion
+
+    TypeParam_ SetParams(double val, int m, int n, int p);
+
+    TypeParam_ SetParams(std::string tag, double val);
+
+    double ForceComponent(const TypeParam_ coeff, double vx, double vy, double vrz) const;
+
+   public:
+
+    /// Default constructor
+    explicit FrManDampingTaylorExpansion(const std::string &name, FrBody *body);
+
+    /// Definition of a manoeuvring force component from string definition and scalar value
+    /// \param tag : shape definition (ex: "Xuuv")
+    /// \param val : coefficient value
+    void Set(std::string tag, double val);
+
+    /// Definition of a manoeuvring force component in surge from string definition and scalar value
+    /// \param tag : shape definition (ex: "uuv")
+    /// \param val : coefficient value
+    void SetX(std::string tag, double val);
+
+    /// Definition of a manoeuvring force component in sway from string definition and scalar value
+    /// \param tag : shape definition (ex: "uuv")
+    /// \param val : coefficient value
+    void SetY(std::string tag, double val);
+
+    /// Definition of a manoeuvring force component in yaw from string definition and scalar value
+    /// \param tag : shape definition (ex: "uuv")
+    /// \param val : coefficient value
+    void SetN(std::string tag, double val);
+
+    /// Definition of a manoeuvring force component in surge from exponent definition
+    /// \param val : coefficient value
+    /// \param m : exponent for surge velocity
+    /// \param n : exponent for sway velocity
+    /// \param p : exponent for yaw velocity
+    void SetX(double val, int m, int n, int p);
+
+    /// Definition of a manoeuvring force component in sway from exponent definition
+    /// \param val : coefficient value
+    /// \param m : exponent for surge velocity
+    /// \param n : exponent for sway velocity
+    /// \param p : exponent for yaw velocity
+    void SetY(double val, int m, int n, int p);
+
+    /// Definition of a manoeuvring force component in yaw from exponent
+    /// \param val : coefficient value
+    /// \param m : exponent for surge velocity
+    /// \param n : exponent for sway velocity
+    /// \param p : exponent for yaw velocity
+    void SetN(double val, int m, int n, int p);
+
+    /// Clear all coefficients definition
+    void ClearAll();
+
+   private:
+
+    /// Compute the manoeuvring force value
+    /// \param time Current time of the simulation from beginning
+    void Compute(double time) override;
+  };
+
+  /// Helper to make a manoeuvring damping model, as described above.
+  /// \param body body to add the force
+  /// \return manoeuvring model to be set up
+  std::shared_ptr<FrManDampingTaylorExpansion>
+  make_manoeuvring_model(const std::string &name, const std::shared_ptr<FrBody> &body);
 
 }  // end namespace frydom
 

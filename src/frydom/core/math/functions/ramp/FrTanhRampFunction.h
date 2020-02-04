@@ -9,48 +9,46 @@
 
 namespace frydom {
 
-    class FrTanhRampFunction : public FrFunctionBase {
+  class FrTanhRampFunction : public FrFunctionBase {
 
-    private:
+   private:
 
-        double m_tolerance = 1e-3;
+    double m_tolerance = 1e-3;
 
-        double m_width = 1.;
-        double m_height = 1.;
-        double m_yOffset = 0.; // TODO : placer dans la classe de base !!
+    double m_width = 1.;
+    double m_height = 1.;
+    double m_yOffset = 0.; // TODO : placer dans la classe de base !!
 
-        double c_a;
+    double c_a;
 
-    public:
+   public:
 
-        FrTanhRampFunction();
+    FrTanhRampFunction();
 
-        FrTanhRampFunction(const FrTanhRampFunction& other);
+    FrTanhRampFunction(const FrTanhRampFunction &other);
 
-        FrTanhRampFunction* Clone() const;
+    FrTanhRampFunction *Clone() const;
 
-        void SetTolerance(double tolerance);
+    void SetTolerance(double tolerance);
 
-        void SetWidth(double width);
+    void SetWidth(double width);
 
-        void SetHeight(double height);
+    void SetHeight(double height);
 
-        void SetYOffset(double yOffset);
+    void SetYOffset(double yOffset);
 
-        void SetByTwoPoints(double x0, double y0, double x1, double y1);
+    void SetByTwoPoints(double x0, double y0, double x1, double y1);
 
-        std::string GetRepr() const override;
+    std::string GetRepr() const override;
 
-        std::string GetTypeName() const override { return "TanhRampFunction"; }
+   private:
+    void ComputeA();
 
-    private:
-        void ComputeA();
+   protected:
 
-    protected:
+    void Eval(double x) const override;
 
-        void Eval(double x) const override;
-
-    };
+  };
 
 }  // end namespace frydom
 

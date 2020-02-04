@@ -285,6 +285,20 @@ The command to plot the impulse response function of the body *ibody_force* alon
 
 For the impulse response functions with forward speed, use ``-pirf_speed`` instead of ``-pirf``.
 
+Mesh
+~~~~
+
+The command to plot the mesh of the body *ibody* is::
+
+    >$ hdb5tool -cal path/to/Nemoh/cal/folder -pm ibody
+
+Meshes
+~~~~~~
+
+The command to plot all the meshes is::
+
+    >$ hdb5tool -cal path/to/Nemoh/cal/folder -pms
+
 Example of use
 --------------
 
@@ -293,7 +307,7 @@ Let us condsider a floating sphere of radius :math:`1` \\(m\\) with a draft of :
 ========================= ==================================
 Parameters                Values
 ========================= ==================================
-Radius                    :math:`5` \\(m\\)
+Radius                    :math:`1` \\(m\\)
 Initial sphere location   (:math:`0`, :math:`0`, :math:`0`)
 Center of gravity         (:math:`0`, :math:`0`, :math:`0`)
 Mass	                  :math:`2094.39` \\(kg\\)
@@ -307,4 +321,4 @@ K55                       :math:`1.699\times10^1` \\(N.m\\)
 
 We want to generate the corresponding *.hdb5* file, named *Sphere.hdb5*, after doing a new discretization of the hydrodynamic database for 41 wave directions, 150 wave frequencies, computing the impulse reponse functions with a final time of :math:`100` \\(s\\) and a time step of :math:`0.01` \\(s\\), providing the hydrostatic and inertia matrices and applying a cutoff scaling function with a cutoff tume of :math:`10` \\(s\\) to :math:`K_{33}` and :math:`{Ku}_{33}`. We also want to plot the following quantities: :math:`A_{33}`, :math:`B_{44}`, :math:`F^{Diff}_{3}`, :math:`F^{Diff}_{4}`, :math:`F^{FK}_{4}`, :math:`F^{Exc}_{3}`, :math:`F^{Exc}_{4}`, :math:`K_{33}` and :math:`{Ku}_{44}`. The command is:: 
 
-    hdb5tool -cal . -dw 41 -df 150 -ft 100 -dt 0.01 -hs 1 3.082e4 1.699e1 1.699e1 0 0 0 -i 1 2094.39 837.76 837.76 837.76 0 0 0 -sym -w Sphere.hdb5 -pab 1 3 1 3 -prad 1 4 1 4 -pd 1 3 1 -pd 1 4 1 -pfk 1 3 1 -pfk 1 4 1 -pe 1 3 1 -pe 1 4 1 -pirf 1 3 1 3 -pirf_speed 1 4 1 4 -coirf 10 1 3 1 3 -coirf_speed 10 1 3 1 3
+    hdb5tool -cal . -dw 41 -df 150 -ft 100 -dt 0.01 -hs 1 3.082e4 1.699e1 1.699e1 0 0 0 -i 1 2094.39 837.76 837.76 837.76 0 0 0 -sym -w Sphere.hdb5 -pab 1 3 1 3 -prad 1 4 1 4 -pd 1 3 1 -pd 1 4 1 -pfk 1 3 1 -pfk 1 4 1 -pe 1 3 1 -pe 1 4 1 -pirf 1 3 1 3 -pirf_speed 1 4 1 4 -coirf 10 1 3 1 3 -coirf_speed 10 1 3 1 3 -pm 1

@@ -3,22 +3,29 @@
 //
 
 #include "FrPrismaticRevoluteLink.h"
+#include "frydom/logging/FrTypeNames.h"
 
 namespace frydom {
 
-    FrPrismaticRevoluteLink::FrPrismaticRevoluteLink(const std::shared_ptr<frydom::FrNode> &node1,
-                                                             const std::shared_ptr<frydom::FrNode> &node2,
-                                                             frydom::FrOffshoreSystem *system) : FrLink(node1, node2,
-                                                                                                        system) {
-        m_chronoLink->SetLinkType(PRISMATICREVOLUTE);
+  FrPrismaticRevoluteLink::FrPrismaticRevoluteLink(const std::string &name,
+                                                   FrOffshoreSystem *system,
+                                                   const std::shared_ptr<frydom::FrNode> &node1,
+                                                   const std::shared_ptr<frydom::FrNode> &node2) :
+      FrLink(name, TypeToString(this), system, node1, node2) {
 
-    }
+    m_chronoLink->SetLinkType(PRISMATICREVOLUTE);
 
-    std::shared_ptr<FrPrismaticRevoluteLink> make_prismatic_revolute_link(
-            const std::shared_ptr<FrNode>& node1, const std::shared_ptr<FrNode>& node2, FrOffshoreSystem* system) {
-        auto link = std::make_shared<FrPrismaticRevoluteLink>(node1, node2, system);
-        system->AddLink(link);
-        return link;
-    }
+  }
+
+  std::shared_ptr<FrPrismaticRevoluteLink>
+  make_prismatic_revolute_link(const std::string &name,
+                               FrOffshoreSystem *system,
+                               const std::shared_ptr<FrNode> &node1,
+                               const std::shared_ptr<FrNode> &node2) {
+
+    auto link = std::make_shared<FrPrismaticRevoluteLink>(name, system, node1, node2);
+    system->Add(link);
+    return link;
+  }
 
 } // end namespace frydom

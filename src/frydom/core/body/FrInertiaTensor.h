@@ -19,119 +19,119 @@
 #include "frydom/core/common/FrFrame.h"
 
 
-
 namespace frydom {
 
-    /**
-     * \class FrInertiaTensor
-     * \brief Class for defining the intertia tensor of a rigid body.
-     *
-     * It stores the principal inertia parameters :
-     *     - mass
-     *     - local COG position expressed in the body reference frame
-     *     - inertia matrix expressed at COG in the body reference frame
-     *
-     * Internally, the frame convention used is NWU but it is still possible to get or set parameters in any frame
-     * convention
-     */
-    class FrInertiaTensor {
+  /**
+   * \class FrInertiaTensor
+   * \brief Class for defining the intertia tensor of a rigid body.
+   *
+   * It stores the principal inertia parameters :
+   *     - mass
+   *     - local COG position expressed in the body reference frame
+   *     - inertia matrix expressed at COG in the body reference frame
+   *
+   * Internally, the frame convention used is NWU but it is still possible to get or set parameters in any frame
+   * convention
+   */
+  class FrInertiaTensor {
 
-        using InertiaMatrix = mathutils::Matrix33<double>;
+    using InertiaMatrix = mathutils::Matrix33<double>;
 
-    private:
+   private:
 
-        double m_mass;
+    double m_mass;
 
-        Position m_cogPosition;  ///< COG Position, stored internally in NWU convention
+    Position m_cogPosition;  ///< COG Position, stored internally in NWU convention
 
-        InertiaMatrix m_inertiaAtCOG;  ///< Inertia matrix expressed at COG in reference frame
+    InertiaMatrix m_inertiaAtCOG;  ///< Inertia matrix expressed at COG in reference frame
 
-    public:
+   public:
 
-        /// Constructor from standard inertia parameters. Inertia coefficients are expressed in coeffsFrame that can be
-        /// different from the cogPosition. Both coeffsFrame and cogPosition are relative to body reference coordinate
-        /// system. Mass is in kg. The frame convention holds on inertia coefficients and COG Position.
-        FrInertiaTensor(double mass,
-                         double Ixx, double Iyy, double Izz,
-                         double Ixy, double Ixz, double Iyz,
-                         const FrFrame& coeffsFrame, const Position& cogPosition, FRAME_CONVENTION fc);
+    /// Constructor from standard inertia parameters. Inertia coefficients are expressed in coeffsFrame that can be
+    /// different from the cogPosition. Both coeffsFrame and cogPosition are relative to body reference coordinate
+    /// system. Mass is in kg. The frame convention holds on inertia coefficients and COG Position.
+    FrInertiaTensor(double mass,
+                    double Ixx, double Iyy, double Izz,
+                    double Ixy, double Ixz, double Iyz,
+                    const FrFrame &coeffsFrame, const Position &cogPosition, FRAME_CONVENTION fc);
 
-        /// Constructor from standard inertia parameters. Inertia coefficients are expressed at COG frame that is
-        /// expressed relative to body reference coordinate system. Mass is in kg. The frame convention holds on
-        /// inertia coefficients.
-        FrInertiaTensor(double mass,
-                         double Ixx, double Iyy, double Izz,
-                         double Ixy, double Ixz, double Iyz,
-                         const Position& cogPos, FRAME_CONVENTION fc);
+    /// Constructor from standard inertia parameters. Inertia coefficients are expressed at COG frame that is
+    /// expressed relative to body reference coordinate system. Mass is in kg. The frame convention holds on
+    /// inertia coefficients.
+    FrInertiaTensor(double mass,
+                    double Ixx, double Iyy, double Izz,
+                    double Ixy, double Ixz, double Iyz,
+                    const Position &cogPos, FRAME_CONVENTION fc);
 
-        FrInertiaTensor(const FrInertiaTensor& other);
+    FrInertiaTensor(const FrInertiaTensor &other);
 
-        /// Get the mass in kg
-        double GetMass() const;
+    /// Get the mass in kg
+    double GetMass() const;
 
-        /// Get the COG position WRT body reference coordinate system
-        const Position GetCOGPosition(FRAME_CONVENTION fc) const;
+    /// Get the COG position WRT body reference coordinate system
+    const Position GetCOGPosition(FRAME_CONVENTION fc) const;
 
-        /// Get the inertia coefficients in the body reference coordinate system and expressed at COG.
-        void GetInertiaCoeffsAtCOG(double &Ixx, double &Iyy, double &Izz,
-                                   double &Ixy, double &Ixz, double &Iyz,
-                                   FRAME_CONVENTION fc) const;
+    /// Get the inertia coefficients in the body reference coordinate system and expressed at COG.
+    void GetInertiaCoeffsAtCOG(double &Ixx, double &Iyy, double &Izz,
+                               double &Ixy, double &Ixz, double &Iyz,
+                               FRAME_CONVENTION fc) const;
 
-        InertiaMatrix GetInertiaMatrixAtCOG(FRAME_CONVENTION fc) const;
+    InertiaMatrix GetInertiaMatrixAtCOG(FRAME_CONVENTION fc) const;
 
-        /// Get the inertia coefficients in the body reference coordinate system and expressed at a specified reference
-        /// frame, relative to the body reference frame.
-        void GetInertiaCoeffsAtFrame(double &Ixx, double &Iyy, double &Izz,
-                                   double &Ixy, double &Ixz, double &Iyz,
-                                   const FrFrame& frame,
-                                   FRAME_CONVENTION fc) const;
+    /// Get the inertia coefficients in the body reference coordinate system and expressed at a specified reference
+    /// frame, relative to the body reference frame.
+    void GetInertiaCoeffsAtFrame(double &Ixx, double &Iyy, double &Izz,
+                                 double &Ixy, double &Ixz, double &Iyz,
+                                 const FrFrame &frame,
+                                 FRAME_CONVENTION fc) const;
 
-        InertiaMatrix GetInertiaMatrixAtFrame(const FrFrame& frame, FRAME_CONVENTION fc) const;
+    InertiaMatrix GetInertiaMatrixAtFrame(const FrFrame &frame, FRAME_CONVENTION fc) const;
 
-        /// Get the inertia matrix of a point mass
-        static InertiaMatrix GetPointMassInertiaMatrix(double mass, const Position& PG);
+    /// Get the inertia matrix of a point mass
+    static InertiaMatrix GetPointMassInertiaMatrix(double mass, const Position &PG);
 
-        Matrix66<double> GetMassMatrixAtCOG() const;
+    Matrix66<double> GetMassMatrixAtCOG() const;
 
-        FrInertiaTensor Add(const FrInertiaTensor& tensor, const FrFrame& frame2Toframe1) const;
+    FrInertiaTensor Add(const FrInertiaTensor &tensor, const FrFrame &frame2Toframe1) const;
 
-        void Add(const FrInertiaTensor& tensor, const FrFrame& frame2Toframe1);
+    void Add(const FrInertiaTensor &tensor, const FrFrame &frame2Toframe1);
 
-    protected:
+   protected:
 
-        void SetInertiaTensorAtCOG(double mass, const InertiaMatrix& inertia, const Position& cogPos, FRAME_CONVENTION fc);
+    void SetInertiaTensorAtCOG(double mass, const InertiaMatrix &inertia, const Position &cogPos, FRAME_CONVENTION fc);
 
-        void SetInertiaTensorAtFrame(double mass, const InertiaMatrix& inertia,
-                                     const FrFrame& coeffsFrame, const Position& cogPos, FRAME_CONVENTION fc);
+    void SetInertiaTensorAtFrame(double mass, const InertiaMatrix &inertia,
+                                 const FrFrame &coeffsFrame, const Position &cogPos, FRAME_CONVENTION fc);
 
-    private:
+   private:
 
-        friend std::ostream&operator<<(std::ostream& os, const FrInertiaTensor& inertia);
-        std::ostream& cout(std::ostream& os) const;
+    friend std::ostream &operator<<(std::ostream &os, const FrInertiaTensor &inertia);
 
-    };
+    std::ostream &cout(std::ostream &os) const;
+
+  };
 
 
-    namespace internal {
+  namespace internal {
 
-        /// Swap the frame convention (NWU/NED) of inertia coefficients
-        inline void SwapInertiaFrameConvention(double& Ixx, double& Iyy, double& Izz,
-                                               double& Ixy, double& Ixz, double& Iyz) {
-            Ixy = -Ixy;
-            Ixz = -Ixz;
-        }
+    /// Swap the frame convention (NWU/NED) of inertia coefficients
+    inline void SwapInertiaFrameConvention(double &Ixx, double &Iyy, double &Izz,
+                                           double &Ixy, double &Ixz, double &Iyz) {
+      Ixy = -Ixy;
+      Ixz = -Ixz;
+    }
 
-        /// Swap the frame convention (NWU/NED) of inertia coefficients
-        inline void SwapInertiaFrameConvention(mathutils::Matrix33<double>& matrix) {
+    /// Swap the frame convention (NWU/NED) of inertia coefficients
+    inline void SwapInertiaFrameConvention(mathutils::Matrix33<double> &matrix) {
 
-            matrix.at(0,1) = -matrix.at(0,1);
-            matrix.at(0,2) = -matrix.at(0,2);
-            matrix.at(1,0) = -matrix.at(1,0);
-            matrix.at(2,0) = -matrix.at(2,0);
+      matrix.at(0, 1) = -matrix.at(0, 1);
+      matrix.at(0, 2) = -matrix.at(0, 2);
+      matrix.at(1, 0) = -matrix.at(1, 0);
+      matrix.at(2, 0) = -matrix.at(2, 0);
 
-        }
+    }
 
-    }  // end namespace frydom::internal
+  }  // end namespace frydom::internal
 
 
 }  // end namespace frydom

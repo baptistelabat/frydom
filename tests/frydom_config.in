@@ -1,0 +1,8 @@
+{
+    "frydom_config": {
+
+        "log_folder": "@FRYDOM_LOG_FOLDER@",
+        "data_folder": "@FRYDOM_DATA_FOLDER@"
+
+    }
+}

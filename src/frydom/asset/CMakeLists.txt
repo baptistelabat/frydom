@@ -14,9 +14,9 @@ set(SRC_FILES
         )
 
 set(FRYDOM_ASSET_SOURCES "")
-foreach(file ${SRC_FILES})
+foreach (file ${SRC_FILES})
     list(APPEND FRYDOM_ASSET_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
-endforeach()
+endforeach ()
 
 list(APPEND FRYDOM_ASSET_SOURCES ${FRYDOM_SHAPE_SOURCES})
 

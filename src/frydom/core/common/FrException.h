@@ -18,26 +18,26 @@
 
 namespace frydom {
 
-    /**
-     * \class FrException
-     * \brief Class for defining exceptions into FRyDoM
-     */
-    class FrException : public std::exception {
+  /**
+   * \class FrException
+   * \brief Class for defining exceptions into FRyDoM
+   */
+  class FrException : public std::exception {
 
-    protected:
-        std::string msg_;
+   protected:
+    std::string msg_;
 
-    public:
+   public:
 
-        explicit FrException(const char* message);
+    explicit FrException(const char *message);
 
-        explicit FrException(const std::string& message);
+    explicit FrException(const std::string &message);
 
-        ~FrException() throw() override;
+    ~FrException() throw() override;
 
-        const char* what() const throw() override;
+    const char *what() const throw() override;
 
-    };
+  };
 
 } // end namespace frydom
 

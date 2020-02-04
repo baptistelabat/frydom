@@ -25,42 +25,44 @@
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/mesh/FrHydroMesh.h"
-#include "FrLinearExcitationForceBase.h"
+#include "FrLinearHDBForce.h"
 
 namespace frydom {
 
-    // Forward declarations.
-    class FrHydroDB;
-    class FrBody;
-    class FrEquilibriumFrame;
+  // Forward declarations.
+  class FrHydroDB;
 
-    /**
-     * \class FrNonLinearExcitationForce
-     * \brief Class for computing the nonlinear excitation loads (nonlinear FK, linear diffraction).
-     */
-    class FrNonLinearFroudeKrylovForce : public FrForce {
+  class FrBody;
 
-    private:
+  class FrEquilibriumFrame;
 
-        std::shared_ptr<FrHydroMesh> m_hydroMesh;   ///< clipped mesh container
+  /**
+   * \class FrNonLinearExcitationForce
+   * \brief Class for computing the nonlinear excitation loads (nonlinear FK, linear diffraction).
+   */
+  class FrNonLinearFroudeKrylovForce : public FrForce {
 
-    public:
+   private:
 
-        explicit FrNonLinearFroudeKrylovForce(const std::shared_ptr<FrHydroMesh>& HydroMesh);
+    std::shared_ptr<FrHydroMesh> m_hydroMesh;   ///< clipped mesh container
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "NonLinearFroudeKrylovForce"; }
+   public:
 
-    private:
+    FrNonLinearFroudeKrylovForce(const std::string &name,
+                                 FrBody *body,
+                                 std::shared_ptr<FrHydroMesh> HydroMesh);
 
-        void Compute(double time) override;
+   private:
 
-    };
+    void Compute(double time) override;
 
-    /// This function creates a (fully or weakly) nonlinear Froude-Krylov force object.
-    std::shared_ptr<FrNonLinearFroudeKrylovForce>
-    make_nonlinear_froude_krylov_force(std::shared_ptr<FrBody> body, std::shared_ptr<FrHydroMesh> HydroMesh);
+  };
+
+  /// This function creates a (fully or weakly) nonlinear Froude-Krylov force object.
+  std::shared_ptr<FrNonLinearFroudeKrylovForce>
+  make_nonlinear_froude_krylov_force(const std::string &name,
+                                     std::shared_ptr<FrBody> body,
+                                     std::shared_ptr<FrHydroMesh> HydroMesh);
 
 }  // end namespace frydom
 

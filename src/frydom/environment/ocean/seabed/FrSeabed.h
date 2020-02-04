@@ -19,187 +19,184 @@
 
 namespace frydom {
 
-    // Forward declarations
-    class FrOcean;
-    class FrSeabedGridAsset;
+  // Forward declarations
+  class FrOcean;
 
-    /**
-     * \class FrSeabed
-     * \brief Class for defining a seabed with either a finite or infinite water depth.
-     */
-    class FrSeabed  : public FrObject {
-    protected:
+  class FrSeabedGridAsset;
 
-        FrOcean *m_ocean;            ///< Pointer to the ocean containing this asset
-        bool m_infiniteDepth = false; ///< true if the infinite depth condition is applied
+  /**
+   * \class FrSeabed
+   * \brief Class for defining a seabed with either a finite or infinite water depth.
+   */
+  class FrSeabed : public FrObject {
+   protected:
 
-    public:
-        /// Default constructor
-        /// \param ocean ocean containing this seabed
-        explicit FrSeabed(FrOcean* ocean);
+    FrOcean *m_ocean;            ///< Pointer to the ocean containing this asset
+    bool m_infiniteDepth = false; ///< true if the infinite depth condition is applied
 
-        /// Default destructor
-        ~FrSeabed() = default;
+   public:
+    /// Default constructor
+    /// \param ocean ocean containing this seabed
+    explicit FrSeabed(FrOcean *ocean);
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "Seabed"; }
+    /// Default destructor
+    ~FrSeabed() = default;
 
-        //---------------------------- Asset ----------------------------//
+    //---------------------------- Asset ----------------------------//
 
-        /// Get the seabed grid asset
-        /// \return seabed grid asset
-        virtual FrSeabedGridAsset * GetSeabedGridAsset() = 0;
+    /// Get the seabed grid asset
+    /// \return seabed grid asset
+    virtual FrSeabedGridAsset *GetSeabedGridAsset() = 0;
 
-        //---------------------------- Seabed elements Getters ----------------------------//
+    //---------------------------- Seabed elements Getters ----------------------------//
 
-        /// Get the ocean containing this seabed
-        /// \return ocean containing this seabed
-        FrOcean* GetOcean() const;
+    /// Get the ocean containing this seabed
+    /// \return ocean containing this seabed
+    FrOcean *GetOcean() const;
 
-        /// Set the mean bathymetry of the seabed (negative in NWU/positive in NED)
-        /// \param bathymetry mean bathymetry of the seabed
-        /// \param fc frame convention (NED/NWU)
-        virtual void SetBathymetry(double bathymetry, FRAME_CONVENTION fc) = 0;
+    /// Set the mean bathymetry of the seabed (negative in NWU/positive in NED)
+    /// \param bathymetry mean bathymetry of the seabed
+    /// \param fc frame convention (NED/NWU)
+    virtual void SetBathymetry(double bathymetry, FRAME_CONVENTION fc) = 0;
 
-        /// Get the mean bathymetry of the seabed
-        /// \param fc frame convention (NED/NWU)
-        /// \return mean bathymetry of the seabed
-        virtual const double GetBathymetry(FRAME_CONVENTION fc) const = 0;
+    /// Get the mean bathymetry of the seabed
+    /// \param fc frame convention (NED/NWU)
+    /// \return mean bathymetry of the seabed
+    virtual const double GetBathymetry(FRAME_CONVENTION fc) const = 0;
 
-        /// Get the local bathymetry at the position (x,y)
-        /// \param x x position
-        /// \param y y position
-        /// \param fc frame convention (NED/NWU)
-        /// \return local bathymetry
-        virtual const double GetBathymetry(double x, double y, FRAME_CONVENTION fc) const = 0;
+    /// Get the local bathymetry at the position (x,y)
+    /// \param x x position
+    /// \param y y position
+    /// \param fc frame convention (NED/NWU)
+    /// \return local bathymetry
+    virtual const double GetBathymetry(double x, double y, FRAME_CONVENTION fc) const = 0;
 
-        /// Check if the infinite depth condition is applied. If true, a FrNullSeabed is instantiated, otherwise it is a
-        /// FrMeanSeabed.
-        /// \return true if the infinite depth condition is applied.
-        bool GetInfiniteDepth();
+    /// Check if the infinite depth condition is applied. If true, a FrNullSeabed is instantiated, otherwise it is a
+    /// FrMeanSeabed.
+    /// \return true if the infinite depth condition is applied.
+    bool GetInfiniteDepth();
 
-        //---------------------------- Update-Initialize-StepFinalize ----------------------------//
+    //---------------------------- Update-Initialize-StepFinalize ----------------------------//
 
-        /// Update the state of the seabed
-        virtual void Update(double time) = 0;
+    /// Update the state of the seabed
+    virtual void Update(double time) = 0;
 
-        /// Initialize the state of the seabed
-        void Initialize() override = 0;
+    /// Initialize the state of the seabed
+    void Initialize() override = 0;
 
-        /// Method called at the send of a time step. Logging may be used here
-        void StepFinalize() override = 0;
+    /// Method called at the send of a time step. Logging may be used here
+    void StepFinalize() override = 0;
 
-    };
+  };
 
-    /**
-     * \class FrNullSeabed
-     * \brief Class for defining a seabed in case of infinite water depth.
-     */
-    class FrNullSeabed  : public FrSeabed {
-    public:
+  /**
+   * \class FrNullSeabed
+   * \brief Class for defining a seabed in case of infinite water depth.
+   */
+  class FrNullSeabed : public FrSeabed {
+   public:
 
-        /// Default constructor
-        /// \param ocean ocean containing this seabed
-        explicit FrNullSeabed(FrOcean* ocean);
+    /// Default constructor
+    /// \param ocean ocean containing this seabed
+    explicit FrNullSeabed(FrOcean *ocean);
 
-        //---------------------------- Asset ----------------------------//
+    //---------------------------- Asset ----------------------------//
 
-        /// Get the seabed grid asset
-        /// \return seabed grid asset
-        FrSeabedGridAsset * GetSeabedGridAsset() override;
+    /// Get the seabed grid asset
+    /// \return seabed grid asset
+    FrSeabedGridAsset *GetSeabedGridAsset() override;
 
-        //---------------------------- Seabed elements Getters ----------------------------//
+    //---------------------------- Seabed elements Getters ----------------------------//
 
-        /// Set the mean bathymetry of the seabed (negative in NWU/positive in NED)
-        /// \param bathymetry mean bathymetry of the seabed
-        /// \param fc frame convention (NED/NWU)
-        void SetBathymetry(double bathymetry, FRAME_CONVENTION fc) override;
+    /// Set the mean bathymetry of the seabed (negative in NWU/positive in NED)
+    /// \param bathymetry mean bathymetry of the seabed
+    /// \param fc frame convention (NED/NWU)
+    void SetBathymetry(double bathymetry, FRAME_CONVENTION fc) override;
 
-        /// Get the mean bathymetry of the seabed
-        /// \param fc frame convention (NED/NWU)
-        /// \return mean bathymetry of the seabed
-        const double GetBathymetry(FRAME_CONVENTION fc) const override;
+    /// Get the mean bathymetry of the seabed
+    /// \param fc frame convention (NED/NWU)
+    /// \return mean bathymetry of the seabed
+    const double GetBathymetry(FRAME_CONVENTION fc) const override;
 
-        /// Get the local bathymetry at the position (x,y)
-        /// \param x x position
-        /// \param y y position
-        /// \param fc frame convention (NED/NWU)
-        /// \return local bathymetry
-        const double GetBathymetry(double x, double y, FRAME_CONVENTION fc) const override;
+    /// Get the local bathymetry at the position (x,y)
+    /// \param x x position
+    /// \param y y position
+    /// \param fc frame convention (NED/NWU)
+    /// \return local bathymetry
+    const double GetBathymetry(double x, double y, FRAME_CONVENTION fc) const override;
 
-        //---------------------------- Update-Initialize-StepFinalize ----------------------------//
+    //---------------------------- Update-Initialize-StepFinalize ----------------------------//
 
-        /// Update the state of the seabed
-        void Update(double time) override;
+    /// Update the state of the seabed
+    void Update(double time) override;
 
-        /// Initialize the state of the seabed
-        void Initialize() override;
+    /// Initialize the state of the seabed
+    void Initialize() override;
 
-        /// Method called at the send of a time step. Logging may be used here
-        void StepFinalize() override;
-    };
+    /// Method called at the send of a time step. Logging may be used here
+    void StepFinalize() override;
+  };
 
-    /**
-     * \class FrMeanSeabed
-     * \brief Class for defining a mean seabed in case of finite and constant water depth.
-     */
-    class FrMeanSeabed  : public FrSeabed {
-    protected:
+  /**
+   * \class FrMeanSeabed
+   * \brief Class for defining a mean seabed in case of finite and constant water depth.
+   */
+  class FrMeanSeabed : public FrSeabed {
+   protected:
 
-        bool m_showSeabed = true;     ///< Boolean checking if the seabed is shown/exists
-                                      ///< It is turned to false also if the infinite depth condition is enforced.
-        std::shared_ptr<FrSeabedGridAsset> m_SeabedGridAsset;    ///> Seabed grid asset, containing also its asset visualization
-        double m_bathymetry = -30;    ///< Mean bathymetry, in NWU
+    bool m_showSeabed = true;     ///< Boolean checking if the seabed is shown/exists
+    ///< It is turned to false also if the infinite depth condition is enforced.
+    std::shared_ptr<FrSeabedGridAsset> m_SeabedGridAsset;    ///> Seabed grid asset, containing also its asset visualization
+    double m_bathymetry = -30;    ///< Mean bathymetry, in NWU
 
-        //TODO : consider varying bathymetry
+    //TODO : consider varying bathymetry
 
-    public:
+   public:
 
-        /// Default constructor
-        /// \param ocean ocean containing this seabed
-        explicit FrMeanSeabed(FrOcean* ocean);
+    /// Default constructor
+    /// \param ocean ocean containing this seabed
+    explicit FrMeanSeabed(FrOcean *ocean);
 
-        /// Default destructor
-        ~FrMeanSeabed() = default;
+    /// Default destructor
+    ~FrMeanSeabed() = default;
 
-        //---------------------------- Asset ----------------------------//
+    //---------------------------- Asset ----------------------------//
 
-        /// Get the seabed grid asset
-        /// \return seabed grid asset
-        FrSeabedGridAsset * GetSeabedGridAsset() override;
+    /// Get the seabed grid asset
+    /// \return seabed grid asset
+    FrSeabedGridAsset *GetSeabedGridAsset() override;
 
-        //---------------------------- Seabed elements Getters ----------------------------//
+    //---------------------------- Seabed elements Getters ----------------------------//
 
-        /// Set the mean bathymetry of the seabed (negative in NWU/positive in NED)
-        /// \param bathymetry mean bathymetry of the seabed
-        /// \param fc frame convention (NED/NWU)
-        void SetBathymetry(double bathymetry, FRAME_CONVENTION fc) override;
+    /// Set the mean bathymetry of the seabed (negative in NWU/positive in NED)
+    /// \param bathymetry mean bathymetry of the seabed
+    /// \param fc frame convention (NED/NWU)
+    void SetBathymetry(double bathymetry, FRAME_CONVENTION fc) override;
 
-        /// Get the mean bathymetry of the seabed
-        /// \param fc frame convention (NED/NWU)
-        /// \return mean bathymetry of the seabed
-        const double GetBathymetry(FRAME_CONVENTION fc) const override;
+    /// Get the mean bathymetry of the seabed
+    /// \param fc frame convention (NED/NWU)
+    /// \return mean bathymetry of the seabed
+    const double GetBathymetry(FRAME_CONVENTION fc) const override;
 
-        /// Get the local bathymetry at the position (x,y)
-        /// \param x x position
-        /// \param y y position
-        /// \param fc frame convention (NED/NWU)
-        /// \return local bathymetry
-        const double GetBathymetry(double x, double y, FRAME_CONVENTION fc) const override;
+    /// Get the local bathymetry at the position (x,y)
+    /// \param x x position
+    /// \param y y position
+    /// \param fc frame convention (NED/NWU)
+    /// \return local bathymetry
+    const double GetBathymetry(double x, double y, FRAME_CONVENTION fc) const override;
 
-        //---------------------------- Update-Initialize-StepFinalize ----------------------------//
+    //---------------------------- Update-Initialize-StepFinalize ----------------------------//
 
-        /// Update the state of the seabed
-        void Update(double time) override;
+    /// Update the state of the seabed
+    void Update(double time) override;
 
-        /// Initialize the state of the seabed
-        void Initialize() override;
+    /// Initialize the state of the seabed
+    void Initialize() override;
 
-        /// Method called at the send of a time step. Logging may be used here
-        void StepFinalize() override;
+    /// Method called at the send of a time step. Logging may be used here
+    void StepFinalize() override;
 
-    };
+  };
 
 }  // end namespace frydom
 

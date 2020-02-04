@@ -17,8 +17,8 @@
 
 namespace frydom {
 
-    FrEnvironment* FrWind::GetEnvironment() const {
-        return m_atmosphere->GetEnvironment();
-    }
+  FrEnvironment *FrWind::GetEnvironment() const {
+    return m_atmosphere->GetEnvironment();
+  }
 
 }  // end namespace frydom

@@ -18,65 +18,43 @@
 namespace frydom {
 
 
-    /// Class for representing a ramp
-    ///
-    ///             --------
-    ///            /
-    ///           /
-    ///          /
-    /// --------
-    ///
-    ///
-    class FrLinearRampFunction : public FrFunctionBase {
+  /// Class for representing a ramp
+  ///
+  ///             --------
+  ///            /
+  ///           /
+  ///          /
+  /// --------
+  ///
+  ///
+  class FrLinearRampFunction : public FrFunctionBase {
 
-    private:
+   private:
+    double m_x0 = 0., m_x1 = 1., m_y0 = 0., m_y1 = 1.;
 
-//        double m_slope = 1.;
-//        double m_intercept = 0.;
-//
-//        double m_x0 = 0.; // TODO : plutot reposer sur l'offset de la fonction de base !
-//        double m_x1 = 1.;
+   public:
 
-        double m_x0 = 0., m_x1 = 1., m_y0 = 0., m_y1 = 1.;
+    FrLinearRampFunction();
 
-    public:
+    FrLinearRampFunction(double x0, double y0, double x1, double y1);
 
-        FrLinearRampFunction();
+    FrLinearRampFunction(const FrLinearRampFunction &other);
 
-        FrLinearRampFunction(double x0, double y0, double x1, double y1);
+    FrLinearRampFunction *Clone() const override;
 
-        FrLinearRampFunction(const FrLinearRampFunction& other);
+    void SetByTwoPoints(double x0, double y0, double x1, double y1);
 
-        FrLinearRampFunction* Clone() const override;
+    void GetByTwoPoints(double &x0, double &y0, double &x1, double &y1);
 
-//        void SetY0(double intercept);
-//
-//        double GetY0() const;
-//
-//        void SetSlope(double slope);
-//
-//        double GetSlope() const;
-//
-//        void SetInterceptAndSlope(double intercept, double slope);
-//
-//        void SetXWindow(double x0, double x1);
-//
-        void SetByTwoPoints(double x0, double y0, double x1, double y1);
-        
-        void GetByTwoPoints(double& x0, double& y0, double& x1, double& y1 );
+    void Initialize() override;
 
-        void Initialize() override;
+    std::string GetRepr() const override;
 
-        std::string GetRepr() const override;
-
-        std::string GetTypeName() const override { return "LinearRampFunction"; }
-
-    protected:
-        void Eval(double x) const override;
+   protected:
+    void Eval(double x) const override;
 
 
-
-    };
+  };
 
 
 }  // end namespace frydom

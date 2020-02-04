@@ -17,8 +17,8 @@ from distutils.spawn import find_executable
 
 ffmpeg = find_executable('ffmpeg')
 
-if __name__ == '__main__':
 
+def main():
     if sys.argv[1] is not None:
         filename = str(sys.argv[1])
     else:
@@ -32,3 +32,7 @@ if __name__ == '__main__':
           "-r", "100",  # TODO: permettre de regler les fps ici...
           filename
           ])
+
+if __name__ == '__main__':
+    main()
+    

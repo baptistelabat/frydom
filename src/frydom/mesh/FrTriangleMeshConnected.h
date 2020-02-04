@@ -18,58 +18,56 @@
 #include "chrono/geometry/ChTriangleMeshConnected.h"
 
 
-
 namespace frydom {
 
-    // Forward declaration
-    class FrRotation;
-    class Direction;
+  // Forward declaration
+  class FrRotation;
 
-    // FIXME : ne plus reposer sur l'heritage chrono. Proposer une fonction de conversion depuis openmesh vers
-    // le format de maillage chrono
+  class Direction;
 
-    /**
-     * \class FrTriangleMeshConnected
-     * \brief Class for dealing with connected triangle meshes.
-     */
-    class FrTriangleMeshConnected : public chrono::geometry::ChTriangleMeshConnected {
+  // FIXME : ne plus reposer sur l'heritage chrono. Proposer une fonction de conversion depuis openmesh vers
+  // le format de maillage chrono
 
-      public:
+  /**
+   * \class FrTriangleMeshConnected
+   * \brief Class for dealing with connected triangle meshes.
+   */
+  class FrTriangleMeshConnected : public chrono::geometry::ChTriangleMeshConnected {
 
-        ~FrTriangleMeshConnected() {
-            std::cout << "Mesh has been destroyed" << std::endl;
-        }
+   public:
 
-        /// Add a vertex to the mesh
-        void addVertex(chrono::ChVector<double> vertex);
+    /// Add a vertex to the mesh
+    void addVertex(chrono::ChVector<double> vertex);
 
-        /// Add a list of vertex to the mesh
-        void addVertex(std::vector<chrono::ChVector<>> vertices);
+    /// Add a list of vertex to the mesh
+    void addVertex(std::vector<chrono::ChVector<>> vertices);
 
-        /// Add a face to the mesh
-        void addTriangle(chrono::ChVector<int> triangle);
+    /// Add a face to the mesh
+    void addTriangle(chrono::ChVector<int> triangle);
 
-        /// Add a list of faces to the mesh
-        void addTriangle(std::vector<chrono::ChVector<int>> faces);
+    /// Add a list of faces to the mesh
+    void addTriangle(std::vector<chrono::ChVector<int>> faces);
 
-        void Scale(double scalingFactor);
+    void Scale(double scalingFactor);
 
-        void Rotate(const FrRotation& rotation);
+    void Rotate(const FrRotation &rotation);
 
-        void Translate(const Direction& direction);
+    void Translate(const Direction &direction);
 
-        unsigned long GetNbVertices();
+    unsigned long GetNbVertices();
 
-        using VertexIterator = std::vector<chrono::ChVector<double>>::iterator;
-        using VertexConstIterator = std::vector<chrono::ChVector<double>>::const_iterator;
+    using VertexIterator = std::vector<chrono::ChVector<double>>::iterator;
+    using VertexConstIterator = std::vector<chrono::ChVector<double>>::const_iterator;
 
-        VertexIterator vertex_begin();
-        VertexIterator vertex_end();
+    VertexIterator vertex_begin();
 
-        VertexConstIterator vertex_begin() const;
-        VertexConstIterator vertex_end() const;
+    VertexIterator vertex_end();
 
-    };
+    VertexConstIterator vertex_begin() const;
+
+    VertexConstIterator vertex_end() const;
+
+  };
 
 }  // end namespace frydom
 

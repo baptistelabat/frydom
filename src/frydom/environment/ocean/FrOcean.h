@@ -19,162 +19,161 @@
 #include "frydom/core/common/FrObject.h"
 
 
-
 namespace frydom {
 
-    // Forward Declarations
-    class FrEnvironment;
-    class FrFreeSurface;
-    class FrCurrent;
-    class FrSeabed;
-    class FrFluidProperties;
+  // Forward Declarations
+  class FrEnvironment;
+
+  class FrFreeSurface;
+
+  class FrCurrent;
+
+  class FrSeabed;
+
+  class FrFluidProperties;
 
 
-    /**
-     * \class FrOcean
-     * \brief Class for defining the ocean.
-     */
-    class FrOcean : public FrObject {
+  /**
+   * \class FrOcean
+   * \brief Class for defining the ocean.
+   */
+  class FrOcean : public FrObject {
 
-    private:
+   private:
 
-        FrEnvironment* m_environment;    ///> pointer to the container
+    FrEnvironment *m_environment;    ///> pointer to the container
 
-        //---------------------------- FrOcean elements ----------------------------//
+    //---------------------------- FrOcean elements ----------------------------//
 
-        std::unique_ptr <FrSeabed> m_seabed;               ///> Seabed element, with bathymetry model information
-        std::unique_ptr <FrFreeSurface> m_freeSurface;     ///> Free surface element, with tidal, wavefield models information
-        std::unique_ptr <FrCurrent> m_current;             ///> Current, with current model information
-        std::unique_ptr <FrFluidProperties> m_waterProp;    ///> Water properties
+    std::unique_ptr<FrSeabed> m_seabed;               ///> Seabed element, with bathymetry model information
+    std::unique_ptr<FrFreeSurface> m_freeSurface;     ///> Free surface element, with tidal, wavefield models information
+    std::unique_ptr<FrCurrent> m_current;             ///> Current, with current model information
+    std::unique_ptr<FrFluidProperties> m_waterProp;    ///> Water properties
 
-    public:
+   public:
 
-        /// Default constructor
-        /// \param environment environment containing this ocean
-        explicit FrOcean(FrEnvironment* environment);
+    /// Default constructor
+    /// \param environment environment containing this ocean
+    explicit FrOcean(FrEnvironment *environment);
 
-        /// Get the environment containing this ocean
-        /// \return environment containing this ocean
-        FrEnvironment* GetEnvironment() const;
+    /// Get the environment containing this ocean
+    /// \return environment containing this ocean
+    FrEnvironment *GetEnvironment() const;
 
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "Ocean"; }
+    //---------------------------- Assets ----------------------------//
 
-        //---------------------------- Assets ----------------------------//
+    /// Set if the seabed is to be shown/exist
+    /// \param showSeabed showseabed true means the seabed exists
+    void ShowSeabed(bool showSeabed);
 
-        /// Set if the seabed is to be shown/exist
-        /// \param showSeabed showseabed true means the seabed exists
-        void ShowSeabed(bool showSeabed);
+    /// Set if the free surface is to be shown/exist
+    /// \param showFreeSurface showfreesurface true means the free surface exists
+    void ShowFreeSurface(bool showFreeSurface);
 
-        /// Set if the free surface is to be shown/exist
-        /// \param showFreeSurface showfreesurface true means the free surface exists
-        void ShowFreeSurface(bool showFreeSurface);
+    //---------------------------- Fluid properties methods ----------------------------//
 
-        //---------------------------- Fluid properties methods ----------------------------//
+    /// Set the fluid temperature
+    /// \param Temperature temperature of the fluid
+    void SetTemperature(double Temperature);
 
-        /// Set the fluid temperature
-        /// \param Temperature temperature of the fluid
-        void SetTemperature(double Temperature);
+    /// Get the fluid temperature
+    /// \return Temperature temperature of the fluid
+    double GetTemperature() const;
 
-        /// Get the fluid temperature
-        /// \return Temperature temperature of the fluid
-        double GetTemperature() const;
+    /// Set the fluid density
+    /// \param Density density of the fluid
+    void SetDensity(double Density);
 
-        /// Set the fluid density
-        /// \param Density density of the fluid
-        void SetDensity(double Density);
+    /// Get the fluid density
+    /// \return Density density of the fluid
+    double GetDensity() const;
 
-        /// Get the fluid density
-        /// \return Density density of the fluid
-        double GetDensity() const;
+    /// Set the fluid dynamic viscosity
+    /// \param DynamicViscosity dynamic viscosity of the fluid
+    void SetDynamicViscosity(double DynamicViscosity);
 
-        /// Set the fluid dynamic viscosity
-        /// \param DynamicViscosity dynamic viscosity of the fluid
-        void SetDynamicViscosity(double DynamicViscosity);
+    /// Get the fluid dynamic viscosity
+    /// \return DynamicViscosity dynamic viscosity of the fluid
+    double GetDynamicViscosity() const;
 
-        /// Get the fluid dynamic viscosity
-        /// \return DynamicViscosity dynamic viscosity of the fluid
-        double GetDynamicViscosity() const;
+    /// Set the fluid kinematic viscosity
+    /// \param KinematicViscosity kinematic viscosity of the fluid
+    void SetKinematicViscosity(double KinematicViscosity);
 
-        /// Set the fluid kinematic viscosity
-        /// \param KinematicViscosity kinematic viscosity of the fluid
-        void SetKinematicViscosity(double KinematicViscosity);
+    /// Get the fluid kinematic viscosity
+    /// \return KinematicViscosity kinematic viscosity of the fluid
+    double GetKinematicViscosity() const;
 
-        /// Get the fluid kinematic viscosity
-        /// \return KinematicViscosity kinematic viscosity of the fluid
-        double GetKinematicViscosity() const;
+    /// Set the fluid salinity
+    /// \param Salinity salinity of the fluid
+    void SetSalinity(double Salinity);
 
-        /// Set the fluid salinity
-        /// \param Salinity salinity of the fluid
-        void SetSalinity(double Salinity);
+    /// Get the fluid salinity
+    /// \return Salinity salinity of the fluid
+    double GetSalinity() const;
 
-        /// Get the fluid salinity
-        /// \return Salinity salinity of the fluid
-        double GetSalinity() const;
+    /// Set the fluid pressure
+    /// \param Pressure pressure of the fluid
+    void SetPressure(double Pressure);
 
-        /// Set the fluid pressure
-        /// \param Pressure pressure of the fluid
-        void SetPressure(double Pressure);
+    /// Get the fluid pressure
+    /// \return Pressure pressure of the fluid
+    double GetPressure() const;
 
-        /// Get the fluid pressure
-        /// \return Pressure pressure of the fluid
-        double GetPressure() const;
+    /// Get Reynolds number (Re = U.L/nu)
+    /// \param characteristicLength characteristic length L, in meters
+    /// \param velocity fluid velocity U, in m/s
+    /// \return Reynolds number, no dimension
+    double GetReynoldsNumberInWater(double characteristicLength, double velocity) const;
 
-        /// Get Reynolds number (Re = U.L/nu)
-        /// \param characteristicLength characteristic length L, in meters
-        /// \param velocity fluid velocity U, in m/s
-        /// \return Reynolds number, no dimension
-        double GetReynoldsNumberInWater(double characteristicLength, double velocity) const;
+    /// Get Froude number (Fe = U/sqrt(g.L) )
+    /// \param characteristicLength characteristic length L, in meters
+    /// \param velocity fluid velocity U, in m/s
+    /// \return Froude number, no dimension
+    double GetFroudeNumberInWater(double characteristicLength, double velocity) const;
 
-        /// Get Froude number (Fe = U/sqrt(g.L) )
-        /// \param characteristicLength characteristic length L, in meters
-        /// \param velocity fluid velocity U, in m/s
-        /// \return Froude number, no dimension
-        double GetFroudeNumberInWater(double characteristicLength, double velocity) const;
+    //---------------------------- Ocean elements Getters ----------------------------//
 
-        //---------------------------- Ocean elements Getters ----------------------------//
+    /// Get the free surface element
+    /// \return the free surface element
+    FrFreeSurface *GetFreeSurface() const;
 
-        /// Get the free surface element
-        /// \return the free surface element
-        FrFreeSurface* GetFreeSurface() const;
+    /// Get The current element
+    /// \return the current element
+    FrCurrent *GetCurrent() const;
 
-        /// Get The current element
-        /// \return the current element
-        FrCurrent* GetCurrent() const;
+    /// Get the seabed element
+    /// \return the seabed element
+    FrSeabed *GetSeabed() const;
 
-        /// Get the seabed element
-        /// \return the seabed element
-        FrSeabed* GetSeabed() const;
+    /// Enforce the infinite depth condition on the Seabed object.
+    /// A NullSeabed is then considered, with no grid asset and no bathymetry getters
+    void SetInfiniteDepth();;
 
-        /// Enforce the infinite depth condition on the Seabed object.
-        /// A NullSeabed is then considered, with no grid asset and no bathymetry getters
-        void SetInfiniteDepth();;
+    /// Get mean ocean depth (tidal height + mean bathymetry)
+    /// \param fc frame convention (NED/NWU)
+    /// \return mean ocean depth, in meters
+    double GetDepth(FRAME_CONVENTION fc) const;
 
-        /// Get mean ocean depth (tidal height + mean bathymetry)
-        /// \param fc frame convention (NED/NWU)
-        /// \return mean ocean depth, in meters
-        double GetDepth(FRAME_CONVENTION fc) const;
+    /// Get ocean depth at a position (x,y) (tidal height + bathymetry at position (x,y))
+    /// \param x x position
+    /// \param y y position
+    /// \param fc frame convention (NED/NWU)
+    /// \return ocean depth at position (x,y)
+    double GetDepth(double x, double y, FRAME_CONVENTION fc) const;
 
-        /// Get ocean depth at a position (x,y) (tidal height + bathymetry at position (x,y))
-        /// \param x x position
-        /// \param y y position
-        /// \param fc frame convention (NED/NWU)
-        /// \return ocean depth at position (x,y)
-        double GetDepth(double x, double y, FRAME_CONVENTION fc) const;
+    //---------------------------- Update-Initialize-StepFinalize ----------------------------//
 
-        //---------------------------- Update-Initialize-StepFinalize ----------------------------//
+    /// Update the state of the ocean
+    void Update(double time);
 
-        /// Update the state of the ocean
-        void Update(double time);
+    /// Initialize the state of the ocean
+    void Initialize() override;
 
-        /// Initialize the state of the ocean
-        void Initialize() override;
+    /// Method called at the send of a time step. Logging may be used here
+    void StepFinalize() override;
 
-        /// Method called at the send of a time step. Logging may be used here
-        void StepFinalize() override;
-
-    };
+  };
 
 }  // end namespace frydom
 

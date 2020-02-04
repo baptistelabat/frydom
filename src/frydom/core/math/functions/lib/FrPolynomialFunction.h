@@ -11,31 +11,28 @@
 
 namespace frydom {
 
-    class FrPolynomialFunction : public FrFunctionBase {
+  class FrPolynomialFunction : public FrFunctionBase {
 
 //    private:
 //        std::map<unsigned int, double> m_poly;
 //        unsigned int m_order = 0;
 
-    public:
-        FrPolynomialFunction(double constant);
-        FrPolynomialFunction(const FrPolynomialFunction& other);
-        FrPolynomialFunction* Clone() const override;
+   public:
+    FrPolynomialFunction(double constant);
 
-        void Add(double val, unsigned int power);
+    FrPolynomialFunction(const FrPolynomialFunction &other);
 
-        std::string GetRepr() const override;
+    FrPolynomialFunction *Clone() const override;
 
-        std::string GetTypeName() const override { return "PolynomialFunction"; }
+    void Add(double val, unsigned int power);
 
+    std::string GetRepr() const override;
 
-    protected:
-        void Eval(double x) const override;
-
+   protected:
+    void Eval(double x) const override;
 
 
-
-    };
+  };
 
 }  // end namespace frydom
 

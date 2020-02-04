@@ -17,70 +17,72 @@
 
 namespace frydom {
 
-    // Forward declaration
-    class FrLinearDamping;
+  // Forward declaration
+  class FrLinearDamping;
 
 
-    class FrMooringBuoy : public FrBody {
+  class FrMooringBuoy : public FrBody {
 
-    private:
-        class FrSphereNonLinearHydrostaticForce : public FrForce {
+   private:
 
-        public:
+    class FrSphereNonLinearHydrostaticForce : public FrForce {
 
-            /// Get the type name of this object
-            /// \return type name of this object
-            std::string GetTypeName() const override { return "SphereNonLinearHydrostaticForce"; }
+     public:
 
-            /// Return true if the force is included in the static analysis
-            bool IncludedInStaticAnalysis() const override {return true;}
+      explicit FrSphereNonLinearHydrostaticForce(const std::string &name, FrBody *body) :
+          FrForce(name, "NonlinearHydrostaticsOnSphericBuoy", body) {} // TODO : Refactorer completement cette classe !!
 
-        private:
+      /// Return true if the force is included in the static analysis
+      bool IncludedInStaticAnalysis() const override { return true; }
 
-            /// Compute the nonlinear hydrostatic force for a sphere
-            /// \param time Current time of the simulation from beginning, in seconds
-            void Compute(double time) override;
-        };
+     private:
 
-
-        double m_radius = 1.;
-        double c_volume;
-        std::shared_ptr<FrSphereNonLinearHydrostaticForce> m_hydrostaticForce;
-        std::shared_ptr<FrLinearDamping> m_dampingForce;
-
-    public:
-
-        FrMooringBuoy(double radius, double mass, bool visual_asset = true, double damping=0);
-
-        /// Get the type name of this object
-        /// \return type name of this object
-        std::string GetTypeName() const override { return "MooringBuoy"; }
-
-        double GetVolume() {return c_volume;}
-
-
-        void Update() override;
-
-    private:
-
-        double computeDraft();
-
-        double inline computeVolume(){
-            auto Zt = computeDraft();
-            return c_volume = M_PI/3 * (Zt*(3*m_radius*m_radius - Zt*Zt) + 2*std::pow(m_radius,3));
-        }
-
+      /// Compute the nonlinear hydrostatic force for a sphere
+      /// \param time Current time of the simulation from beginning, in seconds
+      void Compute(double time) override;
     };
 
-    /// Maker for the mooring buoy class: instantiate and return a FrMooringBuoy. It also add it to the system provided.
-    /// \param system system in charge of the buoy
-    /// \param radius radius of the buoy
-    /// \param mass mass of the buoy
-    /// \param visual_asset true if an asset is to be viewed
-    /// \param damping damping coefficient affected to the diagonal terms of a linear damping force.
-    /// \return FrMooringBuoy instance
-    std::shared_ptr<FrMooringBuoy>
-    make_mooring_buoy(FrOffshoreSystem* system, double radius, double mass, bool visual_asset = true, double damping=0);
+
+    double m_radius = 1.;
+    double c_volume;
+    std::shared_ptr<FrSphereNonLinearHydrostaticForce> m_hydrostaticForce;
+    std::shared_ptr<FrLinearDamping> m_dampingForce;
+
+   public:
+
+    FrMooringBuoy(const std::string &name,
+                  FrOffshoreSystem *system,
+                  double radius,
+                  double mass,
+                  bool visual_asset = true,
+                  double damping = 0);
+
+    double GetVolume() { return c_volume; }
+
+
+    void Update() override;
+
+   private:
+
+    double computeDraft();
+    
+    double inline computeVolume() {
+      auto Zt = computeDraft();
+      return c_volume = M_PI / 3 * (Zt * (3 * m_radius * m_radius - Zt * Zt) + 2 * std::pow(m_radius, 3));
+    }
+
+  };
+
+  /// Maker for the mooring buoy class: instantiate and return a FrMooringBuoy. It also add it to the system provided.
+  /// \param system system in charge of the buoy
+  /// \param radius radius of the buoy
+  /// \param mass mass of the buoy
+  /// \param visual_asset true if an asset is to be viewed
+  /// \param damping damping coefficient affected to the diagonal terms of a linear damping force.
+  /// \return FrMooringBuoy instance
+  std::shared_ptr<FrMooringBuoy>
+  make_mooring_buoy(const std::string &name, FrOffshoreSystem *system, double radius, double mass,
+                    bool visual_asset = true, double damping = 0);
 
 }  //end namespace frydom
 

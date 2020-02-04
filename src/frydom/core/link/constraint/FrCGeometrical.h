@@ -10,81 +10,85 @@
 
 namespace frydom {
 
-    // Forward declarations
-    class FrNode;
-    class Position;
-    class Direction;
+  // Forward declarations
+  class FrNode;
 
-    enum AXISLABEL {XAXIS, YAXIS, ZAXIS};
+  class Position;
 
-    class FrCGeometrical {
+  class Direction;
 
-    protected:
+  enum AXISLABEL {
+    XAXIS, YAXIS, ZAXIS
+  };
 
-        std::shared_ptr<FrNode> m_node;
+  class FrCGeometrical {
 
-    public:
+   protected:
 
-        explicit FrCGeometrical(const std::shared_ptr<FrNode>& node);
+    std::shared_ptr<FrNode> m_node;
 
-        std::shared_ptr<FrNode> GetNode() const;
+   public:
 
-    };
+    explicit FrCGeometrical(const std::shared_ptr<FrNode> &node);
 
-    class FrCPoint : public FrCGeometrical {
+    std::shared_ptr<FrNode> GetNode() const;
 
-    public:
+  };
 
-        explicit FrCPoint(const std::shared_ptr<FrNode>& node);
+  class FrCPoint : public FrCGeometrical {
 
-        Position GetPositionInWorld(FRAME_CONVENTION fc) const;
+   public:
 
-    };
+    explicit FrCPoint(const std::shared_ptr<FrNode> &node);
+
+    Position GetPositionInWorld(FRAME_CONVENTION fc) const;
+
+  };
 
 
-    class FrCAxis : public FrCGeometrical {
+  class FrCAxis : public FrCGeometrical {
 
-    private:
+   private:
 
-        AXISLABEL m_axis;
+    AXISLABEL m_axis;
 
-    public:
+   public:
 
-        explicit FrCAxis(const std::shared_ptr<FrNode>& node);
+    explicit FrCAxis(const std::shared_ptr<FrNode> &node);
 
-        FrCAxis(const std::shared_ptr<FrNode>& node, AXISLABEL axis);
+    FrCAxis(const std::shared_ptr<FrNode> &node, AXISLABEL axis);
 
-        Position GetOriginInWorld(FRAME_CONVENTION fc) const;
+    Position GetOriginInWorld(FRAME_CONVENTION fc) const;
 
-        Direction GetDirectionInWorld(FRAME_CONVENTION fc) const;
+    Direction GetDirectionInWorld(FRAME_CONVENTION fc) const;
 
-        AXISLABEL GetLabel() const;;
+    AXISLABEL GetLabel() const;;
 
-    };
+  };
 
-    class FrCPlane : public FrCGeometrical {
+  class FrCPlane : public FrCGeometrical {
 
-    private:
+   private:
 
-        AXISLABEL m_normale;
+    AXISLABEL m_normale;
 
-    public:
+   public:
 
-        explicit FrCPlane(const std::shared_ptr<FrNode>& node);
+    explicit FrCPlane(const std::shared_ptr<FrNode> &node);
 
-        FrCPlane(const std::shared_ptr<FrNode>& node, AXISLABEL axis);
+    FrCPlane(const std::shared_ptr<FrNode> &node, AXISLABEL axis);
 
-        Position GetOriginInWorld(FRAME_CONVENTION fc) const;
+    Position GetOriginInWorld(FRAME_CONVENTION fc) const;
 
-        Direction GetNormaleInWorld(FRAME_CONVENTION fc) const;
+    Direction GetNormaleInWorld(FRAME_CONVENTION fc) const;
 
-        double GetDistanceToPointInWorld(Position PointInWorld, FRAME_CONVENTION fc) const;
+    double GetDistanceToPointInWorld(Position PointInWorld, FRAME_CONVENTION fc) const;
 
-        Position GetIntersectionWithLineInWorld(Position P0, Position P1, FRAME_CONVENTION fc) const;
+    Position GetIntersectionWithLineInWorld(Position P0, Position P1, FRAME_CONVENTION fc) const;
 
-        Position GetClosestPointOnPlaneInWorld(Position PointInWorld, FRAME_CONVENTION fc) const;
+    Position GetClosestPointOnPlaneInWorld(Position PointInWorld, FRAME_CONVENTION fc) const;
 
-    };
+  };
 
 
 } // end namespace frydom

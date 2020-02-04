@@ -9,28 +9,28 @@
 
 namespace frydom {
 
-    class FrPowFunction : public FrFunctionBase {
+  class FrPowFunction : public FrFunctionBase {
 
-    private:
-        double m_power = 1.;
+   private:
+    double m_power = 1.;
 
-    public:
-        FrPowFunction(const FrFunctionBase& function, double power);
-        FrPowFunction(const FrPowFunction& other);
-        FrPowFunction* Clone() const override;
+   public:
+    FrPowFunction(const FrFunctionBase &function, double power);
 
-        void Set(double power);
+    FrPowFunction(const FrPowFunction &other);
 
-        std::string GetRepr() const override;
+    FrPowFunction *Clone() const override;
 
-        std::string GetTypeName() const override { return "PowFunction"; }
+    void Set(double power);
 
-    protected:
-        void Eval(double x) const;
+    std::string GetRepr() const override;
 
-    };
+   protected:
+    void Eval(double x) const;
 
-    FrPowFunction pow(const FrFunctionBase& function, double power);
+  };
+
+  FrPowFunction pow(const FrFunctionBase &function, double power);
 
 }  // end namespace frydom
 
