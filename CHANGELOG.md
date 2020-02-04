@@ -9,18 +9,18 @@ This file should be kept up to date following [these guidelines](https://keepach
 ### Major changes
 Refactoring of FRyDoM entire architecture, lead by the new logging system
 
-### New features
+### Added
 Hydrostatic equilibrium solver, validated on several cases.
  
 
-### Minor changes
+### Changed
 - mesh manipulation methods for the nonlinear hydrostatic model
 - minor refactoring of the equilibrium frame
 - reorganisation of the StepFinalize procedure
 - docs updated
  
 
-### bugfix
+### Fixed
 - FrNode stay fix in the body reference frame, when moving the body COG refrence frame
 - integral calculations on the clipped mesh corrected
 - unnecessary data removed
@@ -28,3 +28,21 @@ Hydrostatic equilibrium solver, validated on several cases.
 - log FrNonLinearHydrostaticForce
 - timezone target fixed
 - HDB5Tool updated
+
+## [2.1] - 2019-08-06
+
+### Added
+- New constraint type have been added
+- New demos
+
+### Changed
+- New architecture for hydrodynamic interactions, validation and complex test cases
+- Refactoring of Nonlinear hydrostatics and Froude-Krylov
+- Refactoring of HDB5Tool python utility
+- Update of the documentation with nice images (thanks Caroline Leguludec ;-) 
+- Benchmark data have been moved to Amazon S3 cloud storage
+
+### Fixed
+- Unnecessary data removed
+- Log FrNonlinearHydrostaticForce
+- Resource path for demo_HexagonalArticulatedBuoy
