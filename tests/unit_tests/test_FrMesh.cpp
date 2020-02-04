@@ -129,11 +129,7 @@ void TestMesh::Clip() {
 }
 
 
-<<<<<<< HEAD
-void TestMesh::TestIntegrals(double volume, const Position& COG) {
-=======
 void TestMesh::TestIntegrals(double volume, const Position &COG) {
->>>>>>> release/v3.0
 
   auto normal = m_plane->GetNormal(fc);
   auto origin = m_plane->GetOrigin(fc);
