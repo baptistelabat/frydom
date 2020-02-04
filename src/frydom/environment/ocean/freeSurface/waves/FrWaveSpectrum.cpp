@@ -295,31 +295,7 @@ namespace frydom {
     wmax = dichotomySearch(GetPeakFreq(mathutils::RADS), 10., threshold);
   }
 
-<<<<<<< HEAD
-    double FrWaveSpectrum::dichotomySearch(double wmin, double wmax, double threshold) const {
-
-        double wresult, epsilon = 1.E-10;
-
-        while(fabs(wmin-wmax)>epsilon*epsilon)
-        {
-            wresult=(wmin+wmax)/2.0f;
-            if (fabs(Eval(wresult) - threshold) < epsilon)
-            {
-                return wresult;
-            }
-            else
-            {
-                if ((Eval(wmax) - threshold) * (Eval(wresult) - threshold) < 0.0f)
-                    wmin=wresult;
-                else
-                    wmax=wresult;
-            }
-        }
-        throw FrException("FrWaveSpectrum::dichotomySearch no convergence");
-    }
-=======
   double FrWaveSpectrum::dichotomySearch(double wmin, double wmax, double threshold) const {
->>>>>>> release/v3.0
 
     double wresult, epsilon = 1.E-10;
 
