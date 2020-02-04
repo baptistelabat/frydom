@@ -81,7 +81,7 @@ def extract_version_from_git():
         tag = get_last_tag_past_this_commit(commit_sha1)
 
     # Populate major, minor, patch and meta
-    pattern = r'^' \
+    pattern = r'^v?' \
               r'(?P<MAJOR>\d+)\.(?P<MINOR>\d+)' \
               r'(?:\.(?P<PATCH>\d+))?(?:-(?P<META>[\w]+))?' \
               r'$'  # https://regex101.com/r/JGPX5A/1

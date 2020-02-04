@@ -28,9 +28,7 @@ pages:
 #    stage: deploy
     script:
         - cd docs/api
-#        FIXME: getversion does not work with current tags syntax : v2.1.2, because of the "v"
-#        - tag=$(python ../../cmake/getversion.py normalized)
-        - tag=$(git describe)
+        - tag=$(python ../../cmake/getversion.py normalized)
         - sed -i "s/GIT_TAG_VERSION/$tag/g" Doxyfile
         - doxygen Doxyfile
         - mv build/html/ ../../public/
@@ -54,9 +52,7 @@ theory:
        - echo "$GITLAB_CI_SSH_KNOWN_HOST" | tr -d '\r' > ~/.ssh/known_hosts
     script:
         - cd docs/theory
-#        FIXME: getversion does not work with current tags syntax : v2.1.2, because of the "v"
-#          - tag=$(python ../../cmake/getversion.py normalized)
-        - tag=$(git describe)
+        - tag=$(python ../../cmake/getversion.py normalized)
         - sed -i "s/GIT_TAG_VERSION/$tag/g" conf.py
         - make html
         - scp -r ./build/html/* frydomusqo@ssh.cluster027.hosting.ovh.net:/homez.363/frydomusqo/theory-guide
