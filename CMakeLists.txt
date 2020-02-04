@@ -13,9 +13,9 @@ cmake_minimum_required(VERSION 3.11)
 #-----------------------------------------------------------------------------
 # Prevent in-source builds
 #-----------------------------------------------------------------------------
-if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
-    message( FATAL_ERROR  "In-source build is not possible and not recommended. Choose an empty directory for build output.")
-endif(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+    message(FATAL_ERROR "In-source build is not possible and not recommended. Choose an empty directory for build output.")
+endif (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 
 #-----------------------------------------------------------------------------
 # Define project name and specify version information
@@ -70,7 +70,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/URL.conf.cmake)
 if (${frydom_download_demo_data})
     include(${CMAKE_CURRENT_SOURCE_DIR}/data/DownloadData.cmake)
     DownloadData()
-endif()
+endif ()
 
 
 include(Add_googletest)
@@ -100,7 +100,7 @@ if (${frydom_build_tests})
     include(Add_googletest)
 
     add_subdirectory(tests)
-endif()
+endif ()
 
 
 #=============================================================================
@@ -109,4 +109,4 @@ endif()
 if (${frydom_build_tools})
     include(add_cxxopts)
     add_subdirectory(tools)
-endif()
+endif ()

@@ -43,7 +43,7 @@ namespace frydom {
    protected:
 
     FrFrame m_frame;
-    std::shared_ptr<FrNode>  m_bodyNode;  ///< Node fixed to the body corresponding to the equilibrium frame when the body is at equilibrium.
+    std::shared_ptr<FrNode> m_bodyNode;  ///< Node fixed to the body corresponding to the equilibrium frame when the body is at equilibrium.
     Velocity m_velocity;             ///< translational velocity of the frame in world coordinates
     double m_angularVelocity;        ///< angular velocity of the frame around Z-direction
 
@@ -56,7 +56,7 @@ namespace frydom {
     /// Constructor of a new equilibrium frame with default position and no velocity
     /// \param body Body to which the equilibrium frame is linked
     explicit FrEquilibriumFrame(const std::string &name, FrBody *body,
-        const Position& localPos, const double& rot, FRAME_CONVENTION fc);
+                                const Position &localPos, const double &rot, FRAME_CONVENTION fc);
 
     /// Get a pointer to the body to which this frame is attached
     inline FrBody *GetBody() const;
@@ -145,13 +145,13 @@ namespace frydom {
 
     void ApplyFrameProjection();
 
-    void SetAngleRotation(const double& angle, FRAME_CONVENTION fc);
+    void SetAngleRotation(const double &angle, FRAME_CONVENTION fc);
 
    private:
 
     void SetEqFramePositionOrientation();
 
-    void SetEqFramePositionOrientation(const Position& localPos, const double& rot, FRAME_CONVENTION fc);
+    void SetEqFramePositionOrientation(const Position &localPos, const double &rot, FRAME_CONVENTION fc);
 
     /// Update the velocity and position of the frame
     /// \param time Current time of the simulation from the beginning
@@ -161,10 +161,10 @@ namespace frydom {
 
   std::shared_ptr<FrEquilibriumFrame>
   make_equilibrium_frame(const std::string &name, FrOffshoreSystem *system, const std::shared_ptr<FrBody> &body,
-      const Position& localPos, const double& rot, FRAME_CONVENTION fc);
+                         const Position &localPos, const double &rot, FRAME_CONVENTION fc);
 
   std::shared_ptr<FrEquilibriumFrame>
-  make_equilibrium_frame(const std::string& name, FrOffshoreSystem* system, const std::shared_ptr<FrBody>& body);
+  make_equilibrium_frame(const std::string &name, FrOffshoreSystem *system, const std::shared_ptr<FrBody> &body);
 
   /**
    * \class FrEqFrameSpringDamping
@@ -191,8 +191,8 @@ namespace frydom {
     /// \param dampingRatio Damping ratio
     /// \param initPos If true the frame is initialized with the position of the body
     FrEqFrameSpringDamping(const std::string &name, FrBody *body,
-        const Position& localPos, const double& rot, FRAME_CONVENTION fc,
-        double cutoffTime, double dampingRatio);
+                           const Position &localPos, const double &rot, FRAME_CONVENTION fc,
+                           double cutoffTime, double dampingRatio);
 
     /// Get the damping coefficient of the spring-damping system
     /// \return Damping coefficient
@@ -214,17 +214,17 @@ namespace frydom {
   std::shared_ptr<FrEqFrameSpringDamping>
   make_spring_damping_equilibrium_frame(const std::string &name,
                                         const std::shared_ptr<FrBody> &body,
-                                        const Position& localPos,
-                                        const double& rot,
+                                        const Position &localPos,
+                                        const double &rot,
                                         FRAME_CONVENTION fc,
                                         FrOffshoreSystem *system,
                                         double cutoffTime,
                                         double dampingRatio);
 
   std::shared_ptr<FrEqFrameSpringDamping>
-  make_spring_damping_equilibrium_frame(const std::string& name,
-                                        const std::shared_ptr<FrBody>& body,
-                                        FrOffshoreSystem* system,
+  make_spring_damping_equilibrium_frame(const std::string &name,
+                                        const std::shared_ptr<FrBody> &body,
+                                        FrOffshoreSystem *system,
                                         double cutoffTime,
                                         double dampingRatio);
 
@@ -262,8 +262,8 @@ namespace frydom {
     /// \param timeStep Time step of the recorder
     /// \param initPos If true the frame is initialized with the position of the body
     FrEqFrameMeanMotion(const std::string &name, FrBody *body,
-        const Position& localPos, const double& rot, FRAME_CONVENTION fc,
-        double timePersistence, double timeStep);
+                        const Position &localPos, const double &rot, FRAME_CONVENTION fc,
+                        double timePersistence, double timeStep);
 
     void SetPositionCorrection(double timePersistence, double timeStep, double posCoeff, double angleCoeff);
 
@@ -287,10 +287,10 @@ namespace frydom {
                                      double timeStep);
 
   std::shared_ptr<FrEqFrameMeanMotion>
-  make_mean_motion_equilibrium_frame(const std::string& name, FrOffshoreSystem*,
-                                     std::shared_ptr<FrBody>& body,
-                                     const Position& localPos,
-                                     const double& rot,
+  make_mean_motion_equilibrium_frame(const std::string &name, FrOffshoreSystem *,
+                                     std::shared_ptr<FrBody> &body,
+                                     const Position &localPos,
+                                     const double &rot,
                                      FRAME_CONVENTION fc,
                                      double timePersistence,
                                      double timeStep);

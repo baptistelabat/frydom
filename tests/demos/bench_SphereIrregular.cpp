@@ -18,9 +18,9 @@ using namespace frydom;
 void ValidationResults(const std::vector<double> vtime, const std::vector<double> heave, const std::string dbfile,
                        const int iperiod, const int isteepness) {
 
-  std::cout<<"0"<<std::endl;
+  std::cout << "0" << std::endl;
   FrHDF5Reader db(dbfile);
-  std::cout<<"0.1"<<std::endl;
+  std::cout << "0.1" << std::endl;
 
   auto path = "T" + std::to_string(iperiod) + "/H" + std::to_string(isteepness);
 
@@ -29,24 +29,24 @@ void ValidationResults(const std::vector<double> vtime, const std::vector<double
   auto period = db.ReadDouble(path + "/period");
   auto steepness = db.ReadDouble(path + "/steepness");
 
-  std::cout<<"0.2"<<std::endl;
+  std::cout << "0.2" << std::endl;
   int it = 0;
   while (vtime[it] < 100.) {
     it += 1;
   }
-  std::cout<<"1st"<<std::endl;
+  std::cout << "1st" << std::endl;
 
   auto motionMax = -999.;
   for (int i = it; i < vtime.size(); i++) {
     motionMax = std::max(motionMax, heave[i]);
   }
-  std::cout<<"2nd"<<std::endl;
+  std::cout << "2nd" << std::endl;
 
   auto motionMin = 999.;
   for (int i = it; i < vtime.size(); i++) {
     motionMin = std::min(motionMin, heave[i]);
   }
-  std::cout<<"3rd"<<std::endl;
+  std::cout << "3rd" << std::endl;
 
   auto rao = ((motionMax - motionMin) * 0.5) / (0.5 * wave_height);
   auto err_rel = std::abs(rao - rao_bench) / rao_bench;
@@ -147,7 +147,8 @@ int main(int argc, char *argv[]) {
 //
 //  waveField->WriteToJSON("bench_sphere_irregular_sea_state.json");
 
-  auto seastate = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/sphere/bench_sphere_irregular_sea_state.json"});
+  auto seastate = FrFileSystem::join(
+      {system.config_file().GetDataFolder(), "ce/bench/sphere/bench_sphere_irregular_sea_state.json"});
   waveField->LoadJSON(seastate);
 
   // -- Body
@@ -203,7 +204,7 @@ int main(int argc, char *argv[]) {
 
     // -- Linear hydrostatics
 
-  auto forceHst = make_linear_hydrostatic_force("linear_hydrostatic", body, hdb);
+    auto forceHst = make_linear_hydrostatic_force("linear_hydrostatic", body, hdb);
 
     // -- Linear diffraction
 
@@ -215,10 +216,9 @@ int main(int argc, char *argv[]) {
 
     // -- Linear excitation
 
-  auto excitationForce = make_linear_excitation_force("linear_excitation", body, hdb);
+    auto excitationForce = make_linear_excitation_force("linear_excitation", body, hdb);
 
-  }
-  else {
+  } else {
 
     // -- Linear diffraction
 

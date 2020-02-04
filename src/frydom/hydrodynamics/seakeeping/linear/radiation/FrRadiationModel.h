@@ -58,7 +58,7 @@ namespace frydom {
                               std::shared_ptr<FrHydroDB> HDB);
 
     /// \return Pointer to the offshore system
-    inline FrOffshoreSystem* GetSystem() const {
+    inline FrOffshoreSystem *GetSystem() const {
       return GetParent();
     }
 

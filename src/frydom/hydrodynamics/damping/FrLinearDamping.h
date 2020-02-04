@@ -22,73 +22,73 @@
 namespace frydom {
 
 
-    /**
-     * \class FrLinearDamping
-     * \brief Class for computing additional linear damping loads.
-     */
-    class FrLinearDamping : public FrForce {
+  /**
+   * \class FrLinearDamping
+   * \brief Class for computing additional linear damping loads.
+   */
+  class FrLinearDamping : public FrForce {
 
-     public:
-      using DampingMatrix = mathutils::Matrix66<double>; // TODO : disposer d'une Matrix66 dans mathutils
+   public:
+    using DampingMatrix = mathutils::Matrix66<double>; // TODO : disposer d'une Matrix66 dans mathutils
 
-     private:
+   private:
 
-      DampingMatrix m_dampingMatrix;
+    DampingMatrix m_dampingMatrix;
 
-      /// WATER or AIR.
-      FLUID_TYPE m_fluidType;
+    /// WATER or AIR.
+    FLUID_TYPE m_fluidType;
 
-      /// Velocity to use: fluid felocity (true) or body velocity (false).
-      bool m_relativeToFluid = false;  // FIXME : on doit pouvoir aussi appliquer dans l'air !!!!!
+    /// Velocity to use: fluid felocity (true) or body velocity (false).
+    bool m_relativeToFluid = false;  // FIXME : on doit pouvoir aussi appliquer dans l'air !!!!!
 
-     public:
+   public:
 
-      FrLinearDamping(const std::string &name, FrBody* body, FLUID_TYPE ft, bool relativeToFluid);
+    FrLinearDamping(const std::string &name, FrBody *body, FLUID_TYPE ft, bool relativeToFluid);
 
-      /// Return true if the force is included in the static analysis
-      bool IncludedInStaticAnalysis() const override { return true; }
+    /// Return true if the force is included in the static analysis
+    bool IncludedInStaticAnalysis() const override { return true; }
 
-      void SetNull();
+    void SetNull();
 
-      /// Setter for the whole damping matrix. Translations are upper left and rotations are lower right.
-      void SetDampingMatrix(const DampingMatrix &dampingMatrix);
+    /// Setter for the whole damping matrix. Translations are upper left and rotations are lower right.
+    void SetDampingMatrix(const DampingMatrix &dampingMatrix);
 
-      /// Setter for the diagonal components of the damping matrix
-      void SetDiagonalDamping(double Du, double Dv, double Dw, double Dp, double Dq, double Dr);
+    /// Setter for the diagonal components of the damping matrix
+    void SetDiagonalDamping(double Du, double Dv, double Dw, double Dp, double Dq, double Dr);
 
-      /// Setter for the diagonal components in translation of the damping matrix
-      void SetDiagonalTranslationDamping(double Du, double Dv, double Dw);
+    /// Setter for the diagonal components in translation of the damping matrix
+    void SetDiagonalTranslationDamping(double Du, double Dv, double Dw);
 
-      /// Setter for the diagonal components in rotation of the damping matrix
-      void SetDiagonalRotationDamping(double Dp, double Dq, double Dr);
+    /// Setter for the diagonal components in rotation of the damping matrix
+    void SetDiagonalRotationDamping(double Dp, double Dq, double Dr);
 
-      /// Set a damping coefficient given its position.
-      void SetDampingCoeff(unsigned int iRow, unsigned int iCol, double coeff);
+    /// Set a damping coefficient given its position.
+    void SetDampingCoeff(unsigned int iRow, unsigned int iCol, double coeff);
 
-      /// Setter for the boolean : m_relativeVelocity
-      void SetRelativeToFluid(bool isRelative);
+    /// Setter for the boolean : m_relativeVelocity
+    void SetRelativeToFluid(bool isRelative);
 
-      /// Getter for the boolean : m_relativeVelocity
-      bool GetRelativeToFluid();
+    /// Getter for the boolean : m_relativeVelocity
+    bool GetRelativeToFluid();
 
-      void Initialize() override;
+    void Initialize() override;
 
-     private:
+   private:
 
-      /// Compute the linear damping force
-      /// \param time Current time of the simulation from beginning, in seconds
-      void Compute(double time) override;
+    /// Compute the linear damping force
+    /// \param time Current time of the simulation from beginning, in seconds
+    void Compute(double time) override;
 
-      void Check() const;
+    void Check() const;
 
-    };
+  };
 
-    /// This function creates a linear damping force.
-    std::shared_ptr<FrLinearDamping>
-    make_linear_damping_force(const std::string &name,
-                              std::shared_ptr<FrBody> body,
-                              FLUID_TYPE ft,
-                              bool relativeToFluid);
+  /// This function creates a linear damping force.
+  std::shared_ptr<FrLinearDamping>
+  make_linear_damping_force(const std::string &name,
+                            std::shared_ptr<FrBody> body,
+                            FLUID_TYPE ft,
+                            bool relativeToFluid);
 
 }  // end namespace frydom
 

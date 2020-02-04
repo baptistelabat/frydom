@@ -6,11 +6,11 @@
 
 using namespace frydom;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
-    FrOffshoreSystem system;
+  FrOffshoreSystem system;
 
-    system.Initialize();
+  system.Initialize();
 
 
 }

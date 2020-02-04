@@ -9,23 +9,25 @@
 
 namespace frydom {
 
-    class FrQuadDamping : public FrForce {
-    private:
+  class FrQuadDamping : public FrForce {
+   private:
 //        chrono::ChVector<double> m_translationDampings = chrono::VNULL;
 //        chrono::ChVector<double> m_rotationDampings = chrono::VNULL;
 
-        double m_translationDamping = 0;
-        double m_rotationDamping = 0;
+    double m_translationDamping = 0;
+    double m_rotationDamping = 0;
 
-    public:
+   public:
 
-        FrQuadDamping() {};
+    FrQuadDamping() {};
 
-        void SetTranslationalDamping(double B) {m_translationDamping = B;}
-        void SetRotationalDamping(double B) {m_rotationDamping = B;}
+    void SetTranslationalDamping(double B) { m_translationDamping = B; }
 
-        double GetTranslationalDamping() {return m_translationDamping;}
-        double GetRotationalDamping() {return m_rotationDamping;}
+    void SetRotationalDamping(double B) { m_rotationDamping = B; }
+
+    double GetTranslationalDamping() { return m_translationDamping; }
+
+    double GetRotationalDamping() { return m_rotationDamping; }
 
 //        void SetTranslationalDampings(const chrono::ChVector<double>& dampings) {
 //            m_translationDampings = dampings;
@@ -41,16 +43,16 @@ namespace frydom {
 //            SetRotationalDampings(chrono::ChVector<>(Broll,Bpitch,Byaw));
 //        }
 
-        void UpdateState() override;
+    void UpdateState() override;
 
-        void SetLogPrefix(std::string prefix_name) override {
-            if (prefix_name=="") {
-                m_logPrefix = "FLDamp" + FrForce::m_logPrefix;
-            } else {
-                m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
-            }
-        }
-    };
+    void SetLogPrefix(std::string prefix_name) override {
+      if (prefix_name == "") {
+        m_logPrefix = "FLDamp" + FrForce::m_logPrefix;
+      } else {
+        m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
+      }
+    }
+  };
 
 };
 

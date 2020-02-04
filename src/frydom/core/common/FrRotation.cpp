@@ -223,12 +223,12 @@ namespace frydom {
   }
 
   bool FrUnitQuaternion::IsApprox(const FrUnitQuaternion &other, double prec) const {
-      return GetChronoQuaternion().Equals(other.GetChronoQuaternion(), prec);
+    return GetChronoQuaternion().Equals(other.GetChronoQuaternion(), prec);
   }
 
   bool FrUnitQuaternion::IsZero(double prec) const {
-      return (*this == FrUnitQuaternion(1.,0.,0.,0., NWU));
-    }
+    return (*this == FrUnitQuaternion(1., 0., 0., 0., NWU));
+  }
 
   /*
    *

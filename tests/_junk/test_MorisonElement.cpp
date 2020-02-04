@@ -14,82 +14,82 @@
 
 using namespace frydom;
 
-void PlotResults(const std::vector<double>& vtime, const std::vector<double>& vx,
-                 const std::vector<double>& vy, const std::vector<double>& vz,
-                 const std::string label="velocity",
-                 const bool show=true) {
+void PlotResults(const std::vector<double> &vtime, const std::vector<double> &vx,
+                 const std::vector<double> &vy, const std::vector<double> &vz,
+                 const std::string label = "velocity",
+                 const bool show = true) {
 
-    matplotlibcpp::named_plot(label+".x", vtime, vx);
-    matplotlibcpp::named_plot(label+".y", vtime, vy);
-    matplotlibcpp::named_plot(label+".z", vtime, vz);
-    matplotlibcpp::xlabel("time (s)");
-    matplotlibcpp::ylabel(label+" (SI)");
-    matplotlibcpp::grid;
-    matplotlibcpp::legend();
-    if (show) { matplotlibcpp::show(); }
+  matplotlibcpp::named_plot(label + ".x", vtime, vx);
+  matplotlibcpp::named_plot(label + ".y", vtime, vy);
+  matplotlibcpp::named_plot(label + ".z", vtime, vz);
+  matplotlibcpp::xlabel("time (s)");
+  matplotlibcpp::ylabel(label + " (SI)");
+  matplotlibcpp::grid;
+  matplotlibcpp::legend();
+  if (show) { matplotlibcpp::show(); }
 
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
-    // -----------------------------------------------------
-    // System
-    // -----------------------------------------------------
+  // -----------------------------------------------------
+  // System
+  // -----------------------------------------------------
 
-    FrOffshoreSystem_ system;
+  FrOffshoreSystem_ system;
 
-    // -----------------------------------------------------
-    // Environment
-    // -----------------------------------------------------
+  // -----------------------------------------------------
+  // Environment
+  // -----------------------------------------------------
 
-    auto waveField = system.GetEnvironment()->GetOcean()->GetFreeSurface()->SetAiryRegularWaveField();
-    //auto waveField = system.GetEnvironment()->GetOcean()->GetFreeSurface()->GetLinearWaveField();
+  auto waveField = system.GetEnvironment()->GetOcean()->GetFreeSurface()->SetAiryRegularWaveField();
+  //auto waveField = system.GetEnvironment()->GetOcean()->GetFreeSurface()->GetLinearWaveField();
 
-    waveField->SetWaveHeight(1.);
-    waveField->SetWavePeriod(10.);
-    waveField->SetDirection(NORTH(NWU), NWU, GOTO);
-    waveField->GetWaveRamp()->Deactivate();
+  waveField->SetWaveHeight(1.);
+  waveField->SetWavePeriod(10.);
+  waveField->SetDirection(NORTH(NWU), NWU, GOTO);
+  waveField->GetWaveRamp()->Deactivate();
 
-    system.GetEnvironment()->GetAtmosphere()->GetWind()->MakeFieldUniform();
-    system.GetEnvironment()->GetAtmosphere()->GetWind()->GetFieldUniform()->Set(NORTH, 0., KNOT, GOTO);
+  system.GetEnvironment()->GetAtmosphere()->GetWind()->MakeFieldUniform();
+  system.GetEnvironment()->GetAtmosphere()->GetWind()->GetFieldUniform()->Set(NORTH, 0., KNOT, GOTO);
 
-    // ------------------------------------------------------
-    // Morison elements
-    // ------------------------------------------------------
+  // ------------------------------------------------------
+  // Morison elements
+  // ------------------------------------------------------
 
-    auto structure = system.NewBody();
-    structure->SetPosition(Position(0., 0., -2), NWU);
-    //structure->SetDOF(false, false, false, false, false, false);      // TODO : a reintégrer dans FrBody, pourquoi cela n'y est plus ???
+  auto structure = system.NewBody();
+  structure->SetPosition(Position(0., 0., -2), NWU);
+  //structure->SetDOF(false, false, false, false, false, false);      // TODO : a reintégrer dans FrBody, pourquoi cela n'y est plus ???
 
-    auto morisonModel = std::make_shared<FrMorisonSingleElement_>(structure.get());
-    auto morisonForce = std::make_shared<FrMorisonForce_>(morisonModel);
+  auto morisonModel = std::make_shared<FrMorisonSingleElement_>(structure.get());
+  auto morisonForce = std::make_shared<FrMorisonForce_>(morisonModel);
 
-    morisonModel->SetNodes(structure.get(), Position(0., -2, 0.), Position(0., 2., 0));
-    morisonModel->SetDragCoeff(0.1);
-    morisonModel->SetDiameter(0.1);
+  morisonModel->SetNodes(structure.get(), Position(0., -2, 0.), Position(0., 2., 0));
+  morisonModel->SetDragCoeff(0.1);
+  morisonModel->SetDiameter(0.1);
 
-    system.AddPhysicsItem(morisonModel);
-    structure->AddExternalForce(morisonForce);
+  system.AddPhysicsItem(morisonModel);
+  structure->AddExternalForce(morisonForce);
 
-    // ---------------------------------------------------------
-    // Simulation
-    // ---------------------------------------------------------
+  // ---------------------------------------------------------
+  // Simulation
+  // ---------------------------------------------------------
 
-    double time = 0;
-    double dt = 0.01;
+  double time = 0;
+  double dt = 0.01;
 
-    system.Initialize();
-    system.SetTimeStep(dt);
+  system.Initialize();
+  system.SetTimeStep(dt);
 
-    Force force;
+  Force force;
 
-    while (time < 50.) {
-        time += dt;
-        system.AdvanceTo(time);
+  while (time < 50.) {
+    time += dt;
+    system.AdvanceTo(time);
 
-        force = morisonForce->GetForceInWorld(NWU);
+    force = morisonForce->GetForceInWorld(NWU);
 
-        std::cout << force.GetFx() << ";" << force.GetFy() << ";" << force.GetFz() << std::endl;
-    }
+    std::cout << force.GetFx() << ";" << force.GetFy() << ";" << force.GetFz() << std::endl;
+  }
 
 }

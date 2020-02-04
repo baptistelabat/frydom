@@ -29,12 +29,14 @@ void SetUpEnvironment(FrOffshoreSystem *system) {
   current->SetNorth(0.5, KNOT, GOTO);
 }
 
-std::shared_ptr<FrBody> CreateBody(const std::string &name, FrOffshoreSystem *system, Position bodyPos, FrRotation bodyRot) {
+std::shared_ptr<FrBody>
+CreateBody(const std::string &name, FrOffshoreSystem *system, Position bodyPos, FrRotation bodyRot) {
 
   auto body = system->NewBody(name);
 
   auto asset = std::make_shared<FrTriangleMeshConnected>();
-  auto cylinderAsset = FrFileSystem::join({system->config_file().GetDataFolder(), "ce/HexagonalArticulatedBuoy/cylinder_base_bar.obj"});
+  auto cylinderAsset = FrFileSystem::join(
+      {system->config_file().GetDataFolder(), "ce/HexagonalArticulatedBuoy/cylinder_base_bar.obj"});
   asset->LoadWavefrontMesh(cylinderAsset);
   asset->Rotate(bodyRot);
   body->AddMeshAsset(asset);
@@ -109,7 +111,8 @@ void LinkBodies(FrOffshoreSystem *system, std::vector<std::shared_ptr<FrBody>> b
 std::shared_ptr<FrHydroDB>
 SetUpHydrodynamicModel(FrOffshoreSystem *system, std::vector<std::shared_ptr<FrBody>> bodyList) {
 
-  auto HDB_path = FrFileSystem::join({system->config_file().GetDataFolder(), "ce/HexagonalArticulatedBuoy/hexagonal_articulated_buoy.hdb5"});
+  auto HDB_path = FrFileSystem::join(
+      {system->config_file().GetDataFolder(), "ce/HexagonalArticulatedBuoy/hexagonal_articulated_buoy.hdb5"});
   auto hdb = make_hydrodynamic_database(HDB_path);
 
   auto eqFrame0 = make_equilibrium_frame("eqFrame0", system, bodyList[0]);
@@ -215,12 +218,14 @@ void SetUpMooringLines(FrOffshoreSystem *system, std::vector<std::shared_ptr<FrB
 
   auto mooringLineNW = make_catenary_line("mooringLineNW", system, worldNodeNW, bodyNodeNW, cableProp, elastic, uLength,
                                           FLUID_TYPE::WATER);
-  auto mooringLineN = make_catenary_line("mooringLineN", system, worldNodeN, bodyNodeN, cableProp, elastic, uLength, FLUID_TYPE::WATER);
+  auto mooringLineN = make_catenary_line("mooringLineN", system, worldNodeN, bodyNodeN, cableProp, elastic, uLength,
+                                         FLUID_TYPE::WATER);
   auto mooringLineNE = make_catenary_line("mooringLineNE", system, worldNodeNE, bodyNodeNE, cableProp, elastic, uLength,
                                           FLUID_TYPE::WATER);
   auto mooringLineSE = make_catenary_line("mooringLineSE", system, worldNodeSE, bodyNodeSE, cableProp, elastic, uLength,
                                           FLUID_TYPE::WATER);
-  auto mooringLineS = make_catenary_line("mooringLineS", system, worldNodeS, bodyNodeS, cableProp, elastic, uLength, FLUID_TYPE::WATER);
+  auto mooringLineS = make_catenary_line("mooringLineS", system, worldNodeS, bodyNodeS, cableProp, elastic, uLength,
+                                         FLUID_TYPE::WATER);
   auto mooringLineEW = make_catenary_line("mooringLineEW", system, worldNodeSW, bodyNodeSW, cableProp, elastic, uLength,
                                           FLUID_TYPE::WATER);
 
@@ -269,7 +274,8 @@ int main(int argc, char *argv[]) {
   auto cyl1 = CreateBody("cyl1", &system, Position(-2.498, 0., 0.), FrRotation());
   bodyList.push_back(cyl1);
 
-  auto cyl2 = CreateBody("cyl2", &system, Position(-1.25, 2.165, 0.), FrRotation(Direction(0., 0., 1.), -M_PI / 3., NWU));
+  auto cyl2 = CreateBody("cyl2", &system, Position(-1.25, 2.165, 0.),
+                         FrRotation(Direction(0., 0., 1.), -M_PI / 3., NWU));
   bodyList.push_back(cyl2);
 
   auto cyl3 = CreateBody("cyl3", &system, Position(1.25, 2.165, 0.), FrRotation(Direction(0., 0., 1.), M_PI / 3., NWU));
@@ -278,10 +284,12 @@ int main(int argc, char *argv[]) {
   auto cyl4 = CreateBody("cyl4", &system, Position(2.498, 0., 0.), FrRotation());
   bodyList.push_back(cyl4);
 
-  auto cyl5 = CreateBody("cyl5", &system, Position(1.25, -2.165, 0.), FrRotation(Direction(0., 0., 1.), -M_PI / 3., NWU));
+  auto cyl5 = CreateBody("cyl5", &system, Position(1.25, -2.165, 0.),
+                         FrRotation(Direction(0., 0., 1.), -M_PI / 3., NWU));
   bodyList.push_back(cyl5);
 
-  auto cyl6 = CreateBody("cyl6", &system, Position(-1.25, -2.165, 0.), FrRotation(Direction(0., 0., 1.), M_PI / 3., NWU));
+  auto cyl6 = CreateBody("cyl6", &system, Position(-1.25, -2.165, 0.),
+                         FrRotation(Direction(0., 0., 1.), M_PI / 3., NWU));
   bodyList.push_back(cyl6);
 
   // Links
@@ -301,8 +309,9 @@ int main(int argc, char *argv[]) {
   auto excitationForce6 = make_linear_excitation_force("excitationForce6", cyl6, hdb);
 
   // Hydrostatic
-  
-  auto cylinderMesh = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/HexagonalArticulatedBuoy/cylinder_base.obj"}) ;
+
+  auto cylinderMesh = FrFileSystem::join(
+      {system.config_file().GetDataFolder(), "ce/HexagonalArticulatedBuoy/cylinder_base.obj"});
 
   auto cyl1Mesh = make_hydro_mesh("cyl1Mesh", cyl1, cylinderMesh,
                                   FrFrame(Position(0., 0., 0.), FrRotation(), NWU),

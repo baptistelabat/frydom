@@ -19,42 +19,42 @@
 
 namespace frydom {
 
-    FrMorisonSingleElement *FrMorisonForce::SetSingleElementModel(FrBody *body) {
-      m_model = std::make_shared<FrMorisonSingleElement>(body);
-      return dynamic_cast<FrMorisonSingleElement *>(m_model.get());
-    }
+  FrMorisonSingleElement *FrMorisonForce::SetSingleElementModel(FrBody *body) {
+    m_model = std::make_shared<FrMorisonSingleElement>(body);
+    return dynamic_cast<FrMorisonSingleElement *>(m_model.get());
+  }
 
-    FrMorisonCompositeElement *FrMorisonForce::SetCompositeElementModel(FrBody *body) {
-      m_model = std::make_shared<FrMorisonCompositeElement>(body);
-      return dynamic_cast<FrMorisonCompositeElement *>(m_model.get());
-    }
+  FrMorisonCompositeElement *FrMorisonForce::SetCompositeElementModel(FrBody *body) {
+    m_model = std::make_shared<FrMorisonCompositeElement>(body);
+    return dynamic_cast<FrMorisonCompositeElement *>(m_model.get());
+  }
 
-    FrMorisonForce::FrMorisonForce(const std::string &name, FrBody* body, std::shared_ptr<FrMorisonElement> model)
-        : FrForce(name, TypeToString(this), body), m_model(model) {}
+  FrMorisonForce::FrMorisonForce(const std::string &name, FrBody *body, std::shared_ptr<FrMorisonElement> model)
+      : FrForce(name, TypeToString(this), body), m_model(model) {}
 
-    void FrMorisonForce::Compute(double time) {
+  void FrMorisonForce::Compute(double time) {
 
-      m_model->Update(time);
+    m_model->Update(time);
 
-      SetForceInWorldAtCOG(m_model->GetForceInWorld(NWU), NWU);
-      SetTorqueInBodyAtCOG(m_model->GetTorqueInBody(), NWU);
-    }
+    SetForceInWorldAtCOG(m_model->GetForceInWorld(NWU), NWU);
+    SetTorqueInBodyAtCOG(m_model->GetTorqueInBody(), NWU);
+  }
 
-    void FrMorisonForce::Initialize() {
+  void FrMorisonForce::Initialize() {
 
-      FrForce::Initialize();
-      m_model->Initialize();
-    }
+    FrForce::Initialize();
+    m_model->Initialize();
+  }
 
-    std::shared_ptr<FrMorisonForce>
-    make_morison_force(const std::string &name,
-                       std::shared_ptr<FrBody> body,
-                       std::shared_ptr<FrMorisonElement> model) {
+  std::shared_ptr<FrMorisonForce>
+  make_morison_force(const std::string &name,
+                     std::shared_ptr<FrBody> body,
+                     std::shared_ptr<FrMorisonElement> model) {
 
-      assert(body.get() == model->GetNode()->GetBody());
-      auto MorisonForce = std::make_shared<FrMorisonForce>(name, body.get(), model);
-      body->AddExternalForce(MorisonForce);
-      return MorisonForce;
-    }
+    assert(body.get() == model->GetNode()->GetBody());
+    auto MorisonForce = std::make_shared<FrMorisonForce>(name, body.get(), model);
+    body->AddExternalForce(MorisonForce);
+    return MorisonForce;
+  }
 
 }  // end namespace frydom

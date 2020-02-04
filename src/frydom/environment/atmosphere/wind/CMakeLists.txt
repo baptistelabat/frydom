@@ -6,8 +6,8 @@ set(WIND_FILES_LOCAL
         )
 
 set(WIND_FILES "")
-foreach(file ${WIND_FILES_LOCAL})
+foreach (file ${WIND_FILES_LOCAL})
     list(APPEND WIND_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
-endforeach()
+endforeach ()
 
 set(WIND_FILES ${WIND_FILES} PARENT_SCOPE)

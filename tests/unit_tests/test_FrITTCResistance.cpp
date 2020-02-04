@@ -91,7 +91,7 @@ void TestITTCResistance::LoadData(std::string filename) {
 
 TEST_F(TestITTCResistance, test0) {
   force = make_ITTC_resistance_force("test_FrITTCResistance", body, LengthBetweenPerpendicular,
-                                             hullWetSurface, m_cr);
+                                     hullWetSurface, m_cr);
   force->SetHullFormFactor(hullFormFactor);
   force->SetRoughnessFromLength(lengthAtWaterLine);
   force->SetAirResistanceFromArea(frontalArea);

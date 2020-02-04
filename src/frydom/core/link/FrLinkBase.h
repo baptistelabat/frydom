@@ -40,7 +40,7 @@ namespace frydom {
   };
 
   // Forward declarations
-  class  FrNode;
+  class FrNode;
 
   class FrBody;
 
@@ -49,7 +49,7 @@ namespace frydom {
    * \class FrLinkBase
    * \brief Pure abstract class for every FRyDoM constraints (FrLink, FrConstraint_, FrActuator_).
    */
-   // FIXME :: pass the FrLoggable from FrLinkBase to FrLink ( don't forget constraints and actuators)
+  // FIXME :: pass the FrLoggable from FrLinkBase to FrLink ( don't forget constraints and actuators)
   class FrLinkBase : public FrObject, public FrAssetOwner {
 
    protected:

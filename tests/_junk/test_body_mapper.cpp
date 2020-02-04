@@ -13,35 +13,35 @@
 
 using namespace frydom;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
-    std::cout << "========================= Test body mapper ===================== " << std::endl;
+  std::cout << "========================= Test body mapper ===================== " << std::endl;
 
-    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+  cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
 
-    std::cout << "--> Create system..." << std::endl;
-    FrOffshoreSystem system;
+  std::cout << "--> Create system..." << std::endl;
+  FrOffshoreSystem system;
 
-    std::cout << "--> Create body..." << std::endl;
-    auto body = system.NewBody();
+  std::cout << "--> Create body..." << std::endl;
+  auto body = system.NewBody();
 
-    std::cout << "--> Read file : Platform_HDB.hdb5" << std::endl;
-    auto hdb = std::make_shared<FrHydroDB>(resources_path.resolve("Platform_HDB.hdb5").path());
+  std::cout << "--> Read file : Platform_HDB.hdb5" << std::endl;
+  auto hdb = std::make_shared<FrHydroDB>(resources_path.resolve("Platform_HDB.hdb5").path());
 
-    std::cout << "--> Create eqFrame..." << std::endl;
-    auto eqFrame = make_equilibrium_frame(body, &system);
+  std::cout << "--> Create eqFrame..." << std::endl;
+  auto eqFrame = make_equilibrium_frame(body, &system);
 
-    std::cout << "--> Link map..." << std::endl;
-    hdb->Map(0, body.get(), eqFrame);
+  std::cout << "--> Link map..." << std::endl;
+  hdb->Map(0, body.get(), eqFrame);
 
-    std::cout << "--> Test Get BEMBody" << std::endl;
-    auto bemBody = hdb->GetBody(body.get());
-    std::cout << "BEMBody name : " << bemBody->GetName() << std::endl;
+  std::cout << "--> Test Get BEMBody" << std::endl;
+  auto bemBody = hdb->GetBody(body.get());
+  std::cout << "BEMBody name : " << bemBody->GetName() << std::endl;
 
-    auto eqFrame2 = hdb->GetMapper()->GetEquilibriumFrame(body.get());
-    std::cout << "eqFrame x : " << eqFrame2->GetPosition(NWU).GetX() << std::endl;
-    std::cout << "eqFrame y : " << eqFrame2->GetPosition(NWU).GetY() << std::endl;
-    std::cout << "eqFrame z : " << eqFrame2->GetPosition(NWU).GetZ() << std::endl;
+  auto eqFrame2 = hdb->GetMapper()->GetEquilibriumFrame(body.get());
+  std::cout << "eqFrame x : " << eqFrame2->GetPosition(NWU).GetX() << std::endl;
+  std::cout << "eqFrame y : " << eqFrame2->GetPosition(NWU).GetY() << std::endl;
+  std::cout << "eqFrame z : " << eqFrame2->GetPosition(NWU).GetZ() << std::endl;
 
 
 }

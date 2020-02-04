@@ -424,7 +424,8 @@ TEST(FrWaveField, BiDirectionalWaveInfDepth) {
   auto freeSurface = system.GetEnvironment()->GetOcean()->GetFreeSurface();
   auto waveField = freeSurface->SetAiryIrregularWaveField();
 
-  auto wavedata = FrFileSystem::join({system.config_file().GetDataFolder(), "unit_test/BiDirectionalWaveInfDepth.json"});
+  auto wavedata = FrFileSystem::join(
+      {system.config_file().GetDataFolder(), "unit_test/BiDirectionalWaveInfDepth.json"});
   waveField->LoadJSON(wavedata);
 
 ////    // Set the JONSWAP wave spectrum

@@ -14,116 +14,116 @@
 using namespace frydom;
 
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
-    // The system
-    FrOffshoreSystem system;
+  // The system
+  FrOffshoreSystem system;
 
-    // Set the free surface
-    system.GetEnvironment()->GetFreeSurface()->SetGrid(-200, 200, 50, -200, 300, 50);
-
-
-
-    // The current
-    system.GetEnvironment()->GetCurrent<FrUniformCurrent>()->Set(WEST, 20, KNOT, NED, GOTO);
-
-    // Building a TUG
-    auto tug = std::make_shared<FrShip>();
-    system.AddBody(tug);
-    tug->SetName("MyTug");
-    tug->SetHydroMesh("MagneViking.obj", true);
-    tug->SetMass(5e7);  // TODO: plutot dans les 5e9...
-    tug->SetInertiaXX(chrono::ChVector<>(1e8, 1e9, 1e9));
-
-    tug->SetTransverseUnderWaterArea(120.);
-    tug->SetLateralUnderWaterArea(500.);
-    tug->SetLpp(76.2);
-
-    tug->SetNEDHeading(WEST);
-    tug->SetPos(chrono::ChVector<>(0, -50, 0));
-    tug->Set3DOF_ON();
-
-    tug->SetPos_dt(chrono::ChVector<>(0*MU_KNOT, 0, 0));
-
-    // Creating a ship to tug
-    auto ship = std::make_shared<FrShip>();
-    system.AddBody(ship);
-    ship->Set3DOF_ON();
-    ship->SetName("ship");
-    ship->SetHydroMesh("MagneViking.obj", true);
-    ship->SetMass(5e7);  // TODO: plutot dans les 5e9...
-    ship->SetInertiaXX(chrono::ChVector<>(1e8, 1e9, 1e9));
-
-    ship->SetTransverseUnderWaterArea(120.);
-    ship->SetLateralUnderWaterArea(500.);
-    ship->SetLpp(76.2);
-    ship->SetPos(chrono::ChVector<>(-70, -100, 0));
+  // Set the free surface
+  system.GetEnvironment()->GetFreeSurface()->SetGrid(-200, 200, 50, -200, 300, 50);
 
 
 
-    // Adding a curent resistance
-    std::string filename("PolarCurrentCoeffs.yml");
-    auto current_force_tug = std::make_shared<FrCurrentForce>(filename);
-    tug->AddForce(current_force_tug);
+  // The current
+  system.GetEnvironment()->GetCurrent<FrUniformCurrent>()->Set(WEST, 20, KNOT, NED, GOTO);
 
-    // Adding a linear damping
-    auto lin_damping_force_tug = std::make_shared<FrLinearDamping>();
-    lin_damping_force_tug->SetDiagonalDamping(1e7, 1e7, 0, 0, 0, 1e8);
-    tug->AddForce(lin_damping_force_tug);
+  // Building a TUG
+  auto tug = std::make_shared<FrShip>();
+  system.AddBody(tug);
+  tug->SetName("MyTug");
+  tug->SetHydroMesh("MagneViking.obj", true);
+  tug->SetMass(5e7);  // TODO: plutot dans les 5e9...
+  tug->SetInertiaXX(chrono::ChVector<>(1e8, 1e9, 1e9));
 
-    auto current_force_ship= std::make_shared<FrCurrentForce>(filename);
-    ship->AddForce(current_force_ship);
+  tug->SetTransverseUnderWaterArea(120.);
+  tug->SetLateralUnderWaterArea(500.);
+  tug->SetLpp(76.2);
 
-    // Adding a linear damping
-    auto lin_damping_force_ship = std::make_shared<FrLinearDamping>();
-    lin_damping_force_ship->SetDiagonalDamping(1e7, 1e7, 0, 0, 0, 1e8);
-    ship->AddForce(lin_damping_force_ship);
+  tug->SetNEDHeading(WEST);
+  tug->SetPos(chrono::ChVector<>(0, -50, 0));
+  tug->Set3DOF_ON();
 
-    // Adding a propulsion force to the ship
-    auto prop_force = std::make_shared<FrTryalForce>();
-    tug->AddForce(prop_force);
+  tug->SetPos_dt(chrono::ChVector<>(0 * MU_KNOT, 0, 0));
+
+  // Creating a ship to tug
+  auto ship = std::make_shared<FrShip>();
+  system.AddBody(ship);
+  ship->Set3DOF_ON();
+  ship->SetName("ship");
+  ship->SetHydroMesh("MagneViking.obj", true);
+  ship->SetMass(5e7);  // TODO: plutot dans les 5e9...
+  ship->SetInertiaXX(chrono::ChVector<>(1e8, 1e9, 1e9));
+
+  ship->SetTransverseUnderWaterArea(120.);
+  ship->SetLateralUnderWaterArea(500.);
+  ship->SetLpp(76.2);
+  ship->SetPos(chrono::ChVector<>(-70, -100, 0));
 
 
-    // Creating a fairlead on the tug
-    auto fairlead_tug = tug->CreateNode(chrono::ChVector<>(-40, 0.0, 0));
-    fairlead_tug->SetName("MyFairlead");
 
-    auto fairlead_ship = ship->CreateNode(chrono::ChVector<>(40, 0, 0));
-    fairlead_ship->SetName("Fairlead");
+  // Adding a curent resistance
+  std::string filename("PolarCurrentCoeffs.yml");
+  auto current_force_tug = std::make_shared<FrCurrentForce>(filename);
+  tug->AddForce(current_force_tug);
 
-    // Creating an other node as an anchor
+  // Adding a linear damping
+  auto lin_damping_force_tug = std::make_shared<FrLinearDamping>();
+  lin_damping_force_tug->SetDiagonalDamping(1e7, 1e7, 0, 0, 0, 1e8);
+  tug->AddForce(lin_damping_force_tug);
+
+  auto current_force_ship = std::make_shared<FrCurrentForce>(filename);
+  ship->AddForce(current_force_ship);
+
+  // Adding a linear damping
+  auto lin_damping_force_ship = std::make_shared<FrLinearDamping>();
+  lin_damping_force_ship->SetDiagonalDamping(1e7, 1e7, 0, 0, 0, 1e8);
+  ship->AddForce(lin_damping_force_ship);
+
+  // Adding a propulsion force to the ship
+  auto prop_force = std::make_shared<FrTryalForce>();
+  tug->AddForce(prop_force);
+
+
+  // Creating a fairlead on the tug
+  auto fairlead_tug = tug->CreateNode(chrono::ChVector<>(-40, 0.0, 0));
+  fairlead_tug->SetName("MyFairlead");
+
+  auto fairlead_ship = ship->CreateNode(chrono::ChVector<>(40, 0, 0));
+  fairlead_ship->SetName("Fairlead");
+
+  // Creating an other node as an anchor
 //    auto anchor = std::make_shared<FrNode>();
 //    anchor->SetBody(system.GetWorldBodyPtr());  // Faire une classe anchor qui sait le faire toute seule
 
 //    auto anchor_pos = chrono::ChCoordsys<double>();
 //    anchor_pos.pos.x() = 0;
 
-    // TODO: imposer un mouvement de l'ancre avec une fonction pour emuler un remorquage a vitesse constante
+  // TODO: imposer un mouvement de l'ancre avec une fonction pour emuler un remorquage a vitesse constante
 //    anchor->Impose_Abs_Coord(anchor_pos);
 
 
 
-    // Creating a catenary line
-    double Lu = 120;
-    bool elastic = true;
-    auto u = chrono::ChVector<double>(0, 0, -1);
+  // Creating a catenary line
+  double Lu = 120;
+  bool elastic = true;
+  auto u = chrono::ChVector<double>(0, 0, -1);
 //    double q = 616.538;
 //    double q = 2000;
-    double q = 1000;
+  double q = 1000;
 //    double q = 100;
 //    double EA = 1e10;
 //    double EA = 1.5708e9;
-    double EA = 1e10;
-    double A = 0.05;
-    double E = EA/A;
+  double EA = 1e10;
+  double A = 0.05;
+  double E = EA / A;
 //    auto line = FrCatenaryLine(fairlead_tug, anchor, elastic, EA, Lu, q, u);
-    auto line = std::make_shared<FrCatenaryLine>(fairlead_tug, fairlead_ship, elastic, E, A, Lu, q, u);
-    line->Initialize();
-    system.AddLink(line);
+  auto line = std::make_shared<FrCatenaryLine>(fairlead_tug, fairlead_ship, elastic, E, A, Lu, q, u);
+  line->Initialize();
+  system.AddLink(line);
 
-    system.Initialize();
-    auto app = FrIrrApp(system, 300);
-    app.Run();
+  system.Initialize();
+  auto app = FrIrrApp(system, 300);
+  app.Run();
 
 
 //    bool viz = true;
@@ -170,6 +170,6 @@ int main(int argc, char* argv[]) {
 //        }
 //    }
 
-    return 0;
+  return 0;
 
 }

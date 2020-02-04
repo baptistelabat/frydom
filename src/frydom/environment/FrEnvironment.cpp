@@ -89,28 +89,29 @@ namespace frydom {
     }
   }
 
-    FLUID_TYPE FrEnvironment::GetFluidTypeAtPointInWorld(const frydom::Position &worldPos,
-                                                         frydom::FRAME_CONVENTION fc,
-                                                         bool waveDeformation) {
-        double waveElevation = 0.;
-        if (waveDeformation) {
-            waveElevation = m_ocean->GetFreeSurface()->GetElevation(worldPos.x(), worldPos.y(), fc);
-        }
-
-        if (IsNED(fc)) {
-            if (worldPos.z() < waveElevation + DBL_EPSILON) {
-                return FLUID_TYPE::AIR;
-            } else {
-                return FLUID_TYPE::WATER;
-            }
-        } else {
-            if (worldPos.z() > waveElevation - DBL_EPSILON) {
-                return FLUID_TYPE::AIR;
-            } else {
-                return FLUID_TYPE::WATER;
-            }
-        }
+  FLUID_TYPE FrEnvironment::GetFluidTypeAtPointInWorld(const frydom::Position &worldPos,
+                                                       frydom::FRAME_CONVENTION fc,
+                                                       bool waveDeformation) {
+    double waveElevation = 0.;
+    if (waveDeformation) {
+      waveElevation = m_ocean->GetFreeSurface()->GetElevation(worldPos.x(), worldPos.y(), fc);
     }
+
+    if (IsNED(fc)) {
+      if (worldPos.z() < waveElevation + DBL_EPSILON) {
+        return FLUID_TYPE::AIR;
+      } else {
+        return FLUID_TYPE::WATER;
+      }
+    } else {
+      if (worldPos.z() > waveElevation - DBL_EPSILON) {
+        return FLUID_TYPE::AIR;
+      } else {
+        return FLUID_TYPE::WATER;
+      }
+    }
+  }
+
   FrGeographicServices *FrEnvironment::GetGeographicServices() const {
     return m_geographicServices.get();
   }

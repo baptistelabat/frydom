@@ -14,17 +14,18 @@
 using namespace frydom;
 
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
-    double water_height = 5;
-    double omega = 2.;
-    double grav = 9.81;
-
-
-    double k = frydom::SolveWaveDispersionRelation(water_height, omega, grav);
-
-    std::cout << "omega = " << omega << std::endl << "k = " << k << std::endl << "w2/g = " << omega*omega / grav << std::endl;
+  double water_height = 5;
+  double omega = 2.;
+  double grav = 9.81;
 
 
-    return 0;
+  double k = frydom::SolveWaveDispersionRelation(water_height, omega, grav);
+
+  std::cout << "omega = " << omega << std::endl << "k = " << k << std::endl << "w2/g = " << omega * omega / grav
+            << std::endl;
+
+
+  return 0;
 }

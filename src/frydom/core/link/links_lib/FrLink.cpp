@@ -101,36 +101,40 @@ namespace frydom {
 
     void FrLinkLockBase::GenerateCache() {
       // 1 - Relative Frames
-            c_frame2WRT1 = internal::ChCoordsys2FrFrame(GetRelM());
-            c_frame1WRT2 = c_frame2WRT1.GetInverse();
+      c_frame2WRT1 = internal::ChCoordsys2FrFrame(GetRelM());
+      c_frame1WRT2 = c_frame2WRT1.GetInverse();
 
       // 2 - Relative velocities
-            c_generalizedVelocity2WRT1.SetVelocity(internal::ChVectorToVector3d<Velocity>(GetRelM_dt().pos));
-            c_generalizedVelocity2WRT1.SetAngularVelocity(internal::ChVectorToVector3d<AngularVelocity>(GetRelWvel()));
+      c_generalizedVelocity2WRT1.SetVelocity(internal::ChVectorToVector3d<Velocity>(GetRelM_dt().pos));
+      c_generalizedVelocity2WRT1.SetAngularVelocity(internal::ChVectorToVector3d<AngularVelocity>(GetRelWvel()));
 
-            c_generalizedVelocity1WRT2.SetVelocity(
-                    - c_frame1WRT2.ProjectVectorFrameInParent<Velocity>(c_generalizedVelocity2WRT1.GetVelocity(), NWU));
-            c_generalizedVelocity1WRT2.SetAngularVelocity(
-                    - c_frame1WRT2.ProjectVectorFrameInParent<AngularVelocity>(c_generalizedVelocity2WRT1.GetAngularVelocity(), NWU));
+      c_generalizedVelocity1WRT2.SetVelocity(
+          -c_frame1WRT2.ProjectVectorFrameInParent<Velocity>(c_generalizedVelocity2WRT1.GetVelocity(), NWU));
+      c_generalizedVelocity1WRT2.SetAngularVelocity(
+          -c_frame1WRT2.ProjectVectorFrameInParent<AngularVelocity>(c_generalizedVelocity2WRT1.GetAngularVelocity(),
+                                                                    NWU));
 
       // 2 - Relative accelerations
-            c_generalizedAcceleration2WRT1.SetAcceleration(internal::ChVectorToVector3d<Acceleration>(GetRelM_dtdt().pos));
-            c_generalizedAcceleration2WRT1.SetAngularAcceleration(internal::ChVectorToVector3d<AngularAcceleration>(GetRelWacc()));
+      c_generalizedAcceleration2WRT1.SetAcceleration(internal::ChVectorToVector3d<Acceleration>(GetRelM_dtdt().pos));
+      c_generalizedAcceleration2WRT1.SetAngularAcceleration(
+          internal::ChVectorToVector3d<AngularAcceleration>(GetRelWacc()));
 
-            c_generalizedAcceleration1WRT2.SetAcceleration(
-                    - c_frame1WRT2.ProjectVectorFrameInParent<Acceleration>(c_generalizedAcceleration2WRT1.GetAcceleration(), NWU));
-            c_generalizedAcceleration1WRT2.SetAngularAcceleration(
-                    - c_frame1WRT2.ProjectVectorFrameInParent<AngularAcceleration>(c_generalizedAcceleration2WRT1.GetAngularAcceleration(), NWU));
+      c_generalizedAcceleration1WRT2.SetAcceleration(
+          -c_frame1WRT2.ProjectVectorFrameInParent<Acceleration>(c_generalizedAcceleration2WRT1.GetAcceleration(),
+                                                                 NWU));
+      c_generalizedAcceleration1WRT2.SetAngularAcceleration(
+          -c_frame1WRT2.ProjectVectorFrameInParent<AngularAcceleration>(
+              c_generalizedAcceleration2WRT1.GetAngularAcceleration(), NWU));
 
       // 3 - Link forces
-            c_generalizedForceOnNode1.SetForce(internal::ChVectorToVector3d<Force>(Get_react_force()));
-            c_generalizedForceOnNode1.SetTorque(internal::ChVectorToVector3d<Torque>(Get_react_torque()));
+      c_generalizedForceOnNode1.SetForce(internal::ChVectorToVector3d<Force>(Get_react_force()));
+      c_generalizedForceOnNode1.SetTorque(internal::ChVectorToVector3d<Torque>(Get_react_torque()));
 
-            c_generalizedForceOnNode2.SetForce(
-                    - c_frame1WRT2.ProjectVectorFrameInParent<Force>(c_generalizedForceOnNode1.GetForce(), NWU));
-            c_generalizedForceOnNode2.SetTorque(
-                    - c_frame1WRT2.ProjectVectorFrameInParent(c_generalizedForceOnNode1.GetTorque(), NWU)
-                    + c_frame1WRT2.GetPosition(NWU).cross(c_generalizedForceOnNode2.GetForce())
+      c_generalizedForceOnNode2.SetForce(
+          -c_frame1WRT2.ProjectVectorFrameInParent<Force>(c_generalizedForceOnNode1.GetForce(), NWU));
+      c_generalizedForceOnNode2.SetTorque(
+          -c_frame1WRT2.ProjectVectorFrameInParent(c_generalizedForceOnNode1.GetTorque(), NWU)
+          + c_frame1WRT2.GetPosition(NWU).cross(c_generalizedForceOnNode2.GetForce())
       );
 
     }
@@ -167,27 +171,28 @@ namespace frydom {
       return internal::ChVectorToVector3d<Force>(C_force);
     }
 
-        Torque FrLinkLockBase::GetLinkTorqueOnBody1InFrame2AtOrigin1() {
+    Torque FrLinkLockBase::GetLinkTorqueOnBody1InFrame2AtOrigin1() {
       return internal::ChVectorToVector3d<Torque>(C_torque);
     }
 
-      Force FrLinkLockBase::GetLinkForceOnNode1() const {
-        return -GetLinkForceOnNode2();
-      }
+    Force FrLinkLockBase::GetLinkForceOnNode1() const {
+      return -GetLinkForceOnNode2();
+    }
 
-      Torque FrLinkLockBase::GetLinkTorqueOnNode1() const {
-        return -GetLinkTorqueOnNode2();
-      }
+    Torque FrLinkLockBase::GetLinkTorqueOnNode1() const {
+      return -GetLinkTorqueOnNode2();
+    }
 
-      Force FrLinkLockBase::GetLinkForceOnNode2() const {
-        return internal::ChVectorToVector3d<Force>(C_force);
-      }
+    Force FrLinkLockBase::GetLinkForceOnNode2() const {
+      return internal::ChVectorToVector3d<Force>(C_force);
+    }
 
-      Torque FrLinkLockBase::GetLinkTorqueOnNode2() const {
-            return internal::ChVectorToVector3d<Torque>(C_torque);
-        }
+    Torque FrLinkLockBase::GetLinkTorqueOnNode2() const {
+      return internal::ChVectorToVector3d<Torque>(C_torque);
+    }
 
-        FrFrame FrLinkLockBase::GetConstraintViolation() { // TODO : voir si c'est bien la violation de 2 par rapport a 1, dans 1 !! sinon, renvoyer l'inverse
+    FrFrame
+    FrLinkLockBase::GetConstraintViolation() { // TODO : voir si c'est bien la violation de 2 par rapport a 1, dans 1 !! sinon, renvoyer l'inverse
       return internal::ChCoordsys2FrFrame(GetRelC());
     }
 
@@ -340,56 +345,73 @@ namespace frydom {
 
     // Node Position
     msg->AddField<Eigen::Matrix<double, 3, 1>>
-            ("PositionOfNode2WRTNode1","m", fmt::format("Node 2 position relatively to Node 1, in Node 1 reference frame in {}",
-                                                        GetLogFC()),
-             [this]() {return GetNode2PositionWRTNode1(GetLogFC());});
+        ("PositionOfNode2WRTNode1", "m",
+         fmt::format("Node 2 position relatively to Node 1, in Node 1 reference frame in {}",
+                     GetLogFC()),
+         [this]() { return GetNode2PositionWRTNode1(GetLogFC()); });
     // Node Velocity
     msg->AddField<Eigen::Matrix<double, 3, 1>>
-            ("VelocityOfNode2WRTNode1","m/s", fmt::format("Node 2 velocity relatively to Node 1, in Node 1 reference frame in {}", GetLogFC()),
-             [this]() {return GetVelocityOfNode2WRTNode1(GetLogFC());});
+        ("VelocityOfNode2WRTNode1", "m/s",
+         fmt::format("Node 2 velocity relatively to Node 1, in Node 1 reference frame in {}", GetLogFC()),
+         [this]() { return GetVelocityOfNode2WRTNode1(GetLogFC()); });
     // Node Acceleration
     msg->AddField<Eigen::Matrix<double, 3, 1>>
-            ("AccelerationOfNode2WRTNode1","m/s^2", fmt::format("Node 2 acceleration relatively to Node 1, in Marker 1 reference frame in {}", GetLogFC()),
-             [this]() {return GetAccelerationOfNode2WRTNode1(GetLogFC());});
+        ("AccelerationOfNode2WRTNode1", "m/s^2",
+         fmt::format("Node 2 acceleration relatively to Node 1, in Marker 1 reference frame in {}", GetLogFC()),
+         [this]() { return GetAccelerationOfNode2WRTNode1(GetLogFC()); });
 
     // Node Orientation
     msg->AddField<Eigen::Matrix<double, 3, 1>>
-            ("OrientationOfNode2WRTNode1","rad", fmt::format("Node 2 orientation relatively to Node 1, in Node 1 reference frame in {}", GetLogFC()),
-             [this]() {double phi, theta, psi; GetNode2OrientationWRTNode1().GetCardanAngles_RADIANS(phi, theta, psi, GetLogFC());
-                return Position(phi, theta, psi);});
+        ("OrientationOfNode2WRTNode1", "rad",
+         fmt::format("Node 2 orientation relatively to Node 1, in Node 1 reference frame in {}", GetLogFC()),
+         [this]() {
+           double phi, theta, psi;
+           GetNode2OrientationWRTNode1().GetCardanAngles_RADIANS(phi, theta, psi, GetLogFC());
+           return Position(phi, theta, psi);
+         });
     // Node Angular Velocity
     msg->AddField<Eigen::Matrix<double, 3, 1>>
-            ("AngularVelocityOfNode2WRTNode1","rad/s", fmt::format("Node 2 angular velocity relatively to Node 1, in Node 1 reference frame in {}", GetLogFC()),
-             [this]() {return GetAngularVelocityOfNode2WRTNode1(GetLogFC());});
+        ("AngularVelocityOfNode2WRTNode1", "rad/s",
+         fmt::format("Node 2 angular velocity relatively to Node 1, in Node 1 reference frame in {}", GetLogFC()),
+         [this]() { return GetAngularVelocityOfNode2WRTNode1(GetLogFC()); });
     // Node Angular Acceleration
     msg->AddField<Eigen::Matrix<double, 3, 1>>
-            ("AngularAccelerationOfNode2WRTNode1","m/s^2", fmt::format("Node 2 angular acceleration relatively to Node 1, in Node 1 reference frame in {}", GetLogFC()),
-             [this]() {return GetAngularAccelerationOfNode2WRTNode1(GetLogFC());});
+        ("AngularAccelerationOfNode2WRTNode1", "m/s^2",
+         fmt::format("Node 2 angular acceleration relatively to Node 1, in Node 1 reference frame in {}", GetLogFC()),
+         [this]() { return GetAngularAccelerationOfNode2WRTNode1(GetLogFC()); });
     // Force
     msg->AddField<Eigen::Matrix<double, 3, 1>>
-            ("LinkReactionForceOnBody1","N", fmt::format("link reaction force applied at marker 1, expressed in body 1 reference frame in {}", GetLogFC()),
-             [this]() {return GetLinkReactionForceOnBody1(GetLogFC());});
+        ("LinkReactionForceOnBody1", "N",
+         fmt::format("link reaction force applied at marker 1, expressed in body 1 reference frame in {}", GetLogFC()),
+         [this]() { return GetLinkReactionForceOnBody1(GetLogFC()); });
     msg->AddField<Eigen::Matrix<double, 3, 1>>
-            ("LinkReactionForceOnBody2","N", fmt::format("link reaction force applied at marker 2, expressed in body 2 reference frame in {}", GetLogFC()),
-             [this]() {return GetLinkReactionForceOnBody2(GetLogFC());});
+        ("LinkReactionForceOnBody2", "N",
+         fmt::format("link reaction force applied at marker 2, expressed in body 2 reference frame in {}", GetLogFC()),
+         [this]() { return GetLinkReactionForceOnBody2(GetLogFC()); });
     // Torque
     msg->AddField<Eigen::Matrix<double, 3, 1>>
-            ("LinkReactionTorqueOnBody1","Nm", fmt::format("link reaction torque at Node 1, expressed in Node 1 reference frame in {}", GetLogFC()),
-             [this]() {return GetLinkReactionTorqueOnNode1(GetLogFC());});
+        ("LinkReactionTorqueOnBody1", "Nm",
+         fmt::format("link reaction torque at Node 1, expressed in Node 1 reference frame in {}", GetLogFC()),
+         [this]() { return GetLinkReactionTorqueOnNode1(GetLogFC()); });
     msg->AddField<Eigen::Matrix<double, 3, 1>>
-            ("LinkReactionTorqueOnBody2","Nm", fmt::format("link reaction torque at Node 2, expressed in Node 2 reference frame in {}", GetLogFC()),
-             [this]() {return GetLinkReactionTorqueOnNode2(GetLogFC());});
+        ("LinkReactionTorqueOnBody2", "Nm",
+         fmt::format("link reaction torque at Node 2, expressed in Node 2 reference frame in {}", GetLogFC()),
+         [this]() { return GetLinkReactionTorqueOnNode2(GetLogFC()); });
 
     msg->AddField<Eigen::Matrix<double, 3, 1>>
-            ("LinkReactionTorqueOnBody1AtCOG","Nm", fmt::format("link reaction torque at CoG applied at marker 1, expressed in body 1 reference frame in {}", GetLogFC()),
-             [this]() {return GetLinkReactionTorqueOnBody1AtCOG(GetLogFC());});
+        ("LinkReactionTorqueOnBody1AtCOG", "Nm",
+         fmt::format("link reaction torque at CoG applied at marker 1, expressed in body 1 reference frame in {}",
+                     GetLogFC()),
+         [this]() { return GetLinkReactionTorqueOnBody1AtCOG(GetLogFC()); });
     msg->AddField<Eigen::Matrix<double, 3, 1>>
-            ("LinkReactionTorqueOnBody2AtCOG","Nm", fmt::format("link reaction torque at CoG applied at marker 2, expressed in body 2 reference frame in {}", GetLogFC()),
-             [this]() {return GetLinkReactionTorqueOnBody2AtCOG(GetLogFC());});
+        ("LinkReactionTorqueOnBody2AtCOG", "Nm",
+         fmt::format("link reaction torque at CoG applied at marker 2, expressed in body 2 reference frame in {}",
+                     GetLogFC()),
+         [this]() { return GetLinkReactionTorqueOnBody2AtCOG(GetLogFC()); });
 
     // Power
     msg->AddField<double>
-            ("LinkPower","kW", "power delivered in a FrLink", [this]() {return 0.001*GetLinkPower();});
+        ("LinkPower", "kW", "power delivered in a FrLink", [this]() { return 0.001 * GetLinkPower(); });
 
     // Motor
     if (m_actuator) {
@@ -496,41 +518,41 @@ namespace frydom {
     return m_chronoLink->c_generalizedAcceleration1WRT2.GetAngularAcceleration();
   }
 
-    const Force FrLink::GetLinkReactionForceOnNode1(FRAME_CONVENTION fc) const {
+  const Force FrLink::GetLinkReactionForceOnNode1(FRAME_CONVENTION fc) const {
     auto force = m_chronoLink->c_generalizedForceOnNode1.GetForce();
     if (IsNED(fc)) internal::SwapFrameConvention<Force>(force);
     return force;
   }
 
-    const Force FrLink::GetLinkReactionForceOnNode2(FRAME_CONVENTION fc) const {
+  const Force FrLink::GetLinkReactionForceOnNode2(FRAME_CONVENTION fc) const {
     auto force = m_chronoLink->c_generalizedForceOnNode2.GetForce();
     if (IsNED(fc)) internal::SwapFrameConvention<Force>(force);
     return force;
   }
 
-    const Force FrLink::GetLinkReactionForceOnBody1(FRAME_CONVENTION fc) const {
+  const Force FrLink::GetLinkReactionForceOnBody1(FRAME_CONVENTION fc) const {
     auto forceOnNode1 = GetLinkReactionForceOnNode1(fc);
     return m_node1->GetFrameWRT_COG_InBody().ProjectVectorFrameInParent(forceOnNode1, fc);
   }
 
-    const Force FrLink::GetLinkReactionForceOnBody2(FRAME_CONVENTION fc) const {
+  const Force FrLink::GetLinkReactionForceOnBody2(FRAME_CONVENTION fc) const {
     auto forceOnNode2 = GetLinkReactionForceOnNode2(fc);
     return m_node2->GetFrameWRT_COG_InBody().ProjectVectorFrameInParent(forceOnNode2, fc);
   }
 
-    const Torque FrLink::GetLinkReactionTorqueOnNode1(FRAME_CONVENTION fc) const {
+  const Torque FrLink::GetLinkReactionTorqueOnNode1(FRAME_CONVENTION fc) const {
     auto torque = m_chronoLink->c_generalizedForceOnNode1.GetTorque();
     if (IsNED(fc)) internal::SwapFrameConvention<Torque>(torque);
     return torque;
   }
 
-    const Torque FrLink::GetLinkReactionTorqueOnNode2(FRAME_CONVENTION fc) const {
+  const Torque FrLink::GetLinkReactionTorqueOnNode2(FRAME_CONVENTION fc) const {
     auto torque = m_chronoLink->c_generalizedForceOnNode2.GetTorque();
     if (IsNED(fc)) internal::SwapFrameConvention<Torque>(torque);
     return torque;
   }
 
-    const Torque FrLink::GetLinkReactionTorqueOnBody1AtCOG(FRAME_CONVENTION fc) const {
+  const Torque FrLink::GetLinkReactionTorqueOnBody1AtCOG(FRAME_CONVENTION fc) const {
     auto nodeFrame_WRT_COG = m_node1->GetFrameWRT_COG_InBody();
 
     auto torqueAtNode1_ref =
@@ -541,7 +563,7 @@ namespace frydom {
     return torqueAtNode1_ref + COG_M1_ref.cross(force_ref);
   }
 
-    const Torque FrLink::GetLinkReactionTorqueOnBody2AtCOG(FRAME_CONVENTION fc) const {
+  const Torque FrLink::GetLinkReactionTorqueOnBody2AtCOG(FRAME_CONVENTION fc) const {
     auto nodeFrame_WRT_COG = m_node2->GetFrameWRT_COG_InBody();
 
     auto torqueAtNode2_ref =
@@ -588,8 +610,8 @@ namespace frydom {
 
 
   double FrLink::GetLinkPower() const {
-        return GetSpringDamperForceOnNode2(NWU).dot(GetVelocityOfNode2WRTNode1(NWU))
-             + GetSpringDamperTorqueOnNode2(NWU).dot(GetAngularVelocityOfNode2WRTNode1(NWU));
+    return GetSpringDamperForceOnNode2(NWU).dot(GetVelocityOfNode2WRTNode1(NWU))
+           + GetSpringDamperTorqueOnNode2(NWU).dot(GetAngularVelocityOfNode2WRTNode1(NWU));
   }
 
   FrFrame FrLink::GetConstraintViolation() const {
@@ -597,27 +619,28 @@ namespace frydom {
   }
 
   void FrLink::UpdateCache() {}
+
   const Force FrLink::GetSpringDamperForceOnNode1(FRAME_CONVENTION fc) const {
     auto force = m_chronoLink->GetLinkForceOnNode1();
-    if (IsNED(fc)) {internal::SwapFrameConvention(force);}
+    if (IsNED(fc)) { internal::SwapFrameConvention(force); }
     return force;
   }
 
   const Torque FrLink::GetSpringDamperTorqueOnNode1(FRAME_CONVENTION fc) const {
     auto torque = m_chronoLink->GetLinkTorqueOnNode1();
-    if (IsNED(fc)) {internal::SwapFrameConvention(torque);}
+    if (IsNED(fc)) { internal::SwapFrameConvention(torque); }
     return torque;
   }
 
   const Force FrLink::GetSpringDamperForceOnNode2(FRAME_CONVENTION fc) const {
     auto force = m_chronoLink->GetLinkForceOnNode2();
-    if (IsNED(fc)) {internal::SwapFrameConvention(force);}
+    if (IsNED(fc)) { internal::SwapFrameConvention(force); }
     return force;
   }
 
   const Torque FrLink::GetSpringDamperTorqueOnNode2(FRAME_CONVENTION fc) const {
     auto torque = m_chronoLink->GetLinkTorqueOnNode2();
-    if (IsNED(fc)) {internal::SwapFrameConvention(torque);}
+    if (IsNED(fc)) { internal::SwapFrameConvention(torque); }
     return torque;
   }
 
@@ -627,30 +650,30 @@ namespace frydom {
   }
 
   const Force FrLink::GetSpringDamperForceOnBody2(FRAME_CONVENTION fc) const {
-      auto force = GetSpringDamperForceOnNode2(fc);
-      return m_node2->GetFrameWRT_COG_InBody().ProjectVectorFrameInParent(force, fc);
+    auto force = GetSpringDamperForceOnNode2(fc);
+    return m_node2->GetFrameWRT_COG_InBody().ProjectVectorFrameInParent(force, fc);
 
   }
 
   const Torque FrLink::GetSpringDamperTorqueOnBody1AtCOG(FRAME_CONVENTION fc) const {
-      auto nodeFrame_WRT_COG = m_node1->GetFrameWRT_COG_InBody();
+    auto nodeFrame_WRT_COG = m_node1->GetFrameWRT_COG_InBody();
 
-      auto torqueAtNode1_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetSpringDamperTorqueOnNode1(fc), fc);
-      auto COG_M1_ref = nodeFrame_WRT_COG.GetPosition(fc);
-      auto force_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetSpringDamperForceOnNode1(fc), fc);
+    auto torqueAtNode1_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetSpringDamperTorqueOnNode1(fc), fc);
+    auto COG_M1_ref = nodeFrame_WRT_COG.GetPosition(fc);
+    auto force_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetSpringDamperForceOnNode1(fc), fc);
 
-      return torqueAtNode1_ref + COG_M1_ref.cross(force_ref);
-    }
+    return torqueAtNode1_ref + COG_M1_ref.cross(force_ref);
+  }
 
   const Torque FrLink::GetSpringDamperTorqueOnBody2AtCOG(FRAME_CONVENTION fc) const {
-      auto nodeFrame_WRT_COG = m_node2->GetFrameWRT_COG_InBody();
+    auto nodeFrame_WRT_COG = m_node2->GetFrameWRT_COG_InBody();
 
-      auto torqueAtNode2_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetSpringDamperTorqueOnNode2(fc), fc);
-      auto COG_M2_ref = nodeFrame_WRT_COG.GetPosition(fc);
-      auto force_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetSpringDamperForceOnNode2(fc), fc);
+    auto torqueAtNode2_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetSpringDamperTorqueOnNode2(fc), fc);
+    auto COG_M2_ref = nodeFrame_WRT_COG.GetPosition(fc);
+    auto force_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetSpringDamperForceOnNode2(fc), fc);
 
-      return torqueAtNode2_ref + COG_M2_ref.cross(force_ref);
-    }
+    return torqueAtNode2_ref + COG_M2_ref.cross(force_ref);
+  }
 
 //  const GeneralizedForceTorsor FrLink::GetLinkReactionForceOnNode1_(FRAME_CONVENTION fc) const {
 //      return GeneralizedForceTorsor(frydom::Force(), frydom::Torque(), frydom::Position(), NWU);

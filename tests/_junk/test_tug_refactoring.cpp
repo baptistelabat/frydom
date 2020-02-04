@@ -17,64 +17,64 @@
 
 using namespace frydom;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
 
-    // TODO : fournir un frydom initialize...
+  // TODO : fournir un frydom initialize...
 
-    // The system
-    FrOffshoreSystem_ system;
-    system.SetSolver(FrOffshoreSystem_::MINRES);
+  // The system
+  FrOffshoreSystem_ system;
+  system.SetSolver(FrOffshoreSystem_::MINRES);
 //    system.SetTimeStepper(FrOffshoreSystem_::RUNGEKUTTA45);
 
-    // Defining the visualization of the free surface such as it has the same dimensions as the INSEAN towing tank
-    system.GetEnvironment()->GetOcean()->GetFreeSurface()->SetGrid(0., 470, 470, -4.5, 4.5, 9);
+  // Defining the visualization of the free surface such as it has the same dimensions as the INSEAN towing tank
+  system.GetEnvironment()->GetOcean()->GetFreeSurface()->SetGrid(0., 470, 470, -4.5, 4.5, 9);
 
-    // Creating a wall for the basin
-    auto wall = system.NewBody();
-    makeItBox(wall, 470, 0.3, 7.7, 0.);
+  // Creating a wall for the basin
+  auto wall = system.NewBody();
+  makeItBox(wall, 470, 0.3, 7.7, 0.);
 
-    wall->SetPosition(Position(470/2., -4.65, -(6-7.5/2)), NWU);
+  wall->SetPosition(Position(470 / 2., -4.65, -(6 - 7.5 / 2)), NWU);
 
-    wall->SetBodyFixed(true);
-    wall->SetColor(LightGrey);
-    wall->SetName("wall");
+  wall->SetBodyFixed(true);
+  wall->SetColor(LightGrey);
+  wall->SetName("wall");
 
-    // Defining the ship
-    auto ship = system.NewBody();
+  // Defining the ship
+  auto ship = system.NewBody();
 //    ship->RemoveGravity(true);  // TODO : mettre en place les contraintes a la place de virer la gravite...
-    ship->AddMeshAsset("MagneViking_scaled.obj");
-    ship->SetName("ship");
+  ship->AddMeshAsset("MagneViking_scaled.obj");
+  ship->SetName("ship");
 
-    ship->ConstrainInVx(1);
+  ship->ConstrainInVx(1);
 
-    ship->SetColor(DarkRed);
+  ship->SetColor(DarkRed);
 
 
-    // Defining the fish
-    auto fish = system.NewBody();
-    double radius = 0.1;
-    double fishMass = 5./9.81;
+  // Defining the fish
+  auto fish = system.NewBody();
+  double radius = 0.1;
+  double fishMass = 5. / 9.81;
 //    fishMass = 0.1;
 //    fishMass = 0.0;
-    makeItSphere(fish, radius, fishMass);
-    fish->SetColor(GreenYellow);
-    fish->SetName("fish");
-    fish->SetPosition(Position(-1.9, 0, -3.8),  NWU);
+  makeItSphere(fish, radius, fishMass);
+  fish->SetColor(GreenYellow);
+  fish->SetName("fish");
+  fish->SetPosition(Position(-1.9, 0, -3.8), NWU);
 //    fish->SetAbsPosition(0., 0, 0,  NWU);
 //    fish->SetMaxSpeed(0.1);
 //    fish->ActivateSpeedLimits(true);
-    auto fishNode = fish->NewNode(0., 0., radius, NWU);
+  auto fishNode = fish->NewNode(0., 0., radius, NWU);
 
 
-    auto quadForce = std::make_shared<FrQuadraticDamping_>(WATER, false);
-    double area = MU_PI * radius * radius;
-    quadForce->SetProjectedSections(area, area, area);
+  auto quadForce = std::make_shared<FrQuadraticDamping_>(WATER, false);
+  double area = MU_PI * radius * radius;
+  quadForce->SetProjectedSections(area, area, area);
 
 //    double c = 1.; // TODO caler ce coeff pour fitter a l'expe...
-    double c = 0.3; // TODO caler ce coeff pour fitter a l'expe...
-    quadForce->SetDampingCoefficients(c, c, c);
-    fish->AddExternalForce(quadForce);
+  double c = 0.3; // TODO caler ce coeff pour fitter a l'expe...
+  quadForce->SetDampingCoefficients(c, c, c);
+  fish->AddExternalForce(quadForce);
 
 
 //    // Test ittc
@@ -83,33 +83,33 @@ int main(int argc, char* argv[]) {
 
 
 
-    // Defining the cable
+  // Defining the cable
 //    double E = 130e9;  // dyneema young modulus
-    double E = 130e6;  // dyneema young modulus
-    double diam = 0.005*0.5;
-    double linearDensity = 0.015;  // FIXME : evaluer...
-    double length = 4;
+  double E = 130e6;  // dyneema young modulus
+  double diam = 0.005 * 0.5;
+  double linearDensity = 0.015;  // FIXME : evaluer...
+  double length = 4;
 
-    unsigned int nbElt = 1;
+  unsigned int nbElt = 1;
 
 
 //    auto shipNode = ship->NewNode(-1.961, 0., 0.);
 //    auto shipNode = ship->NewNode(-2, 0., 0.);
-    auto shipNode = ship->NewNode(-1.9, 0., 0., NWU);
+  auto shipNode = ship->NewNode(-1.9, 0., 0., NWU);
 
 
-    auto cable = std::make_shared<FrCatway>(E, diam, linearDensity, length, nbElt, shipNode, fishNode);  // TODO : avoir un make_catway
-    system.AddCable(cable);
+  auto cable = std::make_shared<FrCatway>(E, diam, linearDensity, length, nbElt, shipNode,
+                                          fishNode);  // TODO : avoir un make_catway
+  system.AddCable(cable);
 
-    // Adding morrison force on the cable
-    cable->AddMorrisonForce(0.014, 0.9);
+  // Adding morrison force on the cable
+  cable->AddMorrisonForce(0.014, 0.9);
 
 
+  system.SetTimeStep(0.01);
 
-    system.SetTimeStep(0.01);
-
-    system.Initialize();
-    system.RunInViewer(-10, 20, false);
+  system.Initialize();
+  system.RunInViewer(-10, 20, false);
 
 
 
@@ -387,6 +387,6 @@ int main(int argc, char* argv[]) {
 //        }
 //    }
 
-    return 0;
+  return 0;
 
 }

@@ -17,7 +17,7 @@ namespace frydom {
 
   class FrFunctionBase;
 
-  class FrActuator : public FrLinkBase, public FrLoggable<FrLink>  {
+  class FrActuator : public FrLinkBase, public FrLoggable<FrLink> {
 
    protected:
 

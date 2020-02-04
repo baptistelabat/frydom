@@ -216,9 +216,9 @@ class TestMorison : public ::testing::Test {
   double m_diameter;
 
  protected:
-  
+
   TestMorison() : system("TestMorison") {}
-  
+
   void SetUp() override;
 
   void LoadData(std::string filename);

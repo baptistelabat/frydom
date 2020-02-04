@@ -114,12 +114,15 @@ namespace frydom {
     K34 += rg * (-m_reductionPoint[1] * Poly1);
     K35 += -rg * (-m_reductionPoint[0] * Poly1);
     K45 +=
-        -rg * (-m_reductionPoint[1] * PolyX - m_reductionPoint[0] * PolyY + m_reductionPoint[0] * m_reductionPoint[1] * Poly1);
+        -rg * (-m_reductionPoint[1] * PolyX - m_reductionPoint[0] * PolyY +
+               m_reductionPoint[0] * m_reductionPoint[1] * Poly1);
 
     m_transversalMetacentricRadius +=
-        (PolyY2 - 2. * m_reductionPoint[1] * PolyY + m_reductionPoint[1] * m_reductionPoint[1] * Poly1) / m_volumeDisplacement;
+        (PolyY2 - 2. * m_reductionPoint[1] * PolyY + m_reductionPoint[1] * m_reductionPoint[1] * Poly1) /
+        m_volumeDisplacement;
     m_longitudinalMetacentricRadius +=
-        (PolyX2 - 2. * m_reductionPoint[0] * PolyX + m_reductionPoint[0] * m_reductionPoint[0] * Poly1) / m_volumeDisplacement;
+        (PolyX2 - 2. * m_reductionPoint[0] * PolyX + m_reductionPoint[0] * m_reductionPoint[0] * Poly1) /
+        m_volumeDisplacement;
 
     double zb_zg = m_buoyancyCenter[2] - m_centerOfGravity[2];
 
@@ -130,8 +133,8 @@ namespace frydom {
     double K44 = rgV * m_transversalMetacentricHeight;
     double K55 = rgV * m_longitudinalMetacentricHeight;
 
-    m_hydrostaticMatrix.SetDiagonal(K33,K44,K55);
-    m_hydrostaticMatrix.SetNonDiagonal(K34,K35,K45);
+    m_hydrostaticMatrix.SetDiagonal(K33, K44, K55);
+    m_hydrostaticMatrix.SetNonDiagonal(K34, K35, K45);
 
   }
 

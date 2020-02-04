@@ -13,11 +13,11 @@
 
 using namespace frydom;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
 
-    auto HDB = LoadHDB5("frydom_hdb.h5");
+  auto HDB = LoadHDB5("frydom_hdb.h5");
 
 
-    return 0;
+  return 0;
 }

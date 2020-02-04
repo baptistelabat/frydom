@@ -14,91 +14,91 @@
 
 using namespace frydom;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
-    std::cout << "=============================== Test radiation model =================== " << std::endl;
+  std::cout << "=============================== Test radiation model =================== " << std::endl;
 
-    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+  cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
 
-    // ---- System
+  // ---- System
 
-    FrOffshoreSystem system;
+  FrOffshoreSystem system;
 
-    system.GetEnvironment()->GetOcean()->SetInfiniteDepth();
+  system.GetEnvironment()->GetOcean()->SetInfiniteDepth();
 
-    auto freeSurface = system.GetEnvironment()->GetOcean()->GetFreeSurface();
+  auto freeSurface = system.GetEnvironment()->GetOcean()->GetFreeSurface();
 
-    auto waveField = freeSurface->SetAiryRegularWaveField();
-    waveField->SetWavePeriod(9.);
-    waveField->SetWaveHeight(0.);
-    waveField->SetDirection(SOUTH(NWU), NWU, GOTO);
+  auto waveField = freeSurface->SetAiryRegularWaveField();
+  waveField->SetWavePeriod(9.);
+  waveField->SetWaveHeight(0.);
+  waveField->SetDirection(SOUTH(NWU), NWU, GOTO);
 
-    auto timeRamp = system.GetEnvironment()->GetTimeRamp();
-    timeRamp->SetActive(false);
+  auto timeRamp = system.GetEnvironment()->GetTimeRamp();
+  timeRamp->SetActive(false);
 
-    // --- Body
+  // --- Body
 
-    auto body = system.NewBody();
+  auto body = system.NewBody();
 
-    Position COGPos(0.22, 0.22, 2.92);
+  Position COGPos(0.22, 0.22, 2.92);
 
-    body->SetPosition(Position(0., 0., 0.), NWU);
+  body->SetPosition(Position(0., 0., 0.), NWU);
 
-    // - Inertia
+  // - Inertia
 
-    double mass = 3.22114e7;
+  double mass = 3.22114e7;
 
-    double Ixx               = 2.4e11;
-    double Iyy               = 2.3e11;
-    double Izz               = 2e12;
+  double Ixx = 2.4e11;
+  double Iyy = 2.3e11;
+  double Izz = 2e12;
 
-    FrInertiaTensor InertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGPos, NWU);
+  FrInertiaTensor InertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGPos, NWU);
 
-    body->SetInertiaTensor(InertiaTensor);
+  body->SetInertiaTensor(InertiaTensor);
 
-    // --- Hydrodynamic
+  // --- Hydrodynamic
 
-    auto hdb = std::make_shared<FrHydroDB>(resources_path.resolve("Platform_HDB.hdb5").path());
+  auto hdb = std::make_shared<FrHydroDB>(resources_path.resolve("Platform_HDB.hdb5").path());
 
-    auto eqFrame = make_equilibrium_frame(body, &system);
+  auto eqFrame = make_equilibrium_frame(body, &system);
 
 
-    hdb->Map(0, body.get(), eqFrame);
+  hdb->Map(0, body.get(), eqFrame);
 
-    // - Hydrostatic
+  // - Hydrostatic
 
-    auto forceHst = make_linear_hydrostatic_force(hdb, body);
+  auto forceHst = make_linear_hydrostatic_force(hdb, body);
 
-    // - Excitation
+  // - Excitation
 
-    auto excitationForce = make_linear_excitation_force(hdb, body);
+  auto excitationForce = make_linear_excitation_force(hdb, body);
 
-    // - Radiation
+  // - Radiation
 
-    auto radiationModel = make_radiation_convolution_model(hdb, &system);
+  auto radiationModel = make_radiation_convolution_model(hdb, &system);
 
-    // --- Simulation
+  // --- Simulation
 
-    auto dt = 0.01;
+  auto dt = 0.01;
 
-    system.SetTimeStep(dt);
+  system.SetTimeStep(dt);
 
-    system.Initialize();
+  system.Initialize();
 
-    body->SetPosition(Position(0., 0., 1.), NWU);
+  body->SetPosition(Position(0., 0., 1.), NWU);
 
-    auto time = 0.;
+  auto time = 0.;
 
-    while(time < 10.) {
-        time += dt;
-        system.AdvanceTo(time);
+  while (time < 10.) {
+    time += dt;
+    system.AdvanceTo(time);
 
-        std::cout << "time : " << time << " ; position of the body = "
-                  << body->GetPosition(NWU).GetX() << " ; "
-                  << body->GetPosition(NWU).GetY() << " ; "
-                  << body->GetPosition(NWU).GetZ()
-                  << std::endl;
-    }
+    std::cout << "time : " << time << " ; position of the body = "
+              << body->GetPosition(NWU).GetX() << " ; "
+              << body->GetPosition(NWU).GetY() << " ; "
+              << body->GetPosition(NWU).GetZ()
+              << std::endl;
+  }
 
-    std::cout << "============================== End ===================================== " << std::endl;
+  std::cout << "============================== End ===================================== " << std::endl;
 }

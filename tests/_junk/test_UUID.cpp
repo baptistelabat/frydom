@@ -13,15 +13,13 @@
 
 using namespace frydom;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
-    auto myObj1 = FrObject();
-    std::cout << myObj1.GetUUID() << "\n";
+  auto myObj1 = FrObject();
+  std::cout << myObj1.GetUUID() << "\n";
 
-    auto myObj2 = FrObject();
-    std::cout << myObj2.GetUUID() << "\n";
-
-
+  auto myObj2 = FrObject();
+  std::cout << myObj2.GetUUID() << "\n";
 
 
 }

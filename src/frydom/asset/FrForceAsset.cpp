@@ -20,38 +20,38 @@
 namespace frydom {
 
 
-    FrForceAsset::FrForceAsset(FrForce* force) : m_force(force), m_CharacteristicLength(0.005), FrAsset(){
-        m_symbolscolor = chrono::ChColor(0, 0.5, 0.5, 0);
-    }
+  FrForceAsset::FrForceAsset(FrForce *force) : m_force(force), m_CharacteristicLength(0.005), FrAsset() {
+    m_symbolscolor = chrono::ChColor(0, 0.5, 0.5, 0);
+  }
 
-    void FrForceAsset::Initialize() {
-        auto point = internal::Vector3dToChVector(m_force->GetForceApplicationPointInBody(NWU));
-        auto forcevect = internal::Vector3dToChVector(m_force->GetForceInBody(NWU)) * m_CharacteristicLength;
+  void FrForceAsset::Initialize() {
+    auto point = internal::Vector3dToChVector(m_force->GetForceApplicationPointInBody(NWU));
+    auto forcevect = internal::Vector3dToChVector(m_force->GetForceInBody(NWU)) * m_CharacteristicLength;
 
-        auto glyphAsset = std::make_shared<chrono::ChGlyphs>();
-        glyphAsset->SetDrawMode(chrono::ChGlyphs::eCh_GlyphType::GLYPH_VECTOR);
+    auto glyphAsset = std::make_shared<chrono::ChGlyphs>();
+    glyphAsset->SetDrawMode(chrono::ChGlyphs::eCh_GlyphType::GLYPH_VECTOR);
 
-        glyphAsset->SetGlyphVector(0, point, forcevect, m_symbolscolor);
-        glyphAsset->SetGlyphsSize(20);  // Ne semble pas avoir d'effet dans Irrlicht
+    glyphAsset->SetGlyphVector(0, point, forcevect, m_symbolscolor);
+    glyphAsset->SetGlyphsSize(20);  // Ne semble pas avoir d'effet dans Irrlicht
 
-        m_chronoAsset->AddAsset(glyphAsset);
-    }
+    m_chronoAsset->AddAsset(glyphAsset);
+  }
 
-    void FrForceAsset::StepFinalize() {
+  void FrForceAsset::StepFinalize() {
 
-        // Get the glyph asset form the AssetLevel
-        auto GlyphAsset = dynamic_cast<chrono::ChGlyphs*> (m_chronoAsset->GetAssetN(0).get());
+    // Get the glyph asset form the AssetLevel
+    auto GlyphAsset = dynamic_cast<chrono::ChGlyphs *> (m_chronoAsset->GetAssetN(0).get());
 
-        // Here, the asset point is automatically following the motion but the force has to be updated
-        auto point = internal::Vector3dToChVector(m_force->GetForceApplicationPointInBody(NWU));
-        auto forcevect = internal::Vector3dToChVector(m_force->GetForceInBody(NWU)) * m_CharacteristicLength;
+    // Here, the asset point is automatically following the motion but the force has to be updated
+    auto point = internal::Vector3dToChVector(m_force->GetForceApplicationPointInBody(NWU));
+    auto forcevect = internal::Vector3dToChVector(m_force->GetForceInBody(NWU)) * m_CharacteristicLength;
 
-        GlyphAsset->SetGlyphVector(0, point, forcevect, m_symbolscolor);
+    GlyphAsset->SetGlyphVector(0, point, forcevect, m_symbolscolor);
 
-    }
+  }
 
-    void FrForceAsset::SetSize(double size) {
-        m_CharacteristicLength = size;
-    }
+  void FrForceAsset::SetSize(double size) {
+    m_CharacteristicLength = size;
+  }
 
 } // end namespace frydom

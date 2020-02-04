@@ -53,8 +53,8 @@ TEST(FrPathManager, path) {
       path_manager->GetPath(node3.get()) == "FRYDOM_test_FrPathManager/BODIES/BODY_myBody2/NODES/NODE_myNode3/");
   EXPECT_TRUE(path_manager->GetPath(std::dynamic_pointer_cast<FrLink>(revolute_link).get()) ==
               "FRYDOM_test_FrPathManager/LINKS/LINK_revolute_link/");
-  std::cout<<path_manager->GetPath(dynamic_cast<FrActuator*>(motor))<<std::endl;
-  EXPECT_TRUE(path_manager->GetPath(dynamic_cast<FrActuator*>(motor)) ==
+  std::cout << path_manager->GetPath(dynamic_cast<FrActuator *>(motor)) << std::endl;
+  EXPECT_TRUE(path_manager->GetPath(dynamic_cast<FrActuator *>(motor)) ==
               "FRYDOM_test_FrPathManager/LINKS/LINK_revolute_link/ACTUATORS/ACTUATOR_motor/");
 
   EXPECT_TRUE(path_manager->GetPath(std::dynamic_pointer_cast<FrConstraint>(planeConstraint).get()) ==

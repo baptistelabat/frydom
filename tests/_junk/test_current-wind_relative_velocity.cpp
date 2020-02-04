@@ -13,40 +13,41 @@
 #include <frydom/frydom.h>
 
 using namespace frydom;
+
 int main() {
-    FrOffshoreSystem system;
+  FrOffshoreSystem system;
 
-    /// Set the current properties
-    system.GetEnvironment()->GetCurrent()->Set(NORTH, 10, MS, NED, GOTO);
-    system.GetEnvironment()->GetWind()->Set(NORTH, 10, MS, NED, GOTO);
+  /// Set the current properties
+  system.GetEnvironment()->GetCurrent()->Set(NORTH, 10, MS, NED, GOTO);
+  system.GetEnvironment()->GetWind()->Set(NORTH, 10, MS, NED, GOTO);
 
-    /// Create a Ship
-    auto ship = std::make_shared<FrShip>();
-    /// Ship initial position and orientation
-    ship->SetPos(chrono::ChVector<>(0., 0., 0.));
-    ship->SetNEDHeading(EAST);
-    /// Ship initial velocity
-    auto ship_velocity = ship->TransformDirectionLocalToParent(chrono::ChVector<>(25., 0., 0.));
-    ship->SetPos_dt(ship_velocity);
-    /// Set Rate of Turn
-    ship->SetWvel_loc(chrono::ChVector<>(0,0,0));
+  /// Create a Ship
+  auto ship = std::make_shared<FrShip>();
+  /// Ship initial position and orientation
+  ship->SetPos(chrono::ChVector<>(0., 0., 0.));
+  ship->SetNEDHeading(EAST);
+  /// Ship initial velocity
+  auto ship_velocity = ship->TransformDirectionLocalToParent(chrono::ChVector<>(25., 0., 0.));
+  ship->SetPos_dt(ship_velocity);
+  /// Set Rate of Turn
+  ship->SetWvel_loc(chrono::ChVector<>(0, 0, 0));
 
-    auto Node = ship->CreateNode(chrono::ChVector<>(10,0,0));
+  auto Node = ship->CreateNode(chrono::ChVector<>(10, 0, 0));
 
-    /// Add the Ship to the Offshore System
-    system.AddBody(ship);
-    ship->Initialize();
-    ship->Update();
+  /// Add the Ship to the Offshore System
+  system.AddBody(ship);
+  ship->Initialize();
+  ship->Update();
 
-    //auto currentRelativeVelocity = ship->GetCurrentRelativeVelocity(chrono::ChVector<>(10,0,0),NED,PARENT);
-    auto currentRelativeVelocity = ship->GetCurrentRelativeVelocity(Node.get(),NED,PARENT);
-    auto windRelativeVelocity = ship->GetWindRelativeVelocity(Node.get(),NED,PARENT);
+  //auto currentRelativeVelocity = ship->GetCurrentRelativeVelocity(chrono::ChVector<>(10,0,0),NED,PARENT);
+  auto currentRelativeVelocity = ship->GetCurrentRelativeVelocity(Node.get(), NED, PARENT);
+  auto windRelativeVelocity = ship->GetWindRelativeVelocity(Node.get(), NED, PARENT);
 
-    fmt::print("Current relative velocity : ({},{},{})\n",
-               currentRelativeVelocity.x(),currentRelativeVelocity.y(),currentRelativeVelocity.z());
-    fmt::print("Wind relative velocity    : ({},{},{})\n",
-               windRelativeVelocity.x(),windRelativeVelocity.y(),windRelativeVelocity.z());
+  fmt::print("Current relative velocity : ({},{},{})\n",
+             currentRelativeVelocity.x(), currentRelativeVelocity.y(), currentRelativeVelocity.z());
+  fmt::print("Wind relative velocity    : ({},{},{})\n",
+             windRelativeVelocity.x(), windRelativeVelocity.y(), windRelativeVelocity.z());
 
 
-    return 0 ;
+  return 0;
 }

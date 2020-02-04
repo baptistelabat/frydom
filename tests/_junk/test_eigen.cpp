@@ -24,149 +24,149 @@ using namespace Eigen;  // TODO : a retirer
 
 void test_conversions() {
 
-    // chrono::ChVector <--> Eigen
-    auto vect = ChVector<double>(1, 2, 3);
+  // chrono::ChVector <--> Eigen
+  auto vect = ChVector<double>(1, 2, 3);
 //    cout << vect;
 
-    auto vect_eigen = ChEig(vect);
-    cout << vect_eigen << endl;
+  auto vect_eigen = ChEig(vect);
+  cout << vect_eigen << endl;
 
-    Eigen::Vector3d vect3d_eigen;
-    vect3d_eigen << 4, 5, 6;
+  Eigen::Vector3d vect3d_eigen;
+  vect3d_eigen << 4, 5, 6;
 
-    auto vect3d_chrono = ChEig(vect3d_eigen);
+  auto vect3d_chrono = ChEig(vect3d_eigen);
 
 
-    // chrono::ChMatrix33 <--> Eigen
-    auto mat33 = ChMatrix33<double>();
-    for (int i=0; i<9; ++i) mat33.SetElementN(i, i);
+  // chrono::ChMatrix33 <--> Eigen
+  auto mat33 = ChMatrix33<double>();
+  for (int i = 0; i < 9; ++i) mat33.SetElementN(i, i);
 //    cout << mat33;
 
-    auto mat_eigen = ChEig(mat33);
-    cout << "\n" << mat_eigen << endl;
+  auto mat_eigen = ChEig(mat33);
+  cout << "\n" << mat_eigen << endl;
 //    cout << ChEig(mat_eigen);
 
-    // chrono::ChMatrixNM <--> Eigen
-    auto matNM = ChMatrixNM<double, 5, 10>();
-    int k(0);
-    for (int i=0; i<5; ++i) {
-        for (int j=0; j<10; ++j) {
-            ++k;
-            matNM.SetElement(i, j, k);
-        }
+  // chrono::ChMatrixNM <--> Eigen
+  auto matNM = ChMatrixNM<double, 5, 10>();
+  int k(0);
+  for (int i = 0; i < 5; ++i) {
+    for (int j = 0; j < 10; ++j) {
+      ++k;
+      matNM.SetElement(i, j, k);
     }
+  }
 //    print(matNM);
 //    cout << matNM;
 
-    auto matNM_eigen = ChEig(matNM);
+  auto matNM_eigen = ChEig(matNM);
 
-    cout << "\n" << matNM_eigen << endl;
+  cout << "\n" << matNM_eigen << endl;
 
 //    cout << ChEig(matNM_eigen);
 
-    // chrono::ChMatrixDynamic <--> Eigen
-    ChMatrixDynamic<double> mat_dyn;
-    mat_dyn.Resize(4, 8);
-    k = 0;
-    for (int i=0; i<4; ++i) {
-        for (int j=0; j<8; ++j) {
-            ++k;
-            mat_dyn.SetElement(i, j, double(k));
-        }
+  // chrono::ChMatrixDynamic <--> Eigen
+  ChMatrixDynamic<double> mat_dyn;
+  mat_dyn.Resize(4, 8);
+  k = 0;
+  for (int i = 0; i < 4; ++i) {
+    for (int j = 0; j < 8; ++j) {
+      ++k;
+      mat_dyn.SetElement(i, j, double(k));
     }
+  }
 //    cout << mat_dyn;
 
-    auto mat_dyn_eigen = ChEig(mat_dyn);
+  auto mat_dyn_eigen = ChEig(mat_dyn);
 
-    cout << mat_dyn_eigen;
+  cout << mat_dyn_eigen;
 
-    cout << ChEig(mat_dyn_eigen);
+  cout << ChEig(mat_dyn_eigen);
 }
 
 void test_QR() {
-    Eigen::MatrixXd A(5, 3);
-    A.setRandom();
+  Eigen::MatrixXd A(5, 3);
+  A.setRandom();
 
-    auto QR = QR_decomposition<double>(A);
+  auto QR = QR_decomposition<double>(A);
 
-    // Computing the infinite norm
-    auto norm_inf = (A - QR.GetA()).eval().cwiseAbs().rowwise().sum().maxCoeff();
+  // Computing the infinite norm
+  auto norm_inf = (A - QR.GetA()).eval().cwiseAbs().rowwise().sum().maxCoeff();
 
-    assert(norm_inf < 1e-12);
+  assert(norm_inf < 1e-12);
 
 }
 
 void test_LU() {
-    Eigen::MatrixXd A(5, 5);
-    A.setRandom();
+  Eigen::MatrixXd A(5, 5);
+  A.setRandom();
 
-    auto LU = LU_decomposition<double>(A);
+  auto LU = LU_decomposition<double>(A);
 
-    // Computing the infinite norm
-    auto norm_inf = (A - LU.GetA()).eval().cwiseAbs().rowwise().sum().maxCoeff();
+  // Computing the infinite norm
+  auto norm_inf = (A - LU.GetA()).eval().cwiseAbs().rowwise().sum().maxCoeff();
 
-    assert(norm_inf < 1e-12);
+  assert(norm_inf < 1e-12);
 }
 
 void test_SVD() {
-    Eigen::MatrixXd A(5, 3);
-    A.setRandom();
+  Eigen::MatrixXd A(5, 3);
+  A.setRandom();
 
-    auto SVD = SVD_decomposition<double>(A);
+  auto SVD = SVD_decomposition<double>(A);
 
-    auto norm_inf = (A - SVD.GetA()).eval().cwiseAbs().rowwise().sum().maxCoeff();
+  auto norm_inf = (A - SVD.GetA()).eval().cwiseAbs().rowwise().sum().maxCoeff();
 
-    assert(norm_inf < 1e-12);
+  assert(norm_inf < 1e-12);
 
 }
 
 void test_Cholesky() {
 
-    Eigen::MatrixXd A(5, 5);
-    A.setRandom();
-    A = A * A.transpose();  // Making a symmetric matrix
+  Eigen::MatrixXd A(5, 5);
+  A.setRandom();
+  A = A * A.transpose();  // Making a symmetric matrix
 
-    auto chol = Cholesky_decomposition<double>(A);
+  auto chol = Cholesky_decomposition<double>(A);
 
-    auto norm_inf = (A - chol.GetA()).eval().cwiseAbs().rowwise().sum().maxCoeff();
+  auto norm_inf = (A - chol.GetA()).eval().cwiseAbs().rowwise().sum().maxCoeff();
 
-    assert(norm_inf < 1e-12);
+  assert(norm_inf < 1e-12);
 }
 
 void test_pinv() {
-    Eigen::MatrixXd A(10, 5);
-    A.setRandom();
+  Eigen::MatrixXd A(10, 5);
+  A.setRandom();
 
-    auto Apinv = pinv(A);
+  auto Apinv = pinv(A);
 
-    auto norm_inf = (A * Apinv * A - A).cwiseAbs().rowwise().sum().maxCoeff();
+  auto norm_inf = (A * Apinv * A - A).cwiseAbs().rowwise().sum().maxCoeff();
 
-    assert(norm_inf < 1e-12);
+  assert(norm_inf < 1e-12);
 
 }
 
 void test_lsqec() {
-    // TODO
+  // TODO
 }
 
 void test_linear_algebra() {
 
-    test_QR();
-    test_LU();
-    test_SVD();
-    test_Cholesky();
-    test_pinv();
-    test_lsqec();
+  test_QR();
+  test_LU();
+  test_SVD();
+  test_Cholesky();
+  test_pinv();
+  test_lsqec();
 
 
 }
 
-int main(int argc, char* argv[]) {
-    srand((unsigned int) time(0)); // seeding the standard library random number generator
+int main(int argc, char *argv[]) {
+  srand((unsigned int) time(0)); // seeding the standard library random number generator
 
-    test_conversions();
-    test_linear_algebra();
+  test_conversions();
+  test_linear_algebra();
 
 
-    return 0;
+  return 0;
 }

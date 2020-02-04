@@ -17,27 +17,27 @@
 
 namespace frydom {
 
-    // Forward declaration
-    class FrSeabed;
+  // Forward declaration
+  class FrSeabed;
 
-    /**
-     * \class FrSeabedGridAsset
-     * \brief Class to display the seabed grid.
-     */
-    class FrSeabedGridAsset : public FrGridAsset {
+  /**
+   * \class FrSeabedGridAsset
+   * \brief Class to display the seabed grid.
+   */
+  class FrSeabedGridAsset : public FrGridAsset {
 
-        FrSeabed* m_seabed;    ///> Seabed containing this asset
+    FrSeabed *m_seabed;    ///> Seabed containing this asset
 
-    public:
-        /// Default constructor
-        /// \param seabed pointer ot the seabed
-        explicit FrSeabedGridAsset(FrSeabed* seabed);
+   public:
+    /// Default constructor
+    /// \param seabed pointer ot the seabed
+    explicit FrSeabedGridAsset(FrSeabed *seabed);
 
-        /// Get the seabed grid height
-        /// \return
-        double GetGridHeight() const override;
+    /// Get the seabed grid height
+    /// \return
+    double GetGridHeight() const override;
 
-    };
+  };
 
 }  // end namespace frydom
 

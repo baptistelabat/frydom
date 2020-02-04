@@ -15,13 +15,13 @@
 
 namespace frydom {
 
-    /**
-     * \class FrFreeLink
-     * \brief
-     */
-    class FrFreeLink {
+  /**
+   * \class FrFreeLink
+   * \brief
+   */
+  class FrFreeLink {
 
-    };
+  };
 
 }  // end namespace frydom
 

@@ -6,8 +6,8 @@ set(SRC_FILES
         )
 
 set(FRYDOM_DAMPING_SOURCES "")
-foreach(file ${SRC_FILES})
+foreach (file ${SRC_FILES})
     list(APPEND FRYDOM_DAMPING_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
-endforeach()
+endforeach ()
 
 set(FRYDOM_DAMPING_SOURCES ${FRYDOM_DAMPING_SOURCES} PARENT_SCOPE)

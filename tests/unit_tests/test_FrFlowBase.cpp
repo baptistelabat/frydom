@@ -35,9 +35,9 @@ class TestFrFlowBase : public ::testing::Test {
   FrFrame m_frame;                       ///< Local frame
 
  protected:
-  
+
   TestFrFlowBase() : system("test_FrFlowBase") {}
-  
+
   /// Initialization of the environment
   void SetUp() override;
 

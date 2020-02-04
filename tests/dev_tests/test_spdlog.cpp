@@ -5,8 +5,7 @@
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
 
-int main()
-{
+int main() {
 
 
   // Set the default logger to file logger
@@ -33,10 +32,6 @@ int main()
   // define SPDLOG_ACTIVE_LEVEL to desired level
   SPDLOG_TRACE("Some trace message with param {}", {});
   SPDLOG_DEBUG("Some debug message");
-
-
-
-
 
 
 }

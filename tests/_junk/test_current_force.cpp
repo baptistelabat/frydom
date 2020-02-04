@@ -13,20 +13,17 @@
 
 using namespace frydom;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
-    // Create an offshore system
-
-
-    // Set the current field
+  // Create an offshore system
 
 
-    // Building a coefficients table
-    auto table = MakeCurrentPolarCoeffTable("PolarCurrentCoeffs.yml");
+  // Set the current field
 
 
+  // Building a coefficients table
+  auto table = MakeCurrentPolarCoeffTable("PolarCurrentCoeffs.yml");
 
 
-
-    return 0;
+  return 0;
 };

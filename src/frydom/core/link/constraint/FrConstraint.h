@@ -28,7 +28,7 @@ namespace frydom {
    * \class FrConstraint
    * \brief Class to deal with constraints. Derived from FrConstraintBase
    */
-  class FrConstraint : public FrLinkBase, public FrLoggable<FrOffshoreSystem>  {
+  class FrConstraint : public FrLinkBase, public FrLoggable<FrOffshoreSystem> {
 
    protected:
 

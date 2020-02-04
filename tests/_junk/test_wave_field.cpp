@@ -14,48 +14,48 @@
 using namespace frydom;
 
 // =====================================================================================================================
-void TestRegularWaveField(const std::vector<double>& xVect, const std::vector<double>& yVect) {
-    auto waveField = FrLinearWaveField(LINEAR_REGULAR);
-    waveField.SetRegularWaveHeight(3);
-    waveField.SetRegularWavePeriod(9);
-    waveField.SetMeanWaveDirection(0., DEG);
+void TestRegularWaveField(const std::vector<double> &xVect, const std::vector<double> &yVect) {
+  auto waveField = FrLinearWaveField(LINEAR_REGULAR);
+  waveField.SetRegularWaveHeight(3);
+  waveField.SetRegularWavePeriod(9);
+  waveField.SetMeanWaveDirection(0., DEG);
 
-    waveField.GetSteadyElevation(0, 0);
+  waveField.GetSteadyElevation(0, 0);
 
-    auto eta = waveField.GetElevation(xVect, yVect);
+  auto eta = waveField.GetElevation(xVect, yVect);
 }
 
 // =====================================================================================================================
-void TestIrregularWaveField(const std::vector<double>& xVect, const std::vector<double>& yVect) {
+void TestIrregularWaveField(const std::vector<double> &xVect, const std::vector<double> &yVect) {
 
-    auto waveField = FrLinearWaveField(LINEAR_IRREGULAR);
-    waveField.SetRegularWaveHeight(3);
-    waveField.SetRegularWavePeriod(9);
-    waveField.SetMeanWaveDirection(0., DEG);
+  auto waveField = FrLinearWaveField(LINEAR_IRREGULAR);
+  waveField.SetRegularWaveHeight(3);
+  waveField.SetRegularWavePeriod(9);
+  waveField.SetMeanWaveDirection(0., DEG);
 
-    waveField.GetSteadyElevation(0, 0);
+  waveField.GetSteadyElevation(0, 0);
 
-    auto eta = waveField.GetElevation(xVect, yVect);
+  auto eta = waveField.GetElevation(xVect, yVect);
 
 }
 
 // =====================================================================================================================
-void TestDirectionalWaveField(const std::vector<double>& xVect, const std::vector<double>& yVect) {
-    // TODO
+void TestDirectionalWaveField(const std::vector<double> &xVect, const std::vector<double> &yVect) {
+  // TODO
 }
 
 // =====================================================================================================================
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
-    // Grid definition
-    auto xVect = linspace<double>(-1000., 1000., 100);
-    auto yVect = linspace<double>(-1000., 1000., 100);
+  // Grid definition
+  auto xVect = linspace<double>(-1000., 1000., 100);
+  auto yVect = linspace<double>(-1000., 1000., 100);
 
-    TestRegularWaveField(xVect, yVect);
+  TestRegularWaveField(xVect, yVect);
 
-    TestIrregularWaveField(xVect, yVect);
+  TestIrregularWaveField(xVect, yVect);
 
-    TestDirectionalWaveField(xVect, yVect);
+  TestDirectionalWaveField(xVect, yVect);
 
-    return 0;
+  return 0;
 }

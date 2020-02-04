@@ -92,7 +92,7 @@ namespace frydom {
         IntX += dy * (px * px - x0 * x1);
         IntY += dx * (py * py - y0 * y1);
 //        IntXY += dy * (py * a + 2 * px * (x0 * y0 + x1 * y1)); missing terms from FR analytical dev.
-        IntXY += dy * (py * px * px + 2 *( y0 * x0 * x0 + y1 * x1 * x1));
+        IntXY += dy * (py * px * px + 2 * (y0 * x0 * x0 + y1 * x1 * x1));
         IntX2 += dy * a * px;
         IntY2 += dx * b * py;
         IntX2Y += dy *

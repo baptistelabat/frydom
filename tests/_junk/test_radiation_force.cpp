@@ -14,18 +14,19 @@
 
 using namespace frydom;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
-    // Creating a cylinder
-    auto cylinder = std::make_shared<FrHydroBody>();
-    cylinder->SetName("Cylinder");
-    cylinder->SetHydroMesh("Cylinder.obj", true);
+  // Creating a cylinder
+  auto cylinder = std::make_shared<FrHydroBody>();
+  cylinder->SetName("Cylinder");
+  cylinder->SetHydroMesh("Cylinder.obj", true);
 
-    // Loading the hydrodynamic database
-    FrHydroDB HDB = LoadHDB5("frydom_hdb.h5");
+  // Loading the hydrodynamic database
+  FrHydroDB HDB = LoadHDB5("frydom_hdb.h5");
 
-    // Computing the frequency responses
-    HDB.GenerateImpulseResponseFunctions(300.); // Ne pas faire ici, c'est fait a l'initialisation de la force de radiation !!! (automatique)
+  // Computing the frequency responses
+  HDB.GenerateImpulseResponseFunctions(
+      300.); // Ne pas faire ici, c'est fait a l'initialisation de la force de radiation !!! (automatique)
 
 
 //    auto tf = HDB.GetFinalTime();
@@ -33,15 +34,15 @@ int main(int argc, char* argv[]) {
 
 
 
-    auto irf22 = HDB.GetBody(0)->GetImpulseResponseFunction(0, 2, 2);
+  auto irf22 = HDB.GetBody(0)->GetImpulseResponseFunction(0, 2, 2);
 
-    std::vector<double> tmp;
-    for (unsigned int i; i<irf22.rows(); i++) {
-        tmp.push_back(irf22[i]);
-    }
+  std::vector<double> tmp;
+  for (unsigned int i; i < irf22.rows(); i++) {
+    tmp.push_back(irf22[i]);
+  }
 
-    matplotlibcpp::plot(tmp);
-    matplotlibcpp::show();
+  matplotlibcpp::plot(tmp);
+  matplotlibcpp::show();
 
 
 
@@ -97,5 +98,5 @@ int main(int argc, char* argv[]) {
 
 
 
-    return 0;
+  return 0;
 }

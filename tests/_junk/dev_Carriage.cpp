@@ -6,137 +6,143 @@
 
 using namespace frydom;
 
-FrLinearActuator* make_carriage(FrOffshoreSystem* system, const std::shared_ptr<FrNode>& shipNode){
+FrLinearActuator *make_carriage(FrOffshoreSystem *system, const std::shared_ptr<FrNode> &shipNode) {
 
-    FRAME_CONVENTION fc = NWU;
+  FRAME_CONVENTION fc = NWU;
 
-    auto mass = shipNode->GetBody()->GetInertiaTensor().GetMass();
+  auto mass = shipNode->GetBody()->GetInertiaTensor().GetMass();
 
-    double tankLength = 140;
-    double tankWidth = 5;
-    double tankDepth = 3;
-
-
-    // --------------------------------------------------
-    // Seabed and Free-surface grid definitions
-    // --------------------------------------------------
-    auto Seabed = system->GetEnvironment()->GetOcean()->GetSeabed();
-    Seabed->GetSeabedGridAsset()->SetGrid(
-            -0.05*tankLength, 0.95*tankLength, 0.01*tankLength,
-            -0.5*tankWidth, 0.5*tankWidth, 0.01*tankWidth);
-    Seabed->SetBathymetry(-tankDepth,fc);
-
-    auto FreeSurface = system->GetEnvironment()->GetOcean()->GetFreeSurface();
-    FreeSurface->GetFreeSurfaceGridAsset()->SetGrid(
-            -0.05*tankLength, 0.95*tankLength, 0.01*tankLength,
-            -0.5*tankWidth, 0.5*tankWidth, 0.01*tankWidth);
-    FreeSurface->GetFreeSurfaceGridAsset()->UpdateAssetON();
-    FreeSurface->GetFreeSurfaceGridAsset()->SetUpdateStep(10);
-
-    // --------------------------------------------------
-    // Wall definition
-    // --------------------------------------------------
-
-    auto tankWall = system->NewBody();
-    tankWall->SetName("Wall");
-    tankWall->SetFixedInWorld(true);
-    makeItBox(tankWall, tankLength, 0.1*tankWidth, 1.25*tankDepth, mass);
-
-    Position tankWallPosition = shipNode->GetPositionInWorld(fc); tankWallPosition.GetZ() = 0.;
-    tankWallPosition -= Position(-0.45*tankLength,0.55*tankWidth,0.375*tankDepth);
-    tankWall->SetPosition(tankWallPosition,fc);
-
-    auto wallNode = tankWall->NewNode();
-    wallNode->SetPositionInBody(Position(-0.45*tankLength,0.,0.75*tankDepth), fc);
-    wallNode->RotateAroundYInBody(-90*DEG2RAD,fc);
+  double tankLength = 140;
+  double tankWidth = 5;
+  double tankDepth = 3;
 
 
-    // --------------------------------------------------
-    // Carriage definition
-    // --------------------------------------------------
+  // --------------------------------------------------
+  // Seabed and Free-surface grid definitions
+  // --------------------------------------------------
+  auto Seabed = system->GetEnvironment()->GetOcean()->GetSeabed();
+  Seabed->GetSeabedGridAsset()->SetGrid(
+      -0.05 * tankLength, 0.95 * tankLength, 0.01 * tankLength,
+      -0.5 * tankWidth, 0.5 * tankWidth, 0.01 * tankWidth);
+  Seabed->SetBathymetry(-tankDepth, fc);
 
-    auto carriage = system->NewBody();
-    carriage->SetName("Carriage");
-    makeItBox(carriage, 0.1*tankWidth, 1.1*tankWidth, 0.1*tankWidth, mass);
+  auto FreeSurface = system->GetEnvironment()->GetOcean()->GetFreeSurface();
+  FreeSurface->GetFreeSurfaceGridAsset()->SetGrid(
+      -0.05 * tankLength, 0.95 * tankLength, 0.01 * tankLength,
+      -0.5 * tankWidth, 0.5 * tankWidth, 0.01 * tankWidth);
+  FreeSurface->GetFreeSurfaceGridAsset()->UpdateAssetON();
+  FreeSurface->GetFreeSurfaceGridAsset()->SetUpdateStep(10);
 
-    auto carriageToWallNode = carriage->NewNode();
-    carriageToWallNode->SetPositionInBody(Position(0.,-0.5*tankWidth,0.), fc);
-    carriageToWallNode->RotateAroundYInBody(-90*DEG2RAD,fc);
+  // --------------------------------------------------
+  // Wall definition
+  // --------------------------------------------------
 
-    auto carriageToShipNode = carriage->NewNode();
-    carriageToShipNode->SetPositionInBody(Position(0.,0.05*tankWidth,0.), fc);
-    carriageToShipNode->RotateAroundYInBody(90*DEG2RAD,fc);
-    carriageToShipNode->RotateAroundXInBody(90*DEG2RAD,fc);
+  auto tankWall = system->NewBody();
+  tankWall->SetName("Wall");
+  tankWall->SetFixedInWorld(true);
+  makeItBox(tankWall, tankLength, 0.1 * tankWidth, 1.25 * tankDepth, mass);
+
+  Position tankWallPosition = shipNode->GetPositionInWorld(fc);
+  tankWallPosition.GetZ() = 0.;
+  tankWallPosition -= Position(-0.45 * tankLength, 0.55 * tankWidth, 0.375 * tankDepth);
+  tankWall->SetPosition(tankWallPosition, fc);
+
+  auto wallNode = tankWall->NewNode();
+  wallNode->SetPositionInBody(Position(-0.45 * tankLength, 0., 0.75 * tankDepth), fc);
+  wallNode->RotateAroundYInBody(-90 * DEG2RAD, fc);
 
 
-    // --------------------------------------------------
-    // Link definitions
-    // --------------------------------------------------
+  // --------------------------------------------------
+  // Carriage definition
+  // --------------------------------------------------
 
-    auto linkToShip = make_prismatic_revolute_link(carriageToShipNode, shipNode, system);
+  auto carriage = system->NewBody();
+  carriage->SetName("Carriage");
+  makeItBox(carriage, 0.1 * tankWidth, 1.1 * tankWidth, 0.1 * tankWidth, mass);
 
-    auto rail = make_prismatic_link(wallNode, carriageToWallNode, system);
+  auto carriageToWallNode = carriage->NewNode();
+  carriageToWallNode->SetPositionInBody(Position(0., -0.5 * tankWidth, 0.), fc);
+  carriageToWallNode->RotateAroundYInBody(-90 * DEG2RAD, fc);
 
-    return rail->Motorize(VELOCITY);
+  auto carriageToShipNode = carriage->NewNode();
+  carriageToShipNode->SetPositionInBody(Position(0., 0.05 * tankWidth, 0.), fc);
+  carriageToShipNode->RotateAroundYInBody(90 * DEG2RAD, fc);
+  carriageToShipNode->RotateAroundXInBody(90 * DEG2RAD, fc);
+
+
+  // --------------------------------------------------
+  // Link definitions
+  // --------------------------------------------------
+
+  auto linkToShip = make_prismatic_revolute_link(carriageToShipNode, shipNode, system);
+
+  auto rail = make_prismatic_link(wallNode, carriageToWallNode, system);
+
+  return rail->Motorize(VELOCITY);
 
 }
 
 
 int main() {
 
-    FRAME_CONVENTION fc = NWU;
+  FRAME_CONVENTION fc = NWU;
 
-    FrOffshoreSystem system;
+  FrOffshoreSystem system;
 
-    // Resources path
-    cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
+  // Resources path
+  cppfs::FilePath resources_path(std::string(RESOURCES_PATH));
 
-    // --------------------------------------------------
-    // Ship
-    // --------------------------------------------------
+  // --------------------------------------------------
+  // Ship
+  // --------------------------------------------------
 
-    auto ship = system.NewBody();
-    ship->SetName("Ship");
-    ship->AddMeshAsset(resources_path.resolve("DTMB5512.obj").path());
-    ship->SetColor(Green);
+  auto ship = system.NewBody();
+  ship->SetName("Ship");
+  ship->AddMeshAsset(resources_path.resolve("DTMB5512.obj").path());
+  ship->SetColor(Green);
 
-    // Inertia
-    double mass = 86.0; double Ixx = 1.98; double Iyy = 53.88; double Izz = 49.99;
-    Position COGPosition(0., 0., 0.03); // 0.03
+  // Inertia
+  double mass = 86.0;
+  double Ixx = 1.98;
+  double Iyy = 53.88;
+  double Izz = 49.99;
+  Position COGPosition(0., 0., 0.03); // 0.03
 
-    ship->SetInertiaTensor(FrInertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGPosition, NWU));
+  ship->SetInertiaTensor(FrInertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGPosition, NWU));
 
-    auto shipNode = ship->NewNode();
-    shipNode->SetPositionInBody(ship->GetCOG(fc),fc);
-    shipNode->RotateAroundYInBody(90*DEG2RAD,fc);
-    shipNode->RotateAroundXInBody(90*DEG2RAD,fc);
+  auto shipNode = ship->NewNode();
+  shipNode->SetPositionInBody(ship->GetCOG(fc), fc);
+  shipNode->RotateAroundYInBody(90 * DEG2RAD, fc);
+  shipNode->RotateAroundXInBody(90 * DEG2RAD, fc);
 
-    // Hydrodynamic Database
+  // Hydrodynamic Database
 //    auto hdb = make_hydrodynamic_database("DTMB5512.h5");
 
-    auto eqFrame = make_equilibrium_frame(ship.get());
+  auto eqFrame = make_equilibrium_frame(ship.get());
 
 
 //    hdb->Map(0,ship.get(),eqFrame);
 
-    auto hydrostaticForce = make_linear_hydrostatic_force(eqFrame,ship,resources_path.resolve("DTMB5512.obj").path(),FrFrame());
+  auto hydrostaticForce = make_linear_hydrostatic_force(eqFrame, ship, resources_path.resolve("DTMB5512.obj").path(),
+                                                        FrFrame());
 
-    // --------------------------------------------------
-    // Carriage
-    // --------------------------------------------------
+  // --------------------------------------------------
+  // Carriage
+  // --------------------------------------------------
 
-    auto carriage = make_carriage(&system, shipNode);
+  auto carriage = make_carriage(&system, shipNode);
 
-    FrCosRampFunction ramp; ramp.SetByTwoPoints(0.,0.,10.,5.);
+  FrCosRampFunction ramp;
+  ramp.SetByTwoPoints(0., 0., 10., 5.);
 
-    carriage->SetMotorFunction(ramp);
+  carriage->SetMotorFunction(ramp);
 
-    // Run
+  // Run
 
-    system.Initialize();
-    system.DoAssembly();
+  system.Initialize();
+  system.DoAssembly();
 
-    system.SetTimeStep(0.01);
+  system.SetTimeStep(0.01);
 
-    system.RunInViewer(0., 10, false);
+  system.RunInViewer(0., 10, false);
 }

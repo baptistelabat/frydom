@@ -64,8 +64,8 @@ namespace frydom {
 
   std::shared_ptr<FrWaveDriftForce>
   make_wave_drift_force(const std::string &name,
-                                std::shared_ptr<FrBody> body,
-                                std::shared_ptr<FrHydroDB> HDB);
+                        std::shared_ptr<FrBody> body,
+                        std::shared_ptr<FrHydroDB> HDB);
 
 }  // end namespace frydom
 
