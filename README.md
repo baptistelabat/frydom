@@ -58,22 +58,23 @@ Features
     * kinematic joints
     * actuators
 + Hydrodynamics :
-    + Radiation (linear potential flow)
-    + Hydrostatic force (linear and non linear)
-    + Waves excitation (first order and Froude-Krylov non linear)
-    + Mean waves drift forces
-    + Morison model
-    + Wind & Current drag loads
-    + Manoeuvring model force
-    + Damping forces (linear, quadratic)
+    * Radiation (linear potential flow)
+    * Hydrostatic force (linear and nonlinear)
+    * Hydrostatic equilibrium solver
+    * Hydrodynamic interactions between bodies
+    * Waves excitation (first order and Froude-Krylov nonlinear)
+    * Mean waves drift forces
+    * Morison model
+    * Wind & Current drag loads
+    * Manoeuvring model force
+    * Damping forces (linear, quadratic)
 + Cables (quasi static & dynamic FEA) for mooring system modelling, tug operations, lifting
 
 Features in development
 -----------------------
 
-+ Hydrodynamic interactions
 + Cables/Seabed interactions
 + Actuators control e.g. cranes, winches, etc.
-+ Nonsmooth contact
++ Non-smooth contact
 + Distributed loads on FEA cables (Morison, hydrostatic)
 + Wrapper python
