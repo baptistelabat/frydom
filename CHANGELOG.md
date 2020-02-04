@@ -21,7 +21,7 @@ Hydrostatic equilibrium solver, validated on several cases.
  
 
 ### Fixed
-- FrNode stay fix in the body reference frame, when moving the body COG refrence frame
+- FrNode stay fix in the body reference frame, when moving the body COG reference frame
 - integral calculations on the clipped mesh corrected
 - unnecessary data removed
 - resource path missing for HexagonalArticulatedBuoy
