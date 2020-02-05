@@ -23,10 +23,9 @@
 namespace frydom {
 
   FrHydroMesh::FrHydroMesh(const std::string &name,
-                           FrOffshoreSystem *system,
                            const std::shared_ptr<FrBody> &body,
                            FrHydroMesh::ClippingSupport support) :
-      FrTreeNode(name, system),
+      FrTreeNode(name, body->GetSystem()),
       m_body(body),
       m_clippingSupport(support) {
 
@@ -39,12 +38,11 @@ namespace frydom {
   }
 
   FrHydroMesh::FrHydroMesh(const std::string &name,
-                           FrOffshoreSystem *system,
                            const std::shared_ptr<FrBody> &body,
                            const std::string &meshFile,
                            FrFrame meshOffset,
                            FrHydroMesh::ClippingSupport support) :
-      FrTreeNode(name, system),
+      FrTreeNode(name, body->GetSystem()),
       m_body(body),
       m_clippingSupport(support) {
 
@@ -174,7 +172,7 @@ namespace frydom {
                   const std::shared_ptr<FrBody> &body,
                   FrHydroMesh::ClippingSupport support) {
 
-    auto hydroMesh = std::make_shared<FrHydroMesh>(name, body->GetSystem(), body, support);
+    auto hydroMesh = std::make_shared<FrHydroMesh>(name, body, support);
 
     body->GetSystem()->Add(hydroMesh);
 
@@ -188,12 +186,7 @@ namespace frydom {
                                                FrFrame meshOffset,
                                                FrHydroMesh::ClippingSupport support) {
 
-    auto hydroMesh = std::make_shared<FrHydroMesh>(name,
-                                                   body->GetSystem(),
-                                                   body,
-                                                   meshFile,
-                                                   meshOffset,
-                                                   support);
+    auto hydroMesh = std::make_shared<FrHydroMesh>(name, body, meshFile, meshOffset, support);
 
     body->GetSystem()->Add(hydroMesh);
 

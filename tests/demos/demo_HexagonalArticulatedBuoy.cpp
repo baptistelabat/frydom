@@ -216,17 +216,17 @@ void SetUpMooringLines(FrOffshoreSystem *system, std::vector<std::shared_ptr<FrB
   auto bodyNodeSW = bodyList[5]->NewNode("bodyNodeSW");
   bodyNodeSW->SetPositionInWorld(Position(-2.498, -1.444, 0.), NWU);
 
-  auto mooringLineNW = make_catenary_line("mooringLineNW", system, worldNodeNW, bodyNodeNW, cableProp, elastic, uLength,
+  auto mooringLineNW = make_catenary_line("mooringLineNW", worldNodeNW, bodyNodeNW, cableProp, elastic, uLength,
                                           FLUID_TYPE::WATER);
-  auto mooringLineN = make_catenary_line("mooringLineN", system, worldNodeN, bodyNodeN, cableProp, elastic, uLength,
+  auto mooringLineN = make_catenary_line("mooringLineN", worldNodeN, bodyNodeN, cableProp, elastic, uLength,
                                          FLUID_TYPE::WATER);
-  auto mooringLineNE = make_catenary_line("mooringLineNE", system, worldNodeNE, bodyNodeNE, cableProp, elastic, uLength,
+  auto mooringLineNE = make_catenary_line("mooringLineNE", worldNodeNE, bodyNodeNE, cableProp, elastic, uLength,
                                           FLUID_TYPE::WATER);
-  auto mooringLineSE = make_catenary_line("mooringLineSE", system, worldNodeSE, bodyNodeSE, cableProp, elastic, uLength,
+  auto mooringLineSE = make_catenary_line("mooringLineSE", worldNodeSE, bodyNodeSE, cableProp, elastic, uLength,
                                           FLUID_TYPE::WATER);
-  auto mooringLineS = make_catenary_line("mooringLineS", system, worldNodeS, bodyNodeS, cableProp, elastic, uLength,
+  auto mooringLineS = make_catenary_line("mooringLineS", worldNodeS, bodyNodeS, cableProp, elastic, uLength,
                                          FLUID_TYPE::WATER);
-  auto mooringLineEW = make_catenary_line("mooringLineEW", system, worldNodeSW, bodyNodeSW, cableProp, elastic, uLength,
+  auto mooringLineEW = make_catenary_line("mooringLineEW", worldNodeSW, bodyNodeSW, cableProp, elastic, uLength,
                                           FLUID_TYPE::WATER);
 
 }
