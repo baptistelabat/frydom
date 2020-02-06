@@ -25,7 +25,7 @@ namespace frydom {
   // ---------------------------------------------------------------------
 
   FrEquilibriumFrame::FrEquilibriumFrame(const std::string &name, FrBody *body,
-                                         const Position &localPos, const double &rot, FRAME_CONVENTION fc)
+                                         const Position &localPos, FRAME_CONVENTION fc)
       : FrLoggable(name, TypeToString(this), body),
         FrPrePhysicsItem(),
         m_velocity(),
@@ -34,7 +34,7 @@ namespace frydom {
         c_prevTime(0.),
         m_initSpeedFromBody(false) {
     m_bodyNode = GetBody()->NewNode("equilibrium_frame_node_on_body");
-    SetEqFramePositionOrientation(localPos, rot, fc);
+    SetEqFramePositionOrientation(localPos, fc);
   }
 
   FrBody *FrEquilibriumFrame::GetBody() const {
@@ -56,14 +56,13 @@ namespace frydom {
   }
 
   void
-  FrEquilibriumFrame::SetEqFramePositionOrientation(const Position &localPos, const double &rot, FRAME_CONVENTION fc) {
+  FrEquilibriumFrame::SetEqFramePositionOrientation(const Position &localPos, FRAME_CONVENTION fc) {
     m_bodyNode->SetPositionInBody(localPos, fc);
     // Frame
     m_frame.SetIdentity();
     m_frame.SetPosition(m_bodyNode->GetPositionInWorld(NWU), NWU);
     // Project to the horizontal plane
     ApplyFrameProjection();
-    m_frame.RotZ_RADIANS(rot, fc, true);
     // Node
     m_bodyNode->SetFrameInWorld(m_frame);
   }
@@ -237,24 +236,20 @@ namespace frydom {
     m_frame.RotZ_RADIANS(psi, NWU, true);
   }
 
-  void FrEquilibriumFrame::SetAngleRotation(const double &angle, FRAME_CONVENTION fc) {
-    m_frame.RotZ_RADIANS(angle, fc, true);
-  }
-
   // Makers
 
   std::shared_ptr<FrEquilibriumFrame>
-  make_equilibrium_frame(const std::string &name, FrOffshoreSystem *system, const std::shared_ptr<FrBody> &body,
-                         const Position &localPos, const double &rot, FRAME_CONVENTION fc) {
-    auto eqframe = std::make_shared<FrEquilibriumFrame>(name, body.get(), localPos, rot, fc);
-    system->Add(eqframe);
+  make_equilibrium_frame(const std::string &name, const std::shared_ptr<FrBody> &body,
+                         const Position &localPos, FRAME_CONVENTION fc) {
+    auto eqframe = std::make_shared<FrEquilibriumFrame>(name, body.get(), localPos, fc);
+    body->GetSystem()->Add(eqframe);
     return eqframe;
   }
 
   std::shared_ptr<FrEquilibriumFrame>
-  make_equilibrium_frame(const std::string &name, FrOffshoreSystem *system, const std::shared_ptr<FrBody> &body) {
-    auto eqFrame = std::make_shared<FrEquilibriumFrame>(name, body.get(), body->GetCOG(NWU), 0., NWU);
-    system->Add(eqFrame);
+  make_equilibrium_frame(const std::string &name, const std::shared_ptr<FrBody> &body) {
+    auto eqFrame = std::make_shared<FrEquilibriumFrame>(name, body.get(), body->GetCOG(NWU), NWU);
+    body->GetSystem()->Add(eqFrame);
     return eqFrame;
   }
 
@@ -265,11 +260,10 @@ namespace frydom {
   FrEqFrameSpringDamping::FrEqFrameSpringDamping(const std::string &name,
                                                  FrBody *body,
                                                  const Position &localPos,
-                                                 const double &rot,
                                                  FRAME_CONVENTION fc,
                                                  double cutoffTime,
                                                  double dampingRatio)
-      : FrEquilibriumFrame(name, body, localPos, rot, fc) {
+      : FrEquilibriumFrame(name, body, localPos, fc) {
     this->SetSpringDamping(cutoffTime, dampingRatio);
   }
 
@@ -319,26 +313,23 @@ namespace frydom {
   make_spring_damping_equilibrium_frame(const std::string &name,
                                         const std::shared_ptr<FrBody> &body,
                                         const Position &localPos,
-                                        const double &rot,
                                         FRAME_CONVENTION fc,
-                                        FrOffshoreSystem *system,
                                         double cutoffTime,
                                         double dampingRatio) {
     auto eqframe = std::make_shared<FrEqFrameSpringDamping>(name, body.get(),
-                                                            localPos, rot, fc, cutoffTime, dampingRatio);
-    system->Add(eqframe);
+                                                            localPos, fc, cutoffTime, dampingRatio);
+    body->GetSystem()->Add(eqframe);
     return eqframe;
   }
 
   std::shared_ptr<FrEqFrameSpringDamping>
   make_spring_damping_equilibrium_frame(const std::string &name,
                                         const std::shared_ptr<FrBody> &body,
-                                        FrOffshoreSystem *system,
                                         double cutoffTime,
                                         double dampingRatio) {
     auto eqFrame = std::make_shared<FrEqFrameSpringDamping>(name, body.get(),
-                                                            body->GetCOG(NWU), 0., NWU, cutoffTime, dampingRatio);
-    system->Add(eqFrame);
+                                                            body->GetCOG(NWU), NWU, cutoffTime, dampingRatio);
+    body->GetSystem()->Add(eqFrame);
     return eqFrame;
   }
 
@@ -349,11 +340,10 @@ namespace frydom {
   FrEqFrameMeanMotion::FrEqFrameMeanMotion(const std::string &name,
                                            FrBody *body,
                                            const Position &localPos,
-                                           const double &rot,
                                            FRAME_CONVENTION fc,
                                            double timePersistence,
                                            double timeStep)
-      : FrEquilibriumFrame(name, body, localPos, rot, fc) {
+      : FrEquilibriumFrame(name, body, localPos, fc) {
     this->SetRecorders(timePersistence, timeStep);
   }
 
@@ -413,28 +403,25 @@ namespace frydom {
 
   std::shared_ptr<FrEqFrameMeanMotion>
   make_mean_motion_equilibrium_frame(const std::string &name,
-                                     FrOffshoreSystem *system,
                                      const std::shared_ptr<FrBody> &body,
                                      double timePersistence,
                                      double timeStep) {
     auto eqframe = std::make_shared<FrEqFrameMeanMotion>(name, body.get(),
-                                                         body->GetCOG(NWU), 0., NWU, timePersistence, timeStep);
-    system->Add(eqframe);
+                                                         body->GetCOG(NWU), NWU, timePersistence, timeStep);
+    body->GetSystem()->Add(eqframe);
     return eqframe;
   }
 
   std::shared_ptr<FrEqFrameMeanMotion>
   make_mean_motion_equilibrium_frame(const std::string &name,
-                                     FrOffshoreSystem *system,
                                      const std::shared_ptr<FrBody> &body,
                                      const Position &localPos,
-                                     const double &rot,
                                      FRAME_CONVENTION fc,
                                      double timePersistence,
                                      double timeStep) {
     auto eqframe = std::make_shared<FrEqFrameMeanMotion>(name, body.get(),
-                                                         localPos, rot, fc, timePersistence, timeStep);
-    system->Add(eqframe);
+                                                         localPos, fc, timePersistence, timeStep);
+    body->GetSystem()->Add(eqframe);
     return eqframe;
   }
 

@@ -79,10 +79,10 @@ int main(int argc, char *argv[]) {
       double RayleighDamping = 0.;                            //  Rayleigh damping
 
       // Create the catenary line, using the nodes and line properties previously defined
-      auto CatenaryLine = make_catenary_line("CatenaryLine", &system, Node1, Node2, cableProp, elastic,
+      auto CatenaryLine = make_catenary_line("CatenaryLine", Node1, Node2, cableProp, elastic,
                                              unstrainedLength, WATER);
 
-      auto DynamicCable = make_dynamic_cable("DynamicCable", &system, Node1, Node2, cableProp, unstrainedLength,
+      auto DynamicCable = make_dynamic_cable("DynamicCable", Node1, Node2, cableProp, unstrainedLength,
                                              RayleighDamping,
                                              nbElement);
 
@@ -113,7 +113,7 @@ int main(int argc, char *argv[]) {
       double RayleighDamping = 0.;                            //  Rayleigh damping
 
       // Create the catenary line, using the nodes and line properties previously defined
-      auto CatenaryLine = make_catenary_line("CatenaryLine", &system, sphereNode, worldNode, cableProp, elastic,
+      auto CatenaryLine = make_catenary_line("CatenaryLine", sphereNode, worldNode, cableProp, elastic,
                                              unstrainedLength,
                                              WATER);
 
@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) {
       // Dynamic cable properties :
       unstrainedLength -= 1.;
 
-      auto DynamicCable = make_dynamic_cable("DynamicCable", &system, sphereNode2, worldNode2, cableProp,
+      auto DynamicCable = make_dynamic_cable("DynamicCable", sphereNode2, worldNode2, cableProp,
                                              unstrainedLength,
                                              RayleighDamping, nbElement);
 
@@ -193,10 +193,10 @@ int main(int argc, char *argv[]) {
         worldNode2->SetPositionInBody(Position(0., diameter * ib, 50.), NWU);
 
         // Create the catenary lines, using the nodes and line properties previously defined
-        auto CatenaryLine1 = make_catenary_line("CatenaryLine1" + std::to_string(ib), &system, worldNode1, sphereNode,
+        auto CatenaryLine1 = make_catenary_line("CatenaryLine1" + std::to_string(ib), worldNode1, sphereNode,
                                                 cableProp, elastic, unstrainedLength,
                                                 FLUID_TYPE::AIR);
-        auto CatenaryLine2 = make_catenary_line("CatenaryLine2" + std::to_string(ib), &system, worldNode2, sphereNode,
+        auto CatenaryLine2 = make_catenary_line("CatenaryLine2" + std::to_string(ib), worldNode2, sphereNode,
                                                 cableProp, elastic, unstrainedLength,
                                                 FLUID_TYPE::AIR);
         // Set the number of drawn elements on the catenary lines (the more, the slower the simulation)
@@ -238,10 +238,10 @@ int main(int argc, char *argv[]) {
         worldNode2->SetPositionInBody(Position(-20., diameter * ib, 50.), NWU);
 
         // Create the catenary lines, using the nodes and line properties previously defined
-        auto DynamicCable1 = make_dynamic_cable("DynamicCable1" + std::to_string(ib), &system, worldNode1, sphereNode,
+        auto DynamicCable1 = make_dynamic_cable("DynamicCable1" + std::to_string(ib), worldNode1, sphereNode,
                                                 cableProp, unstrainedLength,
                                                 RayleighDamping, nbElements);
-        auto DynamicCable2 = make_dynamic_cable("DynamicCable2" + std::to_string(ib), &system, worldNode2, sphereNode,
+        auto DynamicCable2 = make_dynamic_cable("DynamicCable2" + std::to_string(ib), worldNode2, sphereNode,
                                                 cableProp, unstrainedLength,
                                                 RayleighDamping, nbElements);
       }

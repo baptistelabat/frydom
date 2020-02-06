@@ -24,14 +24,13 @@
 namespace frydom {
 
   FrCatenaryLine::FrCatenaryLine(const std::string &name,
-                                 FrOffshoreSystem *system,
                                  const std::shared_ptr<FrNode> &startingNode,
                                  const std::shared_ptr<FrNode> &endingNode,
                                  const std::shared_ptr<FrCableProperties> &properties,
                                  bool elastic,
                                  double unstrainedLength,
                                  FLUID_TYPE fluid) :
-      FrLoggable(name, TypeToString(this), system),
+      FrLoggable(name, TypeToString(this), startingNode->GetBody()->GetSystem()),
       FrPrePhysicsItem(),
       FrCable(startingNode, endingNode, properties, unstrainedLength),
       m_elastic(elastic),
@@ -321,7 +320,6 @@ namespace frydom {
 
   std::shared_ptr<FrCatenaryLine>
   make_catenary_line(const std::string &name,
-                     FrOffshoreSystem *system,
                      const std::shared_ptr<FrNode> &startingNode,
                      const std::shared_ptr<FrNode> &endingNode,
                      const std::shared_ptr<FrCableProperties> &properties,
@@ -330,14 +328,13 @@ namespace frydom {
                      FLUID_TYPE fluid) {
 
     auto CatenaryLine = std::make_shared<FrCatenaryLine>(name,
-                                                         system,
                                                          startingNode,
                                                          endingNode,
                                                          properties,
                                                          elastic,
                                                          unstrainedLength,
                                                          fluid);
-    system->Add(CatenaryLine);
+    startingNode->GetBody()->GetSystem()->Add(CatenaryLine);
     return CatenaryLine;
 
   }

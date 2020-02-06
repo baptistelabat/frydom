@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
   unsigned int nbElements = 50;                           //  number of elements
 
   // Dynamic cable
-  auto DynamicCable = make_dynamic_cable("dynamic_cable", &system, Node1, Node2, cableProp, unstretchedLength,
+  auto DynamicCable = make_dynamic_cable("dynamic_cable", Node1, Node2, cableProp, unstretchedLength,
                                          rayleighDamping, nbElements);
 
   // To test with constrained hinges, uncomment the following lines.
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
 //  Node2->RotateAroundZInBody(MU_PI, NWU); // need to set the frame node orientation correctly.
 
   // Catenary line for comparison purpose
-  auto CatenaryLine = make_catenary_line("catenary_line", &system, Node3, Node4, cableProp, true, unstretchedLength,
+  auto CatenaryLine = make_catenary_line("catenary_line", Node3, Node4, cableProp, true, unstretchedLength,
                                          AIR);
 
   // Change solver settings, for dynamic cable modeling

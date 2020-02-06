@@ -142,7 +142,6 @@ namespace frydom {
           // Initializing the finite element model so that it fits the catenary line to get close from the
           // equilibrium solution
           catenaryLine = make_catenary_line("dynamicCableInitialization",
-                                            m_frydomCable->GetSystem(),
                                             m_frydomCable->GetStartingNode(),
                                             m_frydomCable->GetEndingNode(),
                                             m_frydomCable->GetCableProperties(),
@@ -289,14 +288,13 @@ namespace frydom {
   }
 
   FrDynamicCable::FrDynamicCable(const std::string &name,
-                                 FrOffshoreSystem *system,
                                  const std::shared_ptr<frydom::FrNode> &startingNode,
                                  const std::shared_ptr<frydom::FrNode> &endingNode,
                                  const std::shared_ptr<FrCableProperties> &properties,
                                  double unstrainedLength,
                                  double rayleighDamping,
                                  unsigned int nbElements) :
-      FrLoggable(name, TypeToString(this), system),
+      FrLoggable(name, TypeToString(this), startingNode->GetBody()->GetSystem()),
       FrFEAMesh(),
       FrCable(startingNode, endingNode, properties, unstrainedLength),
       m_rayleighDamping(rayleighDamping),
@@ -486,7 +484,6 @@ namespace frydom {
 
   std::shared_ptr<FrDynamicCable>
   make_dynamic_cable(const std::string &name,
-                     FrOffshoreSystem *system,
                      const std::shared_ptr<FrNode> &startingNode,
                      const std::shared_ptr<FrNode> &endingNode,
                      const std::shared_ptr<FrCableProperties> &properties,
@@ -495,7 +492,6 @@ namespace frydom {
                      unsigned int nbElements) {
 
     auto Cable = std::make_shared<FrDynamicCable>(name,
-                                                  system,
                                                   startingNode,
                                                   endingNode,
                                                   properties,
@@ -503,7 +499,7 @@ namespace frydom {
                                                   rayleighDamping,
                                                   nbElements);
 
-    system->Add(Cable);
+    startingNode->GetBody()->GetSystem()->Add(Cable);
     return Cable;
 
   }

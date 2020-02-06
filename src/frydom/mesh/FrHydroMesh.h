@@ -48,13 +48,11 @@ namespace frydom {
 
     /// Constructor.
     FrHydroMesh(const std::string &name,
-                FrOffshoreSystem *system,
                 const std::shared_ptr<FrBody> &body,
                 FrHydroMesh::ClippingSupport support);
 
     /// Constructor.
     FrHydroMesh(const std::string &name,
-                FrOffshoreSystem *system,
                 const std::shared_ptr<FrBody> &body,
                 const std::string &meshFile,
                 FrFrame meshOffsset,

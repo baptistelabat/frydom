@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
   auto sphere_HDB = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/sphere/sphere_hdb.h5"});
   auto hdb = make_hydrodynamic_database(sphere_HDB);
 
-  auto eqFrame = make_equilibrium_frame("EqFrame", &system, body);
+  auto eqFrame = make_equilibrium_frame("EqFrame", body);
 
 
   hdb->Map(0, body.get(), eqFrame);
