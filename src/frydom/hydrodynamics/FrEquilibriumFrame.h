@@ -42,35 +42,35 @@ namespace frydom {
 
    protected:
 
-    FrFrame m_frame;
+    FrFrame m_frame;                 ///< Frame corresponding to the equilibrium frame
     std::shared_ptr<FrNode> m_bodyNode;  ///< Node fixed to the body corresponding to the equilibrium frame when the body is at equilibrium.
     Velocity m_velocity;             ///< translational velocity of the frame in world coordinates
     double m_angularVelocity;        ///< angular velocity of the frame around Z-direction
-
     bool m_initSpeedFromBody;        ///< Initialize the frame position, orientation and velocity according
 
     double c_prevTime;
 
    public:
 
-    /// Constructor of a new equilibrium frame with default position and no velocity
+    /// Constructor of a new equilibrium frame with default position and zero speed
+    /// \param name Name of the equilibrium frame
     /// \param body Body to which the equilibrium frame is linked
+    /// \param localPos Local position of the equilibrium frame in body coordinate
+    /// \param fc Frame convention
     explicit FrEquilibriumFrame(const std::string &name, FrBody *body,
-                                const Position &localPos, const double &rot, FRAME_CONVENTION fc);
+                                const Position &localPos, FRAME_CONVENTION fc);
 
     /// Get a pointer to the body to which this frame is attached
     inline FrBody *GetBody() const;
 
     /// The velocity of the frame is initialized from the body velocity
-    /// \param is_init Boolean True/Flase
+    /// \param is_init Boolean True/False
     void InitializeVelocityFromBody(bool is_init);
 
     /// Get the position of the equilibrium frame in the word reference frame
     /// \param fc frame convention (NED/NWU)
     /// \return equilibrium frame position
     Position GetPositionInWorld(FRAME_CONVENTION fc) const;
-
-    //Position GetPositionInBody(FRAME_CONVENTION fc) const;
 
     /// Get the rotation of the equilibrium frame in the word reference frame
     /// \return equilibrium frame rotation
@@ -86,8 +86,9 @@ namespace frydom {
     /// \param fc Frame convention (NED/NWU)
     void SetVelocityInWorld(const Velocity &velocity, FRAME_CONVENTION fc);
 
-    /// Set velocity of the equilibrium frame in world coordinates
+    /// Set velocity of the equilibrium frame in local coordinate
     /// \param velocity Velocity vector in frame coordinates
+    /// \param fc Frame convention
     void SetVelocityInFrame(const Velocity &velocity, FRAME_CONVENTION fc);
 
     /// Set angular velocity around Z-direction
@@ -104,6 +105,9 @@ namespace frydom {
     /// \return Velocity vector
     Velocity GetFrameVelocityInFrame(FRAME_CONVENTION fc) const;
 
+    /// Get the perturbation frame  corresponding to the instantaneous position and orientation
+    /// of the node attached to the body into equilibrium frame coordinate
+    /// \return Perturbation frame
     FrFrame GetPerturbationFrame();
 
     /// Get the perturbation linear velocity of the body around the equilibrium frame
@@ -112,15 +116,17 @@ namespace frydom {
     Velocity GetPerturbationVelocityInWorld(FRAME_CONVENTION fc) const;
 
     /// Get the perturbation linear velocity of the body around the equilibrium frame
+    /// \param fc Frame convention
     /// \return Perturbation velocity in local frame
     Velocity GetPerturbationVelocityInFrame(FRAME_CONVENTION fc) const;
 
-    /// Return the perturbation generalized velocity of the body around the equilibrium frame
+    /// Get the perturbation generalized velocity of the body around the equilibrium frame
     /// \param fc Frame convention
     /// \return Perturbation generalized velocity in world
     GeneralizedVelocity GetPerturbationGeneralizedVelocityInWorld(FRAME_CONVENTION fc) const;
 
-    /// Return the perturbation generalized velocity of the body around the equilibrium frame
+    /// Get the perturbation generalized velocity of the body around the equilibrium frame
+    /// \param fc Frame convention
     /// \return Perturbation generalized velocity in local frame
     GeneralizedVelocity GetPerturbationGeneralizedVelocityInFrame(FRAME_CONVENTION fc) const;
 
@@ -129,8 +135,14 @@ namespace frydom {
     /// \return Angular velocity vector
     AngularVelocity GetFrameAngularVelocity(FRAME_CONVENTION fc) const;
 
+    /// Get the perturbation angular velocity of the body relative to the equilibrium frame
+    /// \param fc Frame convention
+    /// \return Perturbation velocity in world coordinate
     AngularVelocity GetPerturbationAngularVelocity(FRAME_CONVENTION fc) const;
 
+    /// Get the perturbation angular velocity of the body relative to the equilibrium frame
+    /// \param fc Frame convention
+    /// \return Perturbation velocity in frame coordinate
     AngularVelocity GetPerturbationAngularVelocityInFrame(FRAME_CONVENTION fc) const;
 
     /// Initialization of the position and velocity of the equilibrium frame
@@ -145,33 +157,45 @@ namespace frydom {
 
     void ApplyFrameProjection();
 
-    void SetAngleRotation(const double &angle, FRAME_CONVENTION fc);
-
    private:
 
     void SetEqFramePositionOrientation();
 
-    void SetEqFramePositionOrientation(const Position &localPos, const double &rot, FRAME_CONVENTION fc);
+    void SetEqFramePositionOrientation(const Position &localPos, FRAME_CONVENTION fc);
 
-    /// Update the velocity and position of the frame
-    /// \param time Current time of the simulation from the beginning
     void Compute(double time) override;
 
   };
 
+  /// Maker of a new equilibrium frame linked to a body. The equilibrium frame has its
+  /// z-axis pointing upward, x-axis and y-axis are parallel to the horizontal plane
+  /// and x-axis points to the bow (projection of the x-axis of the body into the horizontal plane)
+  /// \param name Name of the equilibrium frame
+  /// \param body Body to which the equilibrium frame is applied
+  /// \param localPos Local position of the equilibrium frame in body coordinate system
+  /// \param fc Frame convention
+  /// \return Equilibrium frame
   std::shared_ptr<FrEquilibriumFrame>
-  make_equilibrium_frame(const std::string &name, FrOffshoreSystem *system, const std::shared_ptr<FrBody> &body,
-                         const Position &localPos, const double &rot, FRAME_CONVENTION fc);
+  make_equilibrium_frame(const std::string &name, const std::shared_ptr<FrBody> &body,
+                         const Position &localPos, FRAME_CONVENTION fc);
 
+  /// Maker of new equilibrium frame linked  to a body. The equilibrium frame has its
+  /// z-axis pointing upward, x-axis and y-axis are parallel to the horizontal plane
+  /// and x-axis points to the bow (projection of the x-axis of the body into the horizontal plane)
+  /// The position of the equilibrium frame is equal to the position of the COG of the body
+  /// at equilibrium.
+  /// \param name Name of the equilibrium frame
+  /// \param body Body to which the equilibrium frame is applied
+  /// \return Equilibrium frame
   std::shared_ptr<FrEquilibriumFrame>
-  make_equilibrium_frame(const std::string &name, FrOffshoreSystem *system, const std::shared_ptr<FrBody> &body);
+  make_equilibrium_frame(const std::string &name, const std::shared_ptr<FrBody> &body);
 
   /**
    * \class FrEqFrameSpringDamping
    * \brief This class defines an equilibrium frame with a spring-damping system.
    *
    * The velocity of the equilibrium frame is solution of a dynamic equation with spring
-   * and damping forces. This system creates a low pass filter on the velocity of the body.
+   * and damping forces. This system is equivalent to a low pass filter on the velocity of the body.
    * The spring-damping system is defined from the cutoff time in seconds, and the damping
    * ratio coefficient.
    *
@@ -186,12 +210,13 @@ namespace frydom {
    public:
 
     /// Constructor of a new equilibrium frame with body link and spring-damping parameters
+    /// \param name Name of the equilibrium frame
     /// \param body Body link
     /// \param cutoffTime Cutoff time period
     /// \param dampingRatio Damping ratio
     /// \param initPos If true the frame is initialized with the position of the body
     FrEqFrameSpringDamping(const std::string &name, FrBody *body,
-                           const Position &localPos, const double &rot, FRAME_CONVENTION fc,
+                           const Position &localPos, FRAME_CONVENTION fc,
                            double cutoffTime, double dampingRatio);
 
     /// Get the damping coefficient of the spring-damping system
@@ -203,28 +228,43 @@ namespace frydom {
 
    private:
 
-    /// Update velocity and position of the equilibrium frame
-    /// \param time Current time of the simulation from beginning
     void Compute(double time) override;
 
     void SetSpringDamping(double cutoffTime, double dampingRatio);
 
   };
 
+  /// Maker of a new equilibrium frame with motion equal the low frequency motion of the body.
+  /// The equilibrium frame has its z-axis pointing upward, x-axis and y-axis are parallel to the horizontal plane
+  ///  and x-axis points to the bow (projection of the x-axis of the body into the horizontal plane)
+  /// \param name Name of the equilibrium frame
+  /// \param body Body to which the equilibrium frame is applied
+  /// \param localPos Local position of the equilibrium frame in the body reference frame
+  /// \param fc Frame convention
+  /// \param cutoffTime Cut off time of the spring damping model
+  /// \param dampingRatio Damping ratio of the spring damping model
+  /// \return Equilibrium frame
   std::shared_ptr<FrEqFrameSpringDamping>
   make_spring_damping_equilibrium_frame(const std::string &name,
                                         const std::shared_ptr<FrBody> &body,
                                         const Position &localPos,
-                                        const double &rot,
                                         FRAME_CONVENTION fc,
-                                        FrOffshoreSystem *system,
                                         double cutoffTime,
                                         double dampingRatio);
 
+  /// Maker of a new equilibrium frame with motion equal the low frequency motion of the body.
+  /// The equilibrium frame has its z-axis pointing upward, x-axis and y-axis are parallel to the horizontal plane
+  ///  and x-axis points to the bow (projection of the x-axis of the body into the horizontal plane)
+  /// The position of the equilibrium frame is equal to the position of the COG of the body
+  /// at equilibrium.
+  /// \param name Name of the equilibrium frame
+  /// \param body Body to which the equilibrium frame is applied
+  /// \param cutoffTime Cut off time of the spring damping model
+  /// \param dampingRatio Damping ratio of the spring damping model
+  /// \return Equilibrium frame
   std::shared_ptr<FrEqFrameSpringDamping>
   make_spring_damping_equilibrium_frame(const std::string &name,
                                         const std::shared_ptr<FrBody> &body,
-                                        FrOffshoreSystem *system,
                                         double cutoffTime,
                                         double dampingRatio);
 
@@ -262,9 +302,15 @@ namespace frydom {
     /// \param timeStep Time step of the recorder
     /// \param initPos If true the frame is initialized with the position of the body
     FrEqFrameMeanMotion(const std::string &name, FrBody *body,
-                        const Position &localPos, const double &rot, FRAME_CONVENTION fc,
+                        const Position &localPos, FRAME_CONVENTION fc,
                         double timePersistence, double timeStep);
 
+    /// Set the correction factor to try to keep the position of the equilibrium frame close
+    /// to the mean position of the body.
+    /// \param timePersistence Time windows for the mean velocity computation
+    /// \param timeStep Time step of the recorder
+    /// \param posCoeff Relaxation factor for the position
+    /// \param angleCoeff Relaxation factor for the rotation
     void SetPositionCorrection(double timePersistence, double timeStep, double posCoeff, double angleCoeff);
 
    private:
@@ -280,17 +326,36 @@ namespace frydom {
 
   };
 
+  /// Maker of a new equilibrium frame with velocity equal to the mean velocity of the body.
+  /// The equilibrium frame has its z-axis pointing upward, x-axis and y-axis are parallel to the horizontal plane
+  /// and x-axis points to the bow (projection of the x-axis of the body into the horizontal plane)
+  /// The position of the equilibrium frame is equal to the position of the COG of the body
+  /// at equilibrium.
+  /// \param name Name of the equilibrium frame
+  /// \param body Body to which the equilibrium frame is applied
+  /// \param timePersistence Length of the time window to compute the mean velocity
+  /// \param timeStep Time step for the computation of the mean velocity
+  /// \return Equilibrium frame
   std::shared_ptr<FrEqFrameMeanMotion>
-  make_mean_motion_equilibrium_frame(const std::string &name, FrOffshoreSystem *system,
+  make_mean_motion_equilibrium_frame(const std::string &name,
                                      const std::shared_ptr<FrBody> &body,
                                      double timePersistence,
                                      double timeStep);
 
+  /// Maker of a new equilibrium frame with velocity equal to the mean velocity of the body.
+  ///  The equilibrium frame has its z-axis pointing upward, x-axis and y-axis are parallel to the horizontal plane
+  ///  and x-axis points to the bow (projection of the x-axis of the body into the horizontal plane)
+  /// \param name Name of the equilibrium frame
+  /// \param body Body to which the equilibrium frame is applied
+  /// \param localPos Local position of the equilibrium frame in body coordinate system
+  /// \param fc Frame convention
+  /// \param timePersistence Length of the time window to compute the mean velocity
+  /// \param timeStep Time step for the computation of the mean velocity
+  /// \return Equilibrium frame
   std::shared_ptr<FrEqFrameMeanMotion>
-  make_mean_motion_equilibrium_frame(const std::string &name, FrOffshoreSystem *,
+  make_mean_motion_equilibrium_frame(const std::string &name,
                                      std::shared_ptr<FrBody> &body,
                                      const Position &localPos,
-                                     const double &rot,
                                      FRAME_CONVENTION fc,
                                      double timePersistence,
                                      double timeStep);
