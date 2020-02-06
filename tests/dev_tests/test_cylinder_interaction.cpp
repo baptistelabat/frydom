@@ -54,8 +54,8 @@ int main(int argc, char *argv[]) {
       {system.config_file().GetDataFolder(), "ce/CylinderInteraction/CylinderInteraction.hdb5"});
   auto hdb = make_hydrodynamic_database(cylinder_hdb);
 
-  auto eqFrame1 = make_equilibrium_frame("eq_frame_cylinder_1", &system, cyl1);
-  auto eqFrame2 = make_equilibrium_frame("eq_frame_cylinder_2", &system, cyl2);
+  auto eqFrame1 = make_equilibrium_frame("eq_frame_cylinder_1", cyl1);
+  auto eqFrame2 = make_equilibrium_frame("eq_frame_cylinder_2", cyl2);
 
   hdb->Map(0, cyl1.get(), eqFrame1);
   hdb->Map(1, cyl2.get(), eqFrame2);

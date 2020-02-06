@@ -144,9 +144,9 @@ int main(int argc, char *argv[]) {
       {system.config_file().GetDataFolder(), "ce/Langlee/Langlee_draft8_5_filtered_t50.hdb5"});
   auto hdb = make_hydrodynamic_database(bargeHDB);
 
-  auto eqFrame0 = make_equilibrium_frame("eqFrame0", &system, barge);
-  auto eqFrame1 = make_equilibrium_frame("eqFrame1", &system, flap1);
-  auto eqFrame2 = make_equilibrium_frame("eqFrame2", &system, flap2);
+  auto eqFrame0 = make_equilibrium_frame("eqFrame0", barge);
+  auto eqFrame1 = make_equilibrium_frame("eqFrame1", flap1);
+  auto eqFrame2 = make_equilibrium_frame("eqFrame2", flap2);
 
   hdb->Map(0, flap1.get(), eqFrame1);
   hdb->Map(1, flap2.get(), eqFrame2);

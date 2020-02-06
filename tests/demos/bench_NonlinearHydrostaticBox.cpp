@@ -96,7 +96,7 @@ int main(int argc, char *argv[]) {
   auto boxMesh = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/bench/box/box_385.obj"});
   if (linear) {
     // -- Linear hydrostatics
-    auto eqFrame = make_equilibrium_frame("EqFrame", &system, body);
+    auto eqFrame = make_equilibrium_frame("EqFrame", body);
 
     auto forceHst = make_linear_hydrostatic_force("linear_hydrostatic", body, eqFrame, boxMesh, FrFrame());
   } else {

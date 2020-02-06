@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
   auto bargeHDB = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/barge/Barge_HDB.h5"});
   auto hdb = make_hydrodynamic_database(bargeHDB);
 
-  auto eqFrame = make_equilibrium_frame("EqFrame", &system, barge);
+  auto eqFrame = make_equilibrium_frame("EqFrame", barge);
   eqFrame->LogThis(true);
 
   hdb->Map(0, barge.get(), eqFrame);

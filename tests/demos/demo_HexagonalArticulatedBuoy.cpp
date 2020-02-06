@@ -115,12 +115,12 @@ SetUpHydrodynamicModel(FrOffshoreSystem *system, std::vector<std::shared_ptr<FrB
       {system->config_file().GetDataFolder(), "ce/HexagonalArticulatedBuoy/hexagonal_articulated_buoy.hdb5"});
   auto hdb = make_hydrodynamic_database(HDB_path);
 
-  auto eqFrame0 = make_equilibrium_frame("eqFrame0", system, bodyList[0]);
-  auto eqFrame1 = make_equilibrium_frame("eqFrame1", system, bodyList[1]);
-  auto eqFrame2 = make_equilibrium_frame("eqFrame2", system, bodyList[2]);
-  auto eqFrame3 = make_equilibrium_frame("eqFrame3", system, bodyList[3]);
-  auto eqFrame4 = make_equilibrium_frame("eqFrame4", system, bodyList[4]);
-  auto eqFrame5 = make_equilibrium_frame("eqFrame5", system, bodyList[5]);
+  auto eqFrame0 = make_equilibrium_frame("eqFrame0", bodyList[0]);
+  auto eqFrame1 = make_equilibrium_frame("eqFrame1", bodyList[1]);
+  auto eqFrame2 = make_equilibrium_frame("eqFrame2", bodyList[2]);
+  auto eqFrame3 = make_equilibrium_frame("eqFrame3", bodyList[3]);
+  auto eqFrame4 = make_equilibrium_frame("eqFrame4", bodyList[4]);
+  auto eqFrame5 = make_equilibrium_frame("eqFrame5", bodyList[5]);
 
   hdb->Map(0, bodyList[0].get(), eqFrame0);
   hdb->Map(1, bodyList[1].get(), eqFrame1);
