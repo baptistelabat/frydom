@@ -3,6 +3,11 @@
 This is the Changelog of the FRyDom framework.
 This file should be kept up to date following [these guidelines](https://keepachangelog.com/en/1.0.0/)
 
+## [3.1] - 2020-02-06
+
+### Changed
+- minor changes in the hydrostatic equilibrium solver
+- minor changes in the equilibrium frame
 
 ## [3.0] - 2020-02-04
 
