@@ -15,15 +15,16 @@ namespace frydom {
 
   class FrLumpedMassCable : public FrLoggable<FrOffshoreSystem>, public FrCable {
 
+   public:
+
     FrLumpedMassCable(const std::string &name,
-                      FrOffshoreSystem *system,
                       const std::shared_ptr<FrNode> &startingNode,
                       const std::shared_ptr<FrNode> &endingNode,
                       const std::shared_ptr<FrCableProperties> &properties,
                       double unstretchedLength,
-                      double rayleightDamping,
-                      unsigned int nbElements
-    );
+                      unsigned int nbElements);
+
+    void Initialize();
 
     Force GetTension(double s, FRAME_CONVENTION fc) const override;
 
@@ -31,6 +32,9 @@ namespace frydom {
 
     void DefineLogMessages() override;
 
+
+   private:
+    unsigned int m_nb_elements;
 
   };
 

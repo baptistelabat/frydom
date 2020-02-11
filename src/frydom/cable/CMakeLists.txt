@@ -6,12 +6,8 @@ set(SRC_FILES
         FrCatenaryLine.cpp
         FrMooringBuoy.cpp
         FrDynamicCable.cpp
-<<<<<<< HEAD
         FrLumpedMassCable.cpp
 )
-=======
-        )
->>>>>>> develop
 
 set(FRYDOM_CABLE_SOURCES "")
 foreach (file ${SRC_FILES})
