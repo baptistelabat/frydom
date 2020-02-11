@@ -17,7 +17,7 @@ namespace frydom {
 
   class FrFunctionBase;
 
-  class FrActuator : public FrLinkBase, public FrLoggable<FrLink>  {
+  class FrActuator : public FrLinkBase, public FrLoggable<FrLink> {
 
    protected:
 
@@ -105,7 +105,8 @@ namespace frydom {
     chrono::ChLinkBase *GetChronoItem_ptr() const override = 0;
 
 
-    friend void FrOffshoreSystem::Add(std::shared_ptr<FrTreeNodeBase>);
+    // Fiends
+    friend bool FrOffshoreSystem::Add(std::shared_ptr<FrTreeNodeBase>);
 
     friend void FrOffshoreSystem::Remove(std::shared_ptr<FrTreeNodeBase>);
 

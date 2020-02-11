@@ -15,8 +15,8 @@
 
 namespace frydom {
 
-    FrEnvironment* FrCurrent::GetEnvironment() const {
-        return m_ocean->GetEnvironment();
-    }
+  FrEnvironment *FrCurrent::GetEnvironment() const {
+    return m_ocean->GetEnvironment();
+  }
 
 }  // end namespace frydom

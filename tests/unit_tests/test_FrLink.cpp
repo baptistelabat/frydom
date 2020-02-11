@@ -26,23 +26,30 @@ TEST(FrLinkTest, FrLinkTest_Fixed_force_Test) {
   body->AllowCollision(false);
 
   // body position
-  Position randPos; randPos.setRandom();
+  Position randPos;
+  randPos.setRandom();
   body->SetPosition(randPos, fc);
 
   // bodyNode creation
   auto bodyNode = body->NewNode("bodyNode");
-  Position bodyNodePosInBody; bodyNodePosInBody.setRandom();
-  bodyNodePosInBody = {-1.,0.,0.};
+  Position bodyNodePosInBody;
+  bodyNodePosInBody.setRandom();
+  bodyNodePosInBody = {-1., 0., 0.};
   bodyNode->SetPositionInBody(bodyNodePosInBody, fc);
-  Direction direction; direction.setRandom(); direction.normalize();
+  Direction direction;
+  direction.setRandom();
+  direction.normalize();
   bodyNode->SetOrientationInBody(FrRotation(direction, 0.35894, fc));
 
   // worldNode Creation
   auto worldNode = WBody->NewNode("worldNode");
-  Position worldNodePosInBody; worldNodePosInBody.setRandom();
-  worldNodePosInBody = {1.,0.,0.};
+  Position worldNodePosInBody;
+  worldNodePosInBody.setRandom();
+  worldNodePosInBody = {1., 0., 0.};
   worldNode->SetPositionInBody(worldNodePosInBody, fc);
-  Direction direction2; direction2.setRandom(); direction2.normalize();
+  Direction direction2;
+  direction2.setRandom();
+  direction2.normalize();
   bodyNode->SetOrientationInBody(FrRotation(direction2, 0.19708, fc));
 
   // link  creation
@@ -66,7 +73,7 @@ TEST(FrLinkTest, FrLinkTest_Fixed_force_Test) {
   EXPECT_TRUE(relFrame.GetPosition(fc).isZero(1e-5));
   EXPECT_TRUE(relFrame.GetRotation().GetRotationMatrix().isIdentity(1e-2));
   if (!relFrame.GetPosition(fc).isZero(1e-5) or !relFrame.GetRotation().GetRotationMatrix().isIdentity(1e-2)) {
-    std::cout<<relFrame<<std::endl;
+    std::cout << relFrame << std::endl;
   }
 
   relFrame = fixedLink->GetNode2FrameWRTNode1Frame();
@@ -75,50 +82,54 @@ TEST(FrLinkTest, FrLinkTest_Fixed_force_Test) {
 
   // Tests force and torque accessors
   auto gravityInWorld = GeneralizedForceTorsor(
-      Force(0.,0.,-body->GetMass() * system.GetGravityAcceleration()),
+      Force(0., 0., -body->GetMass() * system.GetGravityAcceleration()),
       Torque(),
       body->GetCOGPositionInWorld(fc), fc);
 
-  Force testForce = worldNode->ProjectVectorInWorld(fixedLink->GetLinkReactionForceOnNode1(fc), fc) - gravityInWorld.GetForce();
+  Force testForce =
+      worldNode->ProjectVectorInWorld(fixedLink->GetLinkReactionForceOnNode1(fc), fc) - gravityInWorld.GetForce();
   EXPECT_TRUE(testForce.isZero(1e-8));
   if (!testForce.isZero(1e-8)) {
-    std::cout<<worldNode->ProjectVectorInWorld(fixedLink->GetLinkReactionForceOnNode1(fc), fc)<<std::endl;
-    std::cout<<gravityInWorld.GetForce()<<std::endl;
+    std::cout << worldNode->ProjectVectorInWorld(fixedLink->GetLinkReactionForceOnNode1(fc), fc) << std::endl;
+    std::cout << gravityInWorld.GetForce() << std::endl;
   }
 
-  Torque testTorque = worldNode->ProjectVectorInWorld(fixedLink->GetLinkReactionTorqueOnNode1(fc), fc) - gravityInWorld.GetTorqueAtPoint(worldNode->GetPositionInWorld(fc), fc);
+  Torque testTorque = worldNode->ProjectVectorInWorld(fixedLink->GetLinkReactionTorqueOnNode1(fc), fc) -
+                      gravityInWorld.GetTorqueAtPoint(worldNode->GetPositionInWorld(fc), fc);
   EXPECT_TRUE(testTorque.isZero(1e-8));
   if (!testForce.isZero(1e-8)) {
-    std::cout<<worldNode->ProjectVectorInWorld(fixedLink->GetLinkReactionTorqueOnNode1(fc), fc)<<std::endl;
-    std::cout<<gravityInWorld.GetTorqueAtPoint(worldNode->GetPositionInWorld(fc),fc)<<std::endl;
+    std::cout << worldNode->ProjectVectorInWorld(fixedLink->GetLinkReactionTorqueOnNode1(fc), fc) << std::endl;
+    std::cout << gravityInWorld.GetTorqueAtPoint(worldNode->GetPositionInWorld(fc), fc) << std::endl;
   }
 
   testForce = worldNode->ProjectVectorInWorld(fixedLink->GetLinkReactionForceOnNode1(fc), fc)
-      + bodyNode->ProjectVectorInWorld(fixedLink->GetLinkReactionForceOnNode2(fc), fc);
+              + bodyNode->ProjectVectorInWorld(fixedLink->GetLinkReactionForceOnNode2(fc), fc);
   EXPECT_TRUE(testForce.isZero(1e-4));
   if (!testForce.isZero(1e-4)) {
-    std::cout<<worldNode->ProjectVectorInWorld(fixedLink->GetLinkReactionForceOnNode1(fc), fc)<<std::endl;
-    std::cout<<bodyNode->ProjectVectorInWorld(fixedLink->GetLinkReactionForceOnNode2(fc), fc)<<std::endl;
+    std::cout << worldNode->ProjectVectorInWorld(fixedLink->GetLinkReactionForceOnNode1(fc), fc) << std::endl;
+    std::cout << bodyNode->ProjectVectorInWorld(fixedLink->GetLinkReactionForceOnNode2(fc), fc) << std::endl;
   }
 
   testTorque = worldNode->ProjectVectorInWorld(fixedLink->GetLinkReactionTorqueOnNode1(fc), fc)
-      + bodyNode->ProjectVectorInWorld(fixedLink->GetLinkReactionTorqueOnNode2(fc), fc);
+               + bodyNode->ProjectVectorInWorld(fixedLink->GetLinkReactionTorqueOnNode2(fc), fc);
   EXPECT_TRUE(testTorque.isZero(1e-4));
   if (!testTorque.isZero(1e-4)) {
-    std::cout<<worldNode->ProjectVectorInWorld(fixedLink->GetLinkReactionTorqueOnNode1(fc), fc)<<std::endl;
-    std::cout<<bodyNode->ProjectVectorInWorld(fixedLink->GetLinkReactionTorqueOnNode2(fc), fc)<<std::endl;
+    std::cout << worldNode->ProjectVectorInWorld(fixedLink->GetLinkReactionTorqueOnNode1(fc), fc) << std::endl;
+    std::cout << bodyNode->ProjectVectorInWorld(fixedLink->GetLinkReactionTorqueOnNode2(fc), fc) << std::endl;
   }
 
   testForce = WBody->ProjectVectorInWorld(fixedLink->GetLinkReactionForceOnBody1(fc), fc) - gravityInWorld.GetForce();
   EXPECT_TRUE(testForce.isZero(1e-8));
 
-  testTorque = WBody->ProjectVectorInWorld(fixedLink->GetLinkReactionTorqueOnBody1AtCOG(fc), fc) - gravityInWorld.GetTorqueAtPoint(WBody->GetCOGPositionInWorld(fc), fc);
+  testTorque = WBody->ProjectVectorInWorld(fixedLink->GetLinkReactionTorqueOnBody1AtCOG(fc), fc) -
+               gravityInWorld.GetTorqueAtPoint(WBody->GetCOGPositionInWorld(fc), fc);
   EXPECT_TRUE(testTorque.isZero(1e-8));
 
   testForce = body->ProjectVectorInWorld(fixedLink->GetLinkReactionForceOnBody2(fc), fc) + gravityInWorld.GetForce();
   EXPECT_TRUE(testForce.isZero(1e-8));
 
-  testTorque = body->ProjectVectorInWorld(fixedLink->GetLinkReactionTorqueOnBody2AtCOG(fc), fc) + gravityInWorld.GetTorqueAtPoint(body->GetCOGPositionInWorld(fc), fc);
+  testTorque = body->ProjectVectorInWorld(fixedLink->GetLinkReactionTorqueOnBody2AtCOG(fc), fc) +
+               gravityInWorld.GetTorqueAtPoint(body->GetCOGPositionInWorld(fc), fc);
   EXPECT_TRUE(testTorque.isZero(1e-8));
 
 }
@@ -265,17 +276,17 @@ TEST(FrLinkTest, FrLinkTest_Revolute_velocity_Test) {
 
   // bodyNode creation
   auto bodyNode = body->NewNode("bodyNode");
-  FrRotation bodyNodeRot(Direction(1.,0.,0.), 90*DEG2RAD, fc);
+  FrRotation bodyNodeRot(Direction(1., 0., 0.), 90 * DEG2RAD, fc);
   bodyNode->SetFrameInBody(FrFrame(Position(-1., 0., 0.), bodyNodeRot, fc));
 
   // worldNode Creation
   auto worldNode = WBody->NewNode("worldNode");
-  FrRotation worldNodeRot(Direction(1.,0.,0.), 90*DEG2RAD, fc);
+  FrRotation worldNodeRot(Direction(1., 0., 0.), 90 * DEG2RAD, fc);
   worldNode->SetFrameInBody(FrFrame(Position(1., 0., 0.), worldNodeRot, fc));
 
   // link  creation
   auto link = make_revolute_link("revoluteLink", &system, worldNode, bodyNode);
-  link->SetSpringDamper(100.,10.);
+  link->SetSpringDamper(100., 10.);
 
 // initialization and assembly
   system.Initialize();
@@ -318,14 +329,16 @@ TEST(FrLinkTest, FrLinkTest_Revolute_velocity_Test) {
       bodyNode->GetPositionInWorld(fc), fc
   );
 
-  Velocity testVelocity = worldNode->ProjectVectorInWorld(node2Velo.GetVelocity(), fc) - node2Vel.GetLinearVelocityAtPoint(bodyNode->GetPositionInWorld(fc), fc);
+  Velocity testVelocity = worldNode->ProjectVectorInWorld(node2Velo.GetVelocity(), fc) -
+                          node2Vel.GetLinearVelocityAtPoint(bodyNode->GetPositionInWorld(fc), fc);
   EXPECT_TRUE(testVelocity.isZero(1E-15));
   if (!testVelocity.isZero(1E-15)) {
     std::cout << worldNode->ProjectVectorInWorld(node2Velo.GetVelocity(), fc) << std::endl;
     std::cout << node2Vel.GetLinearVelocityAtPoint(bodyNode->GetPositionInWorld(fc), fc) << std::endl;
   }
 
-  bool test = worldNode->ProjectVectorInWorld(node2Velo.GetAngularVelocity(), fc).isApprox(node2Vel.GetAngularVelocity());
+  bool test = worldNode->ProjectVectorInWorld(node2Velo.GetAngularVelocity(), fc).isApprox(
+      node2Vel.GetAngularVelocity());
   EXPECT_TRUE(test);
   if (!test) {
     std::cout << worldNode->ProjectVectorInWorld(node2Velo.GetAngularVelocity(), fc) << std::endl;
@@ -380,17 +393,17 @@ TEST(FrLinkTest, FrLinkTest_Prismatic_force_Test) {
 
   // bodyNode creation
   auto bodyNode = body->NewNode("bodyNode");
-  FrRotation bodyNodeRot(Direction(0.,1.,0.), 90*DEG2RAD, fc);
+  FrRotation bodyNodeRot(Direction(0., 1., 0.), 90 * DEG2RAD, fc);
   bodyNode->SetFrameInBody(FrFrame(Position(), bodyNodeRot, fc));
 
   // worldNode Creation
   auto worldNode = WBody->NewNode("worldNode");
-  FrRotation worldNodeRot(Direction(0.,1.,0.), -45*DEG2RAD, fc);
+  FrRotation worldNodeRot(Direction(0., 1., 0.), -45 * DEG2RAD, fc);
   worldNode->SetFrameInBody(FrFrame(Position(1., 0., 0.), worldNodeRot, fc));
 
   // link  creation
   auto link = make_prismatic_link("prismaticLink", &system, worldNode, bodyNode);
-  link->SetSpringDamper(10.,0.);
+  link->SetSpringDamper(10., 0.);
 
 // initialization and assembly
   system.Initialize();
@@ -407,18 +420,18 @@ TEST(FrLinkTest, FrLinkTest_Prismatic_force_Test) {
   // Tests link force (not reaction, the component from spring/damping)
 
   auto gravityInWorld = GeneralizedForceTorsor(
-      Force(0.,0.,-body->GetMass() * system.GetGravityAcceleration()),
+      Force(0., 0., -body->GetMass() * system.GetGravityAcceleration()),
       Torque(),
       body->GetCOGPositionInWorld(fc), fc);
 
   Force testForce = worldNode->ProjectVectorInWorld(link->GetSpringDamperForceOnNode1(fc), fc)
-      + worldNode->ProjectVectorInWorld(link->GetLinkReactionForceOnNode1(fc), fc)
-      - gravityInWorld.GetForce();
+                    + worldNode->ProjectVectorInWorld(link->GetLinkReactionForceOnNode1(fc), fc)
+                    - gravityInWorld.GetForce();
   EXPECT_TRUE(testForce.isZero(1e-2));
   if (!testForce.isZero(1e-2)) {
-    std::cout<<worldNode->ProjectVectorInWorld(link->GetSpringDamperForceOnNode1(fc), fc)<<std::endl;
-    std::cout<<worldNode->ProjectVectorInWorld(link->GetLinkReactionForceOnNode1(fc), fc)<<std::endl;
-    std::cout<<gravityInWorld.GetForce()<<std::endl;
+    std::cout << worldNode->ProjectVectorInWorld(link->GetSpringDamperForceOnNode1(fc), fc) << std::endl;
+    std::cout << worldNode->ProjectVectorInWorld(link->GetLinkReactionForceOnNode1(fc), fc) << std::endl;
+    std::cout << gravityInWorld.GetForce() << std::endl;
   }
 
   testForce = bodyNode->ProjectVectorInWorld(link->GetSpringDamperForceOnNode2(fc), fc)
@@ -426,21 +439,21 @@ TEST(FrLinkTest, FrLinkTest_Prismatic_force_Test) {
               + gravityInWorld.GetForce();
   EXPECT_TRUE(testForce.isZero(1e-2));
   if (!testForce.isZero(1e-2)) {
-    std::cout<<bodyNode->ProjectVectorInWorld(link->GetSpringDamperForceOnNode2(fc), fc)<<std::endl;
-    std::cout<<bodyNode->ProjectVectorInWorld(link->GetLinkReactionForceOnNode2(fc), fc)<<std::endl;
-    std::cout<<gravityInWorld.GetForce()<<std::endl;
+    std::cout << bodyNode->ProjectVectorInWorld(link->GetSpringDamperForceOnNode2(fc), fc) << std::endl;
+    std::cout << bodyNode->ProjectVectorInWorld(link->GetLinkReactionForceOnNode2(fc), fc) << std::endl;
+    std::cout << gravityInWorld.GetForce() << std::endl;
   }
 
   Torque testTorque = worldNode->ProjectVectorInWorld(link->GetSpringDamperTorqueOnNode1(fc), fc);
   EXPECT_TRUE(testTorque.isZero(1e-8));
   if (!testTorque.isZero(1e-8)) {
-    std::cout<<worldNode->ProjectVectorInWorld(link->GetSpringDamperTorqueOnNode1(fc), fc)<<std::endl;
+    std::cout << worldNode->ProjectVectorInWorld(link->GetSpringDamperTorqueOnNode1(fc), fc) << std::endl;
   }
 
   testTorque = bodyNode->ProjectVectorInWorld(link->GetSpringDamperTorqueOnNode2(fc), fc);
   EXPECT_TRUE(testTorque.isZero(1e-8));
   if (!testTorque.isZero(1e-8)) {
-    std::cout<<bodyNode->ProjectVectorInWorld(link->GetSpringDamperTorqueOnNode2(fc), fc)<<std::endl;
+    std::cout << bodyNode->ProjectVectorInWorld(link->GetSpringDamperTorqueOnNode2(fc), fc) << std::endl;
   }
 
   // test Force Torque on Body
@@ -449,9 +462,9 @@ TEST(FrLinkTest, FrLinkTest_Prismatic_force_Test) {
               - gravityInWorld.GetForce();
   EXPECT_TRUE(testForce.isZero(1e-2));
   if (!testForce.isZero(1e-2)) {
-    std::cout<<WBody->ProjectVectorInWorld(link->GetSpringDamperForceOnBody1(fc), fc)<<std::endl;
-    std::cout<<WBody->ProjectVectorInWorld(link->GetLinkReactionForceOnBody1(fc), fc)<<std::endl;
-    std::cout<<gravityInWorld.GetForce()<<std::endl;
+    std::cout << WBody->ProjectVectorInWorld(link->GetSpringDamperForceOnBody1(fc), fc) << std::endl;
+    std::cout << WBody->ProjectVectorInWorld(link->GetLinkReactionForceOnBody1(fc), fc) << std::endl;
+    std::cout << gravityInWorld.GetForce() << std::endl;
   }
 
   testForce = body->ProjectVectorInWorld(link->GetSpringDamperForceOnBody2(fc), fc)
@@ -459,9 +472,9 @@ TEST(FrLinkTest, FrLinkTest_Prismatic_force_Test) {
               + gravityInWorld.GetForce();
   EXPECT_TRUE(testForce.isZero(1e-2));
   if (!testForce.isZero(1e-2)) {
-    std::cout<<body->ProjectVectorInWorld(link->GetSpringDamperForceOnBody2(fc), fc)<<std::endl;
-    std::cout<<body->ProjectVectorInWorld(link->GetLinkReactionForceOnBody2(fc), fc)<<std::endl;
-    std::cout<<gravityInWorld.GetForce()<<std::endl;
+    std::cout << body->ProjectVectorInWorld(link->GetSpringDamperForceOnBody2(fc), fc) << std::endl;
+    std::cout << body->ProjectVectorInWorld(link->GetLinkReactionForceOnBody2(fc), fc) << std::endl;
+    std::cout << gravityInWorld.GetForce() << std::endl;
   }
 
 
@@ -470,9 +483,9 @@ TEST(FrLinkTest, FrLinkTest_Prismatic_force_Test) {
                - gravityInWorld.GetTorqueAtPoint(WBody->GetPosition(fc), fc);
   EXPECT_TRUE(testTorque.isZero(1e-2));
   if (!testTorque.isZero(1e-2)) {
-    std::cout<<WBody->ProjectVectorInWorld(link->GetSpringDamperTorqueOnBody1AtCOG(fc), fc)<<std::endl;
-    std::cout<<WBody->ProjectVectorInWorld(link->GetLinkReactionTorqueOnBody1AtCOG(fc), fc) <<std::endl;
-    std::cout<<gravityInWorld.GetTorqueAtPoint(WBody->GetPosition(fc), fc)<<std::endl;
+    std::cout << WBody->ProjectVectorInWorld(link->GetSpringDamperTorqueOnBody1AtCOG(fc), fc) << std::endl;
+    std::cout << WBody->ProjectVectorInWorld(link->GetLinkReactionTorqueOnBody1AtCOG(fc), fc) << std::endl;
+    std::cout << gravityInWorld.GetTorqueAtPoint(WBody->GetPosition(fc), fc) << std::endl;
   }
 
   testTorque = body->ProjectVectorInWorld(link->GetSpringDamperTorqueOnBody2AtCOG(fc), fc)
@@ -480,9 +493,9 @@ TEST(FrLinkTest, FrLinkTest_Prismatic_force_Test) {
                - gravityInWorld.GetTorqueAtPoint(body->GetPosition(fc), fc);
   EXPECT_TRUE(testTorque.isZero(1e-2));
   if (!testTorque.isZero(1e-2)) {
-    std::cout<<body->ProjectVectorInWorld(link->GetSpringDamperTorqueOnBody2AtCOG(fc), fc)<<std::endl;
-    std::cout<<body->ProjectVectorInWorld(link->GetLinkReactionTorqueOnBody2AtCOG(fc), fc) <<std::endl;
-    std::cout<<gravityInWorld.GetTorqueAtPoint(body->GetPosition(fc), fc)<<std::endl;
+    std::cout << body->ProjectVectorInWorld(link->GetSpringDamperTorqueOnBody2AtCOG(fc), fc) << std::endl;
+    std::cout << body->ProjectVectorInWorld(link->GetLinkReactionTorqueOnBody2AtCOG(fc), fc) << std::endl;
+    std::cout << gravityInWorld.GetTorqueAtPoint(body->GetPosition(fc), fc) << std::endl;
   }
 
 }
@@ -512,17 +525,17 @@ TEST(FrLinkTest, FrLinkTest_Revolute_force_Test) {
 
   // bodyNode creation
   auto bodyNode = body->NewNode("bodyNode");
-  FrRotation bodyNodeRot(Direction(1.,0.,0.), 90*DEG2RAD, fc);
+  FrRotation bodyNodeRot(Direction(1., 0., 0.), 90 * DEG2RAD, fc);
   bodyNode->SetFrameInBody(FrFrame(Position(-1., 0., 0.), bodyNodeRot, fc));
 
   // worldNode Creation
   auto worldNode = WBody->NewNode("worldNode");
-  FrRotation worldNodeRot(Direction(1.,0.,0.), 90*DEG2RAD, fc);
+  FrRotation worldNodeRot(Direction(1., 0., 0.), 90 * DEG2RAD, fc);
   worldNode->SetFrameInBody(FrFrame(Position(1., 0., 0.), worldNodeRot, fc));
 
   // link  creation
   auto link = make_revolute_link("revoluteLink", &system, worldNode, bodyNode);
-  link->SetSpringDamper(100.,10.);
+  link->SetSpringDamper(100., 10.);
 
 // initialization and assembly
   system.Initialize();
@@ -539,20 +552,20 @@ TEST(FrLinkTest, FrLinkTest_Revolute_force_Test) {
   // Tests link force (not reaction, the component from stiffness/damping
 
   auto gravityInWorld = GeneralizedForceTorsor(
-      Force(0.,0.,-body->GetMass() * system.GetGravityAcceleration()),
+      Force(0., 0., -body->GetMass() * system.GetGravityAcceleration()),
       Torque(),
       body->GetCOGPositionInWorld(fc), fc);
 
   Force testForce = worldNode->ProjectVectorInWorld(link->GetSpringDamperForceOnNode1(fc), fc);
   EXPECT_TRUE(testForce.isZero(1e-8));
   if (!testForce.isZero(1e-8)) {
-    std::cout<<worldNode->ProjectVectorInWorld(link->GetSpringDamperForceOnNode1(fc), fc)<<std::endl;
+    std::cout << worldNode->ProjectVectorInWorld(link->GetSpringDamperForceOnNode1(fc), fc) << std::endl;
   }
 
   testForce = bodyNode->ProjectVectorInWorld(link->GetSpringDamperForceOnNode2(fc), fc);
   EXPECT_TRUE(testForce.isZero(1e-8));
   if (!testForce.isZero(1e-8)) {
-    std::cout<<bodyNode->ProjectVectorInWorld(link->GetSpringDamperForceOnNode2(fc), fc)<<std::endl;
+    std::cout << bodyNode->ProjectVectorInWorld(link->GetSpringDamperForceOnNode2(fc), fc) << std::endl;
   }
 
   Torque testTorque = worldNode->ProjectVectorInWorld(link->GetSpringDamperTorqueOnNode1(fc), fc)
@@ -560,9 +573,9 @@ TEST(FrLinkTest, FrLinkTest_Revolute_force_Test) {
                       - gravityInWorld.GetTorqueAtPoint(worldNode->GetPositionInWorld(fc), fc);
   EXPECT_TRUE(testTorque.isZero(1e-2));
   if (!testTorque.isZero(1e-2)) {
-    std::cout<<worldNode->ProjectVectorInWorld(link->GetSpringDamperTorqueOnNode1(fc), fc)<<std::endl;
-    std::cout<<worldNode->ProjectVectorInWorld(link->GetLinkReactionTorqueOnNode1(fc), fc)<<std::endl;
-    std::cout<<gravityInWorld.GetTorqueAtPoint(worldNode->GetPositionInWorld(fc), fc)<<std::endl;
+    std::cout << worldNode->ProjectVectorInWorld(link->GetSpringDamperTorqueOnNode1(fc), fc) << std::endl;
+    std::cout << worldNode->ProjectVectorInWorld(link->GetLinkReactionTorqueOnNode1(fc), fc) << std::endl;
+    std::cout << gravityInWorld.GetTorqueAtPoint(worldNode->GetPositionInWorld(fc), fc) << std::endl;
   }
 
   testTorque = bodyNode->ProjectVectorInWorld(link->GetSpringDamperTorqueOnNode2(fc), fc)
@@ -570,9 +583,9 @@ TEST(FrLinkTest, FrLinkTest_Revolute_force_Test) {
                + gravityInWorld.GetTorqueAtPoint(bodyNode->GetPositionInWorld(fc), fc);
   EXPECT_TRUE(testTorque.isZero(1e-2));
   if (!testTorque.isZero(1e-2)) {
-    std::cout<<bodyNode->ProjectVectorInWorld(link->GetSpringDamperTorqueOnNode2(fc), fc)<<std::endl;
-    std::cout<<bodyNode->ProjectVectorInWorld(link->GetLinkReactionTorqueOnNode2(fc), fc)<<std::endl;
-    std::cout<<gravityInWorld.GetTorqueAtPoint(bodyNode->GetPositionInWorld(fc), fc)<<std::endl;
+    std::cout << bodyNode->ProjectVectorInWorld(link->GetSpringDamperTorqueOnNode2(fc), fc) << std::endl;
+    std::cout << bodyNode->ProjectVectorInWorld(link->GetLinkReactionTorqueOnNode2(fc), fc) << std::endl;
+    std::cout << gravityInWorld.GetTorqueAtPoint(bodyNode->GetPositionInWorld(fc), fc) << std::endl;
   }
 
 
@@ -581,9 +594,9 @@ TEST(FrLinkTest, FrLinkTest_Revolute_force_Test) {
                - gravityInWorld.GetTorqueAtPoint(WBody->GetPosition(fc), fc);
   EXPECT_TRUE(testTorque.isZero(1e-2));
   if (!testTorque.isZero(1e-2)) {
-    std::cout<<WBody->ProjectVectorInWorld(link->GetSpringDamperTorqueOnBody1AtCOG(fc), fc)<<std::endl;
-    std::cout<<WBody->ProjectVectorInWorld(link->GetLinkReactionTorqueOnBody1AtCOG(fc), fc) <<std::endl;
-    std::cout<<gravityInWorld.GetTorqueAtPoint(WBody->GetPosition(fc), fc)<<std::endl;
+    std::cout << WBody->ProjectVectorInWorld(link->GetSpringDamperTorqueOnBody1AtCOG(fc), fc) << std::endl;
+    std::cout << WBody->ProjectVectorInWorld(link->GetLinkReactionTorqueOnBody1AtCOG(fc), fc) << std::endl;
+    std::cout << gravityInWorld.GetTorqueAtPoint(WBody->GetPosition(fc), fc) << std::endl;
   }
 
   testTorque = body->ProjectVectorInWorld(link->GetSpringDamperTorqueOnBody2AtCOG(fc), fc)
@@ -591,9 +604,9 @@ TEST(FrLinkTest, FrLinkTest_Revolute_force_Test) {
                + gravityInWorld.GetTorqueAtPoint(body->GetPosition(fc), fc);
   EXPECT_TRUE(testTorque.isZero(1e-2));
   if (!testTorque.isZero(1e-2)) {
-    std::cout<<body->ProjectVectorInWorld(link->GetSpringDamperTorqueOnBody2AtCOG(fc), fc)<<std::endl;
-    std::cout<<body->ProjectVectorInWorld(link->GetLinkReactionTorqueOnBody2AtCOG(fc), fc) <<std::endl;
-    std::cout<<gravityInWorld.GetTorqueAtPoint(body->GetPosition(fc), fc)<<std::endl;
+    std::cout << body->ProjectVectorInWorld(link->GetSpringDamperTorqueOnBody2AtCOG(fc), fc) << std::endl;
+    std::cout << body->ProjectVectorInWorld(link->GetLinkReactionTorqueOnBody2AtCOG(fc), fc) << std::endl;
+    std::cout << gravityInWorld.GetTorqueAtPoint(body->GetPosition(fc), fc) << std::endl;
   }
 
 

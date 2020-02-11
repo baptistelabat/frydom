@@ -9,41 +9,46 @@
 
 namespace frydom {
 
-    class FrSqrtFunction : public FrFunctionBase {
+  class FrSqrtFunction : public FrFunctionBase {
 
-    public:
-        explicit FrSqrtFunction(double alpha);
-        FrSqrtFunction(const FrFunctionBase& function);
-        FrSqrtFunction(const FrSqrtFunction& other);
-        FrSqrtFunction* Clone() const override;
+   public:
+    explicit FrSqrtFunction(double alpha);
 
-        std::string GetRepr() const override;
+    FrSqrtFunction(const FrFunctionBase &function);
 
-    protected:
-        void Eval(double x) const override;
+    FrSqrtFunction(const FrSqrtFunction &other);
 
-    };
+    FrSqrtFunction *Clone() const override;
 
-    FrSqrtFunction sqrt(const FrFunctionBase& function);
+    std::string GetRepr() const override;
+
+   protected:
+    void Eval(double x) const override;
+
+  };
+
+  FrSqrtFunction sqrt(const FrFunctionBase &function);
 
 
+  class FrAbsFunction : public FrFunctionBase {
 
-    class FrAbsFunction : public FrFunctionBase {
+   public:
+    explicit FrAbsFunction(double alpha);
 
-    public:
-        explicit FrAbsFunction(double alpha);
-        FrAbsFunction(const FrFunctionBase& function);
-        FrAbsFunction(const FrAbsFunction& other);
-        FrAbsFunction* Clone() const override;
+    FrAbsFunction(const FrFunctionBase &function);
 
-        std::string GetRepr() const override;
+    FrAbsFunction(const FrAbsFunction &other);
 
-    protected:
-        void Eval(double x) const override;
+    FrAbsFunction *Clone() const override;
 
-    };
+    std::string GetRepr() const override;
 
-    FrAbsFunction abs(const FrFunctionBase& function);
+   protected:
+    void Eval(double x) const override;
+
+  };
+
+  FrAbsFunction abs(const FrFunctionBase &function);
 
 
 }  // end namespace frydom

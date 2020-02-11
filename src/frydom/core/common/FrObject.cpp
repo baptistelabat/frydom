@@ -16,11 +16,11 @@
 
 namespace frydom {
 
-    FrObject::FrObject() : m_UUID(boost::lexical_cast<std::string>(boost::uuids::random_generator()())) {}
+  FrObject::FrObject() : m_UUID(boost::lexical_cast<std::string>(boost::uuids::random_generator()())) {}
 
-    std::string FrObject::GetUUID() const { return m_UUID; }
+  std::string FrObject::GetUUID() const { return m_UUID; }
 
-    std::string FrObject::GetShortenUUID() const { return m_UUID.substr(0, 5); }
+  std::string FrObject::GetShortenUUID() const { return m_UUID.substr(0, 5); }
 
 //    void FrObject::StepFinalize() {}
 

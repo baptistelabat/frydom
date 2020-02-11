@@ -17,45 +17,46 @@
 namespace frydom {
 
 
-    /// Class for representing a ramp based on the following function
-    ///         f(x) = (1 - cos(Pi x))/2
-    ///
-    ///             --------
-    ///            /
-    ///           /
-    ///          /
-    /// --------
-    ///
-    ///
-    class FrCosRampFunction : public FrFunctionBase {
+  /// Class for representing a ramp based on the following function
+  ///         f(x) = (1 - cos(Pi x))/2
+  ///
+  ///             --------
+  ///            /
+  ///           /
+  ///          /
+  /// --------
+  ///
+  ///
+  class FrCosRampFunction : public FrFunctionBase {
 
-    private:
+   private:
 
-        double m_x0 = 0., m_x1 = 1., m_y0 = 0., m_y1 = 1.;
+    double m_x0 = 0., m_x1 = 1., m_y0 = 0., m_y1 = 1.;
 
-    public:
+   public:
 
-        FrCosRampFunction();
+    FrCosRampFunction();
 
-        FrCosRampFunction(double x0, double y0, double x1, double y1);
+    FrCosRampFunction(double x0, double y0, double x1, double y1);
 
-        FrCosRampFunction(const FrCosRampFunction& other);
+    FrCosRampFunction(const FrCosRampFunction &other);
 
-        FrCosRampFunction* Clone() const override;
+    FrCosRampFunction *Clone() const override;
+
 //
-        void SetByTwoPoints(double x0, double y0, double x1, double y1);
+    void SetByTwoPoints(double x0, double y0, double x1, double y1);
 
-        void GetByTwoPoints(double& x0, double& y0, double& x1, double& y1 );
+    void GetByTwoPoints(double &x0, double &y0, double &x1, double &y1);
 
-        void Initialize() override;
+    void Initialize() override;
 
-        std::string GetRepr() const override;
+    std::string GetRepr() const override;
 
-    protected:
+   protected:
 
-        void Eval(double x) const override;
+    void Eval(double x) const override;
 
-    };
+  };
 
 } // end namespace frydom
 #endif //FRYDOM_FRCOSRAMPFUNCTION_H

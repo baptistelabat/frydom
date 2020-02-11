@@ -6,13 +6,17 @@ set(SRC_FILES
         FrCatenaryLine.cpp
         FrMooringBuoy.cpp
         FrDynamicCable.cpp
+<<<<<<< HEAD
         FrLumpedMassCable.cpp
 )
+=======
+        )
+>>>>>>> develop
 
 set(FRYDOM_CABLE_SOURCES "")
-foreach(file ${SRC_FILES})
+foreach (file ${SRC_FILES})
     list(APPEND FRYDOM_CABLE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
-endforeach()
+endforeach ()
 
 #message(${FRYDOM_CABLE_SOURCES})
 

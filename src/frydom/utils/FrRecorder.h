@@ -116,7 +116,6 @@ namespace frydom {
 
   };
 
-
   template<class T>
   void FrTimeRecorder<T>::SetTimePersistence(const double timePersistence) {
     assert(timePersistence > DBL_EPSILON);

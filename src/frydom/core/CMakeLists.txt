@@ -3,7 +3,7 @@ message(STATUS "    ...Core")
 
 set(SRC_FILES
         FrOffshoreSystem.cpp
-)
+        )
 
 # BODY
 list(APPEND SRC_FILES
@@ -86,14 +86,14 @@ list(APPEND SRC_FILES
 # STATICS
 list(APPEND SRC_FILES
         statics/FrStaticAnalysis.cpp
-        ../hydrodynamics/hydrostatic/FrHydroStaticEquilibrium.cpp
+        ../hydrodynamics/hydrostatic/FrHydrostaticEquilibrium.cpp
         )
 
 
 set(FRYDOM_CORE_SOURCES "")
-foreach(file ${SRC_FILES})
+foreach (file ${SRC_FILES})
     list(APPEND FRYDOM_CORE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
-endforeach()
+endforeach ()
 
 
 set(FRYDOM_CORE_SOURCES ${FRYDOM_CORE_SOURCES} PARENT_SCOPE)

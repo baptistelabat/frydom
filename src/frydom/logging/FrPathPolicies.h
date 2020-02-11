@@ -9,11 +9,11 @@
 
 namespace frydom {
 
-  template <typename T>
+  template<typename T>
   std::string TypeToNormalizedPathPrefix();
 
-  template <typename T>
-  std::string TypeToNormalizedPathPrefix(T*) { // TODO: voir si on garde le const...
+  template<typename T>
+  std::string TypeToNormalizedPathPrefix(T *) { // TODO: voir si on garde le const...
     return TypeToNormalizedPathPrefix<T>();
   }
 

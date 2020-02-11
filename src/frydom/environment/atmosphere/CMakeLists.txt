@@ -7,9 +7,9 @@ set(SRC_FILES
         )
 
 set(ATMOSPHERE_FILES "")
-foreach(file ${SRC_FILES})
+foreach (file ${SRC_FILES})
     list(APPEND ATMOSPHERE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
-endforeach()
+endforeach ()
 
 list(APPEND ATMOSPHERE_FILES ${WIND_FILES})
 

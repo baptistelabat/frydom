@@ -15,13 +15,13 @@
 #include "frydom/environment/ocean/seabed/FrSeabed.h"
 
 
-namespace frydom{
+namespace frydom {
 
-    FrSeabedGridAsset::FrSeabedGridAsset(FrSeabed* seabed): FrGridAsset()  {
-        m_seabed = seabed;
-        SetGridColor(Chocolate);
-    }
+  FrSeabedGridAsset::FrSeabedGridAsset(FrSeabed *seabed) : FrGridAsset() {
+    m_seabed = seabed;
+    SetGridColor(Chocolate);
+  }
 
-    double FrSeabedGridAsset::GetGridHeight() const {return m_seabed->GetBathymetry(NWU);}
+  double FrSeabedGridAsset::GetGridHeight() const { return m_seabed->GetBathymetry(NWU); }
 
 }  // end namespace frydom

@@ -16,26 +16,26 @@
 #include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
 
 
-namespace frydom{
+namespace frydom {
 
 
-    FrFreeSurfaceGridAsset::FrFreeSurfaceGridAsset(FrFreeSurface* freeSurface) : FrGridAsset() {
-        m_freeSurface = freeSurface;
-        m_gridHeight = m_freeSurface->GetTidal()->GetHeight(NWU);
-        m_color = DodgerBlue;
+  FrFreeSurfaceGridAsset::FrFreeSurfaceGridAsset(FrFreeSurface *freeSurface) : FrGridAsset() {
+    m_freeSurface = freeSurface;
+    m_gridHeight = m_freeSurface->GetTidal()->GetHeight(NWU);
+    m_color = DodgerBlue;
+  }
+
+  void FrFreeSurfaceGridAsset::StepFinalize() {
+    FrGridAsset::StepFinalize();
+    if (fmod(c_currentStep, m_updateStep) == 0) {
+      auto mesh = dynamic_cast<chrono::ChTriangleMeshShape *>(m_chronoAsset->GetAssetN(0).get())->GetMesh();
+      auto nbNodes = mesh->m_vertices.size();
+      for (unsigned int inode = 0; inode < nbNodes; ++inode) {
+        mesh->m_vertices[inode].z() = m_freeSurface->GetPosition(mesh->m_vertices[inode].x(),
+                                                                 mesh->m_vertices[inode].y(), NWU);
+      }
     }
-
-    void FrFreeSurfaceGridAsset::StepFinalize() {
-        FrGridAsset::StepFinalize();
-        if (fmod(c_currentStep,m_updateStep)==0) {
-            auto mesh = dynamic_cast<chrono::ChTriangleMeshShape*>(m_chronoAsset->GetAssetN(0).get())->GetMesh();
-            auto nbNodes = mesh->m_vertices.size();
-            for (unsigned int inode = 0; inode < nbNodes; ++inode) {
-                mesh->m_vertices[inode].z() = m_freeSurface->GetPosition(mesh->m_vertices[inode].x(),
-                                                                                 mesh->m_vertices[inode].y(),NWU);
-            }
-        }
-    }
+  }
 
 
 }  // end namespace frydom

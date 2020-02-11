@@ -9,97 +9,95 @@
 //
 // ==========================================================================
 
-#include "FrHydroStaticEquilibrium.h"
+#include "FrHydrostaticEquilibrium.h"
 #include "frydom/core/body/FrBody.h"
 #include "frydom/core/body/FrInertiaTensor.h"
 #include "frydom/hydrodynamics/FrEquilibriumFrame.h"
 #include "frydom/mesh/FrHydroMesh.h"
 #include "FrHydrostaticsProperties.h"
+#include "FrHydrostaticAssembly.h"
 #include "frydom/logging/FrEventLogger.h"
+
 
 namespace frydom {
 
 
-  FrHydroStaticEquilibrium::FrHydroStaticEquilibrium(std::shared_ptr<FrBody> body, const std::string &meshFile,
+  FrHydrostaticEquilibrium::FrHydrostaticEquilibrium(std::shared_ptr<FrHydrostaticBodyBase> body,
+                                                     const std::string &meshFile,
                                                      FrFrame meshOffset) :
-      m_body(body), m_mass(body->GetMass()), m_COG(body->GetCOG(NWU)),
-      m_relax(0.1, 2 * DEG2RAD, 2 * DEG2RAD) {
+      m_assembly(body), m_mass(body->GetInertiaTensor().GetMass()), m_COG(body->GetInertiaTensor().GetCOGPosition(NWU)),
+      m_iteration(0), m_iterations_max(100), m_relative_tolerance(1e-2), m_relax(0.1, 2 * DEG2RAD, 2 * DEG2RAD) {
 
     // Create a hydroMesh, to set up the mesh in the body frame and then clip it
 
-    m_hydroMesh = make_hydro_mesh("mesh" + body->GetName(),
-                                  body,
-                                  meshFile,
-                                  meshOffset,
-                                  FrHydroMesh::ClippingSupport::PLANESURFACE);
+    m_hydroMesh = std::make_shared<FrHydroMesh>("mesh" + body->GetBody()->GetName(),
+                                                body->GetBody(),
+                                                meshFile,
+                                                meshOffset,
+                                                FrHydroMesh::ClippingSupport::PLANESURFACE);
 
     m_hydroMesh->Initialize();
   }
 
 
-  FrHydroStaticEquilibrium::FrHydroStaticEquilibrium(std::shared_ptr<FrBody> body, const std::string &meshFile,
-                                                     FrFrame meshOffset,
-                                                     double mass, const Position &COGPosInBody, FRAME_CONVENTION fc) :
-      m_body(body), m_mass(mass), m_COG(COGPosInBody),
-      m_relax(0.1, 2 * DEG2RAD, 2 * DEG2RAD) {
-
-    if (IsNED(fc)) internal::SwapFrameConvention(m_COG);
-
-    // Create a hydroMesh, to set up the mesh in the body frame and then clip it
-
-    m_hydroMesh = make_hydro_mesh("mesh" + body->GetName(),
-                                  body,
-                                  meshFile,
-                                  meshOffset,
-                                  FrHydroMesh::ClippingSupport::PLANESURFACE);
-
-    m_hydroMesh->Initialize();
-  }
-
-  FrHydroStaticEquilibrium::~FrHydroStaticEquilibrium() {
-    // Remove the temporary m_hydroMesh from the system
-    m_body->GetSystem()->Remove(m_hydroMesh);
-  }
+//  FrHydrostaticEquilibrium::FrHydrostaticEquilibrium(std::shared_ptr<FrBody> body, const std::string &meshFile,
+//                                                     FrFrame meshOffset,
+//                                                     double mass, const Position &COGPosInBody, FRAME_CONVENTION fc) :
+//      m_body(body), m_mass(mass), m_COG(COGPosInBody),
+//      m_relax(0.1, 2 * DEG2RAD, 2 * DEG2RAD) {
+//
+//    if (IsNED(fc)) internal::SwapFrameConvention(m_COG);
+//
+//    // Create a hydroMesh, to set up the mesh in the body frame and then clip it
+//  //todo passer par le constructeur, pour eviter d'ajouter au system
+//    m_hydroMesh = make_hydro_mesh("mesh" + body->GetName(),
+//                                  body,
+//                                  meshFile,
+//                                  meshOffset,
+//                                  FrHydroMesh::ClippingSupport::PLANESURFACE);
+//
+//    m_hydroMesh->Initialize();
+//  }
 
 
-  void FrHydroStaticEquilibrium::SetMaxIterations(unsigned int max_iterations) {
+  void FrHydrostaticEquilibrium::SetMaxIterations(unsigned int max_iterations) {
     m_iterations_max = max_iterations;
   }
 
-  unsigned int FrHydroStaticEquilibrium::GetMaxIterations() const {
+  unsigned int FrHydrostaticEquilibrium::GetMaxIterations() const {
     return m_iterations_max;
   }
 
-  void FrHydroStaticEquilibrium::SetRelativeTolerance(double tolerance) {
+  void FrHydrostaticEquilibrium::SetRelativeTolerance(double tolerance) {
     m_relative_tolerance = tolerance;
   }
 
-  double FrHydroStaticEquilibrium::GetRelativeTolerance() const {
+  double FrHydrostaticEquilibrium::GetRelativeTolerance() const {
     return m_relative_tolerance;
   }
 
-  void FrHydroStaticEquilibrium::SetLinearRelaxation(double relaxation) {
+  void FrHydrostaticEquilibrium::SetLinearRelaxation(double relaxation) {
     m_relax.at(0) = relaxation;
   }
 
-  void FrHydroStaticEquilibrium::SetAngularRelaxation(double relaxation) {
+  void FrHydrostaticEquilibrium::SetAngularRelaxation(double relaxation) {
     m_relax.at(1) = relaxation;
     m_relax.at(2) = relaxation;
   }
 
-  void FrHydroStaticEquilibrium::SetRelaxation(Vector3d<double> &relaxation) {
+  void FrHydrostaticEquilibrium::SetRelaxation(Vector3d<double> &relaxation) {
     m_relax = relaxation;
   }
 
-  Vector3d<double> FrHydroStaticEquilibrium::GetRelaxation() const {
+  Vector3d<double> FrHydrostaticEquilibrium::GetRelaxation() const {
     return m_relax;
   }
 
 
-  bool FrHydroStaticEquilibrium::SolveDisplacement() {
+  bool FrHydrostaticEquilibrium::SolveDisplacement() {
 
-    double rho = m_body->GetSystem()->GetEnvironment()->GetFluidDensity(WATER);
-    double g = m_body->GetSystem()->GetGravityAcceleration();
+    double rho = m_assembly->GetBody()->GetSystem()->GetEnvironment()->GetFluidDensity(WATER);
+    double g = m_assembly->GetBody()->GetSystem()->GetGravityAcceleration();
     double mg = m_mass * g;
 
     double residual;
@@ -110,7 +108,7 @@ namespace frydom {
 
       event_logger::debug("Hydrostatic equilibrium", "", "iteration : {}", m_iteration);
 
-      m_body->TranslateInWorld(0., 0., solution, NWU);
+      m_assembly->GetBody()->TranslateInWorld(0., 0., solution, NWU);
 
       // Clipping of the mesh, according to the new frame of the body
       m_hydroMesh->Update(0.);
@@ -169,29 +167,28 @@ namespace frydom {
   }
 
 
-  bool FrHydroStaticEquilibrium::SolveEquilibrium() {
+  bool FrHydrostaticEquilibrium::SolveEquilibrium() {
 
     SolveDisplacement();
 
-    double rho = m_body->GetSystem()->GetEnvironment()->GetFluidDensity(WATER);
-    double g = m_body->GetSystem()->GetGravityAcceleration();
+    double rho = m_assembly->GetBody()->GetSystem()->GetEnvironment()->GetFluidDensity(WATER);
+    double g = m_assembly->GetBody()->GetSystem()->GetGravityAcceleration();
     double mg = m_mass * g;
 
     m_residual.SetNull();
     m_solution.SetNull();
     FrRotation m_bodyRotation;
     m_bodyRotation.SetNullRotation();
-    bool convergence = false;
 
-    while (true) {
+    while (m_iteration <= m_iterations_max) {
 
       event_logger::info("Hydrostatic equilibrium", "", "iteration : {}", m_iteration);
 
-      m_body->TranslateInWorld(0., 0., m_solution.at(0), NWU);
+      m_assembly->GetBody()->TranslateInWorld(0., 0., m_solution.at(0), NWU);
       m_bodyRotation.SetCardanAngles_RADIANS(m_solution.at(1), m_solution.at(2), 0., NWU);
-      m_body->Rotate(m_bodyRotation);
+      m_assembly->GetBody()->Rotate(m_bodyRotation);
 
-      auto COGPosInWorld = m_body->GetPointPositionInWorld(m_COG, NWU);
+      auto COGPosInWorld = m_assembly->GetBody()->GetPointPositionInWorld(m_COG, NWU);
 
       // Clipping of the mesh, according to the new frame of the body
       m_hydroMesh->Update(0.);
@@ -200,8 +197,7 @@ namespace frydom {
 
       if (clippedMesh.GetVolume() <= 1E-6) {
         event_logger::info("Hydrostatic equilibrium", "", "body not in water");
-        convergence = false;
-        break;
+        return false;
       }
 
       // Compute all hydrostatics properties
@@ -216,13 +212,6 @@ namespace frydom {
 
       auto scale = Vector3d<double>(mg, mg * hsp.GetBreadthOverallSubmerged(), mg * hsp.GetLengthOverallSubmerged());
 
-      // no convergence reached
-      if (m_iteration > m_iterations_max) {
-        event_logger::info("Hydrostatic equilibrium", "", "no convergence reached : ({},{},{})", m_residual.at(0),
-                           m_residual.at(1), m_residual.at(2));
-        convergence = false;
-        break;
-      }
 
       if (abs(m_residual.at(0) / scale.at(0)) < m_relative_tolerance and
           abs(m_residual.at(1) / scale.at(1)) < m_relative_tolerance and
@@ -230,7 +219,6 @@ namespace frydom {
         // convergence at a stable equilibrium
         if (hsp.GetLongitudinalMetacentricHeight() > 0 and hsp.GetTransversalMetacentricHeight() > 0) {
           event_logger::info("Hydrostatic equilibrium", "", "convergence at a stable equilibrium");
-          convergence = true;
           break;
         }
           // convergence at an unstable equilibrium
@@ -238,7 +226,6 @@ namespace frydom {
           event_logger::info("Hydrostatic equilibrium", "",
                              "convergence at an unstable equilibrium : GMx = {}, GMy = {}",
                              hsp.GetLongitudinalMetacentricHeight(), hsp.GetTransversalMetacentricHeight());
-          convergence = true;
           break;
         }
       }
@@ -264,24 +251,31 @@ namespace frydom {
 
     }
 
-    return convergence;
+    // no convergence reached
+    if (m_iteration > m_iterations_max) {
+      event_logger::info("Hydrostatic equilibrium", "", "no convergence reached : ({},{},{})", m_residual.at(0),
+                         m_residual.at(1), m_residual.at(2));
+      return false;
+    }
+
+    return true;
   }
 
-  std::string FrHydroStaticEquilibrium::GetReport() const {
+  std::string FrHydrostaticEquilibrium::GetReport() const {
 
-    auto COGPosInWorld = m_body->GetPointPositionInWorld(m_COG, NWU);
+    auto COGPosInWorld = m_assembly->GetBody()->GetPointPositionInWorld(m_COG, NWU);
 
     return GetReport(COGPosInWorld, NWU);
 
   }
 
-  std::string FrHydroStaticEquilibrium::GetReport(const Position &reductionPoint, FRAME_CONVENTION fc) const {
+  std::string FrHydrostaticEquilibrium::GetReport(const Position &reductionPoint, FRAME_CONVENTION fc) const {
 
-    auto COGPosInWorld = m_body->GetPointPositionInWorld(m_COG, NWU);
+    auto COGPosInWorld = m_assembly->GetBody()->GetPointPositionInWorld(m_COG, NWU);
 
     // Compute all hydrostatics properties and files a report
-    FrHydrostaticsProperties hsp(m_body->GetSystem()->GetEnvironment()->GetFluidDensity(WATER),
-                                 m_body->GetSystem()->GetGravityAcceleration(),
+    FrHydrostaticsProperties hsp(m_assembly->GetBody()->GetSystem()->GetEnvironment()->GetFluidDensity(WATER),
+                                 m_assembly->GetBody()->GetSystem()->GetGravityAcceleration(),
                                  m_hydroMesh->GetClippedMesh(),
                                  COGPosInWorld, reductionPoint, fc);
     hsp.ComputeProperties();
@@ -290,24 +284,24 @@ namespace frydom {
 
   }
 
-  FrHydroMesh *FrHydroStaticEquilibrium::GetHydroMesh() const {
+  FrHydroMesh *FrHydrostaticEquilibrium::GetHydroMesh() const {
     return m_hydroMesh.get();
   }
 
   FrLinearHydrostaticStiffnessMatrix
-  FrHydroStaticEquilibrium::GetHydrostaticMatrix() const {
+  FrHydrostaticEquilibrium::GetHydrostaticMatrix() const {
 
-    auto COGPosInWorld = m_body->GetPointPositionInWorld(m_COG, NWU);
+    auto COGPosInWorld = m_assembly->GetBody()->GetPointPositionInWorld(m_COG, NWU);
     return GetHydrostaticMatrix(COGPosInWorld, NWU);
 
   }
 
   FrLinearHydrostaticStiffnessMatrix
-  FrHydroStaticEquilibrium::GetHydrostaticMatrix(const Position &reductionPoint, FRAME_CONVENTION fc) const {
-    auto COGPosInWorld = m_body->GetPointPositionInWorld(m_COG, NWU);
+  FrHydrostaticEquilibrium::GetHydrostaticMatrix(const Position &reductionPoint, FRAME_CONVENTION fc) const {
+    auto COGPosInWorld = m_assembly->GetBody()->GetPointPositionInWorld(m_COG, NWU);
     // Compute all hydrostatics properties and files a report
-    FrHydrostaticsProperties hsp(m_body->GetSystem()->GetEnvironment()->GetFluidDensity(WATER),
-                                 m_body->GetSystem()->GetGravityAcceleration(),
+    FrHydrostaticsProperties hsp(m_assembly->GetBody()->GetSystem()->GetEnvironment()->GetFluidDensity(WATER),
+                                 m_assembly->GetBody()->GetSystem()->GetGravityAcceleration(),
                                  m_hydroMesh->GetClippedMesh(),
                                  COGPosInWorld, reductionPoint, fc);
     hsp.ComputeProperties();
@@ -315,11 +309,13 @@ namespace frydom {
     return hsp.GetHydrostaticMatrix();
   }
 
-  FrHydroStaticEquilibrium
+  FrHydrostaticEquilibrium
   solve_hydrostatic_equilibrium(const std::shared_ptr<FrBody> &body,
                                 const std::string &meshFile,
                                 FrFrame meshOffset) {
-    auto staticEquilibrium = FrHydroStaticEquilibrium(body, meshFile, meshOffset);
+    auto assembly = std::make_shared<FrHydrostaticBody>(body);
+
+    auto staticEquilibrium = FrHydrostaticEquilibrium(assembly, meshFile, meshOffset);
 
     staticEquilibrium.SolveEquilibrium();
 
@@ -327,18 +323,32 @@ namespace frydom {
 
   }
 
-  FrHydroStaticEquilibrium
-  solve_hydrostatic_equilibrium(const std::shared_ptr<FrBody> &body,
+  FrHydrostaticEquilibrium
+  solve_hydrostatic_equilibrium(const std::shared_ptr<FrAssembly> &assembly,
                                 const std::string &meshFile,
-                                FrFrame meshOffset,
-                                double mass,
-                                const Position &COGPosInBody,
-                                FRAME_CONVENTION fc) {
-    auto staticEquilibrium = FrHydroStaticEquilibrium(body, meshFile, meshOffset, mass, COGPosInBody, fc);
+                                FrFrame meshOffset) {
+    auto assemblyBase = std::make_shared<FrHydrostaticAssembly>(assembly);
+
+    auto staticEquilibrium = FrHydrostaticEquilibrium(assemblyBase, meshFile, meshOffset);
 
     staticEquilibrium.SolveEquilibrium();
 
     return staticEquilibrium;
 
   }
+
+//  FrHydrostaticEquilibrium
+//  solve_hydrostatic_equilibrium(const std::shared_ptr<FrBody> &body,
+//                                const std::string &meshFile,
+//                                FrFrame meshOffset,
+//                                double mass,
+//                                const Position &COGPosInBody,
+//                                FRAME_CONVENTION fc) {
+//    auto staticEquilibrium = FrHydrostaticEquilibrium(body, meshFile, meshOffset, mass, COGPosInBody, fc);
+//
+//    staticEquilibrium.SolveEquilibrium();
+//
+//    return staticEquilibrium;
+//
+//  }
 } //end namespace frydom

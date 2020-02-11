@@ -66,19 +66,25 @@ namespace frydom {
     try {
       frontal_area = node["frontal_area"].get<double>();
     } catch (json::parse_error &err) {
-      frontal_area = 1.;
+      event_logger::error("FrLoader", "", "JSON file {} parsing error. Could not read {}.",
+                          jsonFile, "frontal_area");
+      exit(EXIT_FAILURE);
     }
 
     try {
       lateral_area = node["lateral_area"].get<double>();
     } catch (json::parse_error &err) {
-      lateral_area = 1.;
+      event_logger::error("FrLoader", "", "JSON file {} parsing error. Could not read {}.",
+                          jsonFile, "lateral_area");
+      exit(EXIT_FAILURE);
     }
 
     try {
       length = node["length"].get<double>();
     } catch (json::parse_error &err) {
-      length = 1.;
+      event_logger::error("FrLoader", "", "JSON file {} parsing error. Could not read {}.",
+                          jsonFile, "length");
+      exit(EXIT_FAILURE);
     }
 
     try {

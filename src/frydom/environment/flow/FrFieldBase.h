@@ -19,30 +19,30 @@
 
 namespace frydom {
 
-    /**
-     * \class FrFieldBase
-     * \brief Class for defining in general the type of flow field used (uniform field, current or wind).
-     */
-    class FrFieldBase : public FrObject {
+  /**
+   * \class FrFieldBase
+   * \brief Class for defining in general the type of flow field used (uniform field, current or wind).
+   */
+  class FrFieldBase : public FrObject {
 
-    public:
-        /// Default constructor
-        FrFieldBase() = default;
+   public:
+    /// Default constructor
+    FrFieldBase() = default;
 
-        /// Return the flow velocity at a given point in world frame
-        /// \param worldPos Position of the Point in world frame
-        /// \param fc Frame convention (NED/NWU)
-        /// \return Velocity in world frame
-        virtual Velocity GetFluxVelocityInWorld(const Position &worldPos, FRAME_CONVENTION fc) const = 0;
+    /// Return the flow velocity at a given point in world frame
+    /// \param worldPos Position of the Point in world frame
+    /// \param fc Frame convention (NED/NWU)
+    /// \return Velocity in world frame
+    virtual Velocity GetFluxVelocityInWorld(const Position &worldPos, FRAME_CONVENTION fc) const = 0;
 
-        /// Update the state of the field model (virtual pure)
-        /// \param time Current time of the simulation
-        virtual void Update(double time) = 0;
+    /// Update the state of the field model (virtual pure)
+    /// \param time Current time of the simulation
+    virtual void Update(double time) = 0;
 
-        /// Initialize the field object
-        void Initialize() override {};
+    /// Initialize the field object
+    void Initialize() override {};
 
-    };
+  };
 }
 
 #endif //FRYDOM_FRFIELDBASE_H

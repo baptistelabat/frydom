@@ -15,4 +15,5 @@ namespace frydom {
                                        double rayleightDamping, unsigned int nbElements) {
 
   }
+
 }  // end namespace frydom

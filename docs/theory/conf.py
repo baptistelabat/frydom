@@ -85,9 +85,9 @@ author = u' '
 # built documents.
 #
 # The short X.Y version.
-version = u'2.1'
+version = u'GIT_TAG_VERSION'
 # The full version, including alpha/beta/rc tags.
-release = u'2.1'
+release = u'GIT_TAG_VERSION'
 
 # numfig:
 numfig_number_figures = True

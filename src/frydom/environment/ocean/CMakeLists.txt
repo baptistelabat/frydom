@@ -9,9 +9,9 @@ set(SRC_FILES
         )
 
 set(OCEAN_FILES "")
-foreach(file ${SRC_FILES})
+foreach (file ${SRC_FILES})
     list(APPEND OCEAN_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
-endforeach()
+endforeach ()
 
 list(APPEND OCEAN_FILES ${CURRENT_FILES})
 list(APPEND OCEAN_FILES ${SEABED_FILES})

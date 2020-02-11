@@ -87,7 +87,7 @@ void TestFrEquilibriumFrame::SetUp() {
   body->SetPosition(m_PositionInWorld, fc);
   body->SetRotation(m_quat);
 
-  m_eqFrame = make_equilibrium_frame("eqFrame", &system, body, {0., 0., 0.}, 0., NWU);
+  m_eqFrame = make_equilibrium_frame("eqFrame", body, Position(0., 0., 0.), NWU);
 
   system.Initialize();
 }

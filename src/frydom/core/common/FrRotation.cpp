@@ -143,6 +143,7 @@ namespace frydom {
   }
 
   FrUnitQuaternion &FrUnitQuaternion::operator*=(const FrUnitQuaternion &other) {
+
 //        m_chronoQuaternion *= other.m_chronoQuaternion; // FIXME : this Chrono operator is currently buggy (07/11/2018)
     m_chronoQuaternion = m_chronoQuaternion * other.m_chronoQuaternion;
     // TODO : wait for a new release of Chrono for a fix to *= to use it... A message has been sent to the Chrono list by Lucas (07/11/2018)
@@ -223,12 +224,12 @@ namespace frydom {
   }
 
   bool FrUnitQuaternion::IsApprox(const FrUnitQuaternion &other, double prec) const {
-      return GetChronoQuaternion().Equals(other.GetChronoQuaternion(), prec);
+    return GetChronoQuaternion().Equals(other.GetChronoQuaternion(), prec);
   }
 
   bool FrUnitQuaternion::IsZero(double prec) const {
-      return (*this == FrUnitQuaternion(1.,0.,0.,0., NWU));
-    }
+    return (*this == FrUnitQuaternion(1., 0., 0., 0., NWU));
+  }
 
   /*
    *

@@ -25,13 +25,13 @@ set(subdirs
 # voir crascit.com/2016/01/31/enhanced-source-file-handling-with-target_sources/
 
 set(FRYDOM_SRC_FILES "")
-foreach(subdir ${subdirs})
+foreach (subdir ${subdirs})
 
     add_subdirectory(${subdir})
     string(TOUPPER FRYDOM_${subdir}_SOURCES SOURCE_FILES)
     list(APPEND FRYDOM_SRC_FILES ${${SOURCE_FILES}})
 
-endforeach()
+endforeach ()
 
 list(APPEND FRYDOM_SRC_FILES "${CMAKE_CURRENT_BINARY_DIR}/version.cpp")
 

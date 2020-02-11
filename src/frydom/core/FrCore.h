@@ -14,6 +14,7 @@
 #define FRYDOM_FRCORE_H_H
 
 #include "FrPlatform.h"
+#include "FrOffshoreSystem.h"
 
 #include "body/FrBodyInc.h"
 #include "common/FrCommonInc.h"
@@ -21,6 +22,6 @@
 #include "link/FrLinkInc.h"
 #include "math/FrMathInc.h"
 #include "misc/FrMiscInc.h"
-#include "statics/FrStatics.h"
+#include "statics/FrStaticsInc.h"
 
 #endif //FRYDOM_FRCORE_H_H

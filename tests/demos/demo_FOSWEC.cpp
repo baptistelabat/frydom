@@ -82,9 +82,9 @@ void DemoModel(FrOffshoreSystem &system, bool flap1_fixed, bool flap2_fixed, dou
   auto FOSWEC_HDB = FrFileSystem::join({system.config_file().GetDataFolder(), "ce/FOSWEC/FOSWEC_phase2_filtered.hdb5"});
   auto hdb = make_hydrodynamic_database(FOSWEC_HDB);
 
-  auto eqFrame0 = make_equilibrium_frame("eqFrame0", &system, platform);
-  auto eqFrame1 = make_equilibrium_frame("eqFrame1", &system, flap1);
-  auto eqFrame2 = make_equilibrium_frame("eqFrame2", &system, flap2);
+  auto eqFrame0 = make_equilibrium_frame("eqFrame0", platform);
+  auto eqFrame1 = make_equilibrium_frame("eqFrame1", flap1);
+  auto eqFrame2 = make_equilibrium_frame("eqFrame2", flap2);
 
   hdb->Map(0, flap1.get(), eqFrame1);
   hdb->Map(1, flap2.get(), eqFrame2);

@@ -5,19 +5,18 @@ set(REFACTORING_TESTS
         test_FrLinks
         test_cylinder_interaction
         test_FrFunction
-        test_logging
         test_FrFileSystem
         test_spdlog
         test_lumped_mass_cable
         )
 
-foreach(test ${REFACTORING_TESTS})
+foreach (test ${REFACTORING_TESTS})
     message(STATUS "        ...add ${test}")
 
     add_executable(${test} ${test}.cpp)
     target_link_libraries(${test} FRyDoM_Engine)
 
-endforeach()
+endforeach ()
 
 set(subdirs
         # add here the test source subdirectories

@@ -84,13 +84,13 @@ namespace frydom {
                              double ca,
                              double caa,
                              double capp) {
-    
+
     auto force = std::make_shared<FrITTCResistance>(name, body.get(), Lpp, hullWetSurface, cr, k, ca, caa, capp);
-    
+
     body->AddExternalForce(force);
 
     return force;
-    
+
   }
 
 }  // end namespace frydom

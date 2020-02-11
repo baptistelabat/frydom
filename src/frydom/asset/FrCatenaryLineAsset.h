@@ -24,102 +24,100 @@
 
 // Chrono forward declaration
 namespace chrono {
-    class ChLineShape;
+  class ChLineShape;
 }
 
 namespace frydom {
 
-    // Forward declarations:
+  // Forward declarations:
 //    class FrCatenaryLine;
-    class FrNode;
+  class FrNode;
 
-    class FrCatenaryAssetOwner : public FrAssetOwner {
+  class FrCatenaryAssetOwner : public FrAssetOwner {
 
-        bool is_lineAsset = true;       ///< Is the line asset shown
-        unsigned int m_nbElements = 40; ///< Numbers of asset elements depicted
-        double m_maxTension = 0;            ///< maximum tension for visualization
+    bool is_lineAsset = true;       ///< Is the line asset shown
+    unsigned int m_nbElements = 40; ///< Numbers of asset elements depicted
+    double m_maxTension = 0;            ///< maximum tension for visualization
 
-    public:
+   public:
 
-        //--------------------------------------------------------------------------------------------------------------
-        // Pure virtual methods, used in FrCatenaryAsset
+    //--------------------------------------------------------------------------------------------------------------
+    // Pure virtual methods, used in FrCatenaryAsset
 
-        virtual double GetUnstrainedLength() const = 0;
+    virtual double GetUnstrainedLength() const = 0;
 
-        virtual Position GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const = 0;
+    virtual Position GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const = 0;
 
-        virtual Force GetTension(double s, FRAME_CONVENTION fc) const = 0;
+    virtual Force GetTension(double s, FRAME_CONVENTION fc) const = 0;
 
-        //--------------------------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------------------------
 
-        void ShowAsset(bool show);
+    void ShowAsset(bool show);
 
-        bool IsAssetShown() const;
+    bool IsAssetShown() const;
 
-        void SetAssetElements(unsigned int nbElements);
+    void SetAssetElements(unsigned int nbElements);
 
-        int GetAssetElements() const;
+    int GetAssetElements() const;
 
-        void SetMaxTension(double max);
+    void SetMaxTension(double max);
 
-        double GetMaxTension() const;
+    double GetMaxTension() const;
 
-    protected:
+   protected:
 
-        virtual void Initialize();
+    virtual void Initialize();
 
-        virtual void InitMaxTension();
+    virtual void InitMaxTension();
 
-    };
-
-
+  };
 
 
-    /**
-     * \class FrCatenaryLineAsset
-     * \brief Class for a catenary line asset, using chrono::ChLineShape in aggregation
-     * Line elements of ChLineShape are updated in position and color (related to the tension) in this class
-     */
-    class FrCatenaryLineAsset : public FrAsset {
+  /**
+   * \class FrCatenaryLineAsset
+   * \brief Class for a catenary line asset, using chrono::ChLineShape in aggregation
+   * Line elements of ChLineShape are updated in position and color (related to the tension) in this class
+   */
+  class FrCatenaryLineAsset : public FrAsset {
 
-    private:
+   private:
 
-        FrCatenaryAssetOwner *m_catenaryLine;    ///< Catenary line containing this asset
+    FrCatenaryAssetOwner *m_catenaryLine;    ///< Catenary line containing this asset
 
 //        using Triplet = std::tuple<double, double, std::shared_ptr<chrono::ChLineShape>>;
 //        std::vector<Triplet> m_elements;    ///< container of elements based on ChLineShape
-        using Triplet = std::tuple<double, double, unsigned int>;
-        std::vector<Triplet> m_elements;
+    using Triplet = std::tuple<double, double, unsigned int>;
+    std::vector<Triplet> m_elements;
 
-        double m_maxTension = 0;            ///< max tension cached value for the color visualization
+    double m_maxTension = 0;            ///< max tension cached value for the color visualization
 
-    public:
+   public:
 
-        /// Catenary line asset constructor
-        /// \param line catenary line containing this asset
-        explicit FrCatenaryLineAsset(FrCatenaryAssetOwner * line);
+    /// Catenary line asset constructor
+    /// \param line catenary line containing this asset
+    explicit FrCatenaryLineAsset(FrCatenaryAssetOwner *line);
 
-        /// Initialize the asset by creating the elements
-        void Initialize() override;
+    /// Initialize the asset by creating the elements
+    void Initialize() override;
 
-        /// Update the state of the asset, at the end of a time step
-        void StepFinalize() override;
+    /// Update the state of the asset, at the end of a time step
+    void StepFinalize() override;
 
-    private:
+   private:
 
-        /// Initialize the max tension value for the color visualization
-        void InitRangeTensionColor();
+    /// Initialize the max tension value for the color visualization
+    void InitRangeTensionColor();
 
-        /// Make a tuple, based on the starting and ending lagrangian coordinates and the corresponding element
-        /// \param s0 starting lagrangian coordinate of the element
-        /// \param s1 ending lagrangiand coordinate of the element
-        /// \param index index of the element based on ChLineShape
-        /// \return
-        static Triplet make_triplet(double s0, double s1, unsigned int index) {
-            return std::make_tuple(s0, s1, index);
-        }
+    /// Make a tuple, based on the starting and ending lagrangian coordinates and the corresponding element
+    /// \param s0 starting lagrangian coordinate of the element
+    /// \param s1 ending lagrangiand coordinate of the element
+    /// \param index index of the element based on ChLineShape
+    /// \return
+    static Triplet make_triplet(double s0, double s1, unsigned int index) {
+      return std::make_tuple(s0, s1, index);
+    }
 
-    };
+  };
 
 
 }  //end namespace frydom

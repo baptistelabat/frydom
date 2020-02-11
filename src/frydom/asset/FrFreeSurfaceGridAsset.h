@@ -18,27 +18,27 @@
 
 namespace frydom {
 
-    class FrFreeSurface;
+  class FrFreeSurface;
 
-    /**
-     * \class FrFreeSurfaceGridAsset
-     * \brief Class for displaying the free surface grid.
-     */
-    class FrFreeSurfaceGridAsset : public FrGridAsset {
+  /**
+   * \class FrFreeSurfaceGridAsset
+   * \brief Class for displaying the free surface grid.
+   */
+  class FrFreeSurfaceGridAsset : public FrGridAsset {
 
-    private:
+   private:
 
-        FrFreeSurface* m_freeSurface;    ///> Pointer to the free surface containing this asset
+    FrFreeSurface *m_freeSurface;    ///> Pointer to the free surface containing this asset
 
-    public:
-        /// Default constructor
-        /// \param freeSurface freeSurface containing this asset
-        explicit FrFreeSurfaceGridAsset(FrFreeSurface* freeSurface);
+   public:
+    /// Default constructor
+    /// \param freeSurface freeSurface containing this asset
+    explicit FrFreeSurfaceGridAsset(FrFreeSurface *freeSurface);
 
-        /// Update the state of the asset, at the end of a time step
-        void StepFinalize() override;
+    /// Update the state of the asset, at the end of a time step
+    void StepFinalize() override;
 
-    };
+  };
 
 } // end namespace frydom
 

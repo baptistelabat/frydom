@@ -35,7 +35,7 @@ namespace frydom {
       m_tree_path = tree_path;
     }
 
-    const std::string& GetTreePath() const {
+    const std::string &GetTreePath() const {
       return m_tree_path;
     }
 
@@ -59,7 +59,7 @@ namespace frydom {
     /// Get a pointer to the Parent TreeNode
     virtual ParentType *GetParent() const;
 
-    FrOffshoreSystem* GetSystem();
+    FrOffshoreSystem *GetSystem();
 
    private:
     ParentType *m_parent = nullptr;
@@ -70,7 +70,7 @@ namespace frydom {
 
    public:
     FrRootNode *GetParent() const final {
-      std::cout<<"test"<<std::endl;
+      std::cout << "test" << std::endl;
       return nullptr;
     }
 

@@ -86,12 +86,12 @@ int main(int argc, char *argv[]) {
 
   // Slack lines
   // ANCF cable
-  auto DynamicCable = make_dynamic_cable("DynamicCable_slack", &system, Node1, Node2, cableProp, unstrainedLength,
+  auto DynamicCable = make_dynamic_cable("DynamicCable_slack", Node1, Node2, cableProp, unstrainedLength,
                                          rayleighDamping, nbElements);
 
   // Catenary line
 
-  auto CatenaryLine = make_catenary_line("CatenaryLine_slack", &system, Node1, Node2, cableProp, elastic,
+  auto CatenaryLine = make_catenary_line("CatenaryLine_slack", Node1, Node2, cableProp, elastic,
                                          unstrainedLength, AIR);
 
 
@@ -123,12 +123,12 @@ int main(int argc, char *argv[]) {
   unstrainedLength = distanceBetweenNodes * 0.85;
 
   // ANCF cable
-  auto DynamicCable2 = make_dynamic_cable("CatenaryLine_taut", &system, Node1, Node2, cableProp, unstrainedLength,
+  auto DynamicCable2 = make_dynamic_cable("CatenaryLine_taut", Node1, Node2, cableProp, unstrainedLength,
                                           rayleighDamping, nbElements);
 
   // Catenary line
 
-  auto CatenaryLine2 = make_catenary_line("CatenaryLine_taut", &system, Node1, Node2, cableProp, elastic,
+  auto CatenaryLine2 = make_catenary_line("CatenaryLine_taut", Node1, Node2, cableProp, elastic,
                                           unstrainedLength, AIR);
 
 

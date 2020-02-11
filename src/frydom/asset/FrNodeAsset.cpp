@@ -11,40 +11,40 @@
 
 namespace frydom {
 
-    FrNodeAsset::FrNodeAsset(frydom::FrNode *node) : m_node(node), m_CharacteristicLength(1.),
-                                                               FrAsset() {
-    }
+  FrNodeAsset::FrNodeAsset(frydom::FrNode *node) : m_node(node), m_CharacteristicLength(1.),
+                                                   FrAsset() {
+  }
 
-    void FrNodeAsset::Initialize() {
+  void FrNodeAsset::Initialize() {
 
-        auto glyphAsset = std::make_shared<chrono::ChGlyphs>();
-        glyphAsset->SetDrawMode(chrono::ChGlyphs::eCh_GlyphType::GLYPH_COORDSYS);
+    auto glyphAsset = std::make_shared<chrono::ChGlyphs>();
+    glyphAsset->SetDrawMode(chrono::ChGlyphs::eCh_GlyphType::GLYPH_COORDSYS);
 
-        chrono::ChCoordsys<double> nodeFrame = internal::FrFrame2ChCoordsys(m_node->GetFrameInBody());
+    chrono::ChCoordsys<double> nodeFrame = internal::FrFrame2ChCoordsys(m_node->GetFrameInBody());
 
-        glyphAsset->SetGlyphCoordsys(0,nodeFrame);
+    glyphAsset->SetGlyphCoordsys(0, nodeFrame);
 
-        glyphAsset->SetGlyphsSize(m_CharacteristicLength);  // Ne semble pas avoir d'effet dans Irrlicht
+    glyphAsset->SetGlyphsSize(m_CharacteristicLength);  // Ne semble pas avoir d'effet dans Irrlicht
 
-        m_chronoAsset->AddAsset(glyphAsset);
-    }
+    m_chronoAsset->AddAsset(glyphAsset);
+  }
 
-    void FrNodeAsset::StepFinalize() {
+  void FrNodeAsset::StepFinalize() {
 
-        // Get the glyph asset form the AssetLevel
-        auto GlyphAsset = dynamic_cast<chrono::ChGlyphs*> (m_chronoAsset->GetAssetN(0).get());
+    // Get the glyph asset form the AssetLevel
+    auto GlyphAsset = dynamic_cast<chrono::ChGlyphs *> (m_chronoAsset->GetAssetN(0).get());
 
-        GlyphAsset->SetGlyphsSize(m_CharacteristicLength);
+    GlyphAsset->SetGlyphsSize(m_CharacteristicLength);
 
-        // Here, the asset point is automatically following the motion but the force has to be updated
-        chrono::ChCoordsys<double> nodeFrame = internal::FrFrame2ChCoordsys(m_node->GetFrameInBody());
+    // Here, the asset point is automatically following the motion but the force has to be updated
+    chrono::ChCoordsys<double> nodeFrame = internal::FrFrame2ChCoordsys(m_node->GetFrameInBody());
 
-        GlyphAsset->SetGlyphCoordsys(0,nodeFrame);
+    GlyphAsset->SetGlyphCoordsys(0, nodeFrame);
 
-    }
+  }
 
-    void FrNodeAsset::SetSize(double size) {
-        m_CharacteristicLength = size;
-    }
+  void FrNodeAsset::SetSize(double size) {
+    m_CharacteristicLength = size;
+  }
 
 }

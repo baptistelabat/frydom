@@ -14,6 +14,7 @@
 #define FRYDOM_IO_H
 
 #include <nlohmann/json.hpp>
+
 using json = nlohmann::json; // for convenience
 
 #include "FrHDF5.h"
