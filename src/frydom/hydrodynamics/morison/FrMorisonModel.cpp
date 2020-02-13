@@ -20,8 +20,42 @@
 namespace frydom {
 
 
-  std::shared_ptr<FrMorisonCompositeElement> make_morison_model(FrBody *body) {
-    return std::make_shared<FrMorisonCompositeElement>(body);
+  std::shared_ptr<FrMorisonCompositeElement> make_morison_model(const std::shared_ptr<FrBody> &body) {
+    return std::make_shared<FrMorisonCompositeElement>(body.get());
+  }
+
+
+  std::shared_ptr<FrMorisonCompositeElement> make_morison_model(const std::shared_ptr<FrBody> &body, const std::string &filename) {
+    //TODO ; extend for Cf, double valued Cd and Ca, etc.
+    auto model = std::make_shared<FrMorisonCompositeElement>(body.get());
+
+    std::ifstream ifs(filename);
+    auto json_obj = json::parse(ifs);
+
+    auto nodes = json_obj["Nodes"];
+
+    std::map<int, std::vector<double>> node_map;
+    for (auto node : nodes) {
+      node_map.emplace(std::make_pair(node["id"].get<int>(), node["position"].get<std::vector<double>>()));
+    }
+
+    auto elements = json_obj["Elements"];
+
+    std::vector<double> position;
+    double Cd, Cm, diameter;
+
+    for (const auto &element : elements) {
+      position = node_map.at(element["id1"].get<int>());
+      Position PosA = {position[0],position[1],position[2]};
+      position = node_map.at(element["id2"].get<int>());
+      Position PosB = {position[0],position[1],position[2]};
+      diameter = element["diameter"].get<double>();
+      Cd = element["cd"].get<double>();
+      Cm = element["cm"].get<double>();
+      model->AddElement(PosA, PosB, diameter, MorisonCoeff(Cm), MorisonCoeff(Cd), 0.);
+    }
+
+    return model;
   }
 
   // -----------------------------------------------------------------

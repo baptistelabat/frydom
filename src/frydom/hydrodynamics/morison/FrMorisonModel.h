@@ -31,7 +31,12 @@ namespace frydom {
   /// Maker for a Morison model : instantiate and return a FrMorisonCompositeElement
   /// \param body body related to the morison model
   /// \return Morison model, as a Morison composite element
-  std::shared_ptr<FrMorisonCompositeElement> make_morison_model(FrBody *body);
+  std::shared_ptr<FrMorisonCompositeElement> make_morison_model(const std::shared_ptr<FrBody> &body);
+
+  /// Maker for a Morison model : instantiate and return a FrMorisonCompositeElement
+  /// \param body body related to the morison model
+  /// \return Morison model, as a Morison composite element
+  std::shared_ptr<FrMorisonCompositeElement> make_morison_model(const std::shared_ptr<FrBody> &body, const std::string &filename);
 
 
   // --------------------------------------------------------------------------
@@ -294,6 +299,9 @@ namespace frydom {
     /// \param body BOdy to which the morison model is applied
     /// \param frame Local frame
     FrMorisonCompositeElement(FrBody *body, FrFrame &frame);
+
+    //TODO: remove unecessary AddElement methods, add if needed the frame convention for the position and complete the
+    // doc (pos are in the world reference frame)
 
     /// Add a new morison model to the composite model
     /// \param model Morison model (can be single or composite elements)
