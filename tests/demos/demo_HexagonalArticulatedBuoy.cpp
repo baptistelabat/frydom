@@ -144,32 +144,32 @@ void SetUpMorisonModel(FrOffshoreSystem *system, std::vector<std::shared_ptr<FrB
 
   auto cd = 3.2;
 
-  auto morisonModel1 = make_morison_model(bodyList[0].get());
+  auto morisonModel1 = make_morison_model(bodyList[0]);
   //morisonModel1->AddElement(FrFrame(), 2., 1., 0., cd, 0. );
   morisonModel1->AddElement(Position(0., -1, 0.), Position(0., 1., 0.), 1., 0., cd, 0., 5);
   auto morisonForce1 = make_morison_force("morisonForce1", bodyList[0], morisonModel1);
 
-  auto morisonModel2 = make_morison_model(bodyList[1].get());
+  auto morisonModel2 = make_morison_model(bodyList[1]);
   //morisonModel2->AddElement(FrFrame(), 2., 1., 0., cd, 0. );
   morisonModel2->AddElement(Position(-0.866, -0.5, 0.), Position(0.866, 0.5, 0.), 1., 0., cd, 0., 5);
   auto morisonForce2 = make_morison_force("morisonForce2", bodyList[1], morisonModel2);
 
-  auto morisonModel3 = make_morison_model(bodyList[2].get());
+  auto morisonModel3 = make_morison_model(bodyList[2]);
   //morisonModel3->AddElement(FrFrame(), 2., 1., 0., cd, 0. );
   morisonModel3->AddElement(Position(-0.866, +0.5, 0.), Position(0.866, -0.5, 0.), 1., 0., cd, 0., 5);
   auto morisonForce3 = make_morison_force("morisonForce3", bodyList[2], morisonModel3);
 
-  auto morisonModel4 = make_morison_model(bodyList[3].get());
+  auto morisonModel4 = make_morison_model(bodyList[3]);
   //morisonModel4->AddElement(FrFrame(), 2., 1., 0., cd, 0. );
   morisonModel4->AddElement(Position(0., -1, 0.), Position(0., 1., 0.), 1., 0., cd, 0., 5);
   auto morisonForce4 = make_morison_force("morisonForce4", bodyList[3], morisonModel4);
 
-  auto morisonModel5 = make_morison_model(bodyList[4].get());
+  auto morisonModel5 = make_morison_model(bodyList[4]);
   //morisonModel5->AddElement(FrFrame(), 2., 1., 0., cd, 0. );
   morisonModel5->AddElement(Position(-0.866, -0.5, 0.), Position(0.866, 0.5, 0.), 1., 0., cd, 0., 5);
   auto morisonForce5 = make_morison_force("morisonForce5", bodyList[4], morisonModel5);
 
-  auto morisonModel6 = make_morison_model(bodyList[5].get());
+  auto morisonModel6 = make_morison_model(bodyList[5]);
   //morisonModel6->AddElement(FrFrame(), 2., 1., 0., cd, 0. );
   morisonModel6->AddElement(Position(-0.866, +0.5, 0.), Position(0.866, -0.5, 0.), 1., 0., cd, 0., 5);
   auto morisonForce6 = make_morison_force("morisonForce6", bodyList[5], morisonModel6);
