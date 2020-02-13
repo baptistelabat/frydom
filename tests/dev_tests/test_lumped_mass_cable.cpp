@@ -21,15 +21,15 @@ int main() {
 
   auto cylinder_anchor = cylinder->NewNode("cylinder_anchor");
 
-  FrCableProperties cable_properties(0.02, 1, 1e9);
+  auto cable_properties = make_cable_properties(0.02, 1., 1e9);
+
 
 
   auto cable = FrLumpedMassCable("cable",
-                                 &system,
-                                 anchor, cylinder_anchor,
+                                 anchor,
+                                 cylinder_anchor,
                                  cable_properties,
                                  100,
-                                 1e5,
                                  10);
 
 

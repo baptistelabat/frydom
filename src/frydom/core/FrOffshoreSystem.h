@@ -116,6 +116,11 @@ namespace frydom {
 
   class FrIrrApp;
 
+  namespace internal {
+    class FrLMNode;
+    class FrLMElement;
+  }
+
   /// Main class for a FRyDoM offshore system. This class is used to represent a multibody physical system,
   /// so it acts also as a database for most items involved in simulations, most noticeably objects of FrBody and FrLink
   /// classes, which are used to represent mechanisms.
@@ -777,6 +782,11 @@ namespace frydom {
     void RemoveDynamicCable(std::shared_ptr<FrDynamicCable> cable,
                             std::shared_ptr<chrono::fea::ChMesh> chrono_mesh);
 
+    /// Add a lumped mass node to the offshore system
+    void AddLumpedMassNode(std::shared_ptr<internal::FrLMNode> lm_node);
+
+    /// Add a lumped mass element to the offshore system
+    void AddLumpedMassElement(std::shared_ptr<internal::FrLMElement> lm_element);
 
    private:
 

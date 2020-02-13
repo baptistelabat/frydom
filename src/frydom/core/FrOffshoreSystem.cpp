@@ -24,6 +24,7 @@
 #include "frydom/core/common/FrFEAMesh.h"
 #include "frydom/cable/FrDynamicCable.h"
 #include "frydom/cable/FrCatenaryLine.h"
+#include "frydom/cable/FrLumpedMassCable.h"
 #include "frydom/core/force/FrForce.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/utils/FrIrrApp.h"
@@ -39,6 +40,7 @@
 
 #include "frydom/logging/FrEventLogger.h"
 #include "frydom/logging/FrSerializerFactory.h"
+
 
 namespace frydom {
 
@@ -463,6 +465,15 @@ namespace frydom {
         dynamic_cast<internal::FrDynamicCableBase *>(chrono_mesh.get())->m_endingHinge);
 
   }
+
+  void FrOffshoreSystem::AddLumpedMassNode(std::shared_ptr<internal::FrLMNode> lm_node) {
+    m_chronoSystem->AddBody(lm_node->GetBody());
+  }
+
+  void FrOffshoreSystem::AddLumpedMassElement(std::shared_ptr<internal::FrLMElement> lm_element) {
+    m_chronoSystem->AddLink(lm_element->GetLink());
+  }
+
 
   void FrOffshoreSystem::MonitorRealTimePerfs(bool val) {
     m_monitor_real_time = val;
@@ -1379,6 +1390,10 @@ namespace frydom {
     } else if (auto fea_mesh = std::dynamic_pointer_cast<FrFEAMesh>(item)) {
       AddFEAMesh(fea_mesh, fea_mesh->GetChronoMesh());
 //      m_pathManager->RegisterTreeNode(fea_mesh.get());
+
+    // LUMPED MASS NODE
+    } else if (auto lumped_mass_node = std::dynamic_pointer_cast<internal::FrLMNode>(item)) {
+      AddLumpedMassNode(lumped_mass_node);
 
       // UNKNOWN
     } else {

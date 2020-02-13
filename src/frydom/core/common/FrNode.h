@@ -13,14 +13,13 @@
 #define FRYDOM_FRNODE_H
 
 
-#include <frydom/frydom.h>
 #include "chrono/physics/ChMarker.h"
 #include "FrRotation.h"
 #include "FrFrame.h"
 #include "FrObject.h"
 
 #include "frydom/core/link/links_lib/FrLink.h"
-//#include "frydom/cable/FrLumpedMassCable.h"
+#include "frydom/cable/FrLumpedMassCable.h"
 
 #include "frydom/logging/FrLoggable.h"
 
@@ -273,7 +272,7 @@ namespace frydom {
 
     friend void FrLink::SetNodes(FrNode *, FrNode *);
 
-//    friend void internal::FrLumpedElement::Initialize();
+    friend chrono::ChMarker *internal::FrLMBoundaryNode::GetMarker() const;
 
   };
 
