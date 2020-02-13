@@ -120,11 +120,11 @@ void DemoModel(FrOffshoreSystem &system, bool flap1_fixed, bool flap2_fixed, dou
 
   // Viscous damping
 
-  auto morisonModel_1 = make_morison_model(flap1.get());
+  auto morisonModel_1 = make_morison_model(flap1);
   morisonModel_1->AddElement(Position(0., 0., -0.16), Position(0., 0., 0.42), 0.1, 0., 8., 0., 30);
   auto morisonForce_1 = make_morison_force("morison_force_flap1", flap1, morisonModel_1);
 
-  auto morisonModel_2 = make_morison_model(flap2.get());
+  auto morisonModel_2 = make_morison_model(flap2);
   morisonModel_2->AddElement(Position(0., 0., -0.16), Position(0., 0., 0.42), 0.1, 0., 8., 0., 30);
   auto morisonForce_2 = make_morison_force("morison_force_flap2", flap2, morisonModel_2);
 }
