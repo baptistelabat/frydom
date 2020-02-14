@@ -248,10 +248,17 @@ namespace frydom {
     auto rho = body->GetSystem()->GetEnvironment()->GetOcean()->GetDensity();
 
     Velocity velocity = GetFlowVelocity();
-    localForce.x() =
-        0.5 * m_property.cd.x * rho * m_property.diameter * m_property.length * velocity.x() * std::abs(velocity.x());
-    localForce.y() =
-        0.5 * m_property.cd.y * rho * m_property.diameter * m_property.length * velocity.y() * std::abs(velocity.y());
+
+    double Vnorm = velocity.norm();
+
+    Vector3d<double> Cd = {m_property.cd.x, m_property.cd.y,  M_PI * m_property.cf};
+
+    localForce = 0.5 * rho * m_property.diameter * m_property.length * Vnorm * velocity.cwiseProduct(Cd);
+
+//    localForce.x() =
+//        0.5 * m_property.cd.x * rho * m_property.diameter * m_property.length * velocity.x() * std::abs(velocity.x());
+//    localForce.y() =
+//        0.5 * m_property.cd.y * rho * m_property.diameter * m_property.length * velocity.y() * std::abs(velocity.y());
 
     if (m_extendedModel) {
       Acceleration acceleration = GetFlowAcceleration();
@@ -259,8 +266,8 @@ namespace frydom {
       localForce.y() += rho * (m_property.ca.y + 1.) * GetVolume() * acceleration.y();
     }
 
-    localForce.z() = 0.5 * m_property.cf * rho * M_PI * m_property.diameter * m_property.length * velocity.z() *
-                     std::abs(velocity.z());
+//    localForce.z() = 0.5 * m_property.cf * rho * M_PI * m_property.diameter * m_property.length * velocity.z() *
+//                     std::abs(velocity.z());
 
     // Project force in world at COG
     auto forceBody = m_node->GetFrameInWorld().ProjectVectorFrameInParent(localForce, NWU);
