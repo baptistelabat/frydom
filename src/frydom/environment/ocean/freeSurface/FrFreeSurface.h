@@ -136,6 +136,12 @@ namespace frydom {
     /// \param fc frame convention (NED/NWU)
     void GetPosition(Position &worldPos, FRAME_CONVENTION fc) const;
 
+    /// If the given position is under the free surface, it returns true
+    /// \param position position to test for position with respect to the free surface
+    bool IsInWater(const Position& position, FRAME_CONVENTION fc) const;
+
+
+
     //---------------------------- Pressure ----------------------------//
 
 

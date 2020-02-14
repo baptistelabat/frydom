@@ -24,7 +24,9 @@ namespace frydom {
 //    void FrLMBoundaryNode::SetElement(const std::shared_ptr<FrLMElement> &element) {
 //      m_element = element;
 //    }
-
+    Position FrLMBoundaryNode::GetPosition() const {
+      return m_frydom_node->GetPositionInWorld(NWU);
+    }
 
     double FrLMBoundaryNode::GetTension() const {
       // TODO
@@ -47,13 +49,17 @@ namespace frydom {
     FrLMNodeBuoyancyForce::FrLMNodeBuoyancyForce(frydom::internal::FrLMNode *node) : FrLMNodeForceBase(node) {}
 
     void FrLMNodeBuoyancyForce::UpdateState() {
-      // TODO
+      force = 0.5 * (m_node->left_element()->GetVolume() + m_node->right_element()->GetVolume()) *
+          m_node->GetFluidDensityAtCurrentPosition();
     }
 
     FrLMNodeMorisonForce::FrLMNodeMorisonForce(frydom::internal::FrLMNode *node) : FrLMNodeForceBase(node) {}
 
     void FrLMNodeMorisonForce::UpdateState() {
       // TODO
+
+
+
     }
 
     FrLMNode::FrLMNode(FrLumpedMassCable *cable, const Position &position) :
@@ -85,6 +91,18 @@ namespace frydom {
       return internal::ChVectorToVector3d<Position>(m_body->GetPos());
     }
 
+    Velocity FrLMNode::GetVelocity() const {
+      return internal::ChVectorToVector3d<Velocity>(m_body->GetCoord_dt().pos);
+    }
+
+    Acceleration FrLMNode::GetAcceleration() const {
+      return internal::ChVectorToVector3d<Acceleration>(m_body->GetCoord_dtdt().pos);
+    }
+
+    bool FrLMNode::IsInWater() const {
+      return m_cable->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->IsInWater(GetPosition(), NWU);
+    }
+
     double FrLMNode::GetFluidDensityAtCurrentPosition() const {
       auto environment = m_cable->GetSystem()->GetEnvironment();
       auto fluid_type = environment->GetFluidTypeAtPointInWorld(GetPosition(), NWU, true);
@@ -93,6 +111,42 @@ namespace frydom {
 
     void FrLMNode::UpdateMass() {
       m_body->SetMass(0.5 * (m_left_element->GetMass() + m_right_element->GetMass()));
+    }
+
+    Direction FrLMNode::GetTangentDirection() const {
+      return (m_right_element->right_node()->GetPosition() - m_left_element->left_node()->GetPosition()).normalized();
+    }
+
+    Velocity FrLMNode::GetRelativeVelocityOfFluid() const {
+      // TODO: mettre cette valeur en cache !!
+
+      auto node_position = GetPosition();
+      Velocity fluid_relative_velocity;
+
+
+      // TODO: mettre en place cet arbitrage directement dans environnement...
+      if (IsInWater()) { // WATER
+        auto ocean = m_cable->GetSystem()->GetEnvironment()->GetOcean();
+
+        // Current
+        fluid_relative_velocity += ocean->GetCurrent()->GetFluxVelocityInWorld(node_position, NWU);
+
+        // Wave orbital velocities
+        fluid_relative_velocity += ocean->GetFreeSurface()->GetWaveField()->GetVelocity(node_position, NWU);
+      } else { // AIR
+        fluid_relative_velocity += m_cable->GetSystem()->GetEnvironment()->GetAtmosphere()->GetWind()->GetFluxVelocityInWorld(node_position, NWU);
+      }
+
+      fluid_relative_velocity -= GetVelocity();
+
+      return fluid_relative_velocity;
+    }
+
+    Direction FrLMNode::GetTransverseDirection() const {
+      auto velocity = GetRelativeVelocityOfFluid();
+
+      // TODO: terminer
+
     }
 
     double FrLMNode::GetTension() const {
@@ -113,6 +167,14 @@ namespace frydom {
 
     std::shared_ptr<chrono::ChBody> FrLMNode::GetBody() {
       return m_body;
+    }
+
+    FrLMElement* FrLMNode::left_element() const {
+      return m_left_element.get();
+    }
+
+    FrLMElement* FrLMNode::right_element() const {
+      return m_right_element.get();
     }
 
     double FrLMNode::GetMass() {
@@ -154,6 +216,18 @@ namespace frydom {
 
     double FrLMElement::GetMass() const {
       return m_cable->GetCableProperties()->GetLinearDensity() * m_link->GetSpringRestLength();
+    }
+
+    double FrLMElement::GetVolume() const {
+      return m_cable->GetCableProperties()->GetSectionArea() * m_link->GetSpringRestLength();
+    }
+
+    FrLMNodeBase* FrLMElement::left_node() {
+      return m_left_node.get();
+    }
+
+    FrLMNodeBase* FrLMElement::right_node() {
+      return m_right_node.get();
     }
 
   }  // end namespace frydom::internal

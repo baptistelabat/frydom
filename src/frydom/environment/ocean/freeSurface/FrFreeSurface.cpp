@@ -64,6 +64,10 @@ namespace frydom {
     worldPos[2] = GetPosition(worldPos[0], worldPos[1], fc);
   }
 
+  bool FrFreeSurface::IsInWater(const Position& position, FRAME_CONVENTION fc) const {
+    return GetPosition(position.x(), position.y(), fc) - position.z() <= 0.;
+  }
+
   double FrFreeSurface::GetPressure(double x, double y, double z, FRAME_CONVENTION fc) const {
     // This function computes the pressure.
     return m_waveField->GetPressure(x, y, z, fc);

@@ -32,6 +32,12 @@ namespace frydom {
      public:
       virtual double GetTension() const {}
 
+      virtual Position GetPosition() const {}
+
+      virtual Velocity GetVelocity() const {}
+
+      virtual Acceleration GetAcceleration() const {}
+
       virtual Direction GetTensionDirection() const {}
 
       virtual Force GetTensionVector() const {}
@@ -66,6 +72,11 @@ namespace frydom {
       explicit FrLMBoundaryNode(const std::shared_ptr<FrNode> &node, TYPE type);
 
 //      double GetFluidDensityAtCurrentPosition() const override;
+      Position GetPosition() const override;
+
+      Velocity GetVelocity() const override;
+
+      Acceleration GetAcceleration() const override;
 
       double GetTension() const override;
 
@@ -88,7 +99,7 @@ namespace frydom {
      public:
       explicit FrLMNodeForceBase(FrLMNode *node);
 
-     private:
+     protected:
       FrLMNode *m_node;
     };
 
@@ -113,11 +124,23 @@ namespace frydom {
 
       double GetMass();
 
-      Position GetPosition() const;
+      Position GetPosition() const override;
+
+      Velocity GetVelocity() const override;
+
+      Acceleration GetAcceleration() const override;
+
+      bool IsInWater() const;
+
+      Velocity GetRelativeVelocityOfFluid() const;
 
       double GetFluidDensityAtCurrentPosition() const override;
 
       void UpdateMass() override;
+
+      Direction GetTangentDirection() const;
+
+      Direction GetTransverseDirection() const;
 
       double GetTension() const override;
 
@@ -130,6 +153,10 @@ namespace frydom {
       std::shared_ptr<chrono::ChMarker> GetMarker();
 
       std::shared_ptr<chrono::ChBody> GetBody();
+
+      FrLMElement* left_element() const;
+
+      FrLMElement* right_element() const;
 
      private:
       FrLumpedMassCable *m_cable;
@@ -159,6 +186,12 @@ namespace frydom {
       std::shared_ptr<chrono::ChLinkSpringCB> GetLink();
 
       double GetMass() const;
+
+      double GetVolume() const;
+
+      FrLMNodeBase* left_node();
+
+      FrLMNodeBase* right_node();
 
      private:
       FrLumpedMassCable *m_cable;
