@@ -5,6 +5,8 @@
 
 #include "frydom/core/common/FrNode.h"
 #include "frydom/core/body/FrBody.h"
+#include "frydom/logging/FrTypeNames.h"
+#include "frydom/environment/FrEnvironmentInc.h"
 
 #include "FrCatenaryLine.h"
 
@@ -23,6 +25,7 @@ namespace frydom {
 //      m_element = element;
 //    }
 
+
     double FrLMBoundaryNode::GetTension() const {
       // TODO
     }
@@ -39,20 +42,54 @@ namespace frydom {
       return m_frydom_node->m_chronoMarker.get();
     }
 
+    FrLMNodeForceBase::FrLMNodeForceBase(frydom::internal::FrLMNode *node) : m_node(node) {}
 
-    FrLMNode::FrLMNode(const Position &position) :
-        FrTreeNodeBase("") {
-      m_body = std::make_shared<chrono::ChBody>();
-      m_marker = std::make_shared<chrono::ChMarker>();
-      m_body->AddMarker(m_marker);
-      m_body->SetPos(internal::Vector3dToChVector(position));
+    FrLMNodeBuoyancyForce::FrLMNodeBuoyancyForce(frydom::internal::FrLMNode *node) : FrLMNodeForceBase(node) {}
+
+    void FrLMNodeBuoyancyForce::UpdateState() {
+      // TODO
     }
 
-//    void FrLMNode::SetElements(const std::shared_ptr<FrLMElement> &left_element,
-//                               const std::shared_ptr<FrLMElement> &right_element) {
-//      m_left_element = left_element;
-//      m_right_element = right_element;
-//    }
+    FrLMNodeMorisonForce::FrLMNodeMorisonForce(frydom::internal::FrLMNode *node) : FrLMNodeForceBase(node) {}
+
+    void FrLMNodeMorisonForce::UpdateState() {
+      // TODO
+    }
+
+    FrLMNode::FrLMNode(FrLumpedMassCable *cable, const Position &position) :
+        FrTreeNodeBase(""),
+        m_cable(cable),
+        m_body(std::make_shared<chrono::ChBody>()),
+        m_marker(std::make_shared<chrono::ChMarker>()) {
+
+      m_body->AddMarker(m_marker);
+      m_body->SetPos(internal::Vector3dToChVector(position));
+      m_body->UpdateMarkers(0.);
+
+      // Collision model: for the moment, we only use spheres for nodes but in the future, we should play with capsules
+      // ideally placed on elements better than on nodes... Is it possible to place collision shapes on links ???
+      auto collision_model = m_body->GetCollisionModel();
+      collision_model->ClearModel();
+      collision_model->AddSphere(m_cable->GetCableProperties()->GetRadius(), {0., 0., 0.});
+      collision_model->BuildModel();
+      m_body->SetCollide(true);
+      m_body->SetMaterialSurface(std::make_shared<chrono::ChMaterialSurfaceSMC>());
+
+      // Adding hydro force
+      m_body->AddForce(std::make_shared<FrLMNodeBuoyancyForce>(this));
+      m_body->AddForce(std::make_shared<FrLMNodeMorisonForce>(this));
+
+    }
+
+    Position FrLMNode::GetPosition() const {
+      return internal::ChVectorToVector3d<Position>(m_body->GetPos());
+    }
+
+    double FrLMNode::GetFluidDensityAtCurrentPosition() const {
+      auto environment = m_cable->GetSystem()->GetEnvironment();
+      auto fluid_type = environment->GetFluidTypeAtPointInWorld(GetPosition(), NWU, true);
+      return environment->GetFluidDensity(fluid_type);
+    }
 
     void FrLMNode::UpdateMass() {
       m_body->SetMass(0.5 * (m_left_element->GetMass() + m_right_element->GetMass()));
@@ -83,7 +120,7 @@ namespace frydom {
     }
 
     chrono::ChMarker *FrLMNode::GetMarker() const {
-      // TODO
+      return m_marker.get();
     }
 
     double FrLMForceFunctor::operator()(double time,
@@ -106,10 +143,9 @@ namespace frydom {
         m_force_functor(std::make_unique<FrLMForceFunctor>()) {
 
       m_link->SetSpringRestLength(rest_length);
-//      m_link->SetUpMarkers(left_node->GetMarker(), right_node->GetMarker());
-      m_link->Initialize()
+      m_link->ReferenceMarkers(left_node->GetMarker(), right_node->GetMarker());
       m_link->RegisterForceFunctor(m_force_functor.get());
-      // TODO: terminer la config du link
+
     }
 
     std::shared_ptr<chrono::ChLinkSpringCB> FrLMElement::GetLink() {
@@ -129,16 +165,15 @@ namespace frydom {
                                        double unstretchedLength,
                                        unsigned int nbElements) :
       FrCable(startingNode, endingNode, properties, unstretchedLength),
-      FrLoggable<FrOffshoreSystem>(name, GetTypeName(), startingNode->GetSystem()) {
+      FrLoggable<FrOffshoreSystem>(name, TypeToString(this), startingNode->GetSystem()) {
 
     double node_dist = (startingNode->GetPositionInWorld(NWU) - endingNode->GetPositionInWorld(NWU)).norm();
 
-    if (node_dist < unstretchedLength) {
+    if (node_dist <= unstretchedLength) {
       BuildSlackCable(nbElements);
     } else {
       BuildTautCable(nbElements);
     }
-
 
   }
 
@@ -148,7 +183,12 @@ namespace frydom {
 
     // Building the static catenary solution to initialize positions
     // FIXME: voir pour une detection auto du fluide...
-    FrCatenaryLine catenaryLine("catline", m_startingNode, m_endingNode, m_properties, false, m_unstrainedLength,
+    FrCatenaryLine catenaryLine("catline",
+                                m_startingNode,
+                                m_endingNode,
+                                m_properties,
+                                false,
+                                m_unstrainedLength,
                                 WATER);
     catenaryLine.Initialize();
 
@@ -161,7 +201,7 @@ namespace frydom {
     for (unsigned int i = 0; i < nbElements - 1; i++) {
       s += element_rest_length;
 
-      auto new_node = std::make_shared<internal::FrLMNode>(catenaryLine.GetNodePositionInWorld(s, NWU));
+      auto new_node = std::make_shared<internal::FrLMNode>(this, catenaryLine.GetNodePositionInWorld(s, NWU));
       system->Add(new_node);
       m_nodes.push_back(new_node);
 
@@ -187,7 +227,7 @@ namespace frydom {
     }
 
     // Updating mass of elements
-    UpdateNodeMasses();
+    UpdateNodesMasses();
 
     // INFO TERMINER
 
@@ -211,7 +251,7 @@ namespace frydom {
     // TODO
   }
 
-  void FrLumpedMassCable::UpdateNodeMasses() {
+  void FrLumpedMassCable::UpdateNodesMasses() {
     for (auto &node: m_nodes) {
       node->UpdateMass();
     }

@@ -74,6 +74,10 @@ namespace frydom {
     /// \return diameter
     double GetDiameter() const;
 
+    /// Get the radius of the cable
+    /// \return radius
+    double GetRadius() const;
+
     void SetEA(double EA);
 
     /// Get the product of the Young modulus and the section area

@@ -184,6 +184,12 @@ namespace frydom {
 
   TYPE_TO_STRING(FrAngularActuator, "AngularActuator")
 
+  // LUMPED MASS CABLE
+
+  class FrLumpedMassCable;
+
+  TYPE_TO_STRING(FrLumpedMassCable, "LumpedMassCable")
+
 
 }
 

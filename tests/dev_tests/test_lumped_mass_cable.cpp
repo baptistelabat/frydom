@@ -18,8 +18,10 @@ int main() {
 
   auto cylinder = system.NewBody("cylinder");
   makeItCylinder(cylinder, 1, 1, 10);
+  cylinder->SetPosition({100, 0., 0.}, NWU);
 
   auto cylinder_anchor = cylinder->NewNode("cylinder_anchor");
+
 
   auto cable_properties = make_cable_properties(0.02, 1., 1e9);
 

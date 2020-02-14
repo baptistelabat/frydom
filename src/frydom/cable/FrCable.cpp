@@ -48,6 +48,10 @@ namespace frydom {
     return sqrt(4. * m_section / M_PI);
   }
 
+  double FrCableProperties::GetRadius() const {
+    return 0.5 * GetDiameter();
+  }
+
   void FrCableProperties::SetEA(double EA) {
     m_youngModulus = EA / m_section;
   }

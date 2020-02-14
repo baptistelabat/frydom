@@ -21,10 +21,11 @@
 
 namespace frydom {
 
+  // Forward declaration
   class FrLumpedMassCable;
 
   namespace internal {
-
+    // Forward declaration
     class FrLMElement;
 
     class FrLMNodeBase {
@@ -37,7 +38,12 @@ namespace frydom {
 
       virtual void UpdateMass() {}
 
-      virtual void SetElements(std::shared_ptr<FrLMElement> left_element, std::shared_ptr<FrLMElement> right_element) {
+      virtual double GetFluidDensityAtCurrentPosition() const {
+        assert(false);
+      }
+
+      virtual void SetElements(std::shared_ptr<FrLMElement> left_element,
+                               std::shared_ptr<FrLMElement> right_element) {
         m_left_element = left_element;
         m_right_element = right_element;
       }
@@ -59,6 +65,8 @@ namespace frydom {
 
       explicit FrLMBoundaryNode(const std::shared_ptr<FrNode> &node, TYPE type);
 
+//      double GetFluidDensityAtCurrentPosition() const override;
+
       double GetTension() const override;
 
       Direction GetTensionDirection() const override;
@@ -76,12 +84,38 @@ namespace frydom {
 
     };
 
+    class FrLMNodeForceBase : public chrono::ChForce {
+     public:
+      explicit FrLMNodeForceBase(FrLMNode *node);
+
+     private:
+      FrLMNode *m_node;
+    };
+
+    class FrLMNodeBuoyancyForce : public FrLMNodeForceBase {
+     public:
+      explicit FrLMNodeBuoyancyForce(FrLMNode *node);
+
+      void UpdateState() override;
+    };
+
+    class FrLMNodeMorisonForce : public FrLMNodeForceBase {
+     public:
+      explicit FrLMNodeMorisonForce(FrLMNode *node);
+
+      void UpdateState() override;
+    };
+
     class FrLMNode : public FrLMNodeBase, public FrTreeNodeBase {
 
      public:
-      explicit FrLMNode(const Position &position);
+      FrLMNode(FrLumpedMassCable *cable, const Position &position);
 
       double GetMass();
+
+      Position GetPosition() const;
+
+      double GetFluidDensityAtCurrentPosition() const override;
 
       void UpdateMass() override;
 
@@ -91,18 +125,14 @@ namespace frydom {
 
       Force GetTensionVector() const override;
 
-
       chrono::ChMarker *GetMarker() const override;
-
-
-//      void
-//      SetElements(const std::shared_ptr<FrLMElement> &left_element, const std::shared_ptr<FrLMElement> &right_element);
 
       std::shared_ptr<chrono::ChMarker> GetMarker();
 
       std::shared_ptr<chrono::ChBody> GetBody();
 
      private:
+      FrLumpedMassCable *m_cable;
       std::shared_ptr<chrono::ChBody> m_body;
       std::shared_ptr<chrono::ChMarker> m_marker;
 
@@ -142,7 +172,6 @@ namespace frydom {
 
   }  // end namespace internal
 
-
   class FrLumpedMassCable : public FrLoggable<FrOffshoreSystem>, public FrCable {
 
    public:
@@ -153,8 +182,6 @@ namespace frydom {
                       const std::shared_ptr<FrCableProperties> &properties,
                       double unstretchedLength,
                       unsigned int nbElements);
-
-//    void Initialize();
 
     Force GetTension(double s, FRAME_CONVENTION fc) const override;
 
@@ -168,7 +195,7 @@ namespace frydom {
 
     void BuildTautCable(unsigned int nbElements);
 
-    void UpdateNodeMasses();
+    void UpdateNodesMasses();
 
 
    private:
