@@ -97,6 +97,9 @@ namespace frydom {
       case NO_STRETCHING:
         m_verticalFactor = std::make_unique<FrKinematicStretching>();
         break;
+      case CUTOFF:
+        m_verticalFactor = std::make_unique<FrKinStretchingCutoff>();
+        break;
       case VERTICAL:
         m_verticalFactor = std::make_unique<FrKinStretchingVertical>();
         break;
