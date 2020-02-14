@@ -86,15 +86,6 @@ namespace frydom {
     /// \return eulerian fluid particule velocity, in m/s
     virtual Velocity GetVelocity(double x, double y, double z, FRAME_CONVENTION fc) const = 0;
 
-    /// Return the eulerian flow velocity. Return null vector if the point is upper the free surface elevation
-    /// \param x x position
-    /// \param y y position
-    /// \param z z position
-    /// \param cutoff if true, and z position above the wave elevation, return 0
-    /// \param fc frame convention (NED/NWU)
-    /// \return eulerian fluid particule velocity, in m/s
-    virtual Velocity GetVelocity(double x, double y, double z, bool cutoff, FRAME_CONVENTION fc) const;
-
 
     /// Return the eulerian fluid particule velocity in global reference frame (from vector position)
     /// \param worldPos position
@@ -109,15 +100,6 @@ namespace frydom {
     /// \param fc frame convention (NED/NWU)
     /// \return eulerian fluid particule acceleration, in m/s²
     virtual Acceleration GetAcceleration(double x, double y, double z, FRAME_CONVENTION fc) const = 0;
-
-    /// Return the eulerian fluid particule acceleration in global reference frame (implemented in child)
-    /// \param x x position
-    /// \param y y position
-    /// \param z z position
-    /// \param cutoff if true, and z position above the wave elevation, return 0
-    /// \param fc frame convention (NED/NWU)
-    /// \return eulerian fluid particule acceleration, in m/s²
-    virtual Acceleration GetAcceleration(double x, double y, double z, bool cutoff, FRAME_CONVENTION fc) const;
 
     /// Return the eulerian fluid particule acceleration in global reference frame (from vector position)
     /// \param worldPos position
