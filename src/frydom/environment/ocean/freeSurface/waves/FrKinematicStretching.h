@@ -19,6 +19,7 @@ namespace frydom {
 
   enum STRETCHING_TYPE {
     NO_STRETCHING,
+    CUTOFF,
     VERTICAL,
     EXTRAPOLATE,
     WHEELER,
@@ -93,6 +94,24 @@ namespace frydom {
     /// Definition of the derivative according to z-direction for the scale factor
     double diffEz(const double &z, const double &konde, const double &depth) const;
 
+  };
+
+  // ------------------------------------------------------
+  // Cut-off
+  // ------------------------------------------------------
+
+  /**
+   * \class FrKinStretchingCutoff
+   * \brief Class for using the cut-off stretching model.
+   */
+  class FrKinStretchingCutoff : public FrKinematicStretching {
+
+   public:
+    /// Return the vertical scaling coefficient with vertical stretching
+    double Eval(const double &z, const double &konde, const double &depth) const override;
+
+    /// Return the vertical derivative of the scale factor with vertical stretching
+    double EvalDZ(const double &z, const double &konde, const double &depth) const override;
   };
 
   // ------------------------------------------------------
