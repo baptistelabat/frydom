@@ -9,6 +9,7 @@
 #include "frydom/environment/FrEnvironmentInc.h"
 
 #include "FrCatenaryLine.h"
+#include "FrCableShapeInitializer.h"
 
 #include "FrLumpedMassCable.h"
 
@@ -58,7 +59,7 @@ namespace frydom {
 
     void FrLMNodeBuoyancyForce::UpdateState() {
       force = 0.5 * (m_node->left_element()->GetVolume() + m_node->right_element()->GetVolume()) *
-          m_node->GetFluidDensityAtCurrentPosition();
+              m_node->GetFluidDensityAtCurrentPosition();
     }
 
     FrLMNodeMorisonForce::FrLMNodeMorisonForce(frydom::internal::FrLMNode *node) : FrLMNodeForceBase(node) {}
@@ -142,7 +143,8 @@ namespace frydom {
         // Wave orbital velocities
         fluid_relative_velocity += ocean->GetFreeSurface()->GetWaveField()->GetVelocity(node_position, NWU);
       } else { // AIR
-        fluid_relative_velocity += m_cable->GetSystem()->GetEnvironment()->GetAtmosphere()->GetWind()->GetFluxVelocityInWorld(node_position, NWU);
+        fluid_relative_velocity += m_cable->GetSystem()->GetEnvironment()->GetAtmosphere()->GetWind()->GetFluxVelocityInWorld(
+            node_position, NWU);
       }
 
       fluid_relative_velocity -= GetVelocity();
@@ -177,11 +179,11 @@ namespace frydom {
       return m_body;
     }
 
-    FrLMElement* FrLMNode::left_element() const {
+    FrLMElement *FrLMNode::left_element() const {
       return m_left_element.get();
     }
 
-    FrLMElement* FrLMNode::right_element() const {
+    FrLMElement *FrLMNode::right_element() const {
       return m_right_element.get();
     }
 
@@ -193,12 +195,18 @@ namespace frydom {
       return m_marker.get();
     }
 
-    double FrLMForceFunctor::operator()(double time,
-                                        double rest_length,
-                                        double length,
-                                        double vel,
-                                        chrono::ChLinkSpringCB *link) {
-      // TODO: c'est ici qu'on calcule la tension !!!
+    double FrLMCableTensionForceFunctor::operator()(double time,
+                                                    double rest_length,
+                                                    double length,
+                                                    double vel,
+                                                    chrono::ChLinkSpringCB *link) {
+      // TODO: verifier le signe !!!
+      // TODO: il faut deriver de ChLinkSpringCB de maniere a ajouter des infos concernant le cable, notamment les pptes
+
+//      auto properties = link->GetProperties;
+
+
+
     }
 
     FrLMElement::FrLMElement(FrLumpedMassCable *cable,
@@ -210,7 +218,7 @@ namespace frydom {
         m_left_node(left_node),
         m_right_node(right_node),
         m_link(std::make_shared<chrono::ChLinkSpringCB>()),
-        m_force_functor(std::make_unique<FrLMForceFunctor>()) {
+        m_force_functor(std::make_unique<FrLMCableTensionForceFunctor>()) {
 
       m_link->SetSpringRestLength(rest_length);
       m_link->ReferenceMarkers(left_node->GetMarker(), right_node->GetMarker());
@@ -230,13 +238,17 @@ namespace frydom {
       return m_cable->GetCableProperties()->GetSectionArea() * m_link->GetSpringRestLength();
     }
 
-    FrLMNodeBase* FrLMElement::left_node() {
+    FrLMNodeBase *FrLMElement::left_node() {
       return m_left_node.get();
     }
 
-    FrLMNodeBase* FrLMElement::right_node() {
+    FrLMNodeBase *FrLMElement::right_node() {
       return m_right_node.get();
     }
+
+//    FrLinkSpringCB::FrLinkSpringCB(FrCableProperties *properties) :
+//        chrono::ChLinkSpringCB(),
+//        m_cable_properties(properties) {}
 
   }  // end namespace frydom::internal
 
@@ -249,46 +261,20 @@ namespace frydom {
       FrCable(startingNode, endingNode, properties, unstretchedLength),
       FrLoggable<FrOffshoreSystem>(name, TypeToString(this), startingNode->GetSystem()) {
 
-//    double node_dist = (startingNode->GetPositionInWorld(NWU) - endingNode->GetPositionInWorld(NWU)).norm();
-//
-//    if (node_dist <= unstretchedLength) {
-//      BuildSlackCable(nbElements);
-//    } else {
-//      BuildTautCable(nbElements);
-//    }
 
-    // TODO: ici, on utlise un shape initializer qui a le role de fournir un shape initial
-
-
-
-
-  }
-
-  void FrLumpedMassCable::BuildSlackCable(unsigned int nbElements) {
-
-    auto system = m_startingNode->GetSystem();
-
-    // Building the static catenary solution to initialize positions
-    // FIXME: voir pour une detection auto du fluide...
-    FrCatenaryLine catenaryLine("catline",
-                                m_startingNode,
-                                m_endingNode,
-                                m_properties,
-                                false,
-                                m_unstrainedLength,
-                                WATER);
-    catenaryLine.Initialize();
+    auto shape_initializer = FrCableShapeInitializer::Create(this, GetSystem()->GetEnvironment());
 
     double element_rest_length = m_unstrainedLength / nbElements;
 
     m_nodes.emplace_back(
         std::make_shared<internal::FrLMBoundaryNode>(m_startingNode, internal::FrLMBoundaryNode::TYPE::START));
 
+    auto system = m_startingNode->GetSystem();
     double s = 0.;
     for (unsigned int i = 0; i < nbElements - 1; i++) {
       s += element_rest_length;
 
-      auto new_node = std::make_shared<internal::FrLMNode>(this, catenaryLine.GetNodePositionInWorld(s, NWU));
+      auto new_node = std::make_shared<internal::FrLMNode>(this, shape_initializer->GetPosition(s, NWU));
       system->Add(new_node);
       m_nodes.push_back(new_node);
 
@@ -316,10 +302,8 @@ namespace frydom {
     // Updating mass of elements
     UpdateNodesMasses();
 
-    // INFO TERMINER
 
   }
-
 
   Force FrLumpedMassCable::GetTension(double s, FRAME_CONVENTION fc) const {
     // TODO
@@ -334,9 +318,9 @@ namespace frydom {
 
   }
 
-  void FrLumpedMassCable::BuildTautCable(unsigned int nbElements) {
-    // TODO
-  }
+//  void FrLumpedMassCable::BuildTautCable(unsigned int nbElements) {
+//    // TODO
+//  }
 
   void FrLumpedMassCable::UpdateNodesMasses() {
     for (auto &node: m_nodes) {

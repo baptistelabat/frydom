@@ -343,7 +343,7 @@ namespace frydom {
       while (delta_t0.infNorm() < m_relax * delta_t0_temp.infNorm()) {
         m_relax *= 0.5;
         if (m_relax < Lmin) {
-          std::cout << "DAMPING TOO STRONG. NO CATENARY CONVERGENCE." << std::endl;
+          event_logger::warn(GetTypeName(), GetName(), "DAMPING TOO STRONG. NO CATENARY CONVERGENCE.");
         }
       }
 
@@ -355,6 +355,10 @@ namespace frydom {
       res = get_residual(NWU);
       err = res.infNorm();
     }  // end while
+
+    if (iter == m_itermax) {
+      event_logger::warn(GetTypeName(), GetName(), "Could not converge in max {} iterations", m_itermax);
+    }
 
   }
 

@@ -41,7 +41,7 @@ namespace frydom {
   }
 
   void FrCableProperties::SetDiameter(double d) {
-    m_section = M_PI * pow(d * 0.5, 2);
+    m_section = 0.25 * M_PI * d * d;
   }
 
   double FrCableProperties::GetDiameter() const {
@@ -90,7 +90,7 @@ namespace frydom {
   }
 
   std::shared_ptr<FrCableProperties> make_cable_properties(double diameter, double linearDensity, double youngModulus) {
-    return std::make_shared<FrCableProperties>(youngModulus, diameter, linearDensity);
+    return std::make_shared<FrCableProperties>(diameter, linearDensity, youngModulus);
   }
 
   //------------------------------------------------------------------------------------------------------------------

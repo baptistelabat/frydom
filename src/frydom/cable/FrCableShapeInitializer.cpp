@@ -34,16 +34,14 @@ namespace frydom {
 
     } else {
 
-      auto seabed = ocean->GetSeabed();
-
       auto fluid_type = FLUID_TYPE::AIR;
       if (ocean->GetFreeSurface()->IsInWater(startPosition, NWU) ||
           ocean->GetFreeSurface()->IsInWater(endPosition, NWU)) {
         fluid_type = FLUID_TYPE::WATER;
       }
 
-      // Yes, we know that we are computing twice a catenary line when the slack only case is activated...
-      // But it is quick and initialization only so don't worry about that !!
+      // Using a catenary line to estimate if the line is in interaction with seabed by checking the lowest point
+      // of this static model
       auto catenary_line = std::make_unique<FrCatenaryLine>("initialize", cable, true, fluid_type);
       catenary_line->Initialize();
 
@@ -106,15 +104,18 @@ namespace frydom {
       // Prevoir egalement la bathymetrie variable dans GetPosition()...
       std::shared_ptr<FrNode> origin_node;
       std::shared_ptr<FrNode> final_node;
-      if (cable->GetStartingNode()->GetBody()->IsFixedInWorld()) {
+      if (cable->GetStartingNode()->GetBody()->IsFixedInWorld()) { // FIXME: IsFixedInWorld est-il un bon critere ?
         origin_node = cable->GetStartingNode();
         final_node = cable->GetEndingNode();
         m_reversed = false;
+
       } else if (cable->GetEndingNode()->GetBody()->IsFixedInWorld()) {
         origin_node = cable->GetEndingNode();
         final_node = cable->GetStartingNode();
         m_reversed = true;
+
       } else {
+        event_logger::error("FrCableShapeInitializer", "Slack with seabed interaction", "");
         assert(false); // Pas pris en charge !!!
       }
 
@@ -160,5 +161,4 @@ namespace frydom {
     }
 
   }  // end namespace frydom::internal
-
 }  // end namespace frydom

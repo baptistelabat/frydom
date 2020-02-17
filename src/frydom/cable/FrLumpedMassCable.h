@@ -154,9 +154,9 @@ namespace frydom {
 
       std::shared_ptr<chrono::ChBody> GetBody();
 
-      FrLMElement* left_element() const;
+      FrLMElement *left_element() const;
 
-      FrLMElement* right_element() const;
+      FrLMElement *right_element() const;
 
      private:
       FrLumpedMassCable *m_cable;
@@ -165,15 +165,26 @@ namespace frydom {
 
     };
 
-    class FrLMForceFunctor : public chrono::ChLinkSpringCB::ForceFunctor {
+    class FrLMCableTensionForceFunctor : public chrono::ChLinkSpringCB::ForceFunctor {
      public:
       double operator()(double time,                  ///< current time
-                        double rest_length,           ///< undeformed length
+                        double rest_length,           ///< unstretched length
                         double length,                ///< current length
                         double vel,                   ///< current velocity (positive when extending)
                         chrono::ChLinkSpringCB *link  ///< back-pointer to associated link
       ) override;
     };
+
+
+//    class FrLinkSpringCB : public chrono::ChLinkSpringCB {
+//
+//     public:
+//      explicit FrLinkSpringCB(FrCableProperties *properties);
+//
+//     private:
+//      FrCableProperties *m_cable_properties;
+//
+//    };
 
 
     class FrLMElement : public FrTreeNodeBase {
@@ -189,9 +200,9 @@ namespace frydom {
 
       double GetVolume() const;
 
-      FrLMNodeBase* left_node();
+      FrLMNodeBase *left_node();
 
-      FrLMNodeBase* right_node();
+      FrLMNodeBase *right_node();
 
      private:
       FrLumpedMassCable *m_cable;
@@ -199,7 +210,7 @@ namespace frydom {
       std::shared_ptr<FrLMNodeBase> m_right_node;
       std::shared_ptr<chrono::ChLinkSpringCB> m_link;
 
-      std::unique_ptr<FrLMForceFunctor> m_force_functor;
+      std::unique_ptr<FrLMCableTensionForceFunctor> m_force_functor;
 
     };
 
@@ -224,10 +235,6 @@ namespace frydom {
 
 
    private:
-    void BuildSlackCable(unsigned int nbElements);
-
-    void BuildTautCable(unsigned int nbElements);
-
     void UpdateNodesMasses();
 
 

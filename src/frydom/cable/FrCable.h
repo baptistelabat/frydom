@@ -126,6 +126,7 @@ namespace frydom {
    *
    */
   class FrCable {
+    // TODO: voir pourquoi FrCable n'est pas un TreeNode<FrOffshoreSystem> ou un FrLoggable<FrOffshoreSystem>...
 
    protected:
 

@@ -5,13 +5,12 @@
 #ifndef FRYDOM_FRCABLESHAPEINITIALIZER_H
 #define FRYDOM_FRCABLESHAPEINITIALIZER_H
 
-#include <frydom/core/math/FrVector.h>
+#include "frydom/core/math/FrVector.h"
 
 
 namespace frydom {
 
-  class FrNode;
-
+  // Forward declarations
   class FrEnvironment;
 
   class FrCable;
@@ -19,6 +18,7 @@ namespace frydom {
   class FrCableShapeInitializer {
 
    public:
+    // Factory static method to get the correct Shape initializer for the given cable
     static std::unique_ptr<FrCableShapeInitializer> Create(FrCable *cable, FrEnvironment *environment);
 
     virtual Position GetPosition(const double &s, FRAME_CONVENTION fc) const {
@@ -28,7 +28,7 @@ namespace frydom {
    protected:
     // info: constructor is protected as we must use the static Create method which is a factory method
     // and choose the rigth concrete class to implement
-    FrCableShapeInitializer(FrCable *cable);
+    explicit FrCableShapeInitializer(FrCable *cable);
 
     FrCable *m_cable;
   };
@@ -79,9 +79,7 @@ namespace frydom {
 
     };
 
-
   }  // end namespace frydom::internal
-
 } // end namespace frydom
 
 #endif //FRYDOM_FRCABLESHAPEINITIALIZER_H
