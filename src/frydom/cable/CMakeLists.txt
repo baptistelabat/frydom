@@ -7,6 +7,7 @@ set(SRC_FILES
         FrMooringBuoy.cpp
         FrDynamicCable.cpp
         FrLumpedMassCable.cpp
+        FrCableShapeInitializer.cpp
 )
 
 set(FRYDOM_CABLE_SOURCES "")

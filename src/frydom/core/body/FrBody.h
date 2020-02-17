@@ -179,6 +179,9 @@ namespace frydom {
     /// \param state true if body is fixed, false otherwise
     void SetFixedInWorld(bool state);
 
+    /// Returns true if the body is fixed in world
+    bool IsFixedInWorld() const;
+
     /// Enable/disable option for setting bodies to "sleep".
     /// If use sleeping = true, bodies which stay in same place
     /// for long enough time will be deactivated, for optimization.

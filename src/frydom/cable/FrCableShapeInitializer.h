@@ -10,59 +10,77 @@
 
 namespace frydom {
 
-  class FrOcean;
+  class FrNode;
 
-  class FrCableShapeInitializerBase {
+  class FrEnvironment;
 
-//   public:
+  class FrCable;
 
-//    enum CONFIG {
-//      TAUT,         // boudary nodes distance is higher than unstretched length, line is straight
-//      SLACK,        // boundary nodes distance is less than unstretched length, line is slack
-//      SLACK_SEABED  // line is slack and lies on the seabed
-//    };
+  class FrCableShapeInitializer {
 
    public:
+    static std::unique_ptr<FrCableShapeInitializer> Create(FrCable *cable, FrEnvironment *environment);
 
+    virtual Position GetPosition(const double &s, FRAME_CONVENTION fc) const {
+      assert(false); // We should never pass here !
+    };
 
-    FrCableShapeInitializerBase(const Position &start_position,
-                                const Position &end_position,
-                                const double &unstretchedLenght,
-                                FrOcean *ocean);
+   protected:
+    // info: constructor is protected as we must use the static Create method which is a factory method
+    // and choose the rigth concrete class to implement
+    FrCableShapeInitializer(FrCable *cable);
 
-
-   private:
-    FrOcean *m_ocean;
-    Position m_start_position;
-    Position m_end_position;
-    double m_unstretchedLength;
-
+    FrCable *m_cable;
   };
 
+  class FrCatenaryLine;
 
-  class FrCableShapeInitializerTaut : public FrCableShapeInitializerBase {
+  namespace internal {
 
-  };
+    class FrCableShapeInitializerTaut : public FrCableShapeInitializer {
+     public:
+      explicit FrCableShapeInitializerTaut(FrCable *cable);
 
-  class FrCableShapeInitializerSlack : public FrCableShapeInitializerBase {
+      Position GetPosition(const double &s, FRAME_CONVENTION fc) const override;
 
-  };
+     private:
+      Direction m_unit_vector;
 
-  class FrCableShapeInitializerSlackSeabed : public FrCableShapeInitializerBase {
+    };
 
-  };
-  
+    class FrCableShapeInitializerSlack : public FrCableShapeInitializer {
+     public:
+      explicit FrCableShapeInitializerSlack(FrCable *cable, std::unique_ptr<FrCatenaryLine> catenary_cable);
+
+      Position GetPosition(const double &s, FRAME_CONVENTION fc) const override;
+
+     private:
+      std::unique_ptr<FrCatenaryLine> m_catenary_line;
+
+    };
+
+    class FrCableShapeInitializerSlackSeabed : public FrCableShapeInitializer {
+     public:
+      FrCableShapeInitializerSlackSeabed(FrCable *cable,
+                                         FrEnvironment *environment);
+
+      Position GetPosition(const double &s, FRAME_CONVENTION fc) const override;
+
+     private:
+      FrEnvironment *m_environment;
+
+      Position m_origin_position;
+      Position m_touch_down_point_position;
+      Direction m_horizontal_direction;
+      Direction m_raising_direction;
+      double m_lying_distance;
+
+      bool m_reversed;
+
+    };
 
 
-
-  class FrCableShapeInitializerFactory {
-   public:
-    FrCableShapeInitializerBase Create(const Position &start_position,
-                                       const Position &end_position,
-                                       const double &unstretchedLenght,
-                                       FrOcean *ocean);
-  };
-
+  }  // end namespace frydom::internal
 
 } // end namespace frydom
 

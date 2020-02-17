@@ -234,6 +234,10 @@ namespace frydom {
 
   }
 
+  bool FrBody::IsFixedInWorld() const {
+    return m_chronoBody->GetBodyFixed();
+  }
+
   void FrBody::SetUseSleeping(bool state) {
     m_chronoBody->SetUseSleeping(state);
     if (state) {

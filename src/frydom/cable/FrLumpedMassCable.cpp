@@ -44,6 +44,14 @@ namespace frydom {
       return m_frydom_node->m_chronoMarker.get();
     }
 
+    Velocity FrLMBoundaryNode::GetVelocity() const {
+      // TODO
+    }
+
+    Acceleration FrLMBoundaryNode::GetAcceleration() const {
+      // TODO
+    }
+
     FrLMNodeForceBase::FrLMNodeForceBase(frydom::internal::FrLMNode *node) : m_node(node) {}
 
     FrLMNodeBuoyancyForce::FrLMNodeBuoyancyForce(frydom::internal::FrLMNode *node) : FrLMNodeForceBase(node) {}
@@ -241,13 +249,18 @@ namespace frydom {
       FrCable(startingNode, endingNode, properties, unstretchedLength),
       FrLoggable<FrOffshoreSystem>(name, TypeToString(this), startingNode->GetSystem()) {
 
-    double node_dist = (startingNode->GetPositionInWorld(NWU) - endingNode->GetPositionInWorld(NWU)).norm();
+//    double node_dist = (startingNode->GetPositionInWorld(NWU) - endingNode->GetPositionInWorld(NWU)).norm();
+//
+//    if (node_dist <= unstretchedLength) {
+//      BuildSlackCable(nbElements);
+//    } else {
+//      BuildTautCable(nbElements);
+//    }
 
-    if (node_dist <= unstretchedLength) {
-      BuildSlackCable(nbElements);
-    } else {
-      BuildTautCable(nbElements);
-    }
+    // TODO: ici, on utlise un shape initializer qui a le role de fournir un shape initial
+
+
+
 
   }
 

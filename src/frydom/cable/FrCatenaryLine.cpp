@@ -15,10 +15,15 @@
 #include "frydom/core/common/FrNode.h"
 #include "FrCatenaryForce.h"
 #include "frydom/core/body/FrBody.h"
+
 #include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/ocean/FrOcean.h"
+#include "frydom/environment/ocean/seabed/FrSeabed.h"
+
 #include "frydom/asset/FrCatenaryLineAsset.h"
 
 #include "frydom/logging/FrTypeNames.h"
+#include "frydom/logging/FrEventLogger.h"
 
 
 namespace frydom {
@@ -38,6 +43,18 @@ namespace frydom {
 
     m_q = properties->GetLinearDensity();
   }
+
+  FrCatenaryLine::FrCatenaryLine(const std::string &name,
+                                 FrCable *cable,
+                                 bool elastic,
+                                 FLUID_TYPE fluid_type) :
+      FrCatenaryLine(name,
+                     cable->GetStartingNode(),
+                     cable->GetEndingNode(),
+                     cable->GetCableProperties(),
+                     elastic,
+                     cable->GetUnstrainedLength(),
+                     fluid_type) {}
 
   void FrCatenaryLine::DefineLogMessages() {
 
@@ -120,6 +137,79 @@ namespace frydom {
     return -GetTension(GetUnstrainedLength(), fc);
   }
 
+  Direction FrCatenaryLine::GetTangent(const double s, FRAME_CONVENTION fc) const {
+    return (Direction) GetTension(s, fc).normalized();
+  }
+
+  void FrCatenaryLine::GetLowestPoint(Position &position,
+                                      double &s,
+                                      FRAME_CONVENTION fc,
+                                      const double tol,
+                                      const unsigned int maxIter) const {
+
+    // Using a bisection algorithm to find the lowest point on the catenary line
+
+    double s0 = 0.;
+    double s1 = GetUnstrainedLength();
+
+    auto p0 = GetStartingNode()->GetPositionInWorld(fc);
+    auto p1 = GetEndingNode()->GetPositionInWorld(fc);
+
+    double dz0 = GetTangent(s0, fc).z();
+    double dz1 = GetTangent(s1, fc).z();
+
+    // Dealing with border cases where the minimum point is at one of the boundary node
+    if (dz0 * dz1 > 0.) {
+      if (dz0 > 0.) {
+        position = p0;
+        s = s0;
+      } else {
+        position = p1;
+        s = s1;
+      }
+      return;
+    } else if (dz0 == 0.) {
+      position = p0;
+      s = s0;
+      return;
+    } else if (dz1 == 0.) {
+      position = p1;
+      s = s1;
+      return;
+    }
+
+    // Bisection algorithm
+    unsigned int iter = 0;
+//        const unsigned int maxIter = 100;
+    double dz = 0.;
+    while (s1 - s0 > tol && iter < maxIter) {  // FIXME : dz ne change pas pendant les iterations !!!!!
+
+      iter++;
+
+      s = s0 + 0.5 * (s1 - s0);
+      position = GetNodePositionInWorld(s, fc);
+
+      dz = GetTangent(s, fc)[2];
+
+      // See if derivative in z has changed sign
+      if (dz0 * dz < 0) {
+        s1 = s;
+        p1 = position;
+        dz1 = dz;
+      } else if (dz1 * dz < 0) {
+        s0 = s;
+        p0 = position;
+        dz0 = dz;
+      } else break; // Tangent is horizontal, this is the minimum...
+
+    }
+
+    if (iter == maxIter) {
+      event_logger::warn(GetTypeName(), GetName(),
+                         "Maximum iteration in bisection has been reached while computing the lowest position in the element!");
+    }
+  }
+
   double FrCatenaryLine::_rho(double s) const {
     auto t0_qS = GetTension(s, NWU);
     return t0_qS.norm() - m_u.dot(t0_qS);
@@ -164,6 +254,15 @@ namespace frydom {
 
   Position FrCatenaryLine::get_residual(FRAME_CONVENTION fc) const {
     return GetNodePositionInWorld(m_unstrainedLength, fc) - GetEndingNode()->GetPositionInWorld(fc);
+  }
+
+  bool FrCatenaryLine::HasSeabedInteraction() const {
+    double s;
+    Position lowest_position;
+    GetLowestPoint(lowest_position, s, NWU, 1e-3, 20);
+
+    return !(GetSystem()->GetEnvironment()->GetOcean()->GetSeabed()->IsAboveSeabed(lowest_position,
+                                                                                   NWU)); // TODO: verifier !!
   }
 
   mathutils::Matrix33<double> FrCatenaryLine::analytical_jacobian() const {

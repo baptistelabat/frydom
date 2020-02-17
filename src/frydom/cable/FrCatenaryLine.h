@@ -109,6 +109,14 @@ namespace frydom {
                    FLUID_TYPE fluid  // FIXME : on ne devrait pas specifier le fluide !!! on doit le recuperer de l'environnement...
     );
 
+    /// Catenary line constructor, based on a generic FrCable pointer. It is used by shape initialization functions
+    /// To get a catenary shape that fit the data of a given uninitialized more complicated cable.
+    /// Internal use only
+    explicit FrCatenaryLine(const std::string &name,
+                            FrCable *cable,
+                            bool elastic,
+                            FLUID_TYPE fluid_type);
+
 
     /// Get the FrOffshoreSystem
     inline FrOffshoreSystem *GetSystem() const {
@@ -163,6 +171,13 @@ namespace frydom {
     /// \return tension applied by the line on the ending node
     Force GetEndingNodeTension(FRAME_CONVENTION fc) const;
 
+    /// Get the lagrangian coordinate and the position of the lowest point on the line by bisection algorithm
+    void GetLowestPoint(Position &position,
+                        double &s,
+                        FRAME_CONVENTION fc,
+                        const double tol,
+                        const unsigned int maxIter) const;
+
     //--------------------------------------------------------------------------------------------------------------
     // Positions accessors
     /// Get the line position at lagrangian coordinate s
@@ -193,6 +208,10 @@ namespace frydom {
     /// \param fc frame convention (NED/NWU)
     /// \return position residual
     Position get_residual(FRAME_CONVENTION fc) const;
+
+    //--------------------------------------------------------------------------------------------------------------
+    /// Returns true if the catenary line has seabed interactions
+    bool HasSeabedInteraction() const;
 
     //--------------------------------------------------------------------------------------------------------------
     // solving methods
@@ -229,6 +248,9 @@ namespace frydom {
     void DefineLogMessages() override;
 
    private :
+
+    /// Get the tangent to the line at s
+    Direction GetTangent(const double s, FRAME_CONVENTION fc) const;
 
     /// Catenary line update method
     /// \param time time of the simulation

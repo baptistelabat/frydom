@@ -16,6 +16,7 @@
 
 #include "frydom/core/common/FrObject.h"
 #include "frydom/core/common/FrConvention.h"
+#include "frydom/core/math/FrVector.h"
 
 namespace frydom {
 
@@ -75,6 +76,12 @@ namespace frydom {
     /// FrMeanSeabed.
     /// \return true if the infinite depth condition is applied.
     bool GetInfiniteDepth();
+
+    /// Returns true if a position in world is above the seabed
+    /// \param world_position position in world coordinate system
+    /// \param fc the FRAME CONVENTION in which world_position is given
+    /// \return true if the position is above the seabed
+    bool IsAboveSeabed(const Position& world_position, FRAME_CONVENTION fc);
 
     //---------------------------- Update-Initialize-StepFinalize ----------------------------//
 

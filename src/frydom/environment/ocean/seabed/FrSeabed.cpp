@@ -32,6 +32,14 @@ namespace frydom {
 
   bool FrSeabed::GetInfiniteDepth() { return m_infiniteDepth; }
 
+  bool FrSeabed::IsAboveSeabed(const Position& world_position, FRAME_CONVENTION fc) {
+    if (m_infiniteDepth)
+      return true; // Always true...
+
+    // TODO: voir s'il faut etre plus fin sur cette condition...
+    return (world_position.z() - GetBathymetry(world_position.x(), world_position.y(), fc) > 0.);
+  }
+
   //------------------------------------------------------------------------------------------------------------------
   // FrNullSeabed descriptions
 
