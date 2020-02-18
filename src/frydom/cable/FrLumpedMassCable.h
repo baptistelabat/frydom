@@ -167,25 +167,18 @@ namespace frydom {
 
     class FrLMCableTensionForceFunctor : public chrono::ChLinkSpringCB::ForceFunctor {
      public:
+      explicit FrLMCableTensionForceFunctor(FrCableProperties *properties);
+
       double operator()(double time,                  ///< current time
                         double rest_length,           ///< unstretched length
                         double length,                ///< current length
                         double vel,                   ///< current velocity (positive when extending)
                         chrono::ChLinkSpringCB *link  ///< back-pointer to associated link
       ) override;
+
+     private:
+      FrCableProperties *m_cable_properties;
     };
-
-
-//    class FrLinkSpringCB : public chrono::ChLinkSpringCB {
-//
-//     public:
-//      explicit FrLinkSpringCB(FrCableProperties *properties);
-//
-//     private:
-//      FrCableProperties *m_cable_properties;
-//
-//    };
-
 
     class FrLMElement : public FrTreeNodeBase {
      public:

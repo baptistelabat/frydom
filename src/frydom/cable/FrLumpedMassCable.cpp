@@ -201,13 +201,25 @@ namespace frydom {
                                                     double vel,
                                                     chrono::ChLinkSpringCB *link) {
       // TODO: verifier le signe !!!
-      // TODO: il faut deriver de ChLinkSpringCB de maniere a ajouter des infos concernant le cable, notamment les pptes
+      // TODO: gerer le cas ou la distance entre les noeuds est inferieure au rest_lenth... (tension nulle)
 
-//      auto properties = link->GetProperties;
+      double tension = 0.;
+      // Stiffness part
+      if (length > rest_length) {
+        tension = m_cable_properties->GetYoungModulus() * m_cable_properties->GetSectionArea()
+                  * (length / rest_length - 1.);
+      }
+
+      // Damping part
+//      tension += m_cable_properties->GetRayleighDamping() // FIXME: pas de damping dans FrCableProperties... c'est où ???
 
 
-
+      return tension;
     }
+
+    FrLMCableTensionForceFunctor::FrLMCableTensionForceFunctor(FrCableProperties *properties) :
+        chrono::ChLinkSpringCB::ForceFunctor(),
+        m_cable_properties(properties) {}
 
     FrLMElement::FrLMElement(FrLumpedMassCable *cable,
                              const std::shared_ptr<FrLMNodeBase> &left_node,
@@ -218,7 +230,7 @@ namespace frydom {
         m_left_node(left_node),
         m_right_node(right_node),
         m_link(std::make_shared<chrono::ChLinkSpringCB>()),
-        m_force_functor(std::make_unique<FrLMCableTensionForceFunctor>()) {
+        m_force_functor(std::make_unique<FrLMCableTensionForceFunctor>(cable->GetCableProperties().get())) {
 
       m_link->SetSpringRestLength(rest_length);
       m_link->ReferenceMarkers(left_node->GetMarker(), right_node->GetMarker());
@@ -245,10 +257,6 @@ namespace frydom {
     FrLMNodeBase *FrLMElement::right_node() {
       return m_right_node.get();
     }
-
-//    FrLinkSpringCB::FrLinkSpringCB(FrCableProperties *properties) :
-//        chrono::ChLinkSpringCB(),
-//        m_cable_properties(properties) {}
 
   }  // end namespace frydom::internal
 

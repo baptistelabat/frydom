@@ -96,10 +96,6 @@ namespace frydom {
   //------------------------------------------------------------------------------------------------------------------
   // FrCable
 
-//    FrCable::FrCable() = default;
-
-//    FrCable::~FrCable() = default;
-
   FrCable::FrCable(const std::shared_ptr<FrNode> &startingNode,
                    const std::shared_ptr<FrNode> &endingNode) :
       m_startingNode(startingNode),
