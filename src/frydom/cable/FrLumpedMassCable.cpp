@@ -126,7 +126,7 @@ namespace frydom {
       return (m_right_element->right_node()->GetPosition() - m_left_element->left_node()->GetPosition()).normalized();
     }
 
-    Velocity FrLMNode::GetRelativeVelocityOfFluid() const {
+    Velocity FrLMNode::GetRelativeVelocityOfFluid() const { // TODO: voir si on ne met pas cette methode sur FrNode, on est forcement dans un fluide...
       // TODO: mettre cette valeur en cache !!
 
       auto node_position = GetPosition();
@@ -142,6 +142,7 @@ namespace frydom {
 
         // Wave orbital velocities
         fluid_relative_velocity += ocean->GetFreeSurface()->GetWaveField()->GetVelocity(node_position, NWU);
+
       } else { // AIR
         fluid_relative_velocity += m_cable->GetSystem()->GetEnvironment()->GetAtmosphere()->GetWind()->GetFluxVelocityInWorld(
             node_position, NWU);
