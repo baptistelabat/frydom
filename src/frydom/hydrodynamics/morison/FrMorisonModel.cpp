@@ -230,9 +230,13 @@ namespace frydom {
     auto waveField = body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
 
     acceleration = waveField->GetAcceleration(worldPos, NWU);
-    acceleration -= m_node->GetAccelerationInWorld(NWU);
-
     Acceleration accBody = body->GetFrame().ProjectVectorParentInFrame(acceleration, NWU);
+    return m_node->GetFrameInWorld().ProjectVectorParentInFrame(accBody, NWU);
+  }
+
+  Acceleration FrMorisonSingleElement::GetNodeAcceleration() {
+    Acceleration acceleration = m_node->GetAccelerationInWorld(NWU);
+    Acceleration accBody = m_node->GetBody()->GetFrame().ProjectVectorParentInFrame(acceleration, NWU);
     return m_node->GetFrameInWorld().ProjectVectorParentInFrame(accBody, NWU);
   }
 
@@ -264,6 +268,10 @@ namespace frydom {
       Acceleration acceleration = GetFlowAcceleration();
       localForce.x() += rho * (m_property.ca.x + 1.) * GetVolume() * acceleration.x();
       localForce.y() += rho * (m_property.ca.y + 1.) * GetVolume() * acceleration.y();
+
+      Acceleration node_acc = GetNodeAcceleration();
+      localForce.x() -= rho * m_property.ca.x * GetVolume() * node_acc.x();
+      localForce.y() -= rho * m_property.ca.y * GetVolume() * node_acc.y();
     }
 
 //    localForce.z() = 0.5 * m_property.cf * rho * M_PI * m_property.diameter * m_property.length * velocity.z() *

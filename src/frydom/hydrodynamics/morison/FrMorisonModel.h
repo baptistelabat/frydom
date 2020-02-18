@@ -273,6 +273,8 @@ namespace frydom {
     /// Get the relative flow acceleration at frame position in local frame
     /// \return Flow acceleration
     Acceleration GetFlowAcceleration();
+
+    Acceleration GetNodeAcceleration();
   };
 
   // --------------------------------------------------------------------------
