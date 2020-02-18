@@ -43,6 +43,7 @@ namespace frydom {
       // Using a catenary line to estimate if the line is in interaction with seabed by checking the lowest point
       // of this static model
       auto catenary_line = std::make_unique<FrCatenaryLine>("initialize", cable, true, fluid_type);
+      catenary_line->UseForShapeInitialization();
       catenary_line->Initialize();
 
       if (catenary_line->HasSeabedInteraction()) {

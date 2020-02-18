@@ -24,6 +24,12 @@ namespace frydom {
     SetDiameter(diameter);
   }
 
+  FrCableProperties::FrCableProperties(double diameter, double linearDensity, double youngModulus,
+                                       double rayleighDamping) :
+      FrCableProperties(diameter, linearDensity, youngModulus) {
+    m_rayleighDamping = rayleighDamping;
+  }
+
   void FrCableProperties::SetYoungModulus(double E) {
     m_youngModulus = E;
   }
@@ -85,12 +91,23 @@ namespace frydom {
     return m_breakingTension;
   }
 
+  double FrCableProperties::GetRayleighDamping() const {
+    return m_rayleighDamping;
+  }
+
   std::shared_ptr<FrCableProperties> make_cable_properties() {
     return std::make_shared<FrCableProperties>();
   }
 
   std::shared_ptr<FrCableProperties> make_cable_properties(double diameter, double linearDensity, double youngModulus) {
     return std::make_shared<FrCableProperties>(diameter, linearDensity, youngModulus);
+  }
+
+  std::shared_ptr<FrCableProperties> make_cable_properties(double diameter,
+                                                           double linearDensity,
+                                                           double youngModulus,
+                                                           double rayleighDamping) {
+    return std::make_shared<FrCableProperties>(diameter, linearDensity, youngModulus, rayleighDamping);
   }
 
   //------------------------------------------------------------------------------------------------------------------

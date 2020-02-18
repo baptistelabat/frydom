@@ -39,7 +39,8 @@ namespace frydom {
       FrPrePhysicsItem(),
       FrCable(startingNode, endingNode, properties, unstrainedLength),
       m_elastic(elastic),
-      c_fluid(fluid) {
+      c_fluid(fluid),
+      m_is_for_shape_initialization(false) {
 
     m_q = properties->GetLinearDensity();
   }
@@ -119,6 +120,10 @@ namespace frydom {
     Force tension = m_t0 - c_qvec * s;
     if (IsNED(fc)) { internal::SwapFrameConvention(tension); }
     return tension;
+  }
+
+  void FrCatenaryLine::UseForShapeInitialization() {
+    m_is_for_shape_initialization = true;
   }
 
   std::shared_ptr<FrCatenaryForce> FrCatenaryLine::GetStartingForce() {
@@ -380,22 +385,24 @@ namespace frydom {
     guess_tension();
     solve();
 
-    // Building the catenary forces and adding them to bodies
-    if (!m_startingForce) {
-      m_startingForce = std::make_shared<FrCatenaryForce>(GetName() + "_start_force", m_startingNode->GetBody(), this,
-                                                          LINE_START);
-      auto starting_body = m_startingNode->GetBody();
-      starting_body->AddExternalForce(m_startingForce);
-    }
+    if (!m_is_for_shape_initialization) {
+      // Building the catenary forces and adding them to bodies
+      if (!m_startingForce) {
+        m_startingForce = std::make_shared<FrCatenaryForce>(GetName() + "_start_force", m_startingNode->GetBody(), this,
+                                                            LINE_START);
+        auto starting_body = m_startingNode->GetBody();
+        starting_body->AddExternalForce(m_startingForce);
+      }
 
-    if (!m_endingForce) {
-      m_endingForce = std::make_shared<FrCatenaryForce>(GetName() + "_end_force", m_endingNode->GetBody(), this,
-                                                        LINE_END);
-      auto ending_body = m_endingNode->GetBody();
-      ending_body->AddExternalForce(m_endingForce);
-    }
+      if (!m_endingForce) {
+        m_endingForce = std::make_shared<FrCatenaryForce>(GetName() + "_end_force", m_endingNode->GetBody(), this,
+                                                          LINE_END);
+        auto ending_body = m_endingNode->GetBody();
+        ending_body->AddExternalForce(m_endingForce);
+      }
 
-    FrCatenaryAssetOwner::Initialize();
+      FrCatenaryAssetOwner::Initialize();
+    }
 
     FrCable::Initialize();
   }

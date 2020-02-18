@@ -49,6 +49,8 @@ namespace frydom {
     /// \param elastic Is the cable elastic (for catenary lines only)
     FrCableProperties(double diameter, double linearDensity, double youngModulus);
 
+    FrCableProperties(double diameter, double linearDensity, double youngModulus, double RayleighDamping);
+
     // cable properties accessors
     ///Set the Young modulus of the cable
     /// \param E Young modulus
@@ -107,12 +109,17 @@ namespace frydom {
     /// Return the breaking tension of the cable
     double GetBreakingTension() const;
 
+    double GetRayleighDamping() const;
+
   };
 
   std::shared_ptr<FrCableProperties> make_cable_properties();
 
   std::shared_ptr<FrCableProperties>
   make_cable_properties(double diameter, double linearDensity, double youngModulus);
+
+  std::shared_ptr<FrCableProperties>
+  make_cable_properties(double diameter, double linearDensity, double youngModulus, double rayleighDamping);
 
 
   /**

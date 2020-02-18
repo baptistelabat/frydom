@@ -3,6 +3,7 @@
 //
 
 
+#include <chrono/assets/ChSphereShape.h>
 #include "frydom/core/common/FrNode.h"
 #include "frydom/core/body/FrBody.h"
 #include "frydom/logging/FrTypeNames.h"
@@ -83,12 +84,20 @@ namespace frydom {
 
       // Collision model: for the moment, we only use spheres for nodes but in the future, we should play with capsules
       // ideally placed on elements better than on nodes... Is it possible to place collision shapes on links ???
-      auto collision_model = m_body->GetCollisionModel();
-      collision_model->ClearModel();
-      collision_model->AddSphere(m_cable->GetCableProperties()->GetRadius(), {0., 0., 0.});
-      collision_model->BuildModel();
-      m_body->SetCollide(true);
-      m_body->SetMaterialSurface(std::make_shared<chrono::ChMaterialSurfaceSMC>());
+//      auto collision_model = m_body->GetCollisionModel();
+//      collision_model->ClearModel();
+//      collision_model->AddSphere(m_cable->GetCableProperties()->GetRadius(), {0., 0., 0.});
+//      collision_model->BuildModel();
+//      m_body->SetCollide(true);
+//      m_body->SetMaterialSurface(std::make_shared<chrono::ChMaterialSurfaceSMC>()); // FIXME: it will not work when going into NSC !
+
+      m_body->AddAsset(std::make_shared<chrono::ChSphereShape>(
+          chrono::geometry::ChSphere(
+              internal::Vector3dToChVector(position),
+              cable->GetCableProperties()->GetRadius() * 100
+          )));
+
+      m_body->SetBodyFixed(true);
 
       // Adding hydro force
       m_body->AddForce(std::make_shared<FrLMNodeBuoyancyForce>(this));
@@ -126,7 +135,8 @@ namespace frydom {
       return (m_right_element->right_node()->GetPosition() - m_left_element->left_node()->GetPosition()).normalized();
     }
 
-    Velocity FrLMNode::GetRelativeVelocityOfFluid() const { // TODO: voir si on ne met pas cette methode sur FrNode, on est forcement dans un fluide...
+    Velocity
+    FrLMNode::GetRelativeVelocityOfFluid() const { // TODO: voir si on ne met pas cette methode sur FrNode, on est forcement dans un fluide...
       // TODO: mettre cette valeur en cache !!
 
       auto node_position = GetPosition();
@@ -207,13 +217,11 @@ namespace frydom {
       double tension = 0.;
       // Stiffness part
       if (length > rest_length) {
-        tension = m_cable_properties->GetYoungModulus() * m_cable_properties->GetSectionArea()
-                  * (length / rest_length - 1.);
+        tension = m_cable_properties->GetEA() * (length / rest_length - 1.);
       }
 
       // Damping part
-//      tension += m_cable_properties->GetRayleighDamping() // FIXME: pas de damping dans FrCableProperties... c'est où ???
-
+      tension += m_cable_properties->GetRayleighDamping() * m_cable_properties->GetSectionArea() * vel;
 
       return tension;
     }
@@ -323,7 +331,21 @@ namespace frydom {
   }
 
   void FrLumpedMassCable::DefineLogMessages() {
-    // TODO
+    auto msg = NewMessage("State", "State messages");
+
+    msg->AddField<double>("time", "s", "Current time of the simulation",
+                          [this]() { return GetSystem()->GetTime(); });
+
+    msg->AddField<double>("StrainedLength", "m", "Strained length of the catenary line",
+                          [this]() { return GetStrainedLength(); });
+
+//    msg->AddField<Eigen::Matrix<double, 3, 1>>
+//        ("StartingNodeTension", "N", fmt::format("Starting node tension in world reference frame in {}", GetLogFC()),
+//         [this]() { return GetStartingNode()(GetLogFC()); });
+//
+//    msg->AddField<Eigen::Matrix<double, 3, 1>>
+//        ("EndingNodeTension", "N", fmt::format("Ending node tension in world reference frame in {}", GetLogFC()),
+//         [this]() { return GetEndingNodeTension(GetLogFC()); });
 
   }
 

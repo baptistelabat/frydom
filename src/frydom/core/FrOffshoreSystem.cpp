@@ -1395,6 +1395,10 @@ namespace frydom {
     } else if (auto lumped_mass_node = std::dynamic_pointer_cast<internal::FrLMNode>(item)) {
       AddLumpedMassNode(lumped_mass_node);
 
+    // LUMPED MASS ELEMENT
+    } else if (auto lumped_mass_element = std::dynamic_pointer_cast<internal::FrLMElement>(item)) {
+      AddLumpedMassElement(lumped_mass_element);
+
       // UNKNOWN
     } else {
       added = false;

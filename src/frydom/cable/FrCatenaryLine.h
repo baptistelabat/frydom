@@ -58,38 +58,31 @@ namespace frydom {
 
    private:
 
-    //--------------------------------------------------------------------------------------------------------------
     // Catenary line properties
     bool m_elastic = true;              ///< Is the catenary line elastic
     mathutils::Vector3d<double> m_t0;   ///< Tension vector at the starting node
     double m_q;                         ///< Uniform distributed load, in N/m : (linear density + hydrostatic)*g
     Direction m_u = {0., 0., -1.};        ///< Uniform distributed load direction
-    //--------------------------------------------------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------------------------------------------
     // Cached values
     FLUID_TYPE c_fluid;                 ///< cached value of the fluid type in which the catenary line is mostly in.
     mathutils::Vector3d<double> c_qvec; ///< cached value of the uniform distributed load : qvec = u.q
     mathutils::Matrix33<double> c_Umat; ///< cached value of the jacobian matrix
-    //--------------------------------------------------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------------------------------------------
     // Data for Newton-Raphson solver
     //TODO: Complete the missing doc (FR)
     const double Lmin = 1e-10;
     double m_tolerance = 1e-6;
     unsigned int m_itermax = 100;
     double m_relax = 0.1;
-    //--------------------------------------------------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------------------------------------------
     // Forces to apply to bodies
     std::shared_ptr<FrCatenaryForce> m_startingForce;   ///< Force applied by the catenary line to the body at the
     ///< starting node
     std::shared_ptr<FrCatenaryForce> m_endingForce;     ///< Force applied by the catenary line to the body at the
     ///< ending node
-    //--------------------------------------------------------------------------------------------------------------
 
+    bool m_is_for_shape_initialization;
 
    public:
 
@@ -137,6 +130,10 @@ namespace frydom {
     /// Set the Newton-Raphson initial relaxation factor
     /// \param relax initial relaxation factor
     void SetSolverInitialRelaxFactor(double relax);
+
+    /// Tells the line it is only for shape initialization and not for a real cable usage so that
+    /// no force is added to boundary bodies
+    void UseForShapeInitialization();
 
     //--------------------------------------------------------------------------------------------------------------
     // TODO: avoir une methode pour detacher d'un noeud ou d'un corps. Dans ce cas, un nouveau noeud fixe est cree a
