@@ -9,6 +9,17 @@ using namespace frydom;
 
 int main() {
 
+  double diameter = 0.0332;
+  double A = 0.25 * MU_PI * diameter * diameter;
+  double E = 77.5e9;
+  double rho_line = 3121;
+  double linear_density = A * rho_line;
+
+  double L = 2;
+  double K = E*A/L;
+  double Cint = 100e6;
+
+
   FrOffshoreSystem system("test");
 
   system.GetEnvironment()->GetOcean()->ShowSeabed(false);
@@ -18,14 +29,24 @@ int main() {
   system.GetWorldBody()->AddSphereShape(0.5, {0, 0, 0}, NWU);
   system.GetWorldBody()->AddSphereShape(0.5, {5, 0, 0}, NWU);
 
-//  auto sphere = make_SphereBody("sphere", &system, 1, 10);
-//  sphere->SetPosition({1, 0, 0}, NWU);
-//
-//
-//  auto cable = std::make_shared<FrLumpedMassCable>();
+  auto node1 = system.GetWorldBody()->NewNode("1");
+  node1->SetPositionInWorld({0., 0., 0.}, NWU);
+
+  auto node2 = system.GetWorldBody()->NewNode("2");
+  node2->SetPositionInWorld({5., 0., 0.}, NWU);
+
+  auto props = make_cable_properties(diameter, linear_density, E, Cint);
+
+  auto cable = std::make_shared<FrLumpedMassCable>("cable",
+      node1,
+      node2,
+      props,
+      4.8,
+      2);
 
 
-  system.RunInViewer(0., 10.);
+  system.SetTimeStep(1e-5);
+  system.RunInViewer(0., 20.);
 
 
 

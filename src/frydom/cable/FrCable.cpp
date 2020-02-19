@@ -94,10 +94,10 @@ namespace frydom {
   double FrCableProperties::GetRayleighDamping() const {
     return m_rayleighDamping;
   }
-
-  std::shared_ptr<FrCableProperties> make_cable_properties() {
-    return std::make_shared<FrCableProperties>();
-  }
+//
+//  std::shared_ptr<FrCableProperties> make_cable_properties() {
+//    return std::make_shared<FrCableProperties>();
+//  }
 
   std::shared_ptr<FrCableProperties> make_cable_properties(double diameter, double linearDensity, double youngModulus) {
     return std::make_shared<FrCableProperties>(diameter, linearDensity, youngModulus);

@@ -113,7 +113,7 @@ namespace frydom {
 
   };
 
-  std::shared_ptr<FrCableProperties> make_cable_properties();
+//  std::shared_ptr<FrCableProperties> make_cable_properties();
 
   std::shared_ptr<FrCableProperties>
   make_cable_properties(double diameter, double linearDensity, double youngModulus);
