@@ -16,7 +16,7 @@ int main() {
   double linear_density = A * rho_line;
 
   double L = 2;
-  double K = E*A/L;
+  double K = E * A / L;
   double Cint = 100e6;
 
 
@@ -38,18 +38,15 @@ int main() {
   auto props = make_cable_properties(diameter, linear_density, E, Cint);
 
   auto cable = std::make_shared<FrLumpedMassCable>("cable",
-      node1,
-      node2,
-      props,
-      4.8,
-      2);
+                                                   node1,
+                                                   node2,
+                                                   props,
+                                                   4.8,
+                                                   2);
 
 
-  system.SetTimeStep(1e-5);
+  system.SetTimeStep(1e-3);
   system.RunInViewer(0., 20.);
-
-
-
 
 
   return 0;

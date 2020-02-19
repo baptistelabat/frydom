@@ -91,13 +91,15 @@ namespace frydom {
 //      m_body->SetCollide(true);
 //      m_body->SetMaterialSurface(std::make_shared<chrono::ChMaterialSurfaceSMC>()); // FIXME: it will not work when going into NSC !
 
-      m_body->AddAsset(std::make_shared<chrono::ChSphereShape>(
-          chrono::geometry::ChSphere(
-              internal::Vector3dToChVector(position),
-              cable->GetCableProperties()->GetRadius() * 100
-          )));
 
-      m_body->SetBodyFixed(true);
+      auto sphere_shape = std::make_shared<chrono::ChSphereShape>();
+      sphere_shape->GetSphereGeometry().center = internal::Vector3dToChVector(position);
+      sphere_shape->GetSphereGeometry().rad = cable->GetCableProperties()->GetRadius() * 100;
+      sphere_shape->SetColor(chrono::ChColor(0, 0, 0));
+
+      m_body->AddAsset(sphere_shape);
+
+//      m_body->SetBodyFixed(true);
 
       // Adding hydro force
       m_body->AddForce(std::make_shared<FrLMNodeBuoyancyForce>(this));
@@ -305,7 +307,7 @@ namespace frydom {
     for (unsigned int i = 0; i < nbElements; i++) {
       m_elements.emplace_back(
           std::make_shared<internal::FrLMElement>(this, m_nodes[i], m_nodes[i + 1], element_rest_length));
-      system->Add(m_elements.back());
+//      system->Add(m_elements.back());
     }
 
     // Telling the nodes their elements
