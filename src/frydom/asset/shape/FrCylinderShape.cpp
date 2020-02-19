@@ -3,11 +3,20 @@
 #include "chrono/assets/ChCylinderShape.h"
 
 namespace frydom {
-  FrCylinderShape::FrCylinderShape(double radius, double height) : m_cylinder(
-      std::make_shared<chrono::ChCylinderShape>()) {
-    m_cylinder->GetCylinderGeometry().p1 = chrono::ChVector<double>(0., -height * 0.5, 0.);
-    m_cylinder->GetCylinderGeometry().p2 = chrono::ChVector<double>(0., height * 0.5, 0.);
+  FrCylinderShape::FrCylinderShape(double radius, double height,
+      const Position& relative_position, FRAME_CONVENTION fc) :
+      m_cylinder(std::make_shared<chrono::ChCylinderShape>()) {
     m_cylinder->GetCylinderGeometry().rad = radius;
+
+    Position pos = relative_position;
+    if (IsNED(fc)) {
+      internal::SwapFrameConvention<Position>(pos);
+    }
+    Position p1 = pos + Position{0., -height*0.5, 0.};
+    Position p2 = pos + Position{0., height*0.5, 0.};
+
+    m_cylinder->GetCylinderGeometry().p1 = internal::Vector3dToChVector(p1);
+    m_cylinder->GetCylinderGeometry().p2 = internal::Vector3dToChVector(p2);
   }
 
   double FrCylinderShape::radius() const {

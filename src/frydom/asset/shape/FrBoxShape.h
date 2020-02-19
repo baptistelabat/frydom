@@ -29,7 +29,7 @@ namespace frydom {
 
   class FrBoxShape {
    public:
-    FrBoxShape(double xSize, double ySize, double zSize);
+    FrBoxShape(double xSize, double ySize, double zSize, const Position& relative_position, FRAME_CONVENTION fc);
 
     double xSize() const;
 
@@ -44,7 +44,7 @@ namespace frydom {
 
    private:
 
-    friend void FrAssetOwner::AddBoxShape(double, double, double);
+    friend void FrAssetOwner::AddBoxShape(double, double, double, const Position&, FRAME_CONVENTION);
 
     std::shared_ptr<chrono::ChBoxShape> m_box;
   };

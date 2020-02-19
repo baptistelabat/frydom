@@ -27,7 +27,7 @@ namespace frydom {
   class FrSphereShape {
 
    public:
-    explicit FrSphereShape(double radius);
+    FrSphereShape(double radius, const Position& relative_position, FRAME_CONVENTION fc);
 
     double radius() const;
 
@@ -35,7 +35,7 @@ namespace frydom {
     std::shared_ptr<chrono::ChAsset> GetChronoAsset();
 
    private:
-    friend void FrAssetOwner::AddSphereShape(double);
+    friend void FrAssetOwner::AddSphereShape(double, const Position&, FRAME_CONVENTION);
 
     std::shared_ptr<chrono::ChSphereShape> m_sphere;
   };

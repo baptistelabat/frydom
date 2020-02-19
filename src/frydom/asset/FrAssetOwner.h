@@ -17,6 +17,8 @@
 #include <vector>
 #include <memory>
 
+#include "frydom/core/math/FrVector.h"
+
 namespace chrono {
   class ChPhysicsItem;
 }
@@ -86,18 +88,24 @@ namespace frydom {
     /// \param xSize size of the box along the x absolute coordinates
     /// \param ySize size of the box along the y absolute coordinates
     /// \param zSize size of the box along the z absolute coordinates
-    void AddBoxShape(double xSize, double ySize,
-                     double zSize);  // TODO : definir plutot les dimensions dans le repere local du corps...
+    void AddBoxShape(double xSize,
+                     double ySize,
+                     double zSize,
+                     const Position &relative_position,
+                     FRAME_CONVENTION fc);
 
     /// Add a cylinder shape to the body with its dimensions defined in ???? Dimensions in meters
     /// \param radius radius of the cylinder shape.
     /// \param height height of the cylinder shape.
     void AddCylinderShape(double radius,
-                          double height);  // FIXME : travailler la possibilite de definir un axe... dans le repere local du corps
+                          double height,
+                          const Position &relative_position,
+                          FRAME_CONVENTION fc);  // FIXME : travailler la possibilite de definir un axe... dans le repere local du corps
 
     /// Add a sphere shape to the body. Dimensions in meters.
     /// \param radius radius of the sphere shape.
-    void AddSphereShape(double radius);  // TODO : permettre de definir un centre en coords locales du corps
+    void AddSphereShape(double radius, const Position &relative_position,
+                        FRAME_CONVENTION fc);  // TODO : permettre de definir un centre en coords locales du corps
 
     /// Add a mesh as an asset for visualization given a WaveFront .obj file name
     /// \param obj_filename filename of the asset to be added

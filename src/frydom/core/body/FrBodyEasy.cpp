@@ -43,7 +43,7 @@ namespace frydom {
     body->SetSmoothContact();
 
     // Asset
-    body->AddBoxShape(xSize, ySize, zSize);
+    body->AddBoxShape(xSize, ySize, zSize, {0., 0., 0.}, NWU);
 
   }
 
@@ -69,7 +69,7 @@ namespace frydom {
     body->SetSmoothContact();  // Smooth contact by default
 
     // Asset
-    body->AddCylinderShape(radius, height);
+    body->AddCylinderShape(radius, height, {0., 0., 0.}, NWU);
 
   }
 
@@ -91,7 +91,7 @@ namespace frydom {
     body->SetSmoothContact();  // Smooth contact by default
 
     // Asset
-    body->AddSphereShape(radius);
+    body->AddSphereShape(radius, {0., 0., 0.}, NWU);
 
   }
 

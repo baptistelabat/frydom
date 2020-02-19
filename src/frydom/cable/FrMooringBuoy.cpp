@@ -64,7 +64,7 @@ namespace frydom {
     SetSmoothContact();  // Smooth contact by default
 
     // Asset
-    AddSphereShape(radius);
+    AddSphereShape(radius, {0., 0., 0.}, NWU);
   }
 
   void FrMooringBuoy::Update() {

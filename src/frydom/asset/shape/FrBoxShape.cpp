@@ -4,8 +4,17 @@
 #include "chrono/assets/ChBoxShape.h"
 
 namespace frydom {
-  FrBoxShape::FrBoxShape(double xSize, double ySize, double zSize) : m_box(std::make_shared<chrono::ChBoxShape>()) {
+  FrBoxShape::FrBoxShape(double xSize, double ySize, double zSize,
+                         const Position &relative_position, FRAME_CONVENTION fc) :
+      m_box(std::make_shared<chrono::ChBoxShape>()) {
     m_box->GetBoxGeometry().SetLengths(chrono::ChVector<double>(xSize, ySize, zSize));
+
+    Position pos = relative_position;
+    if (IsNED(fc)) {
+      internal::SwapFrameConvention<Position>(pos);
+    }
+    m_box->GetBoxGeometry().Pos = internal::Vector3dToChVector(pos);
+
   }
 
   double FrBoxShape::xSize() const {
@@ -27,4 +36,5 @@ namespace frydom {
   void FrBoxShape::Translate(const Direction &direction) const {
     m_box->Pos = internal::Vector3dToChVector(direction);
   }
+
 }  // end namespace frydom

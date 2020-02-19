@@ -29,7 +29,7 @@ namespace frydom {
 
    public:
 
-    FrCylinderShape(double radius, double height);
+    FrCylinderShape(double radius, double height, const Position& relative_position, FRAME_CONVENTION fc);
 
     double radius() const;
 
@@ -40,7 +40,7 @@ namespace frydom {
 
    private:
 
-    friend void FrAssetOwner::AddCylinderShape(double, double);
+    friend void FrAssetOwner::AddCylinderShape(double, double, const Position&, FRAME_CONVENTION);
 
     std::shared_ptr<chrono::ChCylinderShape> m_cylinder;
 

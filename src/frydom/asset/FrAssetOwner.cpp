@@ -27,26 +27,32 @@
 
 #include "FrAsset.h"
 
+#include <chrono/assets/ChAsset.h> // Retirer
+
 namespace frydom {
 
 //    double FrAssetOwner::GetTime() {
 //        GetChronoItem_ptr()->GetChTime();
 //    }
 
-  void FrAssetOwner::AddBoxShape(double xSize, double ySize, double zSize) {
-    auto shape = std::make_shared<FrBoxShape>(xSize, ySize, zSize);
+  void FrAssetOwner::AddBoxShape(double xSize, double ySize, double zSize,
+                                 const Position &relative_position,
+                                 FRAME_CONVENTION fc) {
+    auto shape = std::make_shared<FrBoxShape>(xSize, ySize, zSize, relative_position, fc);
     m_boxShapes.push_back(shape);
     GetChronoItem_ptr()->AddAsset(shape->GetChronoAsset());
   }
 
-  void FrAssetOwner::AddCylinderShape(double radius, double height) {
-    auto shape = std::make_shared<FrCylinderShape>(radius, height);
+  void
+  FrAssetOwner::AddCylinderShape(double radius, double height,
+                                 const Position &relative_position, FRAME_CONVENTION fc) {
+    auto shape = std::make_shared<FrCylinderShape>(radius, height, relative_position, fc);
     m_cylinderShapes.push_back(shape);
     GetChronoItem_ptr()->AddAsset(shape->GetChronoAsset());
   }
 
-  void FrAssetOwner::AddSphereShape(double radius) {
-    auto shape = std::make_shared<FrSphereShape>(radius);
+  void FrAssetOwner::AddSphereShape(double radius, const Position &relative_position, FRAME_CONVENTION fc) {
+    auto shape = std::make_shared<FrSphereShape>(radius, relative_position, fc);
     m_sphereShapes.push_back(shape);
     GetChronoItem_ptr()->AddAsset(shape->GetChronoAsset());
   }
