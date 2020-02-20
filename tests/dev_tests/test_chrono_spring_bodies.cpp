@@ -26,10 +26,10 @@ int main() {
   double rho_line = 3121;
   double linear_density = A * rho_line;
 
-  double L = 2;
+  double L = 5;
   double K = E * A / L;
-  double Cint = 1e4;
-
+  double Cint = 1e2;
+  double damping = Cint * A;
 
   std::cout << "Stiffness: " << K << " N/m" << std::endl;
 
@@ -46,28 +46,35 @@ int main() {
   auto body1 = std::make_shared<chrono::ChBody>();
   system.AddBody(body1);
   body1->SetMass(140);
-  ChVector<> position(0, -5.5, 0);
+  ChVector<> position(0, -L+0.5, 0);
   body1->SetPos(position);
+
+//  body1->SetMaxSpeed(2); // info: Permet de stabiliser de maniere artificielle !!!
+  body1->SetLimitSpeed(true);
+  // TODO: ca stabilise bien et permet de monter en dt. L'idee serait alors a chaque pas de temps de prendre
+  // la vitesse du fairlead et de regler le maxspeed des noeuds LM a x% de sa vitesse...
+
+
 //  auto body1_anchor = std::make_shared<ChMarker>();
 //  body1->AddMarker(body1_anchor);
 //  body1_anchor->Impose_Abs_Coord(ChCoordsys<>(ChVector<>(2, 0, 0)));
   auto sphere = std::make_shared<ChSphereShape>();
-  sphere->GetSphereGeometry().center = ChVector<>();
+  sphere->GetSphereGeometry().center = ChVector<>(); // Attention, la position est relative au corps ici...
   sphere->GetSphereGeometry().rad = 1;
   body1->AddAsset(sphere);
 
 
   auto spring1 = std::make_shared<ChLinkSpring>();
-  spring1->Set_SpringRestLength(2);
+  spring1->Set_SpringRestLength(L);
   spring1->Set_SpringK(K);
-  spring1->Set_SpringR(Cint);
-  spring1->Initialize(world_body,
+  spring1->Set_SpringR(damping);
+  spring1->Initialize(world_body, // TODO: utiliser les marker a la place comme fait dans LM...
                       body1,
                       true,
                       ChVector<>(),
                       ChVector<>(),
                       false,
-                      5.);
+                      L);
   system.AddLink(spring1);
 
 
@@ -79,26 +86,29 @@ int main() {
 
   application.AssetBindAll();
   application.AssetUpdateAll();
+//  application.SetTimestep(9e-3);
   application.SetTimestep(1e-2);
 
 
 //  system.SetSolverType(ChSolver::Type::BARZILAIBORWEIN);
-//  system.SetTimestepperType(ChTimestepper::Type::RUNGEKUTTA45);
+  system.SetTimestepperType(ChTimestepper::Type::RUNGEKUTTA45);
 //  system.SetTimestepperType(ChTimestepper::Type::NEWMARK);
 
 //  system.SetTimestepperType(ChTimestepper::Type::HEUN);
 
-  system.SetTimestepperType(ChTimestepper::Type::HHT);
-  auto integrator = std::dynamic_pointer_cast<chrono::ChTimestepperHHT>(system.GetTimestepper());
-  application.SetTimestep(5e-3); // Pour initialiser le pas de temps
-  integrator->SetAlpha(-0.28); // Min is -0.33333333 == max damping
-  integrator->SetMaxiters(8);
-  integrator->SetAbsTolerances(5e-5, 1.8);
-  integrator->SetMode(ChTimestepperHHT::POSITION);
-  integrator->SetModifiedNewton(false);
-  integrator->SetScaling(true);
-//  integrator->SetStepControl(false);
-//  integrator->SetVerbose(true);
+
+
+//  system.SetTimestepperType(ChTimestepper::Type::HHT);
+//  auto integrator = std::dynamic_pointer_cast<chrono::ChTimestepperHHT>(system.GetTimestepper());
+//  application.SetTimestep(1e-3); // Pour initialiser le pas de temps
+//  integrator->SetAlpha(-0.2); // Min is -0.33333333 == max damping
+//  integrator->SetMaxiters(8);
+//  integrator->SetAbsTolerances(5e-5, 1.8);
+//  integrator->SetMode(ChTimestepperHHT::POSITION);
+//  integrator->SetModifiedNewton(false);
+//  integrator->SetScaling(true);
+////  integrator->SetStepControl(false);
+////  integrator->SetVerbose(true);
 
 
   auto body_pos = body1->GetPos();
@@ -111,6 +121,7 @@ int main() {
 
     body_pos = body1->GetPos();
     std::cout << "Time: " << system.GetChTime() << "\tbody pos: " << body_pos.y() << std::endl;
+    std::cout << spring1->Get_SpringReact() << std::endl;
 
   }
 
