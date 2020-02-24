@@ -27,10 +27,54 @@ double linear_density = A * rho_line;
 
 //double L = 3.33;
 //double K = E * A / L;
-double Cint = 1e5;
-double damping = Cint * A;
+//double Cint = 1e5;
+//double damping = Cint * A;
+double damping = 1e5;
 //double damping = Cint / A;
 
+double element_length = 5;
+int nbElements = 50;
+
+double speed_limit = 1.;
+
+
+double quad_damping = 1e5;
+double inertia = 100.;
+
+
+double timestep = 1e-3;
+
+
+
+//#define IRRLICHT
+
+
+class QuadForce : public chrono::ChForce {
+
+ public:
+  explicit QuadForce(double damping) : m_damping(damping) {}
+
+  void GetBodyForceTorque(ChVector<> &body_force, ChVector<> &body_torque) const override {
+    body_torque.SetNull();
+    body_force = m_quadforce;
+
+  }
+
+  void UpdateState() override {
+    auto absvel = GetBody()->GetPos_dt();
+    auto unitvector = absvel.GetNormalized();
+    double vel = absvel.Length();
+//    m_quadforce = -m_damping * vel * vel * unitvector;
+    m_quadforce = -m_damping * vel * unitvector;
+
+  }
+
+ private:
+  double m_damping;
+
+  ChVector<> m_quadforce;
+
+};
 
 
 std::shared_ptr<ChBody> NewElement(std::shared_ptr<ChBody> prev_body, double L) {
@@ -45,14 +89,20 @@ std::shared_ptr<ChBody> NewElement(std::shared_ptr<ChBody> prev_body, double L) 
 //  lumped_mass = 50;
 //  std::cout << lumped_mass << std::endl;
 
+lumped_mass *= 2.; // FIXME : a retirer !!!
+
   new_body->SetMass(lumped_mass);
-  ChVector<> position(0.0, -L*1.000, 0);
+  new_body->SetInertiaXX({inertia, inertia, inertia});
+  ChVector<> position(0.001, -L * 1.000, 0);
   new_body->SetPos(prev_body->GetPos() + position);
 
-  new_body->SetMaxSpeed(10); // info: Permet de stabiliser de maniere artificielle !!!
   new_body->SetLimitSpeed(true);
+  new_body->SetMaxSpeed(speed_limit); // info: Permet de stabiliser de maniere artificielle !!!
+
   // TODO: ca stabilise bien et permet de monter en dt. L'idee serait alors a chaque pas de temps de prendre
   // la vitesse du fairlead et de regler le maxspeed des noeuds LM a x% de sa vitesse...
+
+  new_body->AddForce(std::make_shared<QuadForce>(quad_damping));
 
 
 //  auto body1_anchor = std::make_shared<ChMarker>();
@@ -66,7 +116,7 @@ std::shared_ptr<ChBody> NewElement(std::shared_ptr<ChBody> prev_body, double L) 
 
   auto spring1 = std::make_shared<ChLinkSpring>();
   spring1->Set_SpringRestLength(L);
-  spring1->Set_SpringK( E*A / L);
+  spring1->Set_SpringK(E * A / L);
   spring1->Set_SpringR(damping);
   spring1->Initialize(prev_body, // TODO: utiliser les marker a la place comme fait dans LM...
                       new_body,
@@ -82,7 +132,6 @@ std::shared_ptr<ChBody> NewElement(std::shared_ptr<ChBody> prev_body, double L) 
 }
 
 
-
 int main() {
 
   ChSystemSMC system;
@@ -91,32 +140,12 @@ int main() {
   system.AddBody(world_body);
   world_body->SetBodyFixed(true);
 
-  double l = 5;
-
-  auto body1 = NewElement(world_body, l);
-  auto body2 = NewElement(body1, l);
-  auto body3 = NewElement(body2, l);
-  auto body4 = NewElement(body3, l);
-  auto body5 = NewElement(body4, l);
-  auto body6 = NewElement(body5, l);
-  auto body7 = NewElement(body6, l);
-  auto body8 = NewElement(body7, l);
-  auto body9 = NewElement(body8, l);
-  auto body10 = NewElement(body9, l);
-  auto body11 = NewElement(body10, l);
-  auto body12 = NewElement(body11, l);
-  auto body13 = NewElement(body12, l);
-  auto body14 = NewElement(body13, l);
-  auto body15 = NewElement(body14, l);
-  auto body16 = NewElement(body15, l);
-  auto body17 = NewElement(body16, l);
-  auto body18 = NewElement(body17, l);
-  auto body19 = NewElement(body18, l);
-  auto body20 = NewElement(body19, l);
-  auto body21 = NewElement(body20, l);
-
-
-  #define IRRLICHT
+  std::shared_ptr<ChBody> prev_body = world_body;
+  std::shared_ptr<ChBody> new_body;
+  for (int i = 0; i < nbElements; i++) {
+    new_body = NewElement(prev_body, element_length);
+    prev_body = new_body;
+  }
 
 
 #ifdef IRRLICHT
@@ -131,7 +160,6 @@ int main() {
 
 #endif
 
-  double timestep = 1e-3;
 
 
 //  application.SetTimestep(timestep);
@@ -160,19 +188,20 @@ int main() {
 //  integrator->SetGammaBeta(0.75, 0.25);
 
 
+  #ifdef IRRLICHT
+  application.SetTimestep(timestep); // Pour initialiser le pas de temps
+  #endif
+
 
 
   system.SetTimestepperType(ChTimestepper::Type::HHT);
   auto integrator = std::dynamic_pointer_cast<chrono::ChTimestepperHHT>(system.GetTimestepper());
-  #ifdef IRRLICHT
-  application.SetTimestep(timestep); // Pour initialiser le pas de temps
-  #endif
   integrator->SetAlpha(-0.25); // Min is -0.33333333 == max damping
+//  integrator->SetAlpha(-0.28); // Min is -0.33333333 == max damping
 //  integrator->SetMaxiters(8);
   integrator->SetMaxiters(30);
   integrator->SetAbsTolerances(5e-5, 1.8);
 //  integrator->SetAbsTolerances(1e-2, 1.8);
-//  integrator->SetMode(ChTimestepperHHT::POSITION);
   integrator->SetMode(ChTimestepperHHT::POSITION);
 //  integrator->SetModifiedNewton(false);
   integrator->SetModifiedNewton(true);
@@ -182,7 +211,7 @@ int main() {
 //  integrator->SetVerbose(true);
 
 
-  auto body_pos = body1->GetPos();
+  auto body_pos = new_body->GetPos();
 
 
 #ifdef IRRLICHT
@@ -193,8 +222,13 @@ int main() {
     application.DoStep();
     application.EndScene();
 
-    body_pos = body1->GetPos();
-    std::cout << "Time: " << system.GetChTime() << "\tbody pos: " << body_pos.y() << "\tVel: " << body1->GetPos_dt().Length() << std::endl;
+    body_pos = new_body->GetPos();
+    std::cout << "Time: " << system.GetChTime() << "\tbody pos: ("
+              << body_pos.x() << ", "
+              << body_pos.y() << ", "
+              << body_pos.z() << ")"
+              << "\tVel: "
+              << new_body->GetPos_dt().Length() << std::endl;
 //    std::cout << spring1->Get_SpringReact() << std::endl;
 //    std::cout << system.GetTimerSolver() << std::endl;
 //    std::cout << system.GetSolver()
@@ -205,8 +239,13 @@ int main() {
   while (true) {
     system.DoStepDynamics(timestep);
 
-    body_pos = body1->GetPos();
-    std::cout << "Time: " << system.GetChTime() << "\tbody pos: " << body_pos.y() << "\tVel: " << body1->GetPos_dt().Length() << std::endl;
+    body_pos = new_body->GetPos();
+    std::cout << "Time: " << system.GetChTime() << "\tbody pos: ("
+              << body_pos.x() << ", "
+              << body_pos.y() << ", "
+              << body_pos.z() << ")"
+              << "\tVel: "
+              << new_body->GetPos_dt().Length() << std::endl;
 
   }
 
