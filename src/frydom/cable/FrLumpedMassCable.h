@@ -30,13 +30,22 @@ namespace frydom {
 
     class FrLMNodeBase {
      public:
+
+      virtual void ActivateSpeedLimit(bool val) {}
+
+      virtual void SetSpeedLimit(const double &speed_limit) {}
+
       virtual double GetTension() const {}
 
-      virtual Position GetPosition() const {}
+      virtual double GetMass() const { return 0.; }
+
+      virtual Position GetPosition() const {}  // FIXME: tout doit avoir un FRAME_CONVENTION !!!
 
       virtual Velocity GetVelocity() const {}
 
       virtual Acceleration GetAcceleration() const {}
+
+      virtual Force GetTotalForce() const { return {}; }
 
       virtual Direction GetTensionDirection() const {}
 
@@ -55,6 +64,11 @@ namespace frydom {
       }
 
       virtual chrono::ChMarker *GetMarker() const {}
+
+      FrLMElement *left_element() { return m_left_element.get(); }
+
+      FrLMElement *right_element() { return m_right_element.get(); }
+
 
      protected:
       std::shared_ptr<FrLMElement> m_left_element;
@@ -122,7 +136,11 @@ namespace frydom {
      public:
       FrLMNode(FrLumpedMassCable *cable, const Position &position);
 
-      double GetMass();
+      void ActivateSpeedLimit(bool val) override;
+
+      void SetSpeedLimit(const double &speed_limit) override;
+
+      double GetMass() const override;
 
       Position GetPosition() const override;
 
@@ -130,9 +148,18 @@ namespace frydom {
 
       Acceleration GetAcceleration() const override;
 
+      Force GetTotalForce() const override;
+
       bool IsInWater() const;
 
       Velocity GetRelativeVelocityOfFluid() const;
+
+      void GetRelativeVelocityOfFluid(Velocity &tangential_velocity, Velocity &transverse_velocity) const;
+
+      Acceleration GetRelativeAccelerationOfFluid() const;
+
+      void GetRelativeAccelerationOfFluid(Acceleration &tangential_acceleration,
+                                          Acceleration &transverse_acceleration) const;
 
       double GetFluidDensityAtCurrentPosition() const override;
 
@@ -140,7 +167,7 @@ namespace frydom {
 
       Direction GetTangentDirection() const;
 
-      Direction GetTransverseDirection() const;
+//      Direction GetTransverseDirection() const;
 
       double GetTension() const override;
 
@@ -157,6 +184,9 @@ namespace frydom {
       FrLMElement *left_element() const;
 
       FrLMElement *right_element() const;
+
+//     private:
+      FrCableProperties *GetCableProperties() const;
 
      private:
       FrLumpedMassCable *m_cable;
@@ -193,6 +223,8 @@ namespace frydom {
 
       double GetVolume() const;
 
+      double GetUnstretchedLength() const;
+
       FrLMNodeBase *left_node();
 
       FrLMNodeBase *right_node();
@@ -220,14 +252,29 @@ namespace frydom {
                       double unstretchedLength,
                       unsigned int nbElements);
 
+    void ActivateSpeedLimit(bool val);
+
+    void SetSpeedLimit(const double &speed_limit);
+
+
     Force GetTension(double s, FRAME_CONVENTION fc) const override;
+
+    double GetMass() const;
+
 
     Position GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const override;
 
     void DefineLogMessages() override;
 
+    double GetUnstretchedLengthFromElements() const {
+      double length = 0.;
+      for (const auto &element: m_elements) {
+        length += element->GetUnstretchedLength();
+      }
+      return length;
+    }
 
-   private:
+//   private:
     void UpdateNodesMasses();
 
 

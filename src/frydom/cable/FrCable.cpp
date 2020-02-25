@@ -94,10 +94,10 @@ namespace frydom {
   double FrCableProperties::GetRayleighDamping() const {
     return m_rayleighDamping;
   }
-//
-//  std::shared_ptr<FrCableProperties> make_cable_properties() {
-//    return std::make_shared<FrCableProperties>();
-//  }
+
+  std::shared_ptr<FrCableProperties> make_cable_properties() {
+    return std::make_shared<FrCableProperties>();
+  }
 
   std::shared_ptr<FrCableProperties> make_cable_properties(double diameter, double linearDensity, double youngModulus) {
     return std::make_shared<FrCableProperties>(diameter, linearDensity, youngModulus);
@@ -124,10 +124,10 @@ namespace frydom {
   FrCable::FrCable(const std::shared_ptr<FrNode> &startingNode,
                    const std::shared_ptr<FrNode> &endingNode,
                    const std::shared_ptr<FrCableProperties> &properties,
-                   double unstrainedLength) :
+                   double unstretchedLength) :
       m_startingNode(startingNode),
       m_endingNode(endingNode),
-      m_unstrainedLength(unstrainedLength),
+      m_unstretchedLength(unstretchedLength),
       m_properties(properties) {}
 
   void FrCable::Initialize() {}
@@ -140,12 +140,12 @@ namespace frydom {
     return m_properties;
   }
 
-  void FrCable::SetUnstrainedLength(double L) {
-    m_unstrainedLength = L;
+  void FrCable::SetUnstretchedLength(double L) {
+    m_unstretchedLength = L;
   }
 
-  double FrCable::GetUnstrainedLength() const {
-    return m_unstrainedLength;
+  double FrCable::GetUnstretchedLength() const {
+    return m_unstretchedLength;
   }
 
 
@@ -178,7 +178,7 @@ namespace frydom {
 //    void FrCable::InitBreakingTension() {
 //
 //        if (GetBreakingTension()==0){
-//            double ds = GetUnstrainedLength()/ GetAssetElements();
+//            double ds = GetUnstretchedLength()/ GetAssetElements();
 //            double max = GetTension(0, NWU).norm();
 //            for (int i=1; i< GetAssetElements(); i++){
 //                auto LocalTension = GetTension(i*ds, NWU).norm();
@@ -204,7 +204,7 @@ namespace frydom {
 
   void FrCable::UpdateState() {
     if (std::abs(m_unrollingSpeed) > DBL_EPSILON and std::abs(m_time_step) > DBL_EPSILON) {
-      m_unstrainedLength += m_unrollingSpeed * m_time_step;
+      m_unstretchedLength += m_unrollingSpeed * m_time_step;
     }
   }
 
@@ -212,7 +212,7 @@ namespace frydom {
     double cl = 0.;
     int n = 1000;
 
-    double ds = GetUnstrainedLength() / (n - 1);
+    double ds = GetUnstretchedLength() / (n - 1);
     auto pos_prev = GetNodePositionInWorld(0., NWU);
 
     for (uint i = 0; i < n; ++i) {

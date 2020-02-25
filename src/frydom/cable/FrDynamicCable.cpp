@@ -133,7 +133,7 @@ namespace frydom {
                                          m_frydomCable->GetStartingNode()->GetPositionInWorld(NWU));
 
         // check if the distance is greater than the length
-        bool elastic = distanceBetweenNodes.norm() >= m_frydomCable->GetUnstrainedLength();
+        bool elastic = distanceBetweenNodes.norm() >= m_frydomCable->GetUnstretchedLength();
 
         // First, creating a catenary line to initialize finite element mesh node positions
         std::shared_ptr<FrCatenaryLine> catenaryLine;
@@ -146,13 +146,13 @@ namespace frydom {
                                             m_frydomCable->GetEndingNode(),
                                             m_frydomCable->GetCableProperties(),
                                             elastic,
-                                            m_frydomCable->GetUnstrainedLength(),
+                                            m_frydomCable->GetUnstretchedLength(),
                                             AIR);
           catenaryLine->Initialize();
         }
 
         double s = 0.;
-        double ds = m_frydomCable->GetUnstrainedLength() / m_frydomCable->GetNumberOfElements();
+        double ds = m_frydomCable->GetUnstretchedLength() / m_frydomCable->GetNumberOfElements();
 
         // Compute the normal to the plan containing the cable
         auto AB = internal::Vector3dToChVector(m_frydomCable->GetEndingNode()->GetPositionInWorld(NWU) -
@@ -227,8 +227,8 @@ namespace frydom {
         if (m_frydomCable->GetBreakingTension() == 0.) {
 
           if (elastic) {
-            double tensionMax = (distanceBetweenNodes.norm() - m_frydomCable->GetUnstrainedLength()) *
-                                m_frydomCable->GetCableProperties()->GetEA() / m_frydomCable->GetUnstrainedLength();
+            double tensionMax = (distanceBetweenNodes.norm() - m_frydomCable->GetUnstretchedLength()) *
+                                m_frydomCable->GetCableProperties()->GetEA() / m_frydomCable->GetUnstretchedLength();
             m_frydomCable->SetBreakingTension(1.2 * tensionMax);
           } else {
             m_frydomCable->SetBreakingTension(1.2 * catenaryLine->GetMaxTension());
@@ -323,8 +323,8 @@ namespace frydom {
   }
 
   void FrDynamicCable::SetTargetElementLength(double elementLength) {
-    assert(elementLength > 0. && elementLength < GetUnstrainedLength());
-    m_nbElements = static_cast<unsigned int>(int(floor(GetUnstrainedLength() / elementLength)));
+    assert(elementLength > 0. && elementLength < GetUnstretchedLength());
+    m_nbElements = static_cast<unsigned int>(int(floor(GetUnstretchedLength() / elementLength)));
   }
 
   void FrDynamicCable::DefineLogMessages() {
@@ -343,7 +343,7 @@ namespace frydom {
 
     msg->AddField<Eigen::Matrix<double, 3, 1>>
         ("EndingNodeTension", "N", fmt::format("Ending node tension in world reference frame in {}", GetLogFC()),
-         [this]() { return -GetTension(GetUnstrainedLength(), GetLogFC()); });
+         [this]() { return -GetTension(GetUnstretchedLength(), GetLogFC()); });
 
   }
 
@@ -381,16 +381,16 @@ namespace frydom {
 
   Force FrDynamicCable::GetTension(double s, FRAME_CONVENTION fc) const {
 
-    assert(s <= GetUnstrainedLength());
+    assert(s <= GetUnstretchedLength());
 
-    if (s > GetUnstrainedLength()) s = GetUnstrainedLength();
+    if (s > GetUnstretchedLength()) s = GetUnstretchedLength();
 
-    double ds = GetUnstrainedLength() / GetNumberOfElements();
+    double ds = GetUnstretchedLength() / GetNumberOfElements();
     double a = s / ds;
     auto index = int(floor(a));
     double eta = 2. * (a - index) - 1.;
 
-    if (s == GetUnstrainedLength()) {
+    if (s == GetUnstretchedLength()) {
       index = GetNumberOfElements() - 1;
       eta = 1;
     }
@@ -405,14 +405,14 @@ namespace frydom {
 
   Position FrDynamicCable::GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const {
 
-    assert(s <= GetUnstrainedLength());
+    assert(s <= GetUnstretchedLength());
 
-    double ds = GetUnstrainedLength() / GetNumberOfElements();
+    double ds = GetUnstretchedLength() / GetNumberOfElements();
     double a = s / ds;
     auto index = int(floor(a));
     double eta = 2. * (a - index) - 1.;
 
-    if (s == GetUnstrainedLength()) {
+    if (s == GetUnstretchedLength()) {
       index = GetNumberOfElements() - 1;
       eta = 1;
     }

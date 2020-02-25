@@ -44,7 +44,7 @@ namespace frydom {
     //--------------------------------------------------------------------------------------------------------------
     // Pure virtual methods, used in FrCatenaryAsset
 
-    virtual double GetUnstrainedLength() const = 0;
+    virtual double GetUnstretchedLength() const = 0;
 
     virtual Position GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const = 0;
 

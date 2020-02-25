@@ -66,9 +66,54 @@ namespace frydom {
     FrLMNodeMorisonForce::FrLMNodeMorisonForce(frydom::internal::FrLMNode *node) : FrLMNodeForceBase(node) {}
 
     void FrLMNodeMorisonForce::UpdateState() {
-      // TODO
 
 
+      Velocity tangential_velocity;
+      Velocity transverse_velocity;
+
+      m_node->GetRelativeVelocityOfFluid(tangential_velocity, transverse_velocity);
+
+      double rho_fluid = m_node->GetFluidDensityAtCurrentPosition();
+
+      auto cable_properties = m_node->GetCableProperties();
+
+      double d = cable_properties->GetHydrodynamicDiameter();
+      double l =
+          0.5 * (m_node->left_element()->GetUnstretchedLength() + m_node->right_element()->GetUnstretchedLength());
+
+      Force morison_force;
+
+      // TODO: verifier les signes...
+
+      // Transverse drag force
+      morison_force =
+          0.5 * rho_fluid * cable_properties->GetTransverseDragCoefficient() * d * l
+          * transverse_velocity.norm() * transverse_velocity;
+
+      // Tangential drag force
+      morison_force +=
+          0.5 * rho_fluid * cable_properties->GetTangentialDragCoefficient() * d * l
+          * tangential_velocity.norm() * tangential_velocity;
+
+
+      Acceleration tangential_acceleration;
+      Acceleration transverse_acceleration;
+
+      m_node->GetRelativeAccelerationOfFluid(tangential_acceleration, transverse_acceleration);
+
+      // Transverse added mass
+      morison_force -=
+          rho_fluid * cable_properties->GetTransverseAddedMassCoefficient() * cable_properties->GetSectionArea() * l
+          * transverse_acceleration.norm() * transverse_acceleration;
+
+      // Tangential added mass
+      morison_force -=
+          rho_fluid * cable_properties->GetTangentialAddedMassCoefficient() * cable_properties->GetSectionArea() * l
+          * tangential_acceleration.norm() * tangential_acceleration;
+
+
+      force = internal::Vector3dToChVector(morison_force);
+//      force.SetNull(); // FIXME : a retirer
 
     }
 
@@ -93,8 +138,8 @@ namespace frydom {
 
 
       auto sphere_shape = std::make_shared<chrono::ChSphereShape>();
-      sphere_shape->GetSphereGeometry().center = internal::Vector3dToChVector(position);
-      sphere_shape->GetSphereGeometry().rad = cable->GetCableProperties()->GetRadius() * 100;
+//      sphere_shape->GetSphereGeometry().center = internal::Vector3dToChVector(position);
+      sphere_shape->GetSphereGeometry().rad = cable->GetCableProperties()->GetRadius() * 10;
       sphere_shape->SetColor(chrono::ChColor(0, 0, 0));
 
       m_body->AddAsset(sphere_shape);
@@ -107,6 +152,14 @@ namespace frydom {
 
     }
 
+    void FrLMNode::ActivateSpeedLimit(bool val) {
+      m_body->SetLimitSpeed(val);
+    }
+
+    void FrLMNode::SetSpeedLimit(const double &speed_limit) {
+      m_body->SetMaxSpeed((float) speed_limit);
+    }
+
     Position FrLMNode::GetPosition() const {
       return internal::ChVectorToVector3d<Position>(m_body->GetPos());
     }
@@ -117,6 +170,10 @@ namespace frydom {
 
     Acceleration FrLMNode::GetAcceleration() const {
       return internal::ChVectorToVector3d<Acceleration>(m_body->GetCoord_dtdt().pos);
+    }
+
+    Force FrLMNode::GetTotalForce() const {
+      return internal::ChVectorToVector3d<Force>(m_body->Get_Xforce());
     }
 
     bool FrLMNode::IsInWater() const {
@@ -165,11 +222,51 @@ namespace frydom {
       return fluid_relative_velocity;
     }
 
-    Direction FrLMNode::GetTransverseDirection() const {
-      auto velocity = GetRelativeVelocityOfFluid();
+    void FrLMNode::GetRelativeVelocityOfFluid(Velocity &tangential_velocity, Velocity &transverse_velocity) const {
+      auto tangent_direction = GetTangentDirection(); // FIXME: faire un cache !!!
 
-      // TODO: terminer
+      auto fluid_relative_velocity = GetRelativeVelocityOfFluid();
 
+      tangential_velocity = (fluid_relative_velocity.transpose() * tangent_direction) * tangent_direction;
+      transverse_velocity = fluid_relative_velocity - tangential_velocity;
+    }
+
+    Acceleration FrLMNode::GetRelativeAccelerationOfFluid() const {
+
+      auto node_position = GetPosition();
+      Acceleration fluid_relative_acceleration;
+
+
+      // TODO: mettre en place cet arbitrage directement dans environnement...
+      if (IsInWater()) { // WATER
+        auto ocean = m_cable->GetSystem()->GetEnvironment()->GetOcean();
+
+        // Current
+//        fluid_relative_acceleration += ocean->GetCurrent()->GetFluxAccelerationInWorld(node_position, NWU);
+
+        // Wave orbital velocities
+        fluid_relative_acceleration += ocean->GetFreeSurface()->GetWaveField()->GetAcceleration(node_position, NWU);
+
+      } else { // AIR
+//        fluid_relative_acceleration +=
+//            m_cable->GetSystem()->GetEnvironment()->GetAtmosphere()->GetWind()->GetFluxAccelerationInworld(
+//                node_position, NWU);
+      }
+
+      fluid_relative_acceleration -= GetAcceleration();
+
+      return fluid_relative_acceleration;
+
+    }
+
+    void FrLMNode::GetRelativeAccelerationOfFluid(Acceleration &tangential_acceleration,
+                                                  Acceleration &transverse_acceleration) const {
+      auto tangent_direction = GetTangentDirection(); // FIXME: faire un cache !!!
+
+      auto fluid_relative_acceleration = GetRelativeAccelerationOfFluid();
+
+      tangential_acceleration = (fluid_relative_acceleration.transpose() * tangent_direction) * tangent_direction;
+      transverse_acceleration = fluid_relative_acceleration - tangential_acceleration;
     }
 
     double FrLMNode::GetTension() const {
@@ -200,7 +297,11 @@ namespace frydom {
       return m_right_element.get();
     }
 
-    double FrLMNode::GetMass() {
+    FrCableProperties *FrLMNode::GetCableProperties() const {
+      return m_cable->GetCableProperties().get();
+    }
+
+    double FrLMNode::GetMass() const {
       return m_body->GetMass();
     }
 
@@ -219,11 +320,11 @@ namespace frydom {
       double tension = 0.;
       // Stiffness part
       if (length > rest_length) {
-        tension = m_cable_properties->GetEA() * (length / rest_length - 1.);
+        tension = -m_cable_properties->GetEA() * (length / rest_length - 1.);
       }
 
       // Damping part
-      tension += m_cable_properties->GetRayleighDamping() * m_cable_properties->GetSectionArea() * vel;
+      tension -= m_cable_properties->GetRayleighDamping() * m_cable_properties->GetSectionArea() * vel;
 
       return tension;
     }
@@ -261,6 +362,10 @@ namespace frydom {
       return m_cable->GetCableProperties()->GetSectionArea() * m_link->GetSpringRestLength();
     }
 
+    double FrLMElement::GetUnstretchedLength() const {
+      return m_link->GetSpringRestLength();
+    }
+
     FrLMNodeBase *FrLMElement::left_node() {
       return m_left_node.get();
     }
@@ -283,7 +388,7 @@ namespace frydom {
 
     auto shape_initializer = FrCableShapeInitializer::Create(this, GetSystem()->GetEnvironment());
 
-    double element_rest_length = m_unstrainedLength / nbElements;
+    double element_rest_length = m_unstretchedLength / nbElements;
 
     m_nodes.emplace_back(
         std::make_shared<internal::FrLMBoundaryNode>(m_startingNode, internal::FrLMBoundaryNode::TYPE::START));
@@ -307,7 +412,7 @@ namespace frydom {
     for (unsigned int i = 0; i < nbElements; i++) {
       m_elements.emplace_back(
           std::make_shared<internal::FrLMElement>(this, m_nodes[i], m_nodes[i + 1], element_rest_length));
-//      system->Add(m_elements.back());
+      system->Add(m_elements.back());
     }
 
     // Telling the nodes their elements
@@ -324,8 +429,28 @@ namespace frydom {
 
   }
 
+  void FrLumpedMassCable::ActivateSpeedLimit(bool val) {
+    for (auto &node : m_nodes) {
+      node->ActivateSpeedLimit(val);
+    }
+  }
+
+  void FrLumpedMassCable::SetSpeedLimit(const double &speed_limit) {
+    for (auto &node : m_nodes) {
+      node->SetSpeedLimit(speed_limit);
+    }
+  }
+
+
   Force FrLumpedMassCable::GetTension(double s, FRAME_CONVENTION fc) const {
     // TODO
+  }
+
+  double FrLumpedMassCable::GetMass() const {
+    double mass = 0.;
+    for (const auto &node : m_nodes) {
+      mass += node->GetMass();
+    }
   }
 
   Position FrLumpedMassCable::GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const {

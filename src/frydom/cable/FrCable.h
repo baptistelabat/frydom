@@ -31,16 +31,36 @@ namespace frydom {
 
     // Cable properties
     // FIXME: mettre des valeurs par defaut non verolees !!!
-    double m_section = 0.05;                    ///< Section area of the cable, in m²
-    double m_youngModulus = 3.1416E10;          ///< Young modulus of the cable, in Pa
-    double m_linearDensity = 616.538;           ///< Linear density of the cable, in kg/m
-    double m_rayleighDamping = 0;               ///< Rayleigh damping of the cable (for dynamic cable only)
-    double m_breakingTension = 0;               ///< breaking tension, in N (for visualization purpose for now)
+    double m_section;                    ///< Section area of the cable, in m²
+    double m_youngModulus;          ///< Young modulus of the cable, in Pa
+    double m_linearDensity;           ///< Linear density of the cable, in kg/m
+
+    double m_hydroDiameter;
+
+    double m_transverseDragCoefficient;
+    double m_tangentialDragCoefficient;
+    double m_transverseAddedMassCoefficient;
+    double m_tangentialAddedMassCoefficient;
+
+    double m_rayleighDamping;               ///< Rayleigh damping of the cable (for dynamic cable only)
+    double m_breakingTension;               ///< breaking tension, in N (for visualization purpose for now)
 
    public:
 
     /// Default constructor
-    FrCableProperties() = default;
+    FrCableProperties() :
+        m_section(0.),
+        m_youngModulus(0.),
+        m_linearDensity(0.),
+        m_hydroDiameter(0.),
+        m_transverseDragCoefficient(0.),
+        m_tangentialDragCoefficient(0.),
+        m_transverseAddedMassCoefficient(0.),
+        m_tangentialAddedMassCoefficient(0.),
+        m_rayleighDamping(0.),
+        m_breakingTension(0.) {
+
+    };
 
     /// Cable properties constructor from Young modulus, diameter and linear density
     /// \param diameter diameter of the cable, in m
@@ -109,11 +129,36 @@ namespace frydom {
     /// Return the breaking tension of the cable
     double GetBreakingTension() const;
 
+    void SetRayleighDamping(double damping) { m_rayleighDamping = damping; }
+
     double GetRayleighDamping() const;
+
+    void SetHydrodynamicDiameter(double d) {m_hydroDiameter = d; }
+
+    double GetHydrodynamicDiameter() const { return m_hydroDiameter; }
+
+    void SetDragCoefficients(double transverse_drag_coeff, double tangential_drag_coeff) {
+      m_transverseDragCoefficient = transverse_drag_coeff;
+      m_tangentialDragCoefficient = tangential_drag_coeff;
+    }
+
+    inline double GetTransverseDragCoefficient() const { return m_transverseDragCoefficient; }
+
+    inline double GetTangentialDragCoefficient() const { return m_tangentialDragCoefficient; }
+
+    void SetAddedMassCoefficients(double transverse_added_mass_coeff, double tangential_added_mass_coeff) {
+      m_transverseAddedMassCoefficient = transverse_added_mass_coeff;
+      m_tangentialAddedMassCoefficient = tangential_added_mass_coeff;
+    }
+
+    inline double GetTransverseAddedMassCoefficient() const { return m_transverseAddedMassCoefficient; }
+
+    inline double GetTangentialAddedMassCoefficient() const { return m_tangentialAddedMassCoefficient; }
+
 
   };
 
-//  std::shared_ptr<FrCableProperties> make_cable_properties();
+  std::shared_ptr<FrCableProperties> make_cable_properties();
 
   std::shared_ptr<FrCableProperties>
   make_cable_properties(double diameter, double linearDensity, double youngModulus);
@@ -151,7 +196,7 @@ namespace frydom {
     // Cable properties
     std::shared_ptr<FrCableProperties> m_properties;    ///< Cable properties (section, Young modulus, linear density, etc.)
 
-    double m_unstrainedLength = 100;                    ///< Unstrained length of the cable in m
+    double m_unstretchedLength = 100;                    ///< Unstrained length of the cable in m
     double m_unrollingSpeed = 0;                        ///< linear unrolling speed of the cable in m/s
 //        double m_breakingTension = 0;                       ///< breaking tension in N (for visualization purpose for now)
 
@@ -167,11 +212,11 @@ namespace frydom {
     /// \param startingNode starting node
     /// \param endingNode ending node
     /// \param properties cable properties
-    /// \param unstrainedLength unstrained length, in m
+    /// \param unstretchedLength unstrained length, in m
     FrCable(const std::shared_ptr<FrNode> &startingNode,
             const std::shared_ptr<FrNode> &endingNode,
             const std::shared_ptr<FrCableProperties> &properties,
-            double unstrainedLength);
+            double unstretchedLength);
 
 //        /// Default destructor
 //        ~FrCable();
@@ -189,11 +234,11 @@ namespace frydom {
 
     /// Set the unstrained length of the cable
     /// \param L unstrained length
-    void SetUnstrainedLength(double L);
+    void SetUnstretchedLength(double L);
 
     /// Get the unstrained length of the cable
     /// \return unstrained length
-    double GetUnstrainedLength() const;
+    virtual double GetUnstretchedLength() const;
 
     /// Set the linear unrolling speed of the cable in m/s
     void SetUnrollingSpeed(double unrollingSpeed);

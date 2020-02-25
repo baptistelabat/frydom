@@ -19,7 +19,7 @@ namespace frydom {
 
     auto startNode = cable->GetStartingNode();
     auto endNode = cable->GetEndingNode();
-    auto unstretchedLength = cable->GetUnstrainedLength();
+    auto unstretchedLength = cable->GetUnstretchedLength();
 
     auto ocean = environment->GetOcean();
 
@@ -72,7 +72,7 @@ namespace frydom {
     }
 
     Position FrCableShapeInitializerTaut::GetPosition(const double &s, FRAME_CONVENTION fc) const {
-      assert(0. <= s <= m_cable->GetUnstrainedLength());
+      assert(0. <= s <= m_cable->GetUnstretchedLength());
       auto position = m_cable->GetStartingNode()->GetPositionInWorld(NWU) + s * m_unit_vector;
       if (IsNED(fc)) {
         internal::SwapFrameConvention<Position>(position);
@@ -87,7 +87,7 @@ namespace frydom {
         m_catenary_line(std::move(catenary_cable)) {}
 
     Position FrCableShapeInitializerSlack::GetPosition(const double &s, FRAME_CONVENTION fc) const {
-      assert(0. <= s <= m_cable->GetUnstrainedLength());
+      assert(0. <= s <= m_cable->GetUnstretchedLength());
       return m_catenary_line->GetNodePositionInWorld(s, fc);
     }
 
@@ -131,7 +131,7 @@ namespace frydom {
 
       m_horizontal_direction.normalize();
 
-      double L = m_cable->GetUnstrainedLength();
+      double L = m_cable->GetUnstretchedLength();
       m_lying_distance = 0.5 * (L + horizontal_spreading -
           (vertical_spreading * vertical_spreading) / (L - horizontal_spreading));
 
@@ -142,11 +142,11 @@ namespace frydom {
     }
 
     Position FrCableShapeInitializerSlackSeabed::GetPosition(const double &s, FRAME_CONVENTION fc) const {
-      assert(0. <= s <= m_cable->GetUnstrainedLength());
+      assert(0. <= s <= m_cable->GetUnstretchedLength());
 
       double stmp;
       if (m_reversed)
-        stmp = m_cable->GetUnstrainedLength() - s;
+        stmp = m_cable->GetUnstretchedLength() - s;
       else {
         stmp = s;
       }

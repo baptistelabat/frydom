@@ -33,11 +33,11 @@ namespace frydom {
                                  const std::shared_ptr<FrNode> &endingNode,
                                  const std::shared_ptr<FrCableProperties> &properties,
                                  bool elastic,
-                                 double unstrainedLength,
+                                 double unstretchedLength,
                                  FLUID_TYPE fluid) :
       FrLoggable(name, TypeToString(this), startingNode->GetBody()->GetSystem()),
       FrPrePhysicsItem(),
-      FrCable(startingNode, endingNode, properties, unstrainedLength),
+      FrCable(startingNode, endingNode, properties, unstretchedLength),
       m_elastic(elastic),
       c_fluid(fluid),
       m_is_for_shape_initialization(false) {
@@ -54,7 +54,7 @@ namespace frydom {
                      cable->GetEndingNode(),
                      cable->GetCableProperties(),
                      elastic,
-                     cable->GetUnstrainedLength(),
+                     cable->GetUnstretchedLength(),
                      fluid_type) {}
 
   void FrCatenaryLine::DefineLogMessages() {
@@ -102,15 +102,15 @@ namespace frydom {
     auto v = m_u.cross(p0pL / chord_length).cross(m_u);
 
     double lambda = 0;
-    if (m_unstrainedLength <= chord_length) {
+    if (m_unstretchedLength <= chord_length) {
       lambda = 0.2;
     } else if ((m_u.cross(p0pL)).norm() < 1e-4) {
       lambda = 1e6;
     } else {
-      lambda = sqrt(3. * (m_unstrainedLength * m_unstrainedLength - lz * lz) / (lx * lx + ly * ly));
+      lambda = sqrt(3. * (m_unstretchedLength * m_unstretchedLength - lz * lz) / (lx * lx + ly * ly));
     }
 
-    auto fu = -0.5 * m_q * (lz / tanh(lambda) - m_unstrainedLength);
+    auto fu = -0.5 * m_q * (lz / tanh(lambda) - m_unstretchedLength);
     auto fv = 0.5 * m_q * sqrt(lx * lx + ly * ly) / lambda;
 
     m_t0 = fu * m_u + fv * v;
@@ -139,7 +139,7 @@ namespace frydom {
   }
 
   Force FrCatenaryLine::GetEndingNodeTension(FRAME_CONVENTION fc) const {
-    return -GetTension(GetUnstrainedLength(), fc);
+    return -GetTension(GetUnstretchedLength(), fc);
   }
 
   Direction FrCatenaryLine::GetTangent(const double s, FRAME_CONVENTION fc) const {
@@ -155,7 +155,7 @@ namespace frydom {
     // Using a bisection algorithm to find the lowest point on the catenary line
 
     double s0 = 0.;
-    double s1 = GetUnstrainedLength();
+    double s1 = GetUnstretchedLength();
 
     auto p0 = GetStartingNode()->GetPositionInWorld(fc);
     auto p1 = GetEndingNode()->GetPositionInWorld(fc);
@@ -220,11 +220,11 @@ namespace frydom {
     return t0_qS.norm() - m_u.dot(t0_qS);
   }
 
-  double FrCatenaryLine::GetUnstrainedLength() const {
-    return m_unstrainedLength;
+  double FrCatenaryLine::GetUnstretchedLength() const {
+    return m_unstretchedLength;
   }
 
-  Position FrCatenaryLine::GetUnstrainedChord(double s, FRAME_CONVENTION fc) const {
+  Position FrCatenaryLine::GetUnstretchedChord(double s, FRAME_CONVENTION fc) const {
 
     Position pc = -(m_u / m_q) * ((GetTension(s, NWU)).norm() - m_t0.norm());
     auto rho_0 = _rho(0.);  // TODO: calculer directement
@@ -251,14 +251,14 @@ namespace frydom {
 
     Position pos;
     pos += GetStartingNode()->GetPositionInWorld(fc);
-    pos += GetUnstrainedChord(s, fc);
+    pos += GetUnstretchedChord(s, fc);
     pos += GetElasticIncrement(s, fc);
     return pos;
 
   }
 
   Position FrCatenaryLine::get_residual(FRAME_CONVENTION fc) const {
-    return GetNodePositionInWorld(m_unstrainedLength, fc) - GetEndingNode()->GetPositionInWorld(fc);
+    return GetNodePositionInWorld(m_unstretchedLength, fc) - GetEndingNode()->GetPositionInWorld(fc);
   }
 
   bool FrCatenaryLine::HasSeabedInteraction() const {
@@ -273,19 +273,19 @@ namespace frydom {
   mathutils::Matrix33<double> FrCatenaryLine::analytical_jacobian() const {
     auto t0n = m_t0.norm();
 
-    auto tL = m_t0 - c_qvec * m_unstrainedLength;
+    auto tL = m_t0 - c_qvec * m_unstretchedLength;
     auto tLn = tL.norm();
 
     auto rho_0 = _rho(0.);  // TODO: calculer directement
     double ln_q = 0.;
     double rho_L = 0.;
     if (rho_0 > 0.) {
-      rho_L = _rho(m_unstrainedLength);  // TODO: calculer directement
+      rho_L = _rho(m_unstretchedLength);  // TODO: calculer directement
       ln_q = log(rho_L / rho_0) / m_q;
     }
 
     double L_EA = 0.;
-    if (m_elastic) L_EA = m_unstrainedLength / m_properties->GetEA();
+    if (m_elastic) L_EA = m_unstretchedLength / m_properties->GetEA();
 
     mathutils::Vector3d<double> Ui;
     double Uit0;
@@ -434,7 +434,7 @@ namespace frydom {
                      const std::shared_ptr<FrNode> &endingNode,
                      const std::shared_ptr<FrCableProperties> &properties,
                      bool elastic,
-                     double unstrainedLength,
+                     double unstretchedLength,
                      FLUID_TYPE fluid) {
 
     auto CatenaryLine = std::make_shared<FrCatenaryLine>(name,
@@ -442,7 +442,7 @@ namespace frydom {
                                                          endingNode,
                                                          properties,
                                                          elastic,
-                                                         unstrainedLength,
+                                                         unstretchedLength,
                                                          fluid);
     startingNode->GetBody()->GetSystem()->Add(CatenaryLine);
     return CatenaryLine;

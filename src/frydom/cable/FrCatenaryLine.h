@@ -91,14 +91,14 @@ namespace frydom {
     /// \param endingNode ending node of the catenary line
     /// \param properties cable properties
     /// \param elastic true if the catenary line is elastic (remember only an elastic line can be strained !)
-    /// \param unstrainedLength Unstrained length of the catenary line
+    /// \param unstretchedLength Unstrained length of the catenary line
     /// \param fluid fluid type in which the catenary line is mostly in
     FrCatenaryLine(const std::string &name,
                    const std::shared_ptr<FrNode> &startingNode,
                    const std::shared_ptr<FrNode> &endingNode,
                    const std::shared_ptr<FrCableProperties> &properties,
                    bool elastic,
-                   double unstrainedLength,
+                   double unstretchedLength,
                    FLUID_TYPE fluid  // FIXME : on ne devrait pas specifier le fluide !!! on doit le recuperer de l'environnement...
     );
 
@@ -183,7 +183,7 @@ namespace frydom {
     /// \return line position
     Position GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const override;
 
-    double GetUnstrainedLength() const override;
+    double GetUnstretchedLength() const override;
 
     /// Get the current chord at lagrangian coordinate s
     /// This is the position of the line if there is no elasticity.
@@ -191,7 +191,7 @@ namespace frydom {
     /// \param s lagrangian coordinate
     /// \param fc frame convention (NED/NWU)
     /// \return current unstrained chord
-    Position GetUnstrainedChord(double s, FRAME_CONVENTION fc) const;
+    Position GetUnstretchedChord(double s, FRAME_CONVENTION fc) const;
 
     /// Get the current elastic increment at lagrangian coordinate s
     /// \param s lagrangian coordinate
@@ -273,7 +273,7 @@ namespace frydom {
                      const std::shared_ptr<FrNode> &endingNode,
                      const std::shared_ptr<FrCableProperties> &properties,
                      bool elastic,
-                     double unstrainedLength,
+                     double unstretchedLength,
                      FLUID_TYPE fluid);
 
 }// end namespace frydom
