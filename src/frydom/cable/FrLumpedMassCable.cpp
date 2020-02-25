@@ -113,7 +113,7 @@ namespace frydom {
 
 
       force = internal::Vector3dToChVector(morison_force);
-//      force.SetNull(); // FIXME : a retirer
+      force.SetNull(); // FIXME : a retirer
 
     }
 

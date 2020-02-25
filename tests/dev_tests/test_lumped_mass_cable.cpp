@@ -11,7 +11,10 @@ int main() {
 
   FrOffshoreSystem system("test_lumped_mass_cable");
 
-  system.GetEnvironment()->GetOcean()->ShowSeabed(false);
+  system.GetEnvironment()->GetOcean()->ShowSeabed(true);
+  system.GetEnvironment()->GetOcean()->GetSeabed()->SetBathymetry(-100, NWU);
+  system.GetEnvironment()->GetOcean()->GetSeabed()->GetSeabedGridAsset()->SetGrid(-500, 500, 500, -500, 500, 500);
+
   system.GetEnvironment()->GetOcean()->ShowFreeSurface(false);
 
   auto world_body = system.GetWorldBody();
