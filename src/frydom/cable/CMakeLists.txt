@@ -2,7 +2,6 @@ message(STATUS "    ...Cable")
 
 set(SRC_FILES
         FrCable.cpp
-#        FrCatenaryForce.cpp
         FrCatenaryLine.cpp
         FrMooringBuoy.cpp
         FrDynamicCable.cpp

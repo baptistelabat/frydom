@@ -7,19 +7,15 @@
 #include <chrono/fea/ChNodeFEAxyzrot.h>
 #include <chrono/fea/ChElementBeamEuler.h>
 #include <chrono/fea/ChVisualizationFEAmesh.h>
-#include "chrono/fea/ChBuilderBeam.h"
 
 #include "FrDynamicCable.h"
 
 #include "frydom/cable/FrCatenaryLine.h"
-#include "frydom/cable/FrCatenaryForce.h"
 
 #include "frydom/core/common/FrNode.h"
 #include "frydom/core/body/FrBody.h"
 
 #include "frydom/logging/FrTypeNames.h"
-
-#include <type_traits>
 
 namespace frydom {
 
