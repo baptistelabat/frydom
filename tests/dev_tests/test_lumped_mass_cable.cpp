@@ -20,6 +20,9 @@ int main() {
   system.GetEnvironment()->GetOcean()->GetFreeSurface()->GetFreeSurfaceGridAsset()->SetGrid(-500, 500, 500, -50, 50,
                                                                                             50);
 
+  system.GetEnvironment()->GetOcean()->GetCurrent()->MakeFieldUniform();
+  system.GetEnvironment()->GetOcean()->GetCurrent()->GetFieldUniform()->Set(90, 2, DEG, KNOT, NED, GOTO);
+
   auto world_body = system.GetWorldBody();
 
   auto anchor = world_body->NewNode("anchor");

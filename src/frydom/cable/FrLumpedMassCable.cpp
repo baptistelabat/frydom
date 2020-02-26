@@ -101,18 +101,17 @@ namespace frydom {
 
       m_node->GetRelativeAccelerationOfFluid(tangential_acceleration, transverse_acceleration);
 
-//      // Transverse added mass
-//      morison_force -=
-//          rho_fluid * cable_properties->GetTransverseAddedMassCoefficient() * cable_properties->GetSectionArea() * l
-//          * transverse_acceleration.norm() * transverse_acceleration;
-//
-//      // Tangential added mass
-//      morison_force -=
-//          rho_fluid * cable_properties->GetTangentialAddedMassCoefficient() * cable_properties->GetSectionArea() * l
-//          * tangential_acceleration.norm() * tangential_acceleration;
+      // Transverse added mass
+      morison_force +=
+          rho_fluid * cable_properties->GetTransverseAddedMassCoefficient() * cable_properties->GetSectionArea() * l
+          * transverse_acceleration.norm() * transverse_acceleration;
+
+      // Tangential added mass
+      morison_force +=
+          rho_fluid * cable_properties->GetTangentialAddedMassCoefficient() * cable_properties->GetSectionArea() * l
+          * tangential_acceleration.norm() * tangential_acceleration;
 
       force = internal::Vector3dToChVector(morison_force);
-//      force.SetNull(); // FIXME : a retirer
 
     }
 
@@ -428,7 +427,6 @@ namespace frydom {
 
     // Updating mass of elements
     UpdateNodesMasses();
-
 
   }
 

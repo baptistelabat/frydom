@@ -65,7 +65,9 @@ namespace frydom {
   }
 
   bool FrFreeSurface::IsInWater(const Position& position, FRAME_CONVENTION fc) const {
-    return GetPosition(position.x(), position.y(), fc) - position.z() <= 0.;
+    auto delta = position.z() - GetPosition(position.x(), position.y(), NWU);
+    if (IsNED(fc)) delta = -delta;
+    return delta <= 0.;
   }
 
   double FrFreeSurface::GetPressure(double x, double y, double z, FRAME_CONVENTION fc) const {
