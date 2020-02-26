@@ -33,6 +33,39 @@
 
 namespace frydom {
 
+
+  FrCatenaryForce::FrCatenaryForce(const std::string &name, FrBody *body, FrCatenaryLine *line,
+                                   FrCatenaryLine::LINE_SIDE side) :
+      FrForce(name, TypeToString(this), body),
+      m_line(line),
+      m_line_side(side) {}
+
+  bool FrCatenaryForce::IncludedInStaticAnalysis() const { return true; }
+
+  void FrCatenaryForce::Compute(double time) {
+
+    Position relpos;
+    Force ForceInWorld;
+
+    // Get the line tension from the corresponding node
+    switch (m_line_side) {
+      case FrCatenaryLine::LINE_START:
+        ForceInWorld = m_line->GetStartingNodeTension(NWU);
+        relpos = m_line->GetStartingNode()->GetNodePositionInBody(NWU);
+        break;
+
+      case FrCatenaryLine::LINE_END:
+        ForceInWorld = m_line->GetEndingNodeTension(NWU);
+        relpos = m_line->GetEndingNode()->GetNodePositionInBody(NWU);
+        break;
+    }
+
+    // Set the tension in the world reference frame and NWU frame convention
+    SetForceTorqueInWorldAtPointInBody(ForceInWorld, Torque(), relpos, NWU);
+
+  }
+
+
   FrCatenaryLine::FrCatenaryLine(const std::string &name,
                                  const std::shared_ptr<FrNode> &startingNode,
                                  const std::shared_ptr<FrNode> &endingNode,
@@ -395,7 +428,6 @@ namespace frydom {
       std::cout << "SEABED INTERACTION" << std::endl;
 
 
-
       auto seabed = GetSystem()->GetEnvironment()->GetOcean()->GetSeabed();
 
       // Intersection point searching using a bisection algorithm
@@ -428,7 +460,6 @@ namespace frydom {
       Position tdp_position = m_endingNode->GetPositionInWorld(NWU) + Ls * dir;
 
 
-
       std::cout << "Intersection point: " << tdp_position << std::endl;
 
 
@@ -438,20 +469,20 @@ namespace frydom {
 
       std::cout << "TDP is at " << Ls << "meters from the anchor" << std::endl;
 
-//      auto tdp_node = GetSystem()->GetWorldBody()->NewNode("tdp");
-      auto tdp_node = GetSystem()->GetEnvironment()->GetOcean()->GetSeabed()->NewAnchor(boost::lexical_cast<std::string>(boost::uuids::random_generator()()),
-          tdp_position.x(),
-                                                                                        tdp_position.y(), NWU);
-      tdp_node->SetPositionInWorld(tdp_position, NWU);
-
-      auto new_cable = make_catenary_line(boost::lexical_cast<std::string>(boost::uuids::random_generator()()),
-                                          m_startingNode,
-                                          tdp_node,
-                                          m_properties,
-                                          true,
-                                          sa,
-                                          c_fluid);
-      new_cable->Initialize();
+////      auto tdp_node = GetSystem()->GetWorldBody()->NewNode("tdp");
+//      auto tdp_node = GetSystem()->GetEnvironment()->GetOcean()->GetSeabed()->NewAnchor(boost::lexical_cast<std::string>(boost::uuids::random_generator()()),
+//          tdp_position.x(),
+//                                                                                        tdp_position.y(), NWU);
+//      tdp_node->SetPositionInWorld(tdp_position, NWU);
+//
+//      auto new_cable = make_catenary_line(boost::lexical_cast<std::string>(boost::uuids::random_generator()()),
+//                                          m_startingNode,
+//                                          tdp_node,
+//                                          m_properties,
+//                                          true,
+//                                          sa,
+//                                          c_fluid);
+//      new_cable->Initialize();
 
 
     }
