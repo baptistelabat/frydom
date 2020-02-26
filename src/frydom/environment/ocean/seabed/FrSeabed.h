@@ -25,6 +25,10 @@ namespace frydom {
 
   class FrSeabedGridAsset;
 
+//  class FrAnchor;
+  class FrNode;
+
+
   /**
    * \class FrSeabed
    * \brief Class for defining a seabed with either a finite or infinite water depth.
@@ -34,6 +38,9 @@ namespace frydom {
 
     FrOcean *m_ocean;            ///< Pointer to the ocean containing this asset
     bool m_infiniteDepth = false; ///< true if the infinite depth condition is applied
+
+    std::vector<std::shared_ptr<FrNode>> m_anchors;
+
 
    public:
     /// Default constructor
@@ -82,6 +89,9 @@ namespace frydom {
     /// \param fc the FRAME CONVENTION in which world_position is given
     /// \return true if the position is above the seabed
     bool IsAboveSeabed(const Position& world_position, FRAME_CONVENTION fc);
+
+    std::shared_ptr<FrNode> NewAnchor(const std::string& name, double x, double y, FRAME_CONVENTION fc);
+
 
     //---------------------------- Update-Initialize-StepFinalize ----------------------------//
 

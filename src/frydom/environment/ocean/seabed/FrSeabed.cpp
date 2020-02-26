@@ -15,10 +15,13 @@
 #include "FrSeabed.h"
 
 #include "frydom/asset/FrSeabedGridAsset.h"
-#include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/core/body/FrBody.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOcean.h"
+
+#include "frydom/core/body/FrBodyEasy.h"
+
+#include "frydom/cable/FrAnchor.h"
 
 
 namespace frydom {
@@ -38,6 +41,28 @@ namespace frydom {
 
     // TODO: voir s'il faut etre plus fin sur cette condition...
     return (world_position.z() - GetBathymetry(world_position.x(), world_position.y(), fc) > 0.);
+  }
+
+  // TODO: voir a utiliser un FrAnchor...
+  std::shared_ptr<FrNode> FrSeabed::NewAnchor(const std::string& name, double x, double y, FRAME_CONVENTION fc) {
+    Position anchor_position = {x, y, GetBathymetry(x, y, fc)};
+//    if (IsNED(fc)) {
+//      internal::SwapFrameConvention(anchor_position);
+//    }
+
+    auto anchor_body = m_ocean->GetEnvironment()->GetSystem()->NewBody(name + "_body");
+    anchor_body->SetPosition(anchor_position, fc);
+    makeItBox(anchor_body, 1, 1, 1, 1);
+    anchor_body->SetFixedInWorld(true);
+    // TODO: mettre asset d'ancre...
+
+    auto anchor_node = anchor_body->NewNode(name);
+
+    m_anchors.push_back(anchor_node);
+
+//    return std::dynamic_pointer_cast<FrAnchor>(anchor_body->NewNode(name));
+    return anchor_node;
+
   }
 
   //------------------------------------------------------------------------------------------------------------------

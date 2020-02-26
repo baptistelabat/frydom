@@ -10,6 +10,7 @@
 // ==========================================================================
 
 
+#include <cfloat>
 #include "FrKinematicStretching.h"
 #include "FrWaveField.h"
 

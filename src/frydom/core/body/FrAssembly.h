@@ -5,6 +5,9 @@
 #ifndef FRYDOM_FRASSEMBLY_H
 #define FRYDOM_FRASSEMBLY_H
 
+#include <memory>
+#include <vector>
+
 #include "frydom/core/common/FrObject.h"
 
 namespace frydom {

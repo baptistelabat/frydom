@@ -13,6 +13,7 @@
 #ifndef FRYDOM_FRWAVESPECTRUM_H
 #define FRYDOM_FRWAVESPECTRUM_H
 
+#include <memory>
 #include <vector>
 
 #include "frydom/core/common/FrObject.h"

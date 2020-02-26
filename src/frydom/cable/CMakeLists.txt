@@ -8,6 +8,7 @@ set(SRC_FILES
         FrDynamicCable.cpp
         FrLumpedMassCable.cpp
         FrCableShapeInitializer.cpp
+        FrAnchor.cpp
 )
 
 set(FRYDOM_CABLE_SOURCES "")
