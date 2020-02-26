@@ -12,10 +12,13 @@ int main() {
   FrOffshoreSystem system("test_lumped_mass_cable");
 
   system.GetEnvironment()->GetOcean()->ShowSeabed(true);
+  // FIXME: le no show seabed ne doit pas declencher de profondeur infine !!! Ca doit seulement concerner l'asset !!
   system.GetEnvironment()->GetOcean()->GetSeabed()->SetBathymetry(-100, NWU);
-  system.GetEnvironment()->GetOcean()->GetSeabed()->GetSeabedGridAsset()->SetGrid(-500, 500, 500, -500, 500, 500);
+  system.GetEnvironment()->GetOcean()->GetSeabed()->GetSeabedGridAsset()->SetGrid(-500, 500, 500, -50, 50, 50);
 
-  system.GetEnvironment()->GetOcean()->ShowFreeSurface(false);
+  system.GetEnvironment()->GetOcean()->ShowFreeSurface(true);
+  system.GetEnvironment()->GetOcean()->GetFreeSurface()->GetFreeSurfaceGridAsset()->SetGrid(-500, 500, 500, -50, 50,
+                                                                                            50);
 
   auto world_body = system.GetWorldBody();
 
@@ -30,27 +33,23 @@ int main() {
 
   auto cylinder_anchor = sphere->NewNode("cylinder_anchor");
 
-//  double diameter = 0.0332;
-//  double section = 0.25 * MU_PI * diameter * diameter;
-//  double linear_density = section * 3121;
-////  double E = 77.5e9;
-//  double E = 77.5e9;
-//  double rayleighDamping = 1e6;
 //  double cable_length = 64 + 425;
-  double cable_length = 600;
-  int nbElements = 10;
-
+  double cable_length = 64 + 425 +30; // Adding more length...
+//  double cable_length = 515;
+  int nb_elements = 20; // TODO: voir dans quelle mesure on peut augmenter la discretisation
 
 
   auto cable_properties = make_cable_properties();
 
-  cable_properties->SetLinearDensity(141); // FIXME: submerged weight = 122... Comment le prendre en compte comme cela ??? --> trouver un diametre equivalent...
-//  cable_properties->SetEA(602.59e6); // Vrai valeur
-  cable_properties->SetEA(602.59e3);
+//  // DONNEES A-FLOWT
+  cable_properties->SetLinearDensity(
+      141); // FIXME: submerged weight = 122... Comment le prendre en compte comme cela ??? --> trouver un diametre equivalent...
+  cable_properties->SetDiameter(0.168); // Vrai valeur
+  //  cable_properties->SetEA(602.59e6); // Vrai valeur // FIXME: EA est systematiquement calcule alors que c'est ca qu'on veut...
+  cable_properties->SetYoungModulus(602.58e6 / cable_properties->GetSectionArea());
   cable_properties->SetDragCoefficients(1.2, 0.);
   cable_properties->SetAddedMassCoefficients(2, 0.);
   cable_properties->SetHydrodynamicDiameter(0.168);
-  cable_properties->SetDiameter(0.168);
   cable_properties->SetRayleighDamping(1e4);
 
 
@@ -61,22 +60,23 @@ int main() {
 //  auto cable_properties = make_cable_properties(diameter, linear_density, E, rayleighDamping);
 
   auto cat_cable = make_catenary_line("catenary_cable", anchor, cylinder_anchor,
-      cable_properties, true, cable_length, AIR);
+                                      cable_properties, true, cable_length, WATER); // TODO: devrait y avoir une detection auto du fluide...
 
   auto cable = FrLumpedMassCable("cable",
                                  anchor,
                                  cylinder_anchor,
                                  cable_properties,
                                  cable_length,
-                                 nbElements);
+                                 nb_elements);
 
   cable.UpdateNodesMasses();
 
-  cable.SetSpeedLimit(1.);
+  cable.SetSpeedLimit(10);
   cable.ActivateSpeedLimit(true);
 
 
-  std::cout << "Cable total numerical mass: " << cable.GetMass() << std::endl;
+  std::cout << "Cable total numerical mass: " << cable.GetMass()
+            << std::endl; // FIXME: il manque la moitier de la masse de chacun des elements aux frontieres...
 
 
   std::cout << "Unstretched length: " << cable.GetUnstretchedLengthFromElements() << std::endl;
@@ -87,7 +87,7 @@ int main() {
 
   system.Initialize();
 
-  system.SetTimeStep(1e-4);
+  system.SetTimeStep(1e-2);
   system.RunInViewer();
 
   return 0;

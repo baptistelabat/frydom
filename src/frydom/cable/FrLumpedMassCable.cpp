@@ -31,7 +31,7 @@ namespace frydom {
     }
 
     double FrLMBoundaryNode::GetTension() const {
-      // TODO
+//      return (m_type == START) ? m_right_element->GetTension() : - m_left_element->GetTension(); // FIXME: verifier signes et implementer les GetTension sur les elements
     }
 
     Direction FrLMBoundaryNode::GetTensionDirection() const {
@@ -59,19 +59,14 @@ namespace frydom {
     FrLMNodeBuoyancyForce::FrLMNodeBuoyancyForce(frydom::internal::FrLMNode *node) : FrLMNodeForceBase(node) {}
 
     void FrLMNodeBuoyancyForce::UpdateState() {
-      force = 0.5 * (m_node->left_element()->GetVolume() + m_node->right_element()->GetVolume()) *
-              m_node->GetFluidDensityAtCurrentPosition();
+      force.SetNull();
+      force.z() = 0.5 * (m_node->left_element()->GetVolume() + m_node->right_element()->GetVolume()) *
+                  m_node->GetFluidDensityAtCurrentPosition();
     }
 
     FrLMNodeMorisonForce::FrLMNodeMorisonForce(frydom::internal::FrLMNode *node) : FrLMNodeForceBase(node) {}
 
     void FrLMNodeMorisonForce::UpdateState() {
-
-
-      Velocity tangential_velocity;
-      Velocity transverse_velocity;
-
-      m_node->GetRelativeVelocityOfFluid(tangential_velocity, transverse_velocity);
 
       double rho_fluid = m_node->GetFluidDensityAtCurrentPosition();
 
@@ -84,6 +79,11 @@ namespace frydom {
       Force morison_force;
 
       // TODO: verifier les signes...
+
+      Velocity tangential_velocity;
+      Velocity transverse_velocity;
+
+      m_node->GetRelativeVelocityOfFluid(tangential_velocity, transverse_velocity);
 
       // Transverse drag force
       morison_force =
@@ -101,19 +101,18 @@ namespace frydom {
 
       m_node->GetRelativeAccelerationOfFluid(tangential_acceleration, transverse_acceleration);
 
-      // Transverse added mass
-      morison_force -=
-          rho_fluid * cable_properties->GetTransverseAddedMassCoefficient() * cable_properties->GetSectionArea() * l
-          * transverse_acceleration.norm() * transverse_acceleration;
-
-      // Tangential added mass
-      morison_force -=
-          rho_fluid * cable_properties->GetTangentialAddedMassCoefficient() * cable_properties->GetSectionArea() * l
-          * tangential_acceleration.norm() * tangential_acceleration;
-
+//      // Transverse added mass
+//      morison_force -=
+//          rho_fluid * cable_properties->GetTransverseAddedMassCoefficient() * cable_properties->GetSectionArea() * l
+//          * transverse_acceleration.norm() * transverse_acceleration;
+//
+//      // Tangential added mass
+//      morison_force -=
+//          rho_fluid * cable_properties->GetTangentialAddedMassCoefficient() * cable_properties->GetSectionArea() * l
+//          * tangential_acceleration.norm() * tangential_acceleration;
 
       force = internal::Vector3dToChVector(morison_force);
-      force.SetNull(); // FIXME : a retirer
+//      force.SetNull(); // FIXME : a retirer
 
     }
 
@@ -173,7 +172,8 @@ namespace frydom {
     }
 
     Force FrLMNode::GetTotalForce() const {
-      return internal::ChVectorToVector3d<Force>(m_body->Get_Xforce());
+      return internal::ChVectorToVector3d<Force>(
+          m_body->Get_Xforce()); // FIXME: n'inclue a priori pas les tension d'element car pas exprime comme force exterieure sur le noeud !
     }
 
     bool FrLMNode::IsInWater() const {
@@ -181,7 +181,7 @@ namespace frydom {
     }
 
     double FrLMNode::GetFluidDensityAtCurrentPosition() const {
-      auto environment = m_cable->GetSystem()->GetEnvironment();
+      auto environment = m_cable->GetSystem()->GetEnvironment(); // TODO: dans environnement, avoir direct la methode GetFluidDensity(position)...
       auto fluid_type = environment->GetFluidTypeAtPointInWorld(GetPosition(), NWU, true);
       return environment->GetFluidDensity(fluid_type);
     }
@@ -213,10 +213,13 @@ namespace frydom {
         fluid_relative_velocity += ocean->GetFreeSurface()->GetWaveField()->GetVelocity(node_position, NWU);
 
       } else { // AIR
+
+        // Wind
         fluid_relative_velocity += m_cable->GetSystem()->GetEnvironment()->GetAtmosphere()->GetWind()->GetFluxVelocityInWorld(
             node_position, NWU);
       }
 
+      // Body velocity induced fluid flux
       fluid_relative_velocity -= GetVelocity();
 
       return fluid_relative_velocity;
@@ -314,13 +317,11 @@ namespace frydom {
                                                     double length,
                                                     double vel,
                                                     chrono::ChLinkSpringCB *link) {
-      // TODO: verifier le signe !!!
-      // TODO: gerer le cas ou la distance entre les noeuds est inferieure au rest_lenth... (tension nulle)
-
       double tension = 0.;
+
       // Stiffness part
       if (length > rest_length) {
-        tension = -m_cable_properties->GetEA() * (length / rest_length - 1.);
+        tension = - m_cable_properties->GetEA() * (length / rest_length - 1.);
       }
 
       // Damping part
@@ -375,6 +376,8 @@ namespace frydom {
     }
 
   }  // end namespace frydom::internal
+
+
 
   FrLumpedMassCable::FrLumpedMassCable(const std::string &name,
                                        const std::shared_ptr<FrNode> &startingNode,
@@ -443,7 +446,19 @@ namespace frydom {
 
 
   Force FrLumpedMassCable::GetTension(double s, FRAME_CONVENTION fc) const {
-    // TODO
+    assert(0. <= s <= GetUnstretchedLength());
+
+    // Determining the element where the coordinate s lies
+    Force tension;
+    double stot = 0.;
+    for (const auto &element : m_elements) {
+      stot += element->GetUnstretchedLength();
+      if (s < stot) {
+//        tension = element->GetTension(); // FIXME : implementer !!!
+        break;
+      }
+    }
+    return tension;
   }
 
   double FrLumpedMassCable::GetMass() const {

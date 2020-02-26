@@ -35,7 +35,7 @@ namespace frydom {
 
       virtual void SetSpeedLimit(const double &speed_limit) {}
 
-      virtual double GetTension() const {}
+      virtual double GetTension() const {} // FIXME: quelle est la signification de la tension sur un noeud ??? Pour un boundary node ok mais sinon ???
 
       virtual double GetMass() const { return 0.; }
 
@@ -100,11 +100,8 @@ namespace frydom {
 
       chrono::ChMarker *GetMarker() const override;
 
-//      void SetElements(std::shared_ptr<FrLMElement> left_element, std::shared_ptr<FrLMElement> right_element) override;
-
-     private:
+     private: // TODO: voir comment faire pour que ce type de noeud n'ait qu'un seul type d'element...
       std::shared_ptr<FrNode> m_frydom_node;
-//      std::shared_ptr<FrLMElement> m_element;
       TYPE m_type;
 
     };

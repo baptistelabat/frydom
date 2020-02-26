@@ -48,7 +48,8 @@ namespace frydom {
 
       if (catenary_line->HasSeabedInteraction()) {
         // Slack with seabed interactions
-        return std::make_unique<internal::FrCableShapeInitializerSlackSeabed>(cable, environment);
+//        return std::make_unique<internal::FrCableShapeInitializerSlackSeabed>(cable, environment); // FIXME: reactiver !!
+        return std::make_unique<internal::FrCableShapeInitializerSlack>(cable, std::move(catenary_line));
 
       } else {
         // Only slack

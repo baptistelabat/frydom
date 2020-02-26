@@ -28,7 +28,7 @@ namespace frydom {
     if (auto system = dynamic_cast<FrOffshoreSystem *>(this)) {
       return system;
     } else {
-      return GetParent()->GetSystem();
+      return m_parent->GetSystem();
     }
   }
 
