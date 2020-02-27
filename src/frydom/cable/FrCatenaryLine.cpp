@@ -43,27 +43,26 @@ namespace frydom {
 
   void FrCatenaryForce::Compute(double time) {
 
-    Position relpos;
-    Force ForceInWorld;
+    Position relative_position;
+    Force force_in_world;
 
     // Get the line tension from the corresponding node
     switch (m_line_side) {
       case FrCatenaryLine::LINE_START:
-        ForceInWorld = m_line->GetStartingNodeTension(NWU);
-        relpos = m_line->GetStartingNode()->GetNodePositionInBody(NWU);
+        force_in_world = m_line->GetStartingNodeTension(NWU);
+        relative_position = m_line->GetStartingNode()->GetNodePositionInBody(NWU);
         break;
 
       case FrCatenaryLine::LINE_END:
-        ForceInWorld = m_line->GetEndingNodeTension(NWU);
-        relpos = m_line->GetEndingNode()->GetNodePositionInBody(NWU);
+        force_in_world = m_line->GetEndingNodeTension(NWU);
+        relative_position = m_line->GetEndingNode()->GetNodePositionInBody(NWU);
         break;
     }
 
     // Set the tension in the world reference frame and NWU frame convention
-    SetForceTorqueInWorldAtPointInBody(ForceInWorld, Torque(), relpos, NWU);
+    SetForceTorqueInWorldAtPointInBody(force_in_world, Torque(), relative_position, NWU);
 
   }
-
 
   FrCatenaryLine::FrCatenaryLine(const std::string &name,
                                  const std::shared_ptr<FrNode> &startingNode,
