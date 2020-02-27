@@ -259,7 +259,7 @@ namespace frydom {
     double GetMass() const;
 
 
-    Position GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const override;
+    Position GetPositionInWorld(double s, FRAME_CONVENTION fc) const override;
 
     void DefineLogMessages() override;
 

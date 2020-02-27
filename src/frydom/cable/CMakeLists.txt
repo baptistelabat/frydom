@@ -3,6 +3,7 @@ message(STATUS "    ...Cable")
 set(SRC_FILES
         FrCable.cpp
         FrCatenaryLine.cpp
+        FrCatenaryLineSeabed.cpp
         FrMooringBuoy.cpp
         FrDynamicCable.cpp
         FrLumpedMassCable.cpp

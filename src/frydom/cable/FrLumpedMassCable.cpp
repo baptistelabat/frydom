@@ -466,7 +466,7 @@ namespace frydom {
     }
   }
 
-  Position FrLumpedMassCable::GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const {
+  Position FrLumpedMassCable::GetPositionInWorld(double s, FRAME_CONVENTION fc) const {
     // TODO
   }
 

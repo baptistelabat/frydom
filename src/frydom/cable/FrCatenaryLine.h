@@ -48,7 +48,10 @@ namespace frydom {
    */
   //TODO: check that the chrono_objects are deleted correctly, when the frydom objects are deleted (assets included)
   class FrCatenaryLine
-      : public FrLoggable<FrOffshoreSystem>, public FrCable, public FrPrePhysicsItem, public FrCatenaryAssetOwner {
+      : public FrLoggable<FrOffshoreSystem>,
+        public FrCable,
+        public FrPrePhysicsItem,
+        public FrCatenaryAssetOwner {
 
    public:
 
@@ -57,11 +60,11 @@ namespace frydom {
       LINE_END
     };
 
-   private:
+   protected:
 
     // Catenary line properties
     bool m_elastic = true;              ///< Is the catenary line elastic
-    mathutils::Vector3d<double> m_t0;   ///< Tension vector at the starting node
+    Force m_t0;   ///< Tension vector at the starting node
     double m_q;                         ///< Uniform distributed load, in N/m : (linear density + hydrostatic)*g
     Direction m_u = {0., 0., -1.};        ///< Uniform distributed load direction
 
@@ -182,7 +185,7 @@ namespace frydom {
     /// \param s lagrangian coordinate
     /// \param fc frame convention (NED/NWU)
     /// \return line position
-    Position GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const override;
+    Position GetPositionInWorld(double s, FRAME_CONVENTION fc) const override;
 
     double GetUnstretchedLength() const override;
 
@@ -214,7 +217,7 @@ namespace frydom {
     //--------------------------------------------------------------------------------------------------------------
     // solving methods
     /// Solve the nonlinear catenary equation for line tension using a Relaxed Newton-Raphson solver
-    void solve();
+    virtual void solve();
 
     /// Guess the line tension from line boundary positions
     /// Used to initialize the Newton-Raphson algorithm.
@@ -314,6 +317,6 @@ namespace frydom {
   };
 
 
-}// end namespace frydom
+}  // end namespace frydom
 
 #endif //FRYDOM_FRCATENARYLINE_H

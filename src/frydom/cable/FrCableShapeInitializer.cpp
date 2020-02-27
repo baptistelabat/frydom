@@ -89,7 +89,7 @@ namespace frydom {
 
     Position FrCableShapeInitializerSlack::GetPosition(const double &s, FRAME_CONVENTION fc) const {
       assert(0. <= s <= m_cable->GetUnstretchedLength());
-      return m_catenary_line->GetNodePositionInWorld(s, fc);
+      return m_catenary_line->GetPositionInWorld(s, fc);
     }
 
     FrCableShapeInitializerSlackSeabed::FrCableShapeInitializerSlackSeabed(FrCable *cable,

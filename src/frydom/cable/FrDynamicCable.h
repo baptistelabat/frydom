@@ -237,7 +237,7 @@ namespace frydom {
     /// \param s lagrangian coordinate
     /// \param fc frame convention (NED/NWU)
     /// \return line position
-    Position GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const override;
+    Position GetPositionInWorld(double s, FRAME_CONVENTION fc) const override;
 
     // Virtual methods, from FEAMesh
 

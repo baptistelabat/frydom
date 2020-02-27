@@ -83,14 +83,14 @@ namespace frydom {
 
     chrono::ChVector<double> p0, p1;
     chrono::ChColor color;
-    p0 = internal::Vector3dToChVector(m_catenaryLine->GetNodePositionInWorld(s0, NWU));
+    p0 = internal::Vector3dToChVector(m_catenaryLine->GetPositionInWorld(s0, NWU));
 
 
     auto index = m_chronoAsset->GetAssets().size();
 
     while (s1 <= m_catenaryLine->GetUnstretchedLength() - ds) {
 
-      p1 = internal::Vector3dToChVector(m_catenaryLine->GetNodePositionInWorld(s1, NWU));
+      p1 = internal::Vector3dToChVector(m_catenaryLine->GetPositionInWorld(s1, NWU));
       auto newElement = std::make_shared<chrono::ChLineShape>();
       color = chrono::ChColor::ComputeFalseColor(m_catenaryLine->GetTension(0.5 * (s0 + s1), NWU).norm(), 0,
                                                  m_maxTension, true);
@@ -111,7 +111,7 @@ namespace frydom {
     auto last_ele = m_elements.back();
     s1 = m_catenaryLine->GetUnstretchedLength();
     if (std::get<1>(last_ele) < m_catenaryLine->GetUnstretchedLength()) {
-      p1 = internal::Vector3dToChVector(m_catenaryLine->GetNodePositionInWorld(s1, NWU));
+      p1 = internal::Vector3dToChVector(m_catenaryLine->GetPositionInWorld(s1, NWU));
       auto newElement = std::make_shared<chrono::ChLineShape>();
       color = chrono::ChColor::ComputeFalseColor(m_catenaryLine->GetTension(0.5 * (s0 + s1), NWU).norm(), 0,
                                                  m_maxTension, true);
@@ -129,7 +129,7 @@ namespace frydom {
     chrono::ChVector<double> p0, p1;
     double s0, s1;
 
-    p0 = internal::Vector3dToChVector(m_catenaryLine->GetNodePositionInWorld(0., NWU));
+    p0 = internal::Vector3dToChVector(m_catenaryLine->GetPositionInWorld(0., NWU));
 
     for (auto &element : m_elements) {
 
@@ -139,7 +139,7 @@ namespace frydom {
 
       auto lineSegment = std::dynamic_pointer_cast<chrono::geometry::ChLineSegment>(lineShape->GetLineGeometry());
 
-      p1 = internal::Vector3dToChVector(m_catenaryLine->GetNodePositionInWorld(s1, NWU));
+      p1 = internal::Vector3dToChVector(m_catenaryLine->GetPositionInWorld(s1, NWU));
 
       lineSegment->pA = p0;
       lineSegment->pB = p1;

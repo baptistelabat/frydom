@@ -46,7 +46,7 @@ namespace frydom {
 
     virtual double GetUnstretchedLength() const = 0;
 
-    virtual Position GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const = 0;
+    virtual Position GetPositionInWorld(double s, FRAME_CONVENTION fc) const = 0;
 
     virtual Force GetTension(double s, FRAME_CONVENTION fc) const = 0;
 

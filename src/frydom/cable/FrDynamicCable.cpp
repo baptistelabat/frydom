@@ -190,7 +190,7 @@ namespace frydom {
           if (elastic) {
             ChronoFrame.SetPos(ChronoFrame.GetPos() + ds * AB);
           } else {
-            ChronoFrame.SetPos(internal::Vector3dToChVector(catenaryLine->GetNodePositionInWorld(s, NWU)));
+            ChronoFrame.SetPos(internal::Vector3dToChVector(catenaryLine->GetPositionInWorld(s, NWU)));
             e1 = internal::Vector3dToChVector(catenaryLine->GetTension(s, NWU));
             e1.Normalize();
             e2 = e3.Cross(e1);
@@ -399,7 +399,7 @@ namespace frydom {
 
   }
 
-  Position FrDynamicCable::GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const {
+  Position FrDynamicCable::GetPositionInWorld(double s, FRAME_CONVENTION fc) const {
 
     assert(s <= GetUnstretchedLength());
 

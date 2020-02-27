@@ -33,7 +33,9 @@
 namespace frydom {
 
 
-  FrCatenaryForce::FrCatenaryForce(const std::string &name, FrBody *body, FrCatenaryLine *line,
+  FrCatenaryForce::FrCatenaryForce(const std::string &name,
+                                   FrBody *body,
+                                   FrCatenaryLine *line,
                                    FrCatenaryLine::LINE_SIDE side) :
       FrForce(name, TypeToString(this), body),
       m_line(line),
@@ -228,7 +230,7 @@ namespace frydom {
       iter++;
 
       s = s0 + 0.5 * (s1 - s0);
-      position = GetNodePositionInWorld(s, fc);
+      position = GetPositionInWorld(s, fc);
 
       dz = GetTangent(s, fc)[2];
 
@@ -283,7 +285,7 @@ namespace frydom {
     return Inc;
   }
 
-  Position FrCatenaryLine::GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const {
+  Position FrCatenaryLine::GetPositionInWorld(double s, FRAME_CONVENTION fc) const {
 
     Position pos;
     pos += GetStartingNode()->GetPositionInWorld(fc);
@@ -294,7 +296,7 @@ namespace frydom {
   }
 
   Position FrCatenaryLine::get_residual(FRAME_CONVENTION fc) const {
-    return GetNodePositionInWorld(m_unstretchedLength, fc) - GetEndingNode()->GetPositionInWorld(fc);
+    return GetPositionInWorld(m_unstretchedLength, fc) - GetEndingNode()->GetPositionInWorld(fc);
   }
 
   bool FrCatenaryLine::HasSeabedInteraction() const {
@@ -412,7 +414,7 @@ namespace frydom {
 
     // Initializing U matrix
     c_Umat.SetIdentity();
-    c_Umat -= m_u * (m_u.transpose().eval());
+    c_Umat -= m_u * (m_u.transpose().eval()); // FIXME: pourquoi le eval ??
 
     // First guess for the tension
     // FIXME: supprimer ces initialize de node et mettre en place la séparation des SetupInitial des FrPhysicsItems en fonction des Pre, Mid et Post.
@@ -421,69 +423,69 @@ namespace frydom {
     guess_tension();
     solve();
 
-    // C'est isi qu'on travaille pour faire de l'interaction seabed
-    if (HasSeabedInteraction()) {
-      std::cout << "SEABED INTERACTION" << std::endl;
-
-
-      auto seabed = GetSystem()->GetEnvironment()->GetOcean()->GetSeabed();
-
-      // Intersection point searching using a bisection algorithm
-      double sa = 0.;
-      double sb = GetUnstretchedLength();
-      while (std::fabs(sb - sa) > 1e-6) {
-
-        double sm = 0.5 * (sa + sb);
-
-        Position Pa = GetNodePositionInWorld(sa, NWU);
-        double da = Pa.z() - seabed->GetBathymetry(Pa.x(), Pa.y(), NWU);
-
-        Position Pm = GetNodePositionInWorld(sm, NWU);
-        double dm = Pm.z() - seabed->GetBathymetry(Pm.x(), Pm.y(), NWU);
-
-        if (da * dm <= 0.) {
-          sb = sm;
-        } else {
-          sa = sm;
-        }
-
-      }
-
-//      Position tdp_position = GetNodePositionInWorld(sa, NWU);
-      Direction dir = m_startingNode->GetPositionInWorld(NWU) - m_endingNode->GetPositionInWorld(NWU);
-      dir.z() = 0.;
-      dir /= dir.norm();
-
-      double Ls = GetUnstretchedLength() - sa;
-      Position tdp_position = m_endingNode->GetPositionInWorld(NWU) + Ls * dir;
-
-
-      std::cout << "Intersection point: " << tdp_position << std::endl;
-
-
-      // Distance ancre -> TDP
-      // FIXME: il faut definir quelque chose pour declarer quel noeud est une ancre. En l'etat, ca ne fonctionnera pas
-//      double Ls = (m_endingNode->GetPositionInWorld(NWU) - tdp_position).norm();
-
-      std::cout << "TDP is at " << Ls << "meters from the anchor" << std::endl;
-
-////      auto tdp_node = GetSystem()->GetWorldBody()->NewNode("tdp");
-//      auto tdp_node = GetSystem()->GetEnvironment()->GetOcean()->GetSeabed()->NewAnchor(boost::lexical_cast<std::string>(boost::uuids::random_generator()()),
-//          tdp_position.x(),
-//                                                                                        tdp_position.y(), NWU);
-//      tdp_node->SetPositionInWorld(tdp_position, NWU);
+//    // C'est isi qu'on travaille pour faire de l'interaction seabed
+//    if (HasSeabedInteraction()) {
+//      std::cout << "SEABED INTERACTION" << std::endl;
 //
-//      auto new_cable = make_catenary_line(boost::lexical_cast<std::string>(boost::uuids::random_generator()()),
-//                                          m_startingNode,
-//                                          tdp_node,
-//                                          m_properties,
-//                                          true,
-//                                          sa,
-//                                          c_fluid);
-//      new_cable->Initialize();
-
-
-    }
+//
+//      auto seabed = GetSystem()->GetEnvironment()->GetOcean()->GetSeabed();
+//
+//      // Intersection point searching using a bisection algorithm
+//      double sa = 0.;
+//      double sb = GetUnstretchedLength();
+//      while (std::fabs(sb - sa) > 1e-6) {
+//
+//        double sm = 0.5 * (sa + sb);
+//
+//        Position Pa = GetPositionInWorld(sa, NWU);
+//        double da = Pa.z() - seabed->GetBathymetry(Pa.x(), Pa.y(), NWU);
+//
+//        Position Pm = GetPositionInWorld(sm, NWU);
+//        double dm = Pm.z() - seabed->GetBathymetry(Pm.x(), Pm.y(), NWU);
+//
+//        if (da * dm <= 0.) {
+//          sb = sm;
+//        } else {
+//          sa = sm;
+//        }
+//
+//      }
+//
+////      Position tdp_position = GetNodePositionInWorld(sa, NWU);
+//      Direction dir = m_startingNode->GetPositionInWorld(NWU) - m_endingNode->GetPositionInWorld(NWU);
+//      dir.z() = 0.;
+//      dir /= dir.norm();
+//
+//      double Ls = GetUnstretchedLength() - sa;
+//      Position tdp_position = m_endingNode->GetPositionInWorld(NWU) + Ls * dir;
+//
+//
+//      std::cout << "Intersection point: " << tdp_position << std::endl;
+//
+//
+//      // Distance ancre -> TDP
+//      // FIXME: il faut definir quelque chose pour declarer quel noeud est une ancre. En l'etat, ca ne fonctionnera pas
+////      double Ls = (m_endingNode->GetPositionInWorld(NWU) - tdp_position).norm();
+//
+//      std::cout << "TDP is at " << Ls << "meters from the anchor" << std::endl;
+//
+//////      auto tdp_node = GetSystem()->GetWorldBody()->NewNode("tdp");
+////      auto tdp_node = GetSystem()->GetEnvironment()->GetOcean()->GetSeabed()->NewAnchor(boost::lexical_cast<std::string>(boost::uuids::random_generator()()),
+////          tdp_position.x(),
+////                                                                                        tdp_position.y(), NWU);
+////      tdp_node->SetPositionInWorld(tdp_position, NWU);
+////
+////      auto new_cable = make_catenary_line(boost::lexical_cast<std::string>(boost::uuids::random_generator()()),
+////                                          m_startingNode,
+////                                          tdp_node,
+////                                          m_properties,
+////                                          true,
+////                                          sa,
+////                                          c_fluid);
+////      new_cable->Initialize();
+//
+//
+//    }
 
 
     if (!m_is_for_shape_initialization) {
