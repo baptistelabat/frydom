@@ -37,7 +37,7 @@ namespace frydom {
    protected:
 
     FrOcean *m_ocean;            ///< Pointer to the ocean containing this asset
-    bool m_infiniteDepth = false; ///< true if the infinite depth condition is applied
+    bool m_is_infinite_depth = false; ///< true if the infinite depth condition is applied
 
     std::vector<std::shared_ptr<FrNode>> m_anchors;
 
@@ -70,27 +70,32 @@ namespace frydom {
     /// Get the mean bathymetry of the seabed
     /// \param fc frame convention (NED/NWU)
     /// \return mean bathymetry of the seabed
-    virtual const double GetBathymetry(FRAME_CONVENTION fc) const = 0;
+    virtual double GetBathymetry(FRAME_CONVENTION fc) const = 0;
 
     /// Get the local bathymetry at the position (x,y)
     /// \param x x position
     /// \param y y position
     /// \param fc frame convention (NED/NWU)
     /// \return local bathymetry
-    virtual const double GetBathymetry(double x, double y, FRAME_CONVENTION fc) const = 0;
+    virtual double GetBathymetry(double x, double y, FRAME_CONVENTION fc) const = 0;
 
     /// Check if the infinite depth condition is applied. If true, a FrNullSeabed is instantiated, otherwise it is a
     /// FrMeanSeabed.
     /// \return true if the infinite depth condition is applied.
-    bool GetInfiniteDepth();
+    bool IsInfiniteDepth();
 
     /// Returns true if a position in world is above the seabed
     /// \param world_position position in world coordinate system
     /// \param fc the FRAME CONVENTION in which world_position is given
     /// \return true if the position is above the seabed
-    bool IsAboveSeabed(const Position& world_position, FRAME_CONVENTION fc);
+    bool IsAboveSeabed(const Position &world_position, FRAME_CONVENTION fc) const;
 
-    std::shared_ptr<FrNode> NewAnchor(const std::string& name, double x, double y, FRAME_CONVENTION fc);
+    bool IsOnSeabed(const Position &world_position,
+                    FRAME_CONVENTION fc,
+                    const double rtol = 1e-5,
+                    const double atol = 1e-8) const;
+
+    std::shared_ptr<FrNode> NewAnchor(const std::string &name, double x, double y, FRAME_CONVENTION fc);
 
 
     //---------------------------- Update-Initialize-StepFinalize ----------------------------//
@@ -133,14 +138,14 @@ namespace frydom {
     /// Get the mean bathymetry of the seabed
     /// \param fc frame convention (NED/NWU)
     /// \return mean bathymetry of the seabed
-    const double GetBathymetry(FRAME_CONVENTION fc) const override;
+    double GetBathymetry(FRAME_CONVENTION fc) const override;
 
     /// Get the local bathymetry at the position (x,y)
     /// \param x x position
     /// \param y y position
     /// \param fc frame convention (NED/NWU)
     /// \return local bathymetry
-    const double GetBathymetry(double x, double y, FRAME_CONVENTION fc) const override;
+    double GetBathymetry(double x, double y, FRAME_CONVENTION fc) const override;
 
     //---------------------------- Update-Initialize-StepFinalize ----------------------------//
 
@@ -193,14 +198,14 @@ namespace frydom {
     /// Get the mean bathymetry of the seabed
     /// \param fc frame convention (NED/NWU)
     /// \return mean bathymetry of the seabed
-    const double GetBathymetry(FRAME_CONVENTION fc) const override;
+    double GetBathymetry(FRAME_CONVENTION fc) const override;
 
     /// Get the local bathymetry at the position (x,y)
     /// \param x x position
     /// \param y y position
     /// \param fc frame convention (NED/NWU)
     /// \return local bathymetry
-    const double GetBathymetry(double x, double y, FRAME_CONVENTION fc) const override;
+    double GetBathymetry(double x, double y, FRAME_CONVENTION fc) const override;
 
     //---------------------------- Update-Initialize-StepFinalize ----------------------------//
 

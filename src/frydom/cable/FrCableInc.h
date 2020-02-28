@@ -13,6 +13,7 @@
 #define FRYDOM_FRCABLEINC_H
 
 #include "FrCatenaryLine.h"
+#include "FrCatenaryLineSeabed.h"
 #include "FrDynamicCable.h"
 #include "FrMooringBuoy.h"
 #include "FrLumpedMassCable.h"

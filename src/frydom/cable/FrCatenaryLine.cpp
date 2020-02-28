@@ -173,15 +173,15 @@ namespace frydom {
   }
 
   Force FrCatenaryLine::GetStartingNodeTension(FRAME_CONVENTION fc) const {
-    return GetTension(0., fc);
+    return FrCatenaryLine::GetTension(0., fc);
   }
 
   Force FrCatenaryLine::GetEndingNodeTension(FRAME_CONVENTION fc) const {
-    return -GetTension(GetUnstretchedLength(), fc);
+    return -FrCatenaryLine::GetTension(FrCatenaryLine::GetUnstretchedLength(), fc);
   }
 
   Direction FrCatenaryLine::GetTangent(const double s, FRAME_CONVENTION fc) const {
-    return (Direction) GetTension(s, fc).normalized();
+    return (Direction) FrCatenaryLine::GetTension(s, fc).normalized();
   }
 
   void FrCatenaryLine::GetLowestPoint(Position &position,
@@ -193,13 +193,13 @@ namespace frydom {
     // Using a bisection algorithm to find the lowest point on the catenary line
 
     double s0 = 0.;
-    double s1 = GetUnstretchedLength();
+    double s1 = FrCatenaryLine::GetUnstretchedLength();
 
     auto p0 = GetStartingNode()->GetPositionInWorld(fc);
     auto p1 = GetEndingNode()->GetPositionInWorld(fc);
 
-    double dz0 = GetTangent(s0, fc).z();
-    double dz1 = GetTangent(s1, fc).z();
+    double dz0 = FrCatenaryLine::GetTangent(s0, fc).z();
+    double dz1 = FrCatenaryLine::GetTangent(s1, fc).z();
 
     // Dealing with border cases where the minimum point is at one of the boundary node
     if (dz0 * dz1 > 0.) {
@@ -230,7 +230,7 @@ namespace frydom {
       iter++;
 
       s = s0 + 0.5 * (s1 - s0);
-      position = GetPositionInWorld(s, fc);
+      position = FrCatenaryLine::GetPositionInWorld(s, fc);
 
       dz = GetTangent(s, fc)[2];
 
@@ -254,7 +254,7 @@ namespace frydom {
   }
 
   double FrCatenaryLine::_rho(double s) const {
-    auto t0_qS = GetTension(s, NWU);
+    auto t0_qS = FrCatenaryLine::GetTension(s, NWU);
     return t0_qS.norm() - m_u.dot(t0_qS);
   }
 
@@ -264,7 +264,7 @@ namespace frydom {
 
   Position FrCatenaryLine::GetUnstretchedChord(double s, FRAME_CONVENTION fc) const {
 
-    Position pc = -(m_u / m_q) * ((GetTension(s, NWU)).norm() - m_t0.norm());
+    Position pc = -(m_u / m_q) * ((FrCatenaryLine::GetTension(s, NWU)).norm() - m_t0.norm());
     auto rho_0 = _rho(0.);  // TODO: calculer directement
 
     if (rho_0 > 0.) {
@@ -286,7 +286,7 @@ namespace frydom {
   }
 
   Position FrCatenaryLine::GetPositionInWorld(double s, FRAME_CONVENTION fc) const {
-
+    assert(0. <= s <= m_unstretchedLength);
     Position pos;
     pos += GetStartingNode()->GetPositionInWorld(fc);
     pos += GetUnstretchedChord(s, fc);
@@ -296,7 +296,7 @@ namespace frydom {
   }
 
   Position FrCatenaryLine::get_residual(FRAME_CONVENTION fc) const {
-    return GetPositionInWorld(m_unstretchedLength, fc) - GetEndingNode()->GetPositionInWorld(fc);
+    return FrCatenaryLine::GetPositionInWorld(FrCatenaryLine::GetUnstretchedLength(), fc) - GetEndingNode()->GetPositionInWorld(fc);
   }
 
   bool FrCatenaryLine::HasSeabedInteraction() const {
@@ -403,6 +403,8 @@ namespace frydom {
       event_logger::warn(GetTypeName(), GetName(), "Could not converge in max {} iterations", m_itermax);
     }
 
+    std::cout << "cat line solver converged in " << iter << " iterations"<< std::endl;
+
   }
 
   void FrCatenaryLine::Initialize() {
@@ -421,72 +423,7 @@ namespace frydom {
     m_startingNode->Initialize();
     m_endingNode->Initialize();
     guess_tension();
-    solve();
-
-//    // C'est isi qu'on travaille pour faire de l'interaction seabed
-//    if (HasSeabedInteraction()) {
-//      std::cout << "SEABED INTERACTION" << std::endl;
-//
-//
-//      auto seabed = GetSystem()->GetEnvironment()->GetOcean()->GetSeabed();
-//
-//      // Intersection point searching using a bisection algorithm
-//      double sa = 0.;
-//      double sb = GetUnstretchedLength();
-//      while (std::fabs(sb - sa) > 1e-6) {
-//
-//        double sm = 0.5 * (sa + sb);
-//
-//        Position Pa = GetPositionInWorld(sa, NWU);
-//        double da = Pa.z() - seabed->GetBathymetry(Pa.x(), Pa.y(), NWU);
-//
-//        Position Pm = GetPositionInWorld(sm, NWU);
-//        double dm = Pm.z() - seabed->GetBathymetry(Pm.x(), Pm.y(), NWU);
-//
-//        if (da * dm <= 0.) {
-//          sb = sm;
-//        } else {
-//          sa = sm;
-//        }
-//
-//      }
-//
-////      Position tdp_position = GetNodePositionInWorld(sa, NWU);
-//      Direction dir = m_startingNode->GetPositionInWorld(NWU) - m_endingNode->GetPositionInWorld(NWU);
-//      dir.z() = 0.;
-//      dir /= dir.norm();
-//
-//      double Ls = GetUnstretchedLength() - sa;
-//      Position tdp_position = m_endingNode->GetPositionInWorld(NWU) + Ls * dir;
-//
-//
-//      std::cout << "Intersection point: " << tdp_position << std::endl;
-//
-//
-//      // Distance ancre -> TDP
-//      // FIXME: il faut definir quelque chose pour declarer quel noeud est une ancre. En l'etat, ca ne fonctionnera pas
-////      double Ls = (m_endingNode->GetPositionInWorld(NWU) - tdp_position).norm();
-//
-//      std::cout << "TDP is at " << Ls << "meters from the anchor" << std::endl;
-//
-//////      auto tdp_node = GetSystem()->GetWorldBody()->NewNode("tdp");
-////      auto tdp_node = GetSystem()->GetEnvironment()->GetOcean()->GetSeabed()->NewAnchor(boost::lexical_cast<std::string>(boost::uuids::random_generator()()),
-////          tdp_position.x(),
-////                                                                                        tdp_position.y(), NWU);
-////      tdp_node->SetPositionInWorld(tdp_position, NWU);
-////
-////      auto new_cable = make_catenary_line(boost::lexical_cast<std::string>(boost::uuids::random_generator()()),
-////                                          m_startingNode,
-////                                          tdp_node,
-////                                          m_properties,
-////                                          true,
-////                                          sa,
-////                                          c_fluid);
-////      new_cable->Initialize();
-//
-//
-//    }
-
+    FrCatenaryLine::solve();
 
     if (!m_is_for_shape_initialization) {
       // Building the catenary forces and adding them to bodies
@@ -519,7 +456,7 @@ namespace frydom {
 
   void FrCatenaryLine::UpdateState() {
     FrCable::UpdateState();
-    solve();
+    FrCatenaryLine::solve();
   }
 
   void FrCatenaryLine::StepFinalize() {
@@ -540,15 +477,15 @@ namespace frydom {
                      double unstretchedLength,
                      FLUID_TYPE fluid) {
 
-    auto CatenaryLine = std::make_shared<FrCatenaryLine>(name,
-                                                         startingNode,
-                                                         endingNode,
-                                                         properties,
-                                                         elastic,
-                                                         unstretchedLength,
-                                                         fluid);
-    startingNode->GetBody()->GetSystem()->Add(CatenaryLine);
-    return CatenaryLine;
+    auto line = std::make_shared<FrCatenaryLine>(name,
+                                                 startingNode,
+                                                 endingNode,
+                                                 properties,
+                                                 elastic,
+                                                 unstretchedLength,
+                                                 fluid);
+    startingNode->GetBody()->GetSystem()->Add(line);
+    return line;
 
   }
 

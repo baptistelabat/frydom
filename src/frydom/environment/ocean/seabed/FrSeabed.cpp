@@ -33,18 +33,33 @@ namespace frydom {
 
   FrOcean *FrSeabed::GetOcean() const { return m_ocean; }
 
-  bool FrSeabed::GetInfiniteDepth() { return m_infiniteDepth; }
+  bool FrSeabed::IsInfiniteDepth() { return m_is_infinite_depth; }
 
-  bool FrSeabed::IsAboveSeabed(const Position& world_position, FRAME_CONVENTION fc) {
-    if (m_infiniteDepth)
+  bool FrSeabed::IsAboveSeabed(const Position &world_position, FRAME_CONVENTION fc) const {
+    if (m_is_infinite_depth)
       return true; // Always true...
 
-    // TODO: voir s'il faut etre plus fin sur cette condition...
-    return (world_position.z() - GetBathymetry(world_position.x(), world_position.y(), fc) > 0.);
+    double dz = world_position.z() - GetBathymetry(world_position.x(), world_position.y(), fc);
+    if (IsNED(fc)) {
+      dz = -dz;
+    }
+
+    return dz > 0.;
+  }
+
+  bool FrSeabed::IsOnSeabed(const Position &world_position,
+                            FRAME_CONVENTION fc,
+                            const double rtol,
+                            const double atol) const {
+    if (m_is_infinite_depth)
+      return false;  // Always false
+
+    return mathutils::IsClose(world_position.z(), GetBathymetry(world_position.x(), world_position.y(), fc), rtol,
+                              atol);
   }
 
   // TODO: voir a utiliser un FrAnchor...
-  std::shared_ptr<FrNode> FrSeabed::NewAnchor(const std::string& name, double x, double y, FRAME_CONVENTION fc) {
+  std::shared_ptr<FrNode> FrSeabed::NewAnchor(const std::string &name, double x, double y, FRAME_CONVENTION fc) {
     Position anchor_position = {x, y, GetBathymetry(x, y, fc)};
 //    if (IsNED(fc)) {
 //      internal::SwapFrameConvention(anchor_position);
@@ -76,7 +91,7 @@ namespace frydom {
     }
   }
 
-  FrNullSeabed::FrNullSeabed(FrOcean *ocean) : FrSeabed(ocean) { m_infiniteDepth = true; }
+  FrNullSeabed::FrNullSeabed(FrOcean *ocean) : FrSeabed(ocean) { m_is_infinite_depth = true; }
 
   void FrNullSeabed::SetBathymetry(double bathymetry, FRAME_CONVENTION fc) {
     try { throw FrException("a null seabed cannot return a bathymetry."); }
@@ -86,7 +101,7 @@ namespace frydom {
     }
   }
 
-  const double FrNullSeabed::GetBathymetry(FRAME_CONVENTION fc) const {
+  double FrNullSeabed::GetBathymetry(FRAME_CONVENTION fc) const {
     try { throw FrException("a null seabed cannot return a bathymetry."); }
     catch (FrException &e) {
       std::cout << e.what() << std::endl;
@@ -94,7 +109,7 @@ namespace frydom {
     }
   }
 
-  const double FrNullSeabed::GetBathymetry(double x, double y, FRAME_CONVENTION fc) const {
+  double FrNullSeabed::GetBathymetry(double x, double y, FRAME_CONVENTION fc) const {
     try { throw FrException("a null seabed cannot return a bathymetry."); }
     catch (FrException &e) {
       std::cout << e.what() << std::endl;
@@ -128,14 +143,14 @@ namespace frydom {
     m_bathymetry = bathymetry;
   }
 
-  const double FrMeanSeabed::GetBathymetry(FRAME_CONVENTION fc) const {
+  double FrMeanSeabed::GetBathymetry(FRAME_CONVENTION fc) const {
     assert(m_showSeabed);
     double bathy = m_bathymetry;
     if (IsNED(fc)) { bathy = -bathy; }
     return bathy;
   }
 
-  const double FrMeanSeabed::GetBathymetry(double x, double y, FRAME_CONVENTION fc) const {
+  double FrMeanSeabed::GetBathymetry(double x, double y, FRAME_CONVENTION fc) const {
     assert(m_showSeabed);
     double bathy = m_bathymetry;
     if (IsNED(fc)) { bathy = -bathy; }

@@ -196,7 +196,7 @@ namespace frydom {
     // Cable properties
     std::shared_ptr<FrCableProperties> m_properties;    ///< Cable properties (section, Young modulus, linear density, etc.)
 
-    double m_unstretchedLength = 100;                    ///< Unstrained length of the cable in m
+    double m_unstretchedLength;                    ///< Unstrained length of the cable in m
     double m_unrollingSpeed = 0;                        ///< linear unrolling speed of the cable in m/s
 //        double m_breakingTension = 0;                       ///< breaking tension in N (for visualization purpose for now)
 

@@ -29,9 +29,15 @@ namespace frydom {
 
     void solve() override;
 
-    Force GetTensionAtTouchDownPoint() {
+    Force GetTensionAtTouchDownPoint() const {
       return m_t0;
     }
+
+    Position GetPositionInWorld(double s, FRAME_CONVENTION fc) const override;
+
+    Force GetTension(double s, FRAME_CONVENTION fc) const override;
+
+    double GetUnstretchedLength() const override;
 
    private:
 
@@ -47,14 +53,25 @@ namespace frydom {
       return m_startingNode.get();
     }
 
+    inline double GetUnstretchedLengthCatenaryPart() const;
+
+    void CorrectTouchDownPointAbscissae(const double &correction);
+
     void UpdateTouchDownPointPosition() {
-      m_startingNode->SetPositionInWorld(m_anchor_node->GetPositionInWorld(NWU) + m_Lb * m_lying_direction, NWU);
+      m_startingNode->SetPositionInWorld(m_anchor_node->GetPositionInWorld(NWU)
+                                         + m_Lb * m_lying_direction,
+                                         NWU);
     }
 
     double GetSeabedIntersection() const;
 
-    Position GetPositionOnSeabed(double s) const;
+    Position GetPositionOnSeabed(double s, FRAME_CONVENTION fc) const;
 
+    mathutils::VectorN<double> get_residual_seabed() const;
+
+    mathutils::MatrixMN<double> analytical_jacobian_seabed() const;
+
+    inline double GetHorizontalTensionAtTouchDownPoint() const;
 
    private:
 
@@ -68,6 +85,24 @@ namespace frydom {
     double c_Cb;
 
   };
+
+  std::shared_ptr<FrCatenaryLineSeabed> make_catenary_line_seabed(const std::string &name,
+                                                                  const std::shared_ptr<FrNode> &anchorNode,
+                                                                  const std::shared_ptr<FrNode> &fairleadNode,
+                                                                  const std::shared_ptr<FrCableProperties> &properties,
+                                                                  bool elastic,
+                                                                  double unstretchedLength,
+                                                                  FLUID_TYPE fluid) {
+    auto line = std::make_shared<FrCatenaryLineSeabed>(name,
+                                                       anchorNode,
+                                                       fairleadNode,
+                                                       properties,
+                                                       elastic,
+                                                       unstretchedLength,
+                                                       fluid);
+    anchorNode->GetBody()->GetSystem()->Add(line);
+  }
+
 
 }  // end namespace frydom
 

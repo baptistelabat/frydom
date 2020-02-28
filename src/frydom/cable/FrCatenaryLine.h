@@ -248,6 +248,15 @@ namespace frydom {
 
     void DefineLogMessages() override;
 
+    /// Compute the jacobian matrix with respect to tension using its analytical expression
+    /// \return jacobian matrix
+    mathutils::Matrix33<double> analytical_jacobian() const;
+
+    /// Cached function to compute ||t(s)|| - u.t(s)
+    /// \param s lagrangian coordinate
+    /// \return rho function value
+    double _rho(double s) const;
+
    private :
 
     /// Get the tangent to the line at s
@@ -257,14 +266,7 @@ namespace frydom {
     /// \param time time of the simulation
     void Compute(double time) override;
 
-    /// Cached function to compute ||t(s)|| - u.t(s)
-    /// \param s lagrangian coordinate
-    /// \return rho function value
-    double _rho(double s) const;
 
-    /// Compute the jacobian matrix with respect to tension using its analytical expression
-    /// \return jacobian matrix
-    mathutils::Matrix33<double> analytical_jacobian() const;
 
 
     friend void FrCatenaryLineAsset::Initialize();

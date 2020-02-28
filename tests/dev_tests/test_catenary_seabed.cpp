@@ -17,12 +17,12 @@ int main() {
 
   auto world_body = system.GetWorldBody();
 
-  auto node1 = world_body->NewNode("node_1");
-  node1->SetPositionInWorld({0, 0, 0}, NWU);
+  auto fairlead = world_body->NewNode("node_1");
+  fairlead->SetPositionInWorld({500, 0, 0}, NWU);
 
-//  auto node2 = world_body->NewNode("node_2");
-  auto node2 = system.GetEnvironment()->GetOcean()->GetSeabed()->NewAnchor("anchor", 500, 0, NWU);
-//  node2->SetPositionInWorld({500, 0, -100}, NWU);
+//  auto anchor = world_body->NewNode("node_2");
+  auto anchor = system.GetEnvironment()->GetOcean()->GetSeabed()->NewAnchor("anchor", 0, 0, NWU);
+//  anchor->SetPositionInWorld({500, 0, -100}, NWU);
 
 
   auto cable_properties = make_cable_properties();
@@ -38,7 +38,7 @@ int main() {
   cable_properties->SetRayleighDamping(1e4);
 
 
-  auto cable = make_catenary_line("cable", node1, node2, cable_properties, true, 520, WATER);
+  auto cable = make_catenary_line_seabed("cable", anchor, fairlead, cable_properties, true, 520, WATER);
 
 
   system.RunInViewer();
