@@ -26,12 +26,51 @@
 //
 //#include "frydom/asset/FrCatenaryLineAsset.h"
 
+#include "FrClumpedMass.h"
 
 // TODO: prevoir une discretisation automatique pour laquelle on precise la taille cible d'un element
 // Servira dans la visu et pour l'application de forces comme Morrison.
 
 
 namespace frydom {
+
+
+  namespace internal {
+
+    class PointForce {
+     public:
+      PointForce(const double &s, const Force &force) : m_s(s), m_force(force) {}
+
+      const double &s() const { return m_s; }
+
+      const Force &force() const { return m_force; }
+
+      bool operator<(const PointForce &other) {
+        return m_s < other.m_s;
+      }
+
+      bool operator==(const PointForce &other) {
+        return mathutils::IsClose(m_s, other.m_s);
+      }
+
+     private:
+      double m_s;
+      Force m_force;
+
+    };
+
+//    auto ComparePointForce = [](const PointForce &lhs, const PointForce &rhs) {
+//      return lhs.s() < rhs.s();
+//    };
+//    std::set<int, decltype(cmp)> s(cmp);
+//
+//    struct ComparePointForce {
+//      bool operator()(const PointForce& lhs, const PointForce& rhs) {
+//        return lhs.s() < rhs.s();
+//      }
+//    };
+
+  }
 
 
   class FrCatenaryLine : public FrCatenaryLineBase {
@@ -51,6 +90,15 @@ namespace frydom {
                    bool elastic);
 
 
+    void AddClumpWeight(const double &s, const double &mass) {
+      assert(mass > 0.);
+      AddPointMass(s, Force(0, 0, -mass * GetSystem()->GetEnvironment()->GetGravityAcceleration()));
+    }
+
+    void AddBuoy(const double &s, const double &mass) {
+      AddClumpWeight(s, -mass);
+    }
+
 
     /// Get the starting force of the line
     /// \return the starting force of the line
@@ -60,15 +108,30 @@ namespace frydom {
     /// \return the ending force of the line
     std::shared_ptr<FrCatenaryForce> GetEndingForce();
 
+    bool IsSingular() const {
+      return rho(0, 0.) == 0. || rho(N(), 1.) == 0.; // TODO: voir dans catway pour les tests...
+    }
 
 
     void Initialize() override {}
 
-    Force GetTension(const double &s, FRAME_CONVENTION fc) const override {}
+    Force GetTension(const double &s, FRAME_CONVENTION fc) const override {
+      Tension tension = t(s) * c_qL;
+      if (IsNED(fc))
+        internal::SwapFrameConvention(tension);
+      return tension;
+    }
 
-    Position GetPositionInWorld(const double &s, FRAME_CONVENTION fc) const override {}
+    Position GetPositionInWorld(const double &s, FRAME_CONVENTION fc) const override {
+      Position position = p(s) * m_unstretchedLength;
+      if (IsNED(fc))
+        internal::SwapFrameConvention(position);
+      return position;
+    }
 
-    double GetUnstretchedLength() const override {}
+    double GetUnstretchedLength() const override {
+      return m_unstretchedLength;
+    }
 
     bool HasSeabedInteraction() const override {}
 
@@ -77,43 +140,139 @@ namespace frydom {
 
    private:
 
-    inline const Direction &pi() const override {}
+    void AddPointMass(const double &s, const Force &force) {
+//      m_point_forces.emplace(internal::PointForce(s, force, NWU));
 
-    inline const double &q() const override {}
+      // TODO:gerer le fait qu'on decrit s a partir du fairlead ???
 
-    inline Tension phi(unsigned int i, const double &s) const {}
+      auto pos = m_point_forces.cbegin();
+      for (; pos != m_point_forces.cend(); pos++) {
+        if (s > pos->s())
+          break;
+      }
 
-    inline Force alpha(unsigned int i, const double &s) const {}
+      m_point_forces.insert(pos, internal::PointForce(s, force));
 
-    inline double rho(unsigned int i, const double &s) const {}
+    }
 
-    inline double lambda(unsigned int i, const double &s) const {}
+//    inline const Direction &pi() const override {}
+//
+//    inline const double &q() const override {}
 
-    inline Force Fi(unsigned int i) const {}
+    inline auto alpha(unsigned int i, const double &s) const {
+      return Fi(i) + m_pi * s;
+    }
 
-    inline Force fi(unsigned int i) const {}
+    inline auto phi(unsigned int i, const double &s) const {
+      return m_t0 - alpha(i, s);
+    }
 
-    inline double si(unsigned int i) const {}
+    inline double rho(unsigned int i, const double &s) const {
+      return phi(i, s).norm() - m_pi.transpose() * phi(i, s); // On essaie d'exploiter Eigen...
+    }
 
-    inline Tension Lambda_tau(unsigned int i) const {}
+    inline double lambda(unsigned int i, const double &s) const {
+      return std::log(rho(i, s));
+    }
 
-    inline unsigned int N() const {}
+    inline Force Fi(unsigned int i) const {
+      return c_Fi[i];
+    }
 
-    inline mathutils::Matrix33<double>& U() const {}
+    inline Force fi(unsigned int i) const {
+      return m_point_forces[i].force();
+    }
 
-    inline Tension t0() const override {}
+    inline double si(unsigned int i) const {
+      return m_point_forces[i].s();
+    }
 
-    inline Tension t(const double &s) const override {}
+    inline auto Lambda_tau(unsigned int i, const double &s) const {
+      double phi_i_s = phi(i, s).norm();
+      return (m_t0 - phi_i_s * m_pi) / (rho(i, s) * phi_i_s);
+    }
 
-    inline Tension tL() const override {}
+    inline unsigned int N() const { return m_point_forces.size() - 1; }
 
-    inline Position p0(bool adim = false) const override {}
+    inline const mathutils::Matrix33<double> &U() const { return c_U; }
 
-    inline Position p(const double &s) const override {}
+    inline Tension t0() const { return m_t0; }
 
-    inline Position pL() const override {}
+    inline Tension t(const double &s) const {
+      unsigned int i = SToI(s);
 
-    inline  double L() const override {}
+
+//      return m_t0 - m_pi * s; // FIXME: ca n'est a priori pas cela du tout avec les clump !!!
+
+      // TODO
+
+    }
+
+    inline Tension tL() const {
+      return t(1.);
+    }
+
+    inline Position p0() const {
+      return m_startingNode->GetPositionInWorld(NWU) / m_unstretchedLength;
+    }
+
+    unsigned int SToI(const double &s) const {
+      assert(0. <= s && s <= 1.);
+
+      // si < s <= si+1
+      for (int i = 0; i < N(); i++) {
+        if (si(i) < s && s <= si(i + 1)) return i;
+      }
+
+    }
+
+    Position p_pi(unsigned int i, const double &s) const {
+      auto scalar = phi(i, s).norm() - phi(i, si(i)).norm();
+      for (int j = 0; j < i; j++) {
+        scalar += phi(j, si(j + 1)).norm() - phi(j, si(j)).norm();
+      }
+      return -m_pi * scalar;
+    }
+
+    Position p_perp(unsigned int i, const double &s) const {
+      Position vector = (m_t0 - Fi(i)) * (lambda(i, s) - lambda(i, si(i)));
+      for (int j = 0; j < i; j++) {
+        vector += (m_t0 - Fi(j)) * (lambda(j, si(j + 1)) - lambda(j, si(j)));
+      }
+      return c_U * vector;
+    }
+
+
+    Position pc(unsigned int i, const double &s) const {
+      if (IsSingular()) {
+        return p_pi(i, s);
+      } else {
+        return p_pi(i, s) + p_perp(i, s);
+      }
+    }
+
+    inline Force sum_fs(unsigned int i) const {
+      return c_sum_fs[i];
+    }
+
+    Position pe(unsigned int i, const double &s) const {
+      return (m_q * m_unstretchedLength / m_properties->GetEA()) *
+             ((m_t0 - Fi(i)) * s + sum_fs(i) - 0.5 * m_pi * s * s);
+    }
+
+    inline Position p(const double &s) const {
+      unsigned int i = SToI(s);
+      Position p = p0() + pc(i, s);
+      if (m_elastic)
+        p += pe(i, s);
+      return p;
+    }
+
+    inline auto pL() const {
+      return m_endingNode->GetPositionInWorld(NWU) / m_unstretchedLength;
+    }
+
+    inline double L() const { return m_unstretchedLength; }
 
     void Compute(double time) override {}
 
@@ -122,27 +281,43 @@ namespace frydom {
     void DefineLogMessages() override {}
 
 
+    void BuildCache() {
+      c_U.SetIdentity();
+      c_U -= m_pi * m_pi.transpose();
+
+      c_qL = m_q * m_unstretchedLength;
+
+      c_Fi.clear();
+      c_sum_fs.clear();
+      c_Fi.emplace_back(m_point_forces.front().force());
+      c_sum_fs.emplace_back(m_point_forces.front().force());
+
+      for (int i = 0; i < N(); i++) { // TODO: voir la borne
+        auto point_force = m_point_forces[i + 1];
+        c_Fi.emplace_back(c_Fi[i] + point_force.force());
+        c_sum_fs.emplace_back(c_sum_fs[i] + point_force.force() * point_force.s());
+      }
+
+    }
+
+
    private:
     bool m_elastic;
-
     Tension m_t0;
 
 
+    std::vector<internal::PointForce> m_point_forces;
+
+
+    // Cache
+    std::vector<Force> c_Fi;
+    std::vector<Force> c_sum_fs;
+
+    mathutils::Matrix33<double> c_U;
+    double c_qL;
+
 
   };
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //

@@ -42,6 +42,8 @@ namespace frydom {
       FrCatenaryLineBase(name, TypeToString(this), startingNode, endingNode, properties, unstretchedLength),
       m_elastic(true) {
 
+    m_point_forces.emplace_back(internal::PointForce{0., Force()});
+
   }
 
   FrCatenaryLine::FrCatenaryLine(const std::string &name, FrCable *cable, bool elastic) :

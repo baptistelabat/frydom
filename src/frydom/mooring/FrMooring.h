@@ -15,13 +15,23 @@
 
 namespace frydom {
 
-  /**
-   * \class FrMooring
-   * \brief Class not used.
-   */
-  class FrMooring {
+//  /**
+//   * \class FrMooring
+//   * \brief Class not used.
+//   */
+//  class FrMooring {
+//
+//  };
+
+
+  class FrClumpWeight {
 
   };
+
+  class FrBuoy {
+
+  };
+
 
 }
 

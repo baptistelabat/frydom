@@ -97,23 +97,23 @@ namespace frydom {
 
     // Tension relative methods
 
-    virtual inline const Direction &pi() const = 0;
-
-    virtual inline const double &q() const = 0;
-
-    virtual inline Tension t0() const = 0;
-
-    virtual inline Tension t(const double &s) const = 0;
-
-    virtual inline Tension tL() const = 0;
-
-    virtual inline Position p0(bool adim = false) const = 0;
-
-    virtual inline Position p(const double &s) const = 0;
-
-    virtual inline Position pL() const = 0;
-
-    virtual inline double L() const = 0;
+//    inline const Direction &pi() const { return m_pi; };
+//
+//    inline const double &q() const { return m_q; };
+//
+//    virtual inline Tension t0() const = 0;
+//
+////    virtual inline auto t(const double &s) const = 0;
+//
+//    virtual inline Tension tL() const = 0;
+//
+//    virtual inline Position p0() const = 0;
+//
+//    virtual inline Position p(const double &s) const = 0;
+//
+//    virtual inline Position pL() const = 0;
+//
+//    virtual inline double L() const = 0;
 
 
    protected:
