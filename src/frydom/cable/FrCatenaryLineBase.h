@@ -75,9 +75,7 @@ namespace frydom {
       m_use_for_shape_initialization = use;
     };
 
-    virtual inline const Direction &pi() const = 0;
 
-    virtual inline const double &q() const = 0;
 
 
     void Initialize() = 0;
@@ -99,19 +97,23 @@ namespace frydom {
 
     // Tension relative methods
 
-    virtual const Tension t0() const = 0;
+    virtual inline const Direction &pi() const = 0;
 
-    virtual const Tension t(const double &s) const = 0;
+    virtual inline const double &q() const = 0;
 
-    virtual const Tension tL() const = 0;
+    virtual inline Tension t0() const = 0;
 
-    virtual const Position p0(bool adim = false) const = 0;
+    virtual inline Tension t(const double &s) const = 0;
 
-    virtual const Position p(const double &s) const = 0;
+    virtual inline Tension tL() const = 0;
 
-    virtual const Position pL() const = 0;
+    virtual inline Position p0(bool adim = false) const = 0;
 
-    virtual const double L() const = 0;
+    virtual inline Position p(const double &s) const = 0;
+
+    virtual inline Position pL() const = 0;
+
+    virtual inline double L() const = 0;
 
 
    protected:

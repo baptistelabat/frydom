@@ -60,9 +60,7 @@ namespace frydom {
     /// \return the ending force of the line
     std::shared_ptr<FrCatenaryForce> GetEndingForce();
 
-    inline const Direction &pi() const override {}
 
-    inline const double &q() const override {}
 
     void Initialize() override {}
 
@@ -79,19 +77,43 @@ namespace frydom {
 
    private:
 
-    const Tension t0() const override {}
+    inline const Direction &pi() const override {}
 
-    const Tension t(const double &s) const override {}
+    inline const double &q() const override {}
 
-    const Tension tL() const override {}
+    inline Tension phi(unsigned int i, const double &s) const {}
 
-    const Position p0(bool adim = false) const override {}
+    inline Force alpha(unsigned int i, const double &s) const {}
 
-    const Position p(const double &s) const override {}
+    inline double rho(unsigned int i, const double &s) const {}
 
-    const Position pL() const override {}
+    inline double lambda(unsigned int i, const double &s) const {}
 
-    const double L() const override {}
+    inline Force Fi(unsigned int i) const {}
+
+    inline Force fi(unsigned int i) const {}
+
+    inline double si(unsigned int i) const {}
+
+    inline Tension Lambda_tau(unsigned int i) const {}
+
+    inline unsigned int N() const {}
+
+    inline mathutils::Matrix33<double>& U() const {}
+
+    inline Tension t0() const override {}
+
+    inline Tension t(const double &s) const override {}
+
+    inline Tension tL() const override {}
+
+    inline Position p0(bool adim = false) const override {}
+
+    inline Position p(const double &s) const override {}
+
+    inline Position pL() const override {}
+
+    inline  double L() const override {}
 
     void Compute(double time) override {}
 
@@ -102,6 +124,8 @@ namespace frydom {
 
    private:
     bool m_elastic;
+
+    Tension m_t0;
 
 
 
