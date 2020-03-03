@@ -231,13 +231,13 @@ namespace frydom {
     /// \param s lagrangian coordinate
     /// \param fc frame convention (NED/NWU)
     /// \return inside line tension
-    Force GetTension(double s, FRAME_CONVENTION fc) const override;;
+    Force GetTension(const double &s, FRAME_CONVENTION fc) const override;
 
     /// Get the line position at lagrangian coordinate s
     /// \param s lagrangian coordinate
     /// \param fc frame convention (NED/NWU)
     /// \return line position
-    Position GetPositionInWorld(double s, FRAME_CONVENTION fc) const override;
+    Position GetPositionInWorld(const double &s, FRAME_CONVENTION fc) const override;
 
     // Virtual methods, from FEAMesh
 

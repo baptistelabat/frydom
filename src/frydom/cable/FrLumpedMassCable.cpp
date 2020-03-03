@@ -443,7 +443,7 @@ namespace frydom {
   }
 
 
-  Force FrLumpedMassCable::GetTension(double s, FRAME_CONVENTION fc) const {
+  Force FrLumpedMassCable::GetTension(const double &s, FRAME_CONVENTION fc) const {
     assert(0. <= s <= GetUnstretchedLength());
 
     // Determining the element where the coordinate s lies
@@ -466,7 +466,7 @@ namespace frydom {
     }
   }
 
-  Position FrLumpedMassCable::GetPositionInWorld(double s, FRAME_CONVENTION fc) const {
+  Position FrLumpedMassCable::GetPositionInWorld(const double &s, FRAME_CONVENTION fc) const {
     // TODO
   }
 

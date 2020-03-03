@@ -133,7 +133,7 @@ namespace frydom {
 
     double GetRayleighDamping() const;
 
-    void SetHydrodynamicDiameter(double d) {m_hydroDiameter = d; }
+    void SetHydrodynamicDiameter(double d) { m_hydroDiameter = d; }
 
     double GetHydrodynamicDiameter() const { return m_hydroDiameter; }
 
@@ -271,13 +271,13 @@ namespace frydom {
     /// \param s lagrangian coordinate
     /// \param fc frame convention (NED/NWU)
     /// \return inside line tension
-    virtual Force GetTension(double s, FRAME_CONVENTION fc) const = 0;
+    virtual Force GetTension(const double &s, FRAME_CONVENTION fc) const = 0;
 
     /// Get the line position at lagrangian coordinate s
     /// \param s lagrangian coordinate
     /// \param fc frame convention (NED/NWU)
     /// \return line position
-    virtual Position GetPositionInWorld(double s, FRAME_CONVENTION fc) const = 0;
+    virtual Position GetPositionInWorld(const double& s, FRAME_CONVENTION fc) const = 0;
 
     /// Get the strained length of the cable
     /// \return strained length

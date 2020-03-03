@@ -254,12 +254,12 @@ namespace frydom {
     void SetSpeedLimit(const double &speed_limit);
 
 
-    Force GetTension(double s, FRAME_CONVENTION fc) const override;
+    Force GetTension(const double &s, FRAME_CONVENTION fc) const override;
 
     double GetMass() const;
 
 
-    Position GetPositionInWorld(double s, FRAME_CONVENTION fc) const override;
+    Position GetPositionInWorld(const double &s, FRAME_CONVENTION fc) const override;
 
     void DefineLogMessages() override;
 

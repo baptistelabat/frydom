@@ -142,8 +142,7 @@ namespace frydom {
                                             m_frydomCable->GetEndingNode(),
                                             m_frydomCable->GetCableProperties(),
                                             elastic,
-                                            m_frydomCable->GetUnstretchedLength(),
-                                            AIR);
+                                            m_frydomCable->GetUnstretchedLength());
           catenaryLine->Initialize();
         }
 
@@ -375,18 +374,20 @@ namespace frydom {
     GetTension(0., NWU);
   }
 
-  Force FrDynamicCable::GetTension(double s, FRAME_CONVENTION fc) const {
+  Force FrDynamicCable::GetTension(const double &s, FRAME_CONVENTION fc) const {
 
     assert(s <= GetUnstretchedLength());
 
-    if (s > GetUnstretchedLength()) s = GetUnstretchedLength();
+    double stmp = s;
+
+    if (s > GetUnstretchedLength()) stmp = GetUnstretchedLength();
 
     double ds = GetUnstretchedLength() / GetNumberOfElements();
-    double a = s / ds;
+    double a = stmp / ds;
     auto index = int(floor(a));
     double eta = 2. * (a - index) - 1.;
 
-    if (s == GetUnstretchedLength()) {
+    if (stmp == GetUnstretchedLength()) {
       index = GetNumberOfElements() - 1;
       eta = 1;
     }
@@ -399,7 +400,7 @@ namespace frydom {
 
   }
 
-  Position FrDynamicCable::GetPositionInWorld(double s, FRAME_CONVENTION fc) const {
+  Position FrDynamicCable::GetPositionInWorld(const double &s, FRAME_CONVENTION fc) const {
 
     assert(s <= GetUnstretchedLength());
 

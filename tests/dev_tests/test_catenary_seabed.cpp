@@ -38,7 +38,7 @@ int main() {
   cable_properties->SetRayleighDamping(1e4);
 
 
-  auto cable = make_catenary_line_seabed("cable", anchor, fairlead, cable_properties, true, 520, WATER);
+//  auto cable = make_catenary_line_seabed("cable", anchor, fairlead, cable_properties, true, 520, WATER);
 
 
   system.RunInViewer();
