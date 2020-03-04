@@ -136,6 +136,8 @@ namespace frydom {
 
     while (iter < m_maxiter) {
 
+      iter++;
+
       Jacobian33 jacobian = GetJacobian();
 
       linear_solver.compute(jacobian);
@@ -151,6 +153,12 @@ namespace frydom {
         break;
       }
 
+    }
+
+    if (iter == m_maxiter) {
+      std::cout << "NO CONVERGENCE" << std::endl;
+    } else {
+      std::cout << "CONVERGENCE IN " << iter << std::endl;
     }
 
   }
@@ -305,7 +313,7 @@ namespace frydom {
 
   FrCatenaryLine::Jacobian33 FrCatenaryLine::dp_pi_dt() const {
     double scalar = 1. / ti(N(), 1.).norm() - 1. / ti(N(), si(N())).norm();
-    for (unsigned int j = 0; j < N() - 1; j++) { // FIXME: verifier le N-1 !!!!!!!!!!!! ---> BUG
+    for (unsigned int j = 0; j < N(); j++) { // FIXME: verifier le N-1 !!!!!!!!!!!! ---> BUG
       scalar += 1. / ti(j, si(j + 1)).norm() - 1. / ti(j, si(j)).norm();
     }
     return -scalar * m_pi * m_t0.transpose();
@@ -314,7 +322,7 @@ namespace frydom {
   FrCatenaryLine::Jacobian33 FrCatenaryLine::dp_perp_dt() const {
     Jacobian33 matrix = (m_t0 - Fi(N())) * (Lambda_tau(N(), 1.) - Lambda_tau(N(), si(N()))).transpose();
     double scalar = lambda(N(), 1.) - lambda(N(), si(N()));
-    for (unsigned int j = 0; j < N() - 1; j++) {
+    for (unsigned int j = 0; j < N(); j++) {
       matrix += (m_t0 - Fi(j)) * (Lambda_tau(j, si(j + 1)) - Lambda_tau(j, si(j))).transpose();
       scalar += lambda(j, si(j + 1)) - lambda(j, si(j));
     }
