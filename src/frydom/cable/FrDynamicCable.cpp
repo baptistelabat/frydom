@@ -142,7 +142,7 @@ namespace frydom {
                                             m_frydomCable->GetEndingNode(),
                                             m_frydomCable->GetCableProperties(),
                                             elastic,
-                                            m_frydomCable->GetUnstretchedLength());
+                                            m_frydomCable->GetUnstretchedLength(), WATER); // FIXME: determiner le fluide...
           catenaryLine->Initialize();
         }
 

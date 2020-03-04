@@ -10,6 +10,7 @@ set(REFACTORING_TESTS
         test_lumped_mass_cable
         test_chrono_spring_bodies
         test_LM_element
+        test_catenary_clump_weight
         test_catenary_seabed
         )
 

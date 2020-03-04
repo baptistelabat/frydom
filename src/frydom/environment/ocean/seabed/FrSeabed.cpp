@@ -60,10 +60,15 @@ namespace frydom {
 
   // TODO: voir a utiliser un FrAnchor...
   std::shared_ptr<FrNode> FrSeabed::NewAnchor(const std::string &name, double x, double y, FRAME_CONVENTION fc) {
+
+    if (m_is_infinite_depth) {
+      event_logger::error("Seabed", "",
+                          "Trying to place an anchor with an infinite seabed is impossible (while placing anchor named {})",
+                          name);
+      exit(EXIT_FAILURE);
+    }
+
     Position anchor_position = {x, y, GetBathymetry(x, y, fc)};
-//    if (IsNED(fc)) {
-//      internal::SwapFrameConvention(anchor_position);
-//    }
 
     auto anchor_body = m_ocean->GetEnvironment()->GetSystem()->NewBody(name + "_body");
     anchor_body->SetPosition(anchor_position, fc);
@@ -75,102 +80,122 @@ namespace frydom {
 
     m_anchors.push_back(anchor_node);
 
-//    return std::dynamic_pointer_cast<FrAnchor>(anchor_body->NewNode(name));
     return anchor_node;
 
   }
 
-  //------------------------------------------------------------------------------------------------------------------
-  // FrNullSeabed descriptions
-
-  FrSeabedGridAsset *FrNullSeabed::GetSeabedGridAsset() {
-    try { throw FrException("a null seabed cannot return a seabed asset."); }
-    catch (FrException &e) {
-      std::cout << e.what() << std::endl;
-      exit(EXIT_FAILURE);
-    }
-  }
-
-  FrNullSeabed::FrNullSeabed(FrOcean *ocean) : FrSeabed(ocean) { m_is_infinite_depth = true; }
-
-  void FrNullSeabed::SetBathymetry(double bathymetry, FRAME_CONVENTION fc) {
-    try { throw FrException("a null seabed cannot return a bathymetry."); }
-    catch (FrException &e) {
-      std::cout << e.what() << std::endl;
-      exit(EXIT_FAILURE);
-    }
-  }
-
-  double FrNullSeabed::GetBathymetry(FRAME_CONVENTION fc) const {
-    try { throw FrException("a null seabed cannot return a bathymetry."); }
-    catch (FrException &e) {
-      std::cout << e.what() << std::endl;
-      exit(EXIT_FAILURE);
-    }
-  }
-
-  double FrNullSeabed::GetBathymetry(double x, double y, FRAME_CONVENTION fc) const {
-    try { throw FrException("a null seabed cannot return a bathymetry."); }
-    catch (FrException &e) {
-      std::cout << e.what() << std::endl;
-      exit(EXIT_FAILURE);
-    }
-  }
-
-  void FrNullSeabed::Update(double time) {
-
-  }
-
-  void FrNullSeabed::Initialize() {
-
-  }
-
-  void FrNullSeabed::StepFinalize() {
-
-  }
+//  //------------------------------------------------------------------------------------------------------------------
+//  // FrNullSeabed descriptions
+//
+//  FrSeabedGridAsset *FrNullSeabed::GetSeabedGridAsset() {
+//    try { throw FrException("a null seabed cannot return a seabed asset."); }
+//    catch (FrException &e) {
+//      std::cout << e.what() << std::endl;
+//      exit(EXIT_FAILURE);
+//    }
+//  }
+//
+//  FrNullSeabed::FrNullSeabed(FrOcean *ocean) : FrSeabed(ocean) { m_is_infinite_depth = true; }
+//
+//  void FrNullSeabed::SetBathymetry(double bathymetry, FRAME_CONVENTION fc) {
+//    if (m_is_infinite_depth) {
+//      event_logger::error("Seabed", "", "Request on bathymetry when water depth is infinite is forbidden");
+//      exit(EXIT_FAILURE);
+//    }
+//  }
+//
+//  double FrNullSeabed::GetBathymetry(FRAME_CONVENTION fc) const {
+//    if (m_is_infinite_depth) {
+//      event_logger::error("Seabed", "", "Request on bathymetry when water depth is infinite is forbidden");
+//      exit(EXIT_FAILURE);
+//    }
+//  }
+//
+//  double FrNullSeabed::GetBathymetry(double x, double y, FRAME_CONVENTION fc) const {
+//    if (m_is_infinite_depth) {
+//      event_logger::error("Seabed", "", "Request on bathymetry when water depth is infinite is forbidden");
+//      exit(EXIT_FAILURE);
+//    }
+//  }
+//
+//  void FrNullSeabed::Update(double time) {
+//
+//  }
+//
+//  void FrNullSeabed::Initialize() {
+//
+//  }
+//
+//  void FrNullSeabed::StepFinalize() {
+//
+//  }
 
   //------------------------------------------------------------------------------------------------------------------
-  // FrMeanSeabed descriptions
+  // FrFlatSeabed descriptions
 
-  FrMeanSeabed::FrMeanSeabed(FrOcean *ocean) : FrSeabed(ocean) {
+  FrFlatSeabed::FrFlatSeabed(FrOcean *ocean) :
+      FrSeabed(ocean),
+      m_showSeabed(false),
+      m_bathymetry(0.) {
+
+    m_is_infinite_depth = true;
     m_SeabedGridAsset = std::make_shared<FrSeabedGridAsset>(this);
   }
 
-  void FrMeanSeabed::SetBathymetry(double bathymetry, FRAME_CONVENTION fc) {
-    assert(m_showSeabed);
+  void FrFlatSeabed::DontShow() {
+    m_SeabedGridAsset = nullptr;
+    m_showSeabed = false;
+  }
+
+  void FrFlatSeabed::SetBathymetry(double bathymetry, FRAME_CONVENTION fc) {
     if (IsNED(fc)) { bathymetry = -bathymetry; }
     event_logger::info("Seabed", "Flat seabed", "Set to {} meters", bathymetry);
     m_bathymetry = bathymetry;
+    m_is_infinite_depth = false;
   }
 
-  double FrMeanSeabed::GetBathymetry(FRAME_CONVENTION fc) const {
-    assert(m_showSeabed);
+  double FrFlatSeabed::GetBathymetry(FRAME_CONVENTION fc) const {
+    if (m_is_infinite_depth) {
+      std::cerr << "Requesting bathymetry on an infinite seabed" << std::endl; // TODO: a retirer
+      event_logger::error("Seabed", "", "Requesting bathymetry on an infinite seabed");
+      assert(false); // TODO: RETIRER
+      exit(EXIT_FAILURE);
+    }
+
     double bathy = m_bathymetry;
     if (IsNED(fc)) { bathy = -bathy; }
     return bathy;
   }
 
-  double FrMeanSeabed::GetBathymetry(double x, double y, FRAME_CONVENTION fc) const {
-    assert(m_showSeabed);
+  double FrFlatSeabed::GetBathymetry(double x, double y, FRAME_CONVENTION fc) const {
+    if (m_is_infinite_depth) {
+      std::cerr << "Requesting bathymetry on an infinite seabed" << std::endl; // TODO: a retirer
+      event_logger::error("Seabed", "", "Requesting bathymetry on an infinite seabed");
+      assert(false); // TODO: RETIRER
+      exit(EXIT_FAILURE);
+    }
+
     double bathy = m_bathymetry;
     if (IsNED(fc)) { bathy = -bathy; }
     return bathy;
   }
 
-  void FrMeanSeabed::Update(double time) {}
+  void FrFlatSeabed::Update(double time) {}
 
-  void FrMeanSeabed::Initialize() {
+  void FrFlatSeabed::Initialize() {
     if (m_showSeabed) {
       m_SeabedGridAsset->Initialize();
       m_ocean->GetEnvironment()->GetSystem()->GetWorldBody()->AddAsset(m_SeabedGridAsset);
+    } else {
+//      m_SeabedGridAsset->SetNoGrid();
     }
   }
 
-  void FrMeanSeabed::StepFinalize() {
+  void FrFlatSeabed::StepFinalize() {
 
   }
 
-  FrSeabedGridAsset *FrMeanSeabed::GetSeabedGridAsset() { return m_SeabedGridAsset.get(); }
+  FrSeabedGridAsset *FrFlatSeabed::GetSeabedGridAsset() { return m_SeabedGridAsset.get(); }
 
 
 }  // end namespace frydom

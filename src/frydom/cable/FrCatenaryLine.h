@@ -13,7 +13,6 @@
 #ifndef FRYDOM_FRCATENARYLINE_H
 #define FRYDOM_FRCATENARYLINE_H
 
-
 #include "FrCatenaryLineBase.h"
 
 
@@ -60,23 +59,17 @@ namespace frydom {
                    const std::shared_ptr<FrNode> &endingNode,
                    const std::shared_ptr<FrCableProperties> &properties,
                    bool elastic,
-                   double unstretchedLength);
+                   double unstretchedLength,
+                   FLUID_TYPE fluid_type);
 
     FrCatenaryLine(const std::string &name,
                    FrCable *cable,
-                   bool elastic);
+                   bool elastic,
+                   FLUID_TYPE fluid_type);
 
     void AddClumpWeight(const double &s, const double &mass);
 
     void AddBuoy(const double &s, const double &mass);
-
-    /// Get the starting force of the line
-    /// \return the starting force of the line
-    std::shared_ptr<FrCatenaryForce> GetStartingForce();
-
-    /// Get the ending force of the line
-    /// \return the ending force of the line
-    std::shared_ptr<FrCatenaryForce> GetEndingForce();
 
     bool IsSingular() const;
 
@@ -99,31 +92,31 @@ namespace frydom {
     using Residue3 = mathutils::Vector3d<double>;
     using Jacobian33 = mathutils::Matrix33<double>;
 
+
+
     void AddPointMass(const double &s, const Force &force);
 
-    inline auto alpha(const unsigned int &i, const double &s) const;
+    double rho(const unsigned int &i, const double &s) const; // inline
 
-    inline auto phi(const unsigned int &i, const double &s) const;
+    double lambda(const unsigned int &i, const double &s) const; // inline
 
-    inline double rho(const unsigned int &i, const double &s) const;
+    Force Fi(const unsigned int &i) const; // inline
 
-    inline double lambda(const unsigned int &i, const double &s) const;
+    Force fi(const unsigned int &i) const; // inline
 
-    inline Force Fi(const unsigned int &i) const;
+    double si(const unsigned int &i) const; // inline
 
-    inline Force fi(const unsigned int &i) const;
+    auto Lambda_tau(const unsigned int &i, const double &s) const; // inline
 
-    inline double si(const unsigned int &i) const;
+    unsigned int N() const; // inline
 
-    inline auto Lambda_tau(const unsigned int &i, const double &s) const;
+    auto ti(const unsigned int &i, const double &s) const; // inline
 
-    inline unsigned int N() const;
+    Tension t(const double &s) const; // inline
 
-    inline Tension t(const double &s) const;
+    Tension tL() const; // inline
 
-    inline Tension tL() const;
-
-    inline Position p0() const;
+    Position p0() const; // inline
 
     unsigned int SToI(const double &s) const;
 
@@ -133,25 +126,27 @@ namespace frydom {
 
     Position pc(const unsigned int &i, const double &s) const;
 
-    inline Force sum_fs(const unsigned int &i) const;
+    Force sum_fs(const unsigned int &i) const; // inline
 
     Position pe(const unsigned int &i, const double &s) const;
 
-    inline Position p(const double &s) const;
+    Position pi(const unsigned int &i, const double &s) const; // inline
 
-    inline auto pL() const;
+    Position p(const double &s) const; // inline
+
+    Position pL() const; // inline
 
     void GuessTension();
 
     Residue3 GetResidue() const;
 
-    inline Jacobian33 dpc_dt() const;
+    Jacobian33 dpc_dt() const; // inline
 
-    inline Jacobian33 dp_pi_dt() const;
+    Jacobian33 dp_pi_dt() const; // inline
 
-    inline Jacobian33 dp_perp_dt() const;
+    Jacobian33 dp_perp_dt() const; // inline
 
-    inline Jacobian33 dpe_dt() const;
+    Jacobian33 dpe_dt() const; // inline
 
     Jacobian33 GetJacobian() const;
 
@@ -432,7 +427,8 @@ namespace frydom {
                      const std::shared_ptr<FrNode> &endingNode,
                      const std::shared_ptr<FrCableProperties> &properties,
                      bool elastic,
-                     double unstretchedLength);
+                     double unstretchedLength,
+                     FLUID_TYPE fluid_type);
 
 
 //  /**

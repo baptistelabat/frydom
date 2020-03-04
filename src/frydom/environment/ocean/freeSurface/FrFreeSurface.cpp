@@ -172,7 +172,7 @@ namespace frydom {
     }
   }
 
-  void FrFreeSurface::ShowFreeSurface(bool showFreeSurface) {
+  void FrFreeSurface::Show(bool showFreeSurface) { // FIXME: le show ne doit etre que de la visu !!!
     if (showFreeSurface && m_showFreeSurface != showFreeSurface) {
       std::cout << "Be careful to set new free surface grid, wave field and tidal model" << std::endl;
     }

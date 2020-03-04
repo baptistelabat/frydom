@@ -9,6 +9,7 @@
 //
 // ==========================================================================
 
+#include <Eigen/Dense>
 
 #include "FrCatenaryLine.h"
 
@@ -29,21 +30,25 @@ namespace frydom {
                                  const std::shared_ptr<FrNode> &endingNode,
                                  const std::shared_ptr<FrCableProperties> &properties,
                                  bool elastic,
-                                 double unstretchedLength) :
+                                 double unstretchedLength,
+                                 FLUID_TYPE fluid_type) :
       FrCatenaryLineBase(name, TypeToString(this), startingNode, endingNode, properties, elastic, unstretchedLength),
       c_qL(0.) {
 
     m_point_forces.emplace_back(internal::PointForce{0., Force()});
-
+    m_q = properties->GetLinearDensity() - properties->GetSectionArea() *
+                                           startingNode->GetSystem()->GetEnvironment()->GetFluidDensity(fluid_type);
+    m_pi = {0., 0., -1.};
   }
 
-  FrCatenaryLine::FrCatenaryLine(const std::string &name, FrCable *cable, bool elastic) :
+  FrCatenaryLine::FrCatenaryLine(const std::string &name, FrCable *cable, bool elastic, FLUID_TYPE fluid_type) :
       FrCatenaryLine(name,
                      cable->GetStartingNode(),
                      cable->GetEndingNode(),
                      cable->GetCableProperties(),
                      elastic,
-                     cable->GetUnstretchedLength()) {}
+                     cable->GetUnstretchedLength(),
+                     fluid_type) {}
 
   void FrCatenaryLine::AddClumpWeight(const double &s, const double &mass) {
     AddPointMass(s / m_unstretchedLength,
@@ -56,20 +61,41 @@ namespace frydom {
                  Force(0, 0, mass * GetSystem()->GetEnvironment()->GetGravityAcceleration()) / c_qL);
   }
 
-  std::shared_ptr<FrCatenaryForce> FrCatenaryLine::GetStartingForce() {
-    // TODO
-  }
-
-  std::shared_ptr<FrCatenaryForce> FrCatenaryLine::GetEndingForce() {
-    // TODO
-  }
-
   bool FrCatenaryLine::IsSingular() const {
     return rho(0, 0.) == 0. || rho(N(), 1.) == 0.; // TODO: voir dans catway pour les tests...
   }
 
   void FrCatenaryLine::Initialize() {
-    // TODO
+
+    m_startingNode->Initialize();
+    m_endingNode->Initialize();
+
+    BuildCache();
+
+    GuessTension();
+    solve();
+
+    if (!m_use_for_shape_initialization) {
+      // Building the catenary forces and adding them to bodies
+      if (!m_startingForce) {
+        m_startingForce = std::make_shared<FrCatenaryForce>(GetName() + "_start_force", m_startingNode->GetBody(), this,
+                                                            FrCatenaryLineBase::LINE_START);
+        auto starting_body = m_startingNode->GetBody();
+        starting_body->AddExternalForce(m_startingForce);
+      }
+
+      if (!m_endingForce) {
+        m_endingForce = std::make_shared<FrCatenaryForce>(GetName() + "_end_force", m_endingNode->GetBody(), this,
+                                                          FrCatenaryLineBase::LINE_END);
+        auto ending_body = m_endingNode->GetBody();
+        ending_body->AddExternalForce(m_endingForce);
+      }
+
+      FrCatenaryAssetOwner::Initialize();
+    }
+
+    FrCable::Initialize();
+
   }
 
   Force FrCatenaryLine::GetTension(const double &s, FRAME_CONVENTION fc) const {
@@ -95,33 +121,56 @@ namespace frydom {
 //  }
 
   void FrCatenaryLine::solve() {
-    // TODO
+
+    unsigned int iter = 0;
+
+    // Defining the linear solver
+    Eigen::FullPivLU<Eigen::Matrix3d> linear_solver;
+
+    Residue3 residue = GetResidue();
+    double err = residue.infNorm();
+    if (err < m_tolerance) {
+      std::cout << "Already at equilibrium" << std::endl;
+      return;
+    }
+
+    while (iter < m_maxiter) {
+
+      Jacobian33 jacobian = GetJacobian();
+
+      linear_solver.compute(jacobian);
+      Tension dt0 = linear_solver.solve(-residue);
+
+      m_t0 += dt0;
+
+      residue = GetResidue();
+      err = residue.infNorm();
+
+      if (err < m_tolerance) {
+        std::cout << "convergence in " << iter << std::endl;
+        break;
+      }
+
+    }
 
   }
 
   void FrCatenaryLine::AddPointMass(const double &s, const Force &force) {
     // TODO:gerer le fait qu'on decrit s a partir du fairlead ???
-
     auto pos = m_point_forces.cbegin();
     for (; pos != m_point_forces.cend(); pos++) {
       if (s > pos->s())
         break;
     }
-
     m_point_forces.insert(pos, internal::PointForce(s, force));
-
   }
 
-  auto FrCatenaryLine::alpha(const unsigned int &i, const double &s) const {
-    return Fi(i) + m_pi * s;
-  }
-
-  auto FrCatenaryLine::phi(const unsigned int &i, const double &s) const {
-    return m_t0 - alpha(i, s);
+  auto FrCatenaryLine::ti(const unsigned int &i, const double &s) const {
+    return m_t0 - Fi(i) - m_pi * s;
   }
 
   double FrCatenaryLine::rho(const unsigned int &i, const double &s) const {
-    return phi(i, s).norm() - m_pi.transpose() * phi(i, s); // On essaie d'exploiter Eigen...
+    return ti(i, s).norm() - m_pi.transpose() * ti(i, s); // On essaie d'exploiter Eigen...
   }
 
   double FrCatenaryLine::lambda(const unsigned int &i, const double &s) const {
@@ -141,20 +190,15 @@ namespace frydom {
   }
 
   auto FrCatenaryLine::Lambda_tau(const unsigned int &i, const double &s) const {
-    double phi_i_s = phi(i, s).norm();
-    return (m_t0 - phi_i_s * m_pi) / (rho(i, s) * phi_i_s);
+    double ti_s_n = ti(i, s).norm();
+    return (m_t0 - ti_s_n * m_pi) / (rho(i, s) * ti_s_n);
   }
 
   unsigned int FrCatenaryLine::N() const { return m_point_forces.size() - 1; }
 
   FrCatenaryLineBase::Tension FrCatenaryLine::t(const double &s) const {
     unsigned int i = SToI(s);
-
-
-//      return m_t0 - m_pi * s; // FIXME: ca n'est a priori pas cela du tout avec les clump !!!
-
-    // TODO: TERMINER !!!!!!!!!!!!!!
-
+    return ti(i, s);
   }
 
   FrCatenaryLineBase::Tension FrCatenaryLine::tL() const {
@@ -168,16 +212,21 @@ namespace frydom {
   unsigned int FrCatenaryLine::SToI(const double &s) const {
     assert(0. <= s && s <= 1.);
 
+    unsigned int i = 0;
     // si < s <= si+1 ---> we send back i
-    for (unsigned int i = 0; i < N(); i++) {
-      if (si(i) < s && s <= si(i + 1)) return i;
+    for (unsigned int j = 0; i < N(); i++) {
+      if (si(j) < s && s <= si(j + 1)) {
+        i = j;
+        break;
+      }
     }
+    return i;
   }
 
   Position FrCatenaryLine::p_pi(const unsigned int &i, const double &s) const {
-    auto scalar = phi(i, s).norm() - phi(i, si(i)).norm();
+    auto scalar = ti(i, s).norm() - ti(i, si(i)).norm();
     for (int j = 0; j < i; j++) {
-      scalar += phi(j, si(j + 1)).norm() - phi(j, si(j)).norm();
+      scalar += ti(j, si(j + 1)).norm() - ti(j, si(j)).norm();
     }
     return -m_pi * scalar;
   }
@@ -207,15 +256,19 @@ namespace frydom {
            ((m_t0 - Fi(i)) * s + sum_fs(i) - 0.5 * m_pi * s * s);
   }
 
-  Position FrCatenaryLine::p(const double &s) const {
-    unsigned int i = SToI(s);
+  Position FrCatenaryLine::pi(const unsigned int &i, const double &s) const {
     Position p = p0() + pc(i, s);
     if (m_elastic)
       p += pe(i, s);
     return p;
   }
 
-  auto FrCatenaryLine::pL() const {
+  Position FrCatenaryLine::p(const double &s) const {
+    unsigned int i = SToI(s);
+    return pi(i, s);
+  }
+
+  Position FrCatenaryLine::pL() const {
     return m_endingNode->GetPositionInWorld(NWU) / m_unstretchedLength;
   }
 
@@ -242,17 +295,18 @@ namespace frydom {
     auto fu = -0.5 * m_q * (lz / std::tanh(lambda) - m_unstretchedLength);
     auto fv = 0.5 * m_q * std::sqrt(lx * lx + ly * ly) / lambda;
 
-    m_t0 = fu * m_pi + fv * v;
+    m_t0 = (fu * m_pi + fv * v) / c_qL;
   }
 
   FrCatenaryLine::Residue3 FrCatenaryLine::GetResidue() const {
+    auto pend = pL();
     return p(1.) - pL(); // TODO : verifier
   }
 
   FrCatenaryLine::Jacobian33 FrCatenaryLine::dp_pi_dt() const {
-    double scalar = 1. / phi(N(), 1.).norm() - 1. / phi(N(), si(N())).norm();
-    for (unsigned int j = 0; j < N() - 1; j++) {
-      scalar += 1. / phi(j, si(j + 1)).norm() - 1. / phi(j, si(j)).norm();
+    double scalar = 1. / ti(N(), 1.).norm() - 1. / ti(N(), si(N())).norm();
+    for (unsigned int j = 0; j < N() - 1; j++) { // FIXME: verifier le N-1 !!!!!!!!!!!! ---> BUG
+      scalar += 1. / ti(j, si(j + 1)).norm() - 1. / ti(j, si(j)).norm();
     }
     return -scalar * m_pi * m_t0.transpose();
   }
@@ -792,14 +846,16 @@ namespace frydom {
                      const std::shared_ptr<FrNode> &endingNode,
                      const std::shared_ptr<FrCableProperties> &properties,
                      bool elastic,
-                     double unstretchedLength) {
+                     double unstretchedLength,
+                     FLUID_TYPE fluid_type) {
 
     auto line = std::make_shared<FrCatenaryLine>(name,
                                                  startingNode,
                                                  endingNode,
                                                  properties,
                                                  elastic,
-                                                 unstretchedLength);
+                                                 unstretchedLength,
+                                                 fluid_type);
     startingNode->GetBody()->GetSystem()->Add(line);
     return line;
 

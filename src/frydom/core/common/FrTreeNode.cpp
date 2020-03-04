@@ -32,4 +32,9 @@ namespace frydom {
     }
   }
 
+  template<class ParentType>
+  FrOffshoreSystem *FrTreeNode<ParentType>::GetSystem() const {
+    return GetSystem();
+  }
+
 }  // end namespace frydom

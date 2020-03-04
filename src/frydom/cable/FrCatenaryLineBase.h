@@ -11,9 +11,13 @@
 #include "frydom/core/math/FrVector.h"
 #include "frydom/core/force/FrForce.h"
 #include "frydom/asset/FrCatenaryLineAsset.h"
+#include "frydom/environment/FrFluidType.h"
 
 
 namespace frydom {
+
+  // Forward declaration
+  class FrCatenaryForce;
 
   class FrCatenaryLineBase : public FrLoggable<FrOffshoreSystem>,
                              public FrCable,
@@ -60,16 +64,29 @@ namespace frydom {
       m_use_for_shape_initialization = use;
     };
 
+    /// Get the starting force of the line
+    /// \return the starting force of the line
+    std::shared_ptr<FrCatenaryForce> GetStartingForce() {
+      return m_startingForce;
+    }
 
+    /// Get the ending force of the line
+    /// \return the ending force of the line
+    std::shared_ptr<FrCatenaryForce> GetEndingForce() {
+      return m_endingForce;
+    }
 
+//    FLUID_TYPE GetFluidType() const;
 
-    void Initialize() = 0;
+//    void Initialize() = 0;
 
-    Force GetTension(const double &s, FRAME_CONVENTION fc) const = 0;
+    Force GetTension(const double &s, FRAME_CONVENTION fc) const override = 0;
 
-    Position GetPositionInWorld(const double &s, FRAME_CONVENTION fc) const = 0;
+//
+    Position GetPositionInWorld(const double &s, FRAME_CONVENTION fc) const override = 0;
 
-    double GetUnstretchedLength() const = 0;
+//
+    double GetUnstretchedLength() const override = 0;
 
     virtual bool HasSeabedInteraction() const {
       // TODO
@@ -82,21 +99,23 @@ namespace frydom {
     bool m_use_for_shape_initialization;
     bool m_elastic;
 
+    // Forces to apply to bodies
+    std::shared_ptr<FrCatenaryForce> m_startingForce;   ///< Force applied by the catenary line to the body at the
+    ///< starting node
+    std::shared_ptr<FrCatenaryForce> m_endingForce;     ///< Force applied by the catenary line to the body at the
+    ///< ending node
+
     double m_tolerance = 1e-6;
     unsigned int m_maxiter = 100;
     const double Lmin = 1e-10;
 
-    const Direction m_pi;
+    Direction m_pi;
     double m_q;
 
 //    double m_unstretchedLength;
 
 
-//    // Forces to apply to bodies
-//    std::shared_ptr<FrCatenaryForce> m_startingForce;   ///< Force applied by the catenary line to the body at the
-//    ///< starting node
-//    std::shared_ptr<FrCatenaryForce> m_endingForce;     ///< Force applied by the catenary line to the body at the
-//    ///< ending node
+
 
 
 

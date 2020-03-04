@@ -82,7 +82,7 @@ namespace frydom {
 
     /// Set if the free surface is to be shown/exist
     /// \param showFreeSurface showfreesurface true means the free surface exists
-    void ShowFreeSurface(bool showFreeSurface);
+    void Show(bool showFreeSurface);
 
     /// Get the free surface grid asset
     /// \return free surface grid asset

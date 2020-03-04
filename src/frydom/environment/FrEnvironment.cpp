@@ -124,7 +124,7 @@ namespace frydom {
   }
 
   void FrEnvironment::ShowFreeSurface(bool show) {
-    GetOcean()->GetFreeSurface()->ShowFreeSurface(show);
+    GetOcean()->GetFreeSurface()->Show(show);
   }
 
   void FrEnvironment::ShowSeabed(bool show) {

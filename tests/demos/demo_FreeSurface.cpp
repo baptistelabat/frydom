@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
 
     // It is also possible to hide the free surface asset, by using the following method. The free surface however
     // still exists, and you can still access its components.
-    // system.GetEnvironment()->GetOcean()->ShowFreeSurface(false);
+    // system.GetEnvironment()->GetOcean()->Show(false);
 
     // To manipulate the free surface grid asset, you first need to access it, through the free surface object.
     auto FSAsset = system.GetEnvironment()->GetOcean()->GetFreeSurface()->GetFreeSurfaceGridAsset();

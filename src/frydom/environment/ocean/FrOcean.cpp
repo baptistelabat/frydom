@@ -25,7 +25,7 @@ namespace frydom {
 
   FrOcean::FrOcean(FrEnvironment *environment) : m_environment(environment) {
 
-    m_seabed = std::make_unique<FrMeanSeabed>(this);
+    m_seabed = std::make_unique<FrFlatSeabed>(this);
     m_freeSurface = std::make_unique<FrFreeSurface>(this);
     m_current = std::make_unique<FrCurrent>(this);
     m_waterProp = std::make_unique<FrFluidProperties>(10., 1027., 0.001397, 1.3604E-06, 35., 1.2030E-03);
@@ -107,19 +107,15 @@ namespace frydom {
   }
 
   void FrOcean::ShowSeabed(bool showSeabed) {
-    if (showSeabed) {
-//            assert(dynamic_cast<FrNullSeabed>(m_seabed)); //FIXME to check that the deleted seabed is a NullSeabed
-      m_seabed = std::make_unique<FrMeanSeabed>(this);
-    } else {
-      m_seabed = std::make_unique<FrNullSeabed>(this);
+    if (!showSeabed) {
+      m_seabed->DontShow();
     }
   }
 
   void FrOcean::ShowFreeSurface(bool showFreeSurface) {
-    m_freeSurface->ShowFreeSurface(showFreeSurface);
+    m_freeSurface->Show(showFreeSurface);
   }
 
   void FrOcean::SetInfiniteDepth() { ShowSeabed(false); }
-
 
 }  // end namespace frydom
