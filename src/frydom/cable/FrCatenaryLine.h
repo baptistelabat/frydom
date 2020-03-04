@@ -34,7 +34,6 @@
 
 namespace frydom {
 
-
   namespace internal {
 
     class PointForce {
@@ -45,36 +44,14 @@ namespace frydom {
 
       const Force &force() const { return m_force; }
 
-      bool operator<(const PointForce &other) {
-        return m_s < other.m_s;
-      }
-
-      bool operator==(const PointForce &other) {
-        return mathutils::IsClose(m_s, other.m_s);
-      }
-
      private:
       double m_s;
       Force m_force;
-
     };
-
-//    auto ComparePointForce = [](const PointForce &lhs, const PointForce &rhs) {
-//      return lhs.s() < rhs.s();
-//    };
-//    std::set<int, decltype(cmp)> s(cmp);
-//
-//    struct ComparePointForce {
-//      bool operator()(const PointForce& lhs, const PointForce& rhs) {
-//        return lhs.s() < rhs.s();
-//      }
-//    };
-
-  }
+  }  // end namespace frydom::internal
 
 
   class FrCatenaryLine : public FrCatenaryLineBase {
-
 
    public:
 
@@ -89,16 +66,9 @@ namespace frydom {
                    FrCable *cable,
                    bool elastic);
 
+    void AddClumpWeight(const double &s, const double &mass);
 
-    void AddClumpWeight(const double &s, const double &mass) {
-      assert(mass > 0.);
-      AddPointMass(s, Force(0, 0, -mass * GetSystem()->GetEnvironment()->GetGravityAcceleration()));
-    }
-
-    void AddBuoy(const double &s, const double &mass) {
-      AddClumpWeight(s, -mass);
-    }
-
+    void AddBuoy(const double &s, const double &mass);
 
     /// Get the starting force of the line
     /// \return the starting force of the line
@@ -108,214 +78,100 @@ namespace frydom {
     /// \return the ending force of the line
     std::shared_ptr<FrCatenaryForce> GetEndingForce();
 
-    bool IsSingular() const {
-      return rho(0, 0.) == 0. || rho(N(), 1.) == 0.; // TODO: voir dans catway pour les tests...
-    }
+    bool IsSingular() const;
 
+    void Initialize() override;
 
-    void Initialize() override {}
+    Force GetTension(const double &s, FRAME_CONVENTION fc) const override;
 
-    Force GetTension(const double &s, FRAME_CONVENTION fc) const override {
-      Tension tension = t(s) * c_qL;
-      if (IsNED(fc))
-        internal::SwapFrameConvention(tension);
-      return tension;
-    }
+    Position GetPositionInWorld(const double &s, FRAME_CONVENTION fc) const override;
 
-    Position GetPositionInWorld(const double &s, FRAME_CONVENTION fc) const override {
-      Position position = p(s) * m_unstretchedLength;
-      if (IsNED(fc))
-        internal::SwapFrameConvention(position);
-      return position;
-    }
+    double GetUnstretchedLength() const override;
 
-    double GetUnstretchedLength() const override {
-      return m_unstretchedLength;
-    }
-
-    bool HasSeabedInteraction() const override {}
-
-    void solve() override {}
+    void solve() override;
 
 
    private:
+    // WARNING: every method into the private scope are working with dimensionless variables and in NWU
+    // The public part of the catenary line API works with dimensional variables.
+    // Forces are divided by Lq and lengths by L
 
-    void AddPointMass(const double &s, const Force &force) {
-//      m_point_forces.emplace(internal::PointForce(s, force, NWU));
+    using Residue3 = mathutils::Vector3d<double>;
+    using Jacobian33 = mathutils::Matrix33<double>;
 
-      // TODO:gerer le fait qu'on decrit s a partir du fairlead ???
+    void AddPointMass(const double &s, const Force &force);
 
-      auto pos = m_point_forces.cbegin();
-      for (; pos != m_point_forces.cend(); pos++) {
-        if (s > pos->s())
-          break;
-      }
+    inline auto alpha(const unsigned int &i, const double &s) const;
 
-      m_point_forces.insert(pos, internal::PointForce(s, force));
+    inline auto phi(const unsigned int &i, const double &s) const;
 
-    }
+    inline double rho(const unsigned int &i, const double &s) const;
 
-//    inline const Direction &pi() const override {}
-//
-//    inline const double &q() const override {}
+    inline double lambda(const unsigned int &i, const double &s) const;
 
-    inline auto alpha(unsigned int i, const double &s) const {
-      return Fi(i) + m_pi * s;
-    }
+    inline Force Fi(const unsigned int &i) const;
 
-    inline auto phi(unsigned int i, const double &s) const {
-      return m_t0 - alpha(i, s);
-    }
+    inline Force fi(const unsigned int &i) const;
 
-    inline double rho(unsigned int i, const double &s) const {
-      return phi(i, s).norm() - m_pi.transpose() * phi(i, s); // On essaie d'exploiter Eigen...
-    }
+    inline double si(const unsigned int &i) const;
 
-    inline double lambda(unsigned int i, const double &s) const {
-      return std::log(rho(i, s));
-    }
+    inline auto Lambda_tau(const unsigned int &i, const double &s) const;
 
-    inline Force Fi(unsigned int i) const {
-      return c_Fi[i];
-    }
+    inline unsigned int N() const;
 
-    inline Force fi(unsigned int i) const {
-      return m_point_forces[i].force();
-    }
+    inline Tension t(const double &s) const;
 
-    inline double si(unsigned int i) const {
-      return m_point_forces[i].s();
-    }
+    inline Tension tL() const;
 
-    inline auto Lambda_tau(unsigned int i, const double &s) const {
-      double phi_i_s = phi(i, s).norm();
-      return (m_t0 - phi_i_s * m_pi) / (rho(i, s) * phi_i_s);
-    }
+    inline Position p0() const;
 
-    inline unsigned int N() const { return m_point_forces.size() - 1; }
+    unsigned int SToI(const double &s) const;
 
-    inline const mathutils::Matrix33<double> &U() const { return c_U; }
+    Position p_pi(const unsigned int &i, const double &s) const;
 
-    inline Tension t0() const { return m_t0; }
+    Position p_perp(const unsigned int &i, const double &s) const;
 
-    inline Tension t(const double &s) const {
-      unsigned int i = SToI(s);
+    Position pc(const unsigned int &i, const double &s) const;
 
+    inline Force sum_fs(const unsigned int &i) const;
 
-//      return m_t0 - m_pi * s; // FIXME: ca n'est a priori pas cela du tout avec les clump !!!
+    Position pe(const unsigned int &i, const double &s) const;
 
-      // TODO
+    inline Position p(const double &s) const;
 
-    }
+    inline auto pL() const;
 
-    inline Tension tL() const {
-      return t(1.);
-    }
+    void GuessTension();
 
-    inline Position p0() const {
-      return m_startingNode->GetPositionInWorld(NWU) / m_unstretchedLength;
-    }
+    Residue3 GetResidue() const;
 
-    unsigned int SToI(const double &s) const {
-      assert(0. <= s && s <= 1.);
+    inline Jacobian33 dpc_dt() const;
 
-      // si < s <= si+1
-      for (int i = 0; i < N(); i++) {
-        if (si(i) < s && s <= si(i + 1)) return i;
-      }
+    inline Jacobian33 dp_pi_dt() const;
 
-    }
+    inline Jacobian33 dp_perp_dt() const;
 
-    Position p_pi(unsigned int i, const double &s) const {
-      auto scalar = phi(i, s).norm() - phi(i, si(i)).norm();
-      for (int j = 0; j < i; j++) {
-        scalar += phi(j, si(j + 1)).norm() - phi(j, si(j)).norm();
-      }
-      return -m_pi * scalar;
-    }
+    inline Jacobian33 dpe_dt() const;
 
-    Position p_perp(unsigned int i, const double &s) const {
-      Position vector = (m_t0 - Fi(i)) * (lambda(i, s) - lambda(i, si(i)));
-      for (int j = 0; j < i; j++) {
-        vector += (m_t0 - Fi(j)) * (lambda(j, si(j + 1)) - lambda(j, si(j)));
-      }
-      return c_U * vector;
-    }
+    Jacobian33 GetJacobian() const;
 
+    void Compute(double time) override;
 
-    Position pc(unsigned int i, const double &s) const {
-      if (IsSingular()) {
-        return p_pi(i, s);
-      } else {
-        return p_pi(i, s) + p_perp(i, s);
-      }
-    }
+    internal::FrPhysicsItemBase *GetChronoItem_ptr() const override; // Qu'est ce que ca fait la ???
 
-    inline Force sum_fs(unsigned int i) const {
-      return c_sum_fs[i];
-    }
+    void DefineLogMessages() override;
 
-    Position pe(unsigned int i, const double &s) const {
-      return (m_q * m_unstretchedLength / m_properties->GetEA()) *
-             ((m_t0 - Fi(i)) * s + sum_fs(i) - 0.5 * m_pi * s * s);
-    }
-
-    inline Position p(const double &s) const {
-      unsigned int i = SToI(s);
-      Position p = p0() + pc(i, s);
-      if (m_elastic)
-        p += pe(i, s);
-      return p;
-    }
-
-    inline auto pL() const {
-      return m_endingNode->GetPositionInWorld(NWU) / m_unstretchedLength;
-    }
-
-    inline double L() const { return m_unstretchedLength; }
-
-    void Compute(double time) override {}
-
-    internal::FrPhysicsItemBase *GetChronoItem_ptr() const override {} // Qu'est ce que ca fait la ???
-
-    void DefineLogMessages() override {}
-
-
-    void BuildCache() {
-      c_U.SetIdentity();
-      c_U -= m_pi * m_pi.transpose();
-
-      c_qL = m_q * m_unstretchedLength;
-
-      c_Fi.clear();
-      c_sum_fs.clear();
-      c_Fi.emplace_back(m_point_forces.front().force());
-      c_sum_fs.emplace_back(m_point_forces.front().force());
-
-      for (int i = 0; i < N(); i++) { // TODO: voir la borne
-        auto point_force = m_point_forces[i + 1];
-        c_Fi.emplace_back(c_Fi[i] + point_force.force());
-        c_sum_fs.emplace_back(c_sum_fs[i] + point_force.force() * point_force.s());
-      }
-
-    }
-
+    void BuildCache();
 
    private:
-    bool m_elastic;
     Tension m_t0;
-
-
     std::vector<internal::PointForce> m_point_forces;
-
 
     // Cache
     std::vector<Force> c_Fi;
     std::vector<Force> c_sum_fs;
-
     mathutils::Matrix33<double> c_U;
     double c_qL;
-
 
   };
 

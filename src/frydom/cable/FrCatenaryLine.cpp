@@ -19,19 +19,10 @@
 #include "frydom/environment/ocean/FrOcean.h"
 #include "frydom/environment/ocean/seabed/FrSeabed.h"
 
-#include "frydom/asset/FrCatenaryLineAsset.h"
-
 #include "frydom/logging/FrTypeNames.h"
 #include "frydom/logging/FrEventLogger.h"
 
-#include "boost/lexical_cast.hpp" // TODO: retirer, seulement pour tests
-#include "boost/uuid/uuid_io.hpp"
-#include "boost/uuid/uuid.hpp"
-#include "boost/uuid/uuid_generators.hpp"
-
-
 namespace frydom {
-
 
   FrCatenaryLine::FrCatenaryLine(const std::string &name,
                                  const std::shared_ptr<FrNode> &startingNode,
@@ -39,8 +30,8 @@ namespace frydom {
                                  const std::shared_ptr<FrCableProperties> &properties,
                                  bool elastic,
                                  double unstretchedLength) :
-      FrCatenaryLineBase(name, TypeToString(this), startingNode, endingNode, properties, unstretchedLength),
-      m_elastic(true) {
+      FrCatenaryLineBase(name, TypeToString(this), startingNode, endingNode, properties, elastic, unstretchedLength),
+      c_qL(0.) {
 
     m_point_forces.emplace_back(internal::PointForce{0., Force()});
 
@@ -54,12 +45,277 @@ namespace frydom {
                      elastic,
                      cable->GetUnstretchedLength()) {}
 
+  void FrCatenaryLine::AddClumpWeight(const double &s, const double &mass) {
+    AddPointMass(s / m_unstretchedLength,
+                 Force(0, 0, -mass * GetSystem()->GetEnvironment()->GetGravityAcceleration()) / c_qL);
+    // FIXME: il faut que c_qL soit set dans le constructeur !
+  }
+
+  void FrCatenaryLine::AddBuoy(const double &s, const double &mass) {
+    AddPointMass(s / m_unstretchedLength,
+                 Force(0, 0, mass * GetSystem()->GetEnvironment()->GetGravityAcceleration()) / c_qL);
+  }
+
   std::shared_ptr<FrCatenaryForce> FrCatenaryLine::GetStartingForce() {
-//    return std::shared_ptr<FrCatenaryForce>();
+    // TODO
   }
 
   std::shared_ptr<FrCatenaryForce> FrCatenaryLine::GetEndingForce() {
-//    return std::shared_ptr<FrCatenaryForce>();
+    // TODO
+  }
+
+  bool FrCatenaryLine::IsSingular() const {
+    return rho(0, 0.) == 0. || rho(N(), 1.) == 0.; // TODO: voir dans catway pour les tests...
+  }
+
+  void FrCatenaryLine::Initialize() {
+    // TODO
+  }
+
+  Force FrCatenaryLine::GetTension(const double &s, FRAME_CONVENTION fc) const {
+    Tension tension = t(s) * c_qL;
+    if (IsNED(fc))
+      internal::SwapFrameConvention(tension);
+    return tension;
+  }
+
+  Position FrCatenaryLine::GetPositionInWorld(const double &s, FRAME_CONVENTION fc) const {
+    Position position = p(s) * m_unstretchedLength;
+    if (IsNED(fc))
+      internal::SwapFrameConvention(position);
+    return position;
+  }
+
+  double FrCatenaryLine::GetUnstretchedLength() const {
+    return m_unstretchedLength;
+  }
+
+//  bool FrCatenaryLine::HasSeabedInteraction() const {
+//    // TODO
+//  }
+
+  void FrCatenaryLine::solve() {
+    // TODO
+
+  }
+
+  void FrCatenaryLine::AddPointMass(const double &s, const Force &force) {
+    // TODO:gerer le fait qu'on decrit s a partir du fairlead ???
+
+    auto pos = m_point_forces.cbegin();
+    for (; pos != m_point_forces.cend(); pos++) {
+      if (s > pos->s())
+        break;
+    }
+
+    m_point_forces.insert(pos, internal::PointForce(s, force));
+
+  }
+
+  auto FrCatenaryLine::alpha(const unsigned int &i, const double &s) const {
+    return Fi(i) + m_pi * s;
+  }
+
+  auto FrCatenaryLine::phi(const unsigned int &i, const double &s) const {
+    return m_t0 - alpha(i, s);
+  }
+
+  double FrCatenaryLine::rho(const unsigned int &i, const double &s) const {
+    return phi(i, s).norm() - m_pi.transpose() * phi(i, s); // On essaie d'exploiter Eigen...
+  }
+
+  double FrCatenaryLine::lambda(const unsigned int &i, const double &s) const {
+    return std::log(rho(i, s));
+  }
+
+  Force FrCatenaryLine::Fi(const unsigned int &i) const {
+    return c_Fi[i];
+  }
+
+  Force FrCatenaryLine::fi(const unsigned int &i) const {
+    return m_point_forces[i].force();
+  }
+
+  double FrCatenaryLine::si(const unsigned int &i) const {
+    return m_point_forces[i].s();
+  }
+
+  auto FrCatenaryLine::Lambda_tau(const unsigned int &i, const double &s) const {
+    double phi_i_s = phi(i, s).norm();
+    return (m_t0 - phi_i_s * m_pi) / (rho(i, s) * phi_i_s);
+  }
+
+  unsigned int FrCatenaryLine::N() const { return m_point_forces.size() - 1; }
+
+  FrCatenaryLineBase::Tension FrCatenaryLine::t(const double &s) const {
+    unsigned int i = SToI(s);
+
+
+//      return m_t0 - m_pi * s; // FIXME: ca n'est a priori pas cela du tout avec les clump !!!
+
+    // TODO: TERMINER !!!!!!!!!!!!!!
+
+  }
+
+  FrCatenaryLineBase::Tension FrCatenaryLine::tL() const {
+    return t(1.);
+  }
+
+  Position FrCatenaryLine::p0() const {
+    return m_startingNode->GetPositionInWorld(NWU) / m_unstretchedLength;
+  }
+
+  unsigned int FrCatenaryLine::SToI(const double &s) const {
+    assert(0. <= s && s <= 1.);
+
+    // si < s <= si+1 ---> we send back i
+    for (unsigned int i = 0; i < N(); i++) {
+      if (si(i) < s && s <= si(i + 1)) return i;
+    }
+  }
+
+  Position FrCatenaryLine::p_pi(const unsigned int &i, const double &s) const {
+    auto scalar = phi(i, s).norm() - phi(i, si(i)).norm();
+    for (int j = 0; j < i; j++) {
+      scalar += phi(j, si(j + 1)).norm() - phi(j, si(j)).norm();
+    }
+    return -m_pi * scalar;
+  }
+
+  Position FrCatenaryLine::p_perp(const unsigned int &i, const double &s) const {
+    Position vector = (m_t0 - Fi(i)) * (lambda(i, s) - lambda(i, si(i)));
+    for (int j = 0; j < i; j++) {
+      vector += (m_t0 - Fi(j)) * (lambda(j, si(j + 1)) - lambda(j, si(j)));
+    }
+    return c_U * vector;
+  }
+
+  Position FrCatenaryLine::pc(const unsigned int &i, const double &s) const {
+    if (IsSingular()) {
+      return p_pi(i, s);
+    } else {
+      return p_pi(i, s) + p_perp(i, s);
+    }
+  }
+
+  Force FrCatenaryLine::sum_fs(const unsigned int &i) const {
+    return c_sum_fs[i];
+  }
+
+  Position FrCatenaryLine::pe(const unsigned int &i, const double &s) const {
+    return (m_q * m_unstretchedLength / m_properties->GetEA()) *
+           ((m_t0 - Fi(i)) * s + sum_fs(i) - 0.5 * m_pi * s * s);
+  }
+
+  Position FrCatenaryLine::p(const double &s) const {
+    unsigned int i = SToI(s);
+    Position p = p0() + pc(i, s);
+    if (m_elastic)
+      p += pe(i, s);
+    return p;
+  }
+
+  auto FrCatenaryLine::pL() const {
+    return m_endingNode->GetPositionInWorld(NWU) / m_unstretchedLength;
+  }
+
+  void FrCatenaryLine::GuessTension() {
+    // Peyrot et goulois
+
+    Position p0pL = GetEndingNode()->GetPositionInWorld(NWU) - GetStartingNode()->GetPositionInWorld(NWU);
+    double lx = p0pL[0];
+    double ly = p0pL[1];
+    double lz = p0pL[2];
+
+    double chord_length = p0pL.norm();
+    Direction v = m_pi.cross(p0pL / chord_length).cross(m_pi);
+
+    double lambda = 0;
+    if (m_unstretchedLength <= chord_length) {
+      lambda = 0.2;
+    } else if ((m_pi.cross(p0pL)).norm() < 1e-4) {
+      lambda = 1e6;
+    } else {
+      lambda = sqrt(3. * (m_unstretchedLength * m_unstretchedLength - lz * lz) / (lx * lx + ly * ly));
+    }
+
+    auto fu = -0.5 * m_q * (lz / std::tanh(lambda) - m_unstretchedLength);
+    auto fv = 0.5 * m_q * std::sqrt(lx * lx + ly * ly) / lambda;
+
+    m_t0 = fu * m_pi + fv * v;
+  }
+
+  FrCatenaryLine::Residue3 FrCatenaryLine::GetResidue() const {
+    return p(1.) - pL(); // TODO : verifier
+  }
+
+  FrCatenaryLine::Jacobian33 FrCatenaryLine::dp_pi_dt() const {
+    double scalar = 1. / phi(N(), 1.).norm() - 1. / phi(N(), si(N())).norm();
+    for (unsigned int j = 0; j < N() - 1; j++) {
+      scalar += 1. / phi(j, si(j + 1)).norm() - 1. / phi(j, si(j)).norm();
+    }
+    return -scalar * m_pi * m_t0.transpose();
+  }
+
+  FrCatenaryLine::Jacobian33 FrCatenaryLine::dp_perp_dt() const {
+    Jacobian33 matrix = (m_t0 - Fi(N())) * (Lambda_tau(N(), 1.) - Lambda_tau(N(), si(N()))).transpose();
+    double scalar = lambda(N(), 1.) - lambda(N(), si(N()));
+    for (unsigned int j = 0; j < N() - 1; j++) {
+      matrix += (m_t0 - Fi(j)) * (Lambda_tau(j, si(j + 1)) - Lambda_tau(j, si(j))).transpose();
+      scalar += lambda(j, si(j + 1)) - lambda(j, si(j));
+    }
+    return c_U * matrix + scalar * Eigen::Matrix3d::Identity();
+  }
+
+  FrCatenaryLine::Jacobian33 FrCatenaryLine::dpc_dt() const {
+    auto jacobian = dp_pi_dt();
+    if (!IsSingular()) {
+      jacobian += dp_perp_dt();
+    }
+    return jacobian;
+  }
+
+  FrCatenaryLine::Jacobian33 FrCatenaryLine::dpe_dt() const {
+    return (m_q * m_unstretchedLength / m_properties->GetEA()) * Eigen::Matrix3d::Identity(); // TODO: optim
+  }
+
+  FrCatenaryLine::Jacobian33 FrCatenaryLine::GetJacobian() const {
+//    auto jacobian;
+    auto jacobian = dpc_dt();
+    if (m_elastic) {
+      jacobian += dpe_dt();
+    }
+    return jacobian;
+  }
+
+  void FrCatenaryLine::Compute(double time) {
+    // TODO
+  }
+
+  internal::FrPhysicsItemBase *FrCatenaryLine::GetChronoItem_ptr() const {
+    // TODO
+  }
+
+  void FrCatenaryLine::DefineLogMessages() {
+    // TODO
+  }
+
+  void FrCatenaryLine::BuildCache() {
+    c_U.SetIdentity();
+    c_U -= m_pi * m_pi.transpose();
+
+    c_qL = m_q * m_unstretchedLength;
+
+    c_Fi.clear();
+    c_sum_fs.clear();
+    c_Fi.emplace_back(m_point_forces.front().force());
+    c_sum_fs.emplace_back(m_point_forces.front().force());
+
+    for (unsigned int i = 0; i < N(); i++) { // TODO: voir la borne
+      auto point_force = m_point_forces[i + 1];
+      c_Fi.emplace_back(c_Fi[i] + point_force.force());
+      c_sum_fs.emplace_back(c_sum_fs[i] + point_force.force() * point_force.s());
+    }
   }
 
 

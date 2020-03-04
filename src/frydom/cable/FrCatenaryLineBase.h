@@ -15,23 +15,6 @@
 
 namespace frydom {
 
-//  // Forward declarations:
-//  class FrCatenaryForce;
-
-
-
-
-
-//  class LocalizedForce { // Mettre dans catenaryline !!!
-//
-//   public:
-//
-//
-//
-//  };
-
-
-
   class FrCatenaryLineBase : public FrLoggable<FrOffshoreSystem>,
                              public FrCable,
                              public FrPrePhysicsItem,
@@ -51,14 +34,16 @@ namespace frydom {
                        const std::shared_ptr<FrNode> &startingNode,
                        const std::shared_ptr<FrNode> &endingNode,
                        const std::shared_ptr<FrCableProperties> &properties,
-//                       bool elastic,
+                       bool elastic,
                        double unstretchedLength) :
         FrLoggable(name, type, startingNode->GetSystem()),
         FrPrePhysicsItem(),
         FrCable(startingNode, endingNode, properties, unstretchedLength),
+        m_elastic(elastic),
         m_use_for_shape_initialization(false),
         m_tolerance(1e-6),
-        m_maxiter(100) {}
+        m_maxiter(100),
+        m_q(0.) {}
 
 
     /// Set the Newton-Raphson solver tolerance
@@ -86,38 +71,16 @@ namespace frydom {
 
     double GetUnstretchedLength() const = 0;
 
-    virtual bool HasSeabedInteraction() const = 0;
+    virtual bool HasSeabedInteraction() const {
+      // TODO
+    }
 
     virtual void solve() = 0;
 
 
    protected:
-
-    // Attention: toutes les methodes qui suivent sont adimentionnelles !!!
-
-    // Tension relative methods
-
-//    inline const Direction &pi() const { return m_pi; };
-//
-//    inline const double &q() const { return m_q; };
-//
-//    virtual inline Tension t0() const = 0;
-//
-////    virtual inline auto t(const double &s) const = 0;
-//
-//    virtual inline Tension tL() const = 0;
-//
-//    virtual inline Position p0() const = 0;
-//
-//    virtual inline Position p(const double &s) const = 0;
-//
-//    virtual inline Position pL() const = 0;
-//
-//    virtual inline double L() const = 0;
-
-
-   protected:
     bool m_use_for_shape_initialization;
+    bool m_elastic;
 
     double m_tolerance = 1e-6;
     unsigned int m_maxiter = 100;

@@ -63,7 +63,7 @@ int main() {
 //  auto cable_properties = make_cable_properties(diameter, linear_density, E, rayleighDamping);
 
   auto cat_cable = make_catenary_line("catenary_cable", anchor, cylinder_anchor,
-                                      cable_properties, true, cable_length, WATER); // TODO: devrait y avoir une detection auto du fluide...
+                                      cable_properties, true, cable_length); // TODO: devrait y avoir une detection auto du fluide...
 
   auto cable = FrLumpedMassCable("cable",
                                  anchor,
