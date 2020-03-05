@@ -45,7 +45,7 @@ namespace frydom {
         FrCable(startingNode, endingNode, properties, unstretchedLength),
         m_elastic(elastic),
         m_use_for_shape_initialization(false),
-        m_tolerance(1e-6),
+        m_tolerance(1e-4),
         m_maxiter(100),
         m_q(0.) {}
 

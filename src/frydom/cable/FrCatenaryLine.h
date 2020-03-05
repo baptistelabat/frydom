@@ -97,15 +97,13 @@ namespace frydom {
 
     double rho(const unsigned int &i, const double &s) const; // inline
 
-    double lambda(const unsigned int &i, const double &s) const; // inline
-
     Force Fi(const unsigned int &i) const; // inline
 
     Force fi(const unsigned int &i) const; // inline
 
     double si(const unsigned int &i) const; // inline
 
-    auto Lambda_tau(const unsigned int &i, const double &s) const; // inline
+    Direction Lambda_tau(const unsigned int &i, const double &s) const; // inline
 
     unsigned int N() const; // inline
 
@@ -115,7 +113,7 @@ namespace frydom {
 
     Tension tL() const; // inline
 
-    Position p0() const; // inline
+//    Position p0() const; // inline
 
     unsigned int SToI(const double &s) const;
 

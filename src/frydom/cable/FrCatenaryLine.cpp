@@ -34,11 +34,7 @@ namespace frydom {
                                  FLUID_TYPE fluid_type) :
       FrCatenaryLineBase(name, TypeToString(this), startingNode, endingNode, properties, elastic, unstretchedLength),
       c_qL(0.) {
-
     m_point_forces.emplace_back(internal::PointForce{0., Force()});
-    m_q = properties->GetLinearDensity() - properties->GetSectionArea() *
-                                           startingNode->GetSystem()->GetEnvironment()->GetFluidDensity(fluid_type);
-    m_pi = {0., 0., -1.};
   }
 
   FrCatenaryLine::FrCatenaryLine(const std::string &name, FrCable *cable, bool elastic, FLUID_TYPE fluid_type) :
@@ -68,6 +64,13 @@ namespace frydom {
   }
 
   void FrCatenaryLine::Initialize() {
+
+    //    m_q = properties->GetLinearDensity() - properties->GetSectionArea() *
+//                                           startingNode->GetSystem()->GetEnvironment()->GetFluidDensity(fluid_type); // FIXME: bug ici, pas de gravity
+    m_q = m_properties->GetLinearDensity() *
+          GetSystem()->GetEnvironment()->GetGravityAcceleration(); // FIXME: reintroduire l'hydrostatique !!!
+    m_pi = {0., 0., -1.};
+
 
     m_startingNode->Initialize();
     m_endingNode->Initialize();
@@ -130,7 +133,8 @@ namespace frydom {
     Eigen::FullPivLU<Eigen::Matrix3d> linear_solver;
 
     Residue3 residue = GetResidue();
-    double err = residue.infNorm();
+    double err = residue.norm();
+
     if (err < m_tolerance) {
       std::cout << "Already at equilibrium" << std::endl;
       return;
@@ -146,10 +150,9 @@ namespace frydom {
       m_t0 += dt0;
 
       residue = GetResidue();
-      err = residue.infNorm();
+      err = residue.norm();
 
       if (err < m_tolerance) {
-        std::cout << "convergence in " << iter << std::endl;
         break;
       }
 
@@ -181,10 +184,6 @@ namespace frydom {
     return ti(i, s).norm() - m_pi.transpose() * ti(i, s); // On essaie d'exploiter Eigen...
   }
 
-  double FrCatenaryLine::lambda(const unsigned int &i, const double &s) const {
-    return std::log(rho(i, s));
-  }
-
   Force FrCatenaryLine::Fi(const unsigned int &i) const {
     return c_Fi[i];
   }
@@ -195,13 +194,6 @@ namespace frydom {
 
   double FrCatenaryLine::si(const unsigned int &i) const {
     return m_point_forces[i].s();
-  }
-
-  auto FrCatenaryLine::Lambda_tau(const unsigned int &i, const double &s) const {
-//    double ti_s_n = ti(i, s).norm();
-//    return (m_t0 - ti_s_n * m_pi) / (rho(i, s) * ti_s_n);
-    return (ti(i, s).normalized() - m_pi) /
-           rho(i, s); // FIXME: essai au bluf !!!! --> donne la meme chose... -> re-verifier neanmoins
   }
 
   unsigned int FrCatenaryLine::N() const { return m_point_forces.size() - 1; }
@@ -215,9 +207,9 @@ namespace frydom {
     return t(1.);
   }
 
-  Position FrCatenaryLine::p0() const {
-    return m_startingNode->GetPositionInWorld(NWU) / m_unstretchedLength;
-  }
+//  Position FrCatenaryLine::p0() const {
+//    return m_startingNode->GetPositionInWorld(NWU) / m_unstretchedLength;
+//  }
 
   unsigned int FrCatenaryLine::SToI(const double &s) const {
     assert(0. <= s && s <= 1.);
@@ -235,6 +227,9 @@ namespace frydom {
 
   void FrCatenaryLine::p_pi(Position &position, const unsigned int &i, const double &s) const {
     auto scalar = ti(i, s).norm() - ti(i, si(i)).norm();
+    double t1 = ti(i, s).norm(); // TODO: Retirer
+    double t2 = ti(i, si(i)).norm(); // TODO: Retirer
+
     for (int j = 0; j < i; j++) {
       scalar += ti(j, si(j + 1)).norm() - ti(j, si(j)).norm();
     }
@@ -242,9 +237,9 @@ namespace frydom {
   }
 
   void FrCatenaryLine::p_perp(Position &position, const unsigned int &i, const double &s) const {
-    Position vector = (m_t0 - Fi(i)) * (lambda(i, s) - lambda(i, si(i)));
+    Position vector = (m_t0 - Fi(i)) * std::log(rho(i, s) / rho(i, si(i)));
     for (int j = 0; j < i; j++) {
-      vector += (m_t0 - Fi(j)) * (lambda(j, si(j + 1)) - lambda(j, si(j)));
+      vector += (m_t0 - Fi(j)) * std::log(rho(j, si(j + 1)) / rho(j, si(j)));
     }
     position += c_U * vector;
   }
@@ -254,6 +249,7 @@ namespace frydom {
     if (!IsSingular()) {
       p_perp(position, i, s);
     }
+    Position pp = position * m_unstretchedLength; // TODO: retirer
   }
 
   Force FrCatenaryLine::sum_fs(const unsigned int &i) const {
@@ -261,11 +257,13 @@ namespace frydom {
   }
 
   void FrCatenaryLine::pe(Position &position, const unsigned int &i, const double &s) const {
+    Position pp = (c_qL / m_properties->GetEA()) * ((m_t0 - Fi(i)) * s + sum_fs(i) - 0.5 * m_pi * s * s) *
+                  m_unstretchedLength; // TODO: retirer
     position += (c_qL / m_properties->GetEA()) * ((m_t0 - Fi(i)) * s + sum_fs(i) - 0.5 * m_pi * s * s);
   }
 
   void FrCatenaryLine::pi(Position &position, const unsigned int &i, const double &s) const {
-    position += p0();
+//    position += p0();
     pc(position, i, s);
     if (m_elastic)
       pe(position, i, s);
@@ -275,60 +273,71 @@ namespace frydom {
     Position position;
     unsigned int i = SToI(s);
     pi(position, i, s);
+    Position pp = position * m_unstretchedLength;
     return position;
   }
 
   Position FrCatenaryLine::pL() const { // TODO: est-ce que l'adim est aussi simple ???
-    return m_endingNode->GetPositionInWorld(NWU) / m_unstretchedLength;
+    return (m_endingNode->GetPositionInWorld(NWU) - m_startingNode->GetPositionInWorld(NWU)) / m_unstretchedLength;
   }
 
   void FrCatenaryLine::GuessTension() {
     // Peyrot et goulois
 
     Position p0pL = GetEndingNode()->GetPositionInWorld(NWU) - GetStartingNode()->GetPositionInWorld(NWU);
-    double lx = p0pL[0];
-    double ly = p0pL[1];
-    double lz = p0pL[2];
+    double lx = p0pL(0);
+    double ly = p0pL(1);
+    double lz = p0pL(2);
 
-    double chord_length = p0pL.norm();
-    Direction v = m_pi.cross(p0pL / chord_length).cross(m_pi);
+    double V = lz;
+    double H = sqrt(lx * lx + ly * ly);
 
+    auto chord_length = p0pL.norm();
+    Direction v_horiz = (m_pi.cross(p0pL).cross(m_pi)).normalized();
+
+    double lu = GetUnstretchedLength();
     double lambda = 0;
-    if (m_unstretchedLength <= chord_length) {
+
+    if (lu <= chord_length) {
+      // The cable is taut
       lambda = 0.2;
     } else if ((m_pi.cross(p0pL)).norm() < 1e-4) {
+      // The cable has direction collinear to main effort
       lambda = 1e6;
     } else {
-      lambda = sqrt(3. * (m_unstretchedLength * m_unstretchedLength - lz * lz) / (lx * lx + ly * ly));
+      lambda = sqrt(6. * (sqrt((lu * lu - lz * lz) / (lx * lx + ly * ly)) - 1.));
     }
 
-    auto fu = -0.5 * m_q * (lz / std::tanh(lambda) - m_unstretchedLength);
-    auto fv = 0.5 * m_q * std::sqrt(lx * lx + ly * ly) / lambda;
+    double f_vert = 0.5 * m_q * (-lz / tanh(lambda) + lu);
+    double f_horiz = std::max(0.5 * m_q * H / lambda, 1e-3); // Attention au signe
 
-    m_t0 = (fu * m_pi + fv * v) / c_qL;
+    m_t0 = (f_vert * m_pi + f_horiz * v_horiz) / c_qL;
   }
 
   FrCatenaryLine::Residue3 FrCatenaryLine::GetResidue() const {
-//    auto pend = pL();
-    return p(1.) - pL(); // TODO : verifier
+    return p(1.) - pL();
   }
 
   void FrCatenaryLine::dp_pi_dt(Jacobian33 &jacobian) const {
-    double scalar = 1. / ti(N(), 1.).norm() - 1. / ti(N(), si(N())).norm();
-    for (unsigned int j = 0; j < N(); j++) { // FIXME: verifier le N-1 !!!!!!!!!!!! ---> BUG
-      scalar += 1. / ti(j, si(j + 1)).norm() - 1. / ti(j, si(j)).norm();
+    Direction direction = ti(N(), 1.).normalized() - ti(N(), si(N())).normalized();
+    for (unsigned int j = 0; j < N(); j++) {
+      direction += ti(j, si(j + 1)).normalized() - ti(j, si(j)).normalized();
     }
-    jacobian -= scalar * m_pi * m_t0.transpose();
+    jacobian -= m_pi * direction.transpose();
+  }
+
+  Direction FrCatenaryLine::Lambda_tau(const unsigned int &i, const double &s) const {
+    return (ti(i, s).normalized() - m_pi) / (rho(i, s));
   }
 
   void FrCatenaryLine::dp_perp_dt(Jacobian33 &jacobian) const {
-    Jacobian33 matrix = (m_t0 - Fi(N())) * (Lambda_tau(N(), 1.) - Lambda_tau(N(), si(N()))).transpose();
-    double scalar = lambda(N(), 1.) - lambda(N(), si(N()));
+    Jacobian33 matrix = (c_U * (m_t0 - Fi(N()))) * (Lambda_tau(N(), 1.) - Lambda_tau(N(), si(N()))).transpose();
+    double scalar = std::log(rho(N(), 1.) / rho(N(), si(N())));
     for (unsigned int j = 0; j < N(); j++) {
-      matrix += (m_t0 - Fi(j)) * (Lambda_tau(j, si(j + 1)) - Lambda_tau(j, si(j))).transpose();
-      scalar += lambda(j, si(j + 1)) - lambda(j, si(j));
+      matrix += c_U * (m_t0 - Fi(j)) * (Lambda_tau(j, si(j + 1)) - Lambda_tau(j, si(j))).transpose();
+      scalar += std::log(rho(j, si(j + 1)) / rho(j, si(j)));
     }
-    jacobian += c_U * matrix + scalar * Eigen::Matrix3d::Identity();
+    jacobian += c_U * scalar + c_U * matrix;
   }
 
   void FrCatenaryLine::dpc_dt(Jacobian33 &jacobian) const {
@@ -357,7 +366,7 @@ namespace frydom {
   }
 
   internal::FrPhysicsItemBase *FrCatenaryLine::GetChronoItem_ptr() const {
-    // TODO
+    return m_chronoPhysicsItem.get();
   }
 
   void FrCatenaryLine::DefineLogMessages() {
@@ -382,8 +391,26 @@ namespace frydom {
     }
   }
 
+  std::shared_ptr<FrCatenaryLine>
+  make_catenary_line(const std::string &name,
+                     const std::shared_ptr<FrNode> &startingNode,
+                     const std::shared_ptr<FrNode> &endingNode,
+                     const std::shared_ptr<FrCableProperties> &properties,
+                     bool elastic,
+                     double unstretchedLength,
+                     FLUID_TYPE fluid_type) {
 
+    auto line = std::make_shared<FrCatenaryLine>(name,
+                                                 startingNode,
+                                                 endingNode,
+                                                 properties,
+                                                 elastic,
+                                                 unstretchedLength,
+                                                 fluid_type);
+    startingNode->GetBody()->GetSystem()->Add(line);
+    return line;
 
+  }
 
 
 
@@ -850,25 +877,6 @@ namespace frydom {
 //  internal::FrPhysicsItemBase *FrCatenaryLine_::GetChronoItem_ptr() const { return m_chronoPhysicsItem.get(); }
 //
 //
-  std::shared_ptr<FrCatenaryLine>
-  make_catenary_line(const std::string &name,
-                     const std::shared_ptr<FrNode> &startingNode,
-                     const std::shared_ptr<FrNode> &endingNode,
-                     const std::shared_ptr<FrCableProperties> &properties,
-                     bool elastic,
-                     double unstretchedLength,
-                     FLUID_TYPE fluid_type) {
 
-    auto line = std::make_shared<FrCatenaryLine>(name,
-                                                 startingNode,
-                                                 endingNode,
-                                                 properties,
-                                                 elastic,
-                                                 unstretchedLength,
-                                                 fluid_type);
-    startingNode->GetBody()->GetSystem()->Add(line);
-    return line;
-
-  }
 
 }  // end namespace frydom
