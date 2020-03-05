@@ -20,7 +20,7 @@ endif ()
 
 if (${frydom_build_demo})
     set(FRYDOM_LOG_FOLDER ${CMAKE_CURRENT_BINARY_DIR}/demo)
-    configure_file(frydom_config.in ${CMAKE_CURRENT_BINARY_DIR}/demo/.frydom_config)
+    configure_file(frydom_config.in ${CMAKE_CURRENT_BINARY_DIR}/demos/.frydom_config)
     add_subdirectory(demos)
 endif ()
 

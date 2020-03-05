@@ -50,13 +50,15 @@ namespace frydom {
                      cable->GetUnstretchedLength(),
                      fluid_type) {}
 
-  void FrCatenaryLine::AddClumpWeight(const double &s, const double &mass) {
+  void FrCatenaryLine::AddClumpWeight(double s, const double &mass, bool reversed) {
+    if (reversed) s = m_unstretchedLength - s;
     AddPointMass(s / m_unstretchedLength,
                  Force(0, 0, -mass * GetSystem()->GetEnvironment()->GetGravityAcceleration()) / c_qL);
     // FIXME: il faut que c_qL soit set dans le constructeur !
   }
 
-  void FrCatenaryLine::AddBuoy(const double &s, const double &mass) {
+  void FrCatenaryLine::AddBuoy(double s, const double &mass, bool reversed) {
+    if (reversed) s = m_unstretchedLength - s;
     AddPointMass(s / m_unstretchedLength,
                  Force(0, 0, mass * GetSystem()->GetEnvironment()->GetGravityAcceleration()) / c_qL);
   }
@@ -99,14 +101,14 @@ namespace frydom {
   }
 
   Force FrCatenaryLine::GetTension(const double &s, FRAME_CONVENTION fc) const {
-    Tension tension = t(s) * c_qL;
+    Tension tension = t(s / m_unstretchedLength) * c_qL;
     if (IsNED(fc))
       internal::SwapFrameConvention(tension);
     return tension;
   }
 
   Position FrCatenaryLine::GetPositionInWorld(const double &s, FRAME_CONVENTION fc) const {
-    Position position = p(s) * m_unstretchedLength;
+    Position position = p(s / m_unstretchedLength) * m_unstretchedLength;
     if (IsNED(fc))
       internal::SwapFrameConvention(position);
     return position;
@@ -138,9 +140,7 @@ namespace frydom {
 
       iter++;
 
-      Jacobian33 jacobian = GetJacobian();
-
-      linear_solver.compute(jacobian);
+      linear_solver.compute(GetJacobian());
       Tension dt0 = linear_solver.solve(-residue);
 
       m_t0 += dt0;
@@ -198,8 +198,10 @@ namespace frydom {
   }
 
   auto FrCatenaryLine::Lambda_tau(const unsigned int &i, const double &s) const {
-    double ti_s_n = ti(i, s).norm();
-    return (m_t0 - ti_s_n * m_pi) / (rho(i, s) * ti_s_n);
+//    double ti_s_n = ti(i, s).norm();
+//    return (m_t0 - ti_s_n * m_pi) / (rho(i, s) * ti_s_n);
+    return (ti(i, s).normalized() - m_pi) /
+           rho(i, s); // FIXME: essai au bluf !!!! --> donne la meme chose... -> re-verifier neanmoins
   }
 
   unsigned int FrCatenaryLine::N() const { return m_point_forces.size() - 1; }
@@ -231,27 +233,26 @@ namespace frydom {
     return i;
   }
 
-  Position FrCatenaryLine::p_pi(const unsigned int &i, const double &s) const {
+  void FrCatenaryLine::p_pi(Position &position, const unsigned int &i, const double &s) const {
     auto scalar = ti(i, s).norm() - ti(i, si(i)).norm();
     for (int j = 0; j < i; j++) {
       scalar += ti(j, si(j + 1)).norm() - ti(j, si(j)).norm();
     }
-    return -m_pi * scalar;
+    position -= m_pi * scalar;
   }
 
-  Position FrCatenaryLine::p_perp(const unsigned int &i, const double &s) const {
+  void FrCatenaryLine::p_perp(Position &position, const unsigned int &i, const double &s) const {
     Position vector = (m_t0 - Fi(i)) * (lambda(i, s) - lambda(i, si(i)));
     for (int j = 0; j < i; j++) {
       vector += (m_t0 - Fi(j)) * (lambda(j, si(j + 1)) - lambda(j, si(j)));
     }
-    return c_U * vector;
+    position += c_U * vector;
   }
 
-  Position FrCatenaryLine::pc(const unsigned int &i, const double &s) const {
-    if (IsSingular()) {
-      return p_pi(i, s);
-    } else {
-      return p_pi(i, s) + p_perp(i, s);
+  void FrCatenaryLine::pc(Position &position, const unsigned int &i, const double &s) const {
+    p_pi(position, i, s);
+    if (!IsSingular()) {
+      p_perp(position, i, s);
     }
   }
 
@@ -259,24 +260,25 @@ namespace frydom {
     return c_sum_fs[i];
   }
 
-  Position FrCatenaryLine::pe(const unsigned int &i, const double &s) const {
-    return (m_q * m_unstretchedLength / m_properties->GetEA()) *
-           ((m_t0 - Fi(i)) * s + sum_fs(i) - 0.5 * m_pi * s * s);
+  void FrCatenaryLine::pe(Position &position, const unsigned int &i, const double &s) const {
+    position += (c_qL / m_properties->GetEA()) * ((m_t0 - Fi(i)) * s + sum_fs(i) - 0.5 * m_pi * s * s);
   }
 
-  Position FrCatenaryLine::pi(const unsigned int &i, const double &s) const {
-    Position p = p0() + pc(i, s);
+  void FrCatenaryLine::pi(Position &position, const unsigned int &i, const double &s) const {
+    position += p0();
+    pc(position, i, s);
     if (m_elastic)
-      p += pe(i, s);
-    return p;
+      pe(position, i, s);
   }
 
   Position FrCatenaryLine::p(const double &s) const {
+    Position position;
     unsigned int i = SToI(s);
-    return pi(i, s);
+    pi(position, i, s);
+    return position;
   }
 
-  Position FrCatenaryLine::pL() const {
+  Position FrCatenaryLine::pL() const { // TODO: est-ce que l'adim est aussi simple ???
     return m_endingNode->GetPositionInWorld(NWU) / m_unstretchedLength;
   }
 
@@ -307,45 +309,45 @@ namespace frydom {
   }
 
   FrCatenaryLine::Residue3 FrCatenaryLine::GetResidue() const {
-    auto pend = pL();
+//    auto pend = pL();
     return p(1.) - pL(); // TODO : verifier
   }
 
-  FrCatenaryLine::Jacobian33 FrCatenaryLine::dp_pi_dt() const {
+  void FrCatenaryLine::dp_pi_dt(Jacobian33 &jacobian) const {
     double scalar = 1. / ti(N(), 1.).norm() - 1. / ti(N(), si(N())).norm();
     for (unsigned int j = 0; j < N(); j++) { // FIXME: verifier le N-1 !!!!!!!!!!!! ---> BUG
       scalar += 1. / ti(j, si(j + 1)).norm() - 1. / ti(j, si(j)).norm();
     }
-    return -scalar * m_pi * m_t0.transpose();
+    jacobian -= scalar * m_pi * m_t0.transpose();
   }
 
-  FrCatenaryLine::Jacobian33 FrCatenaryLine::dp_perp_dt() const {
+  void FrCatenaryLine::dp_perp_dt(Jacobian33 &jacobian) const {
     Jacobian33 matrix = (m_t0 - Fi(N())) * (Lambda_tau(N(), 1.) - Lambda_tau(N(), si(N()))).transpose();
     double scalar = lambda(N(), 1.) - lambda(N(), si(N()));
     for (unsigned int j = 0; j < N(); j++) {
       matrix += (m_t0 - Fi(j)) * (Lambda_tau(j, si(j + 1)) - Lambda_tau(j, si(j))).transpose();
       scalar += lambda(j, si(j + 1)) - lambda(j, si(j));
     }
-    return c_U * matrix + scalar * Eigen::Matrix3d::Identity();
+    jacobian += c_U * matrix + scalar * Eigen::Matrix3d::Identity();
   }
 
-  FrCatenaryLine::Jacobian33 FrCatenaryLine::dpc_dt() const {
-    auto jacobian = dp_pi_dt();
+  void FrCatenaryLine::dpc_dt(Jacobian33 &jacobian) const {
+    dp_pi_dt(jacobian);
     if (!IsSingular()) {
-      jacobian += dp_perp_dt();
+      dp_perp_dt(jacobian);
     }
-    return jacobian;
   }
 
-  FrCatenaryLine::Jacobian33 FrCatenaryLine::dpe_dt() const {
-    return (m_q * m_unstretchedLength / m_properties->GetEA()) * Eigen::Matrix3d::Identity(); // TODO: optim
+  void FrCatenaryLine::dpe_dt(Jacobian33 &jacobian) const {
+    jacobian += (m_q * m_unstretchedLength / m_properties->GetEA()) * Eigen::Matrix3d::Identity(); // TODO: optim
   }
 
   FrCatenaryLine::Jacobian33 FrCatenaryLine::GetJacobian() const {
-//    auto jacobian;
-    auto jacobian = dpc_dt();
+    Jacobian33 jacobian;
+    jacobian.SetNull();
+    dpc_dt(jacobian);
     if (m_elastic) {
-      jacobian += dpe_dt();
+      dpe_dt(jacobian);
     }
     return jacobian;
   }
@@ -370,8 +372,8 @@ namespace frydom {
 
     c_Fi.clear();
     c_sum_fs.clear();
-    c_Fi.emplace_back(m_point_forces.front().force());
-    c_sum_fs.emplace_back(m_point_forces.front().force());
+    c_Fi.emplace_back(m_point_forces.front().force()); // FIXME: c'est de toute maniere 0 non ?
+    c_sum_fs.emplace_back(m_point_forces.front().force()); // FIXME: c'est de toute maniere 0 non ?
 
     for (unsigned int i = 0; i < N(); i++) { // TODO: voir la borne
       auto point_force = m_point_forces[i + 1];

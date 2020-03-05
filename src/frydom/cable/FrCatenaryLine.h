@@ -67,9 +67,9 @@ namespace frydom {
                    bool elastic,
                    FLUID_TYPE fluid_type);
 
-    void AddClumpWeight(const double &s, const double &mass);
+    void AddClumpWeight(double s, const double &mass, bool reversed = false);
 
-    void AddBuoy(const double &s, const double &mass);
+    void AddBuoy(double s, const double &mass, bool reversed = false);
 
     bool IsSingular() const;
 
@@ -91,7 +91,6 @@ namespace frydom {
 
     using Residue3 = mathutils::Vector3d<double>;
     using Jacobian33 = mathutils::Matrix33<double>;
-
 
 
     void AddPointMass(const double &s, const Force &force);
@@ -120,17 +119,17 @@ namespace frydom {
 
     unsigned int SToI(const double &s) const;
 
-    Position p_pi(const unsigned int &i, const double &s) const;
+    void p_pi(Position &position, const unsigned int &i, const double &s) const;
 
-    Position p_perp(const unsigned int &i, const double &s) const;
+    void p_perp(Position &position, const unsigned int &i, const double &s) const;
 
-    Position pc(const unsigned int &i, const double &s) const;
+    void pc(Position &position, const unsigned int &i, const double &s) const;
 
     Force sum_fs(const unsigned int &i) const; // inline
 
-    Position pe(const unsigned int &i, const double &s) const;
+    void pe(Position &position, const unsigned int &i, const double &s) const;
 
-    Position pi(const unsigned int &i, const double &s) const; // inline
+    void pi(Position &position, const unsigned int &i, const double &s) const; // inline
 
     Position p(const double &s) const; // inline
 
@@ -140,13 +139,13 @@ namespace frydom {
 
     Residue3 GetResidue() const;
 
-    Jacobian33 dpc_dt() const; // inline
+    void dpc_dt(Jacobian33& jacobian) const; // inline
 
-    Jacobian33 dp_pi_dt() const; // inline
+    void dp_pi_dt(Jacobian33& jacobian) const; // inline
 
-    Jacobian33 dp_perp_dt() const; // inline
+    void dp_perp_dt(Jacobian33& jacobian) const; // inline
 
-    Jacobian33 dpe_dt() const; // inline
+    void dpe_dt(Jacobian33& jacobian) const; // inline
 
     Jacobian33 GetJacobian() const;
 
